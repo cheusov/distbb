@@ -220,4 +220,10 @@ END {
 ### main loop - building
 
 get_package () { # get package ready to be built
+    awk '$2 == 0 {print $1; exit 0} END {exit 1}' $queue_fn
 }
+
+pkg_fn=$tmpdir/pkg.txt
+while get_package > $pkg_fn; do
+    cat $pkg_fn
+done
