@@ -50,6 +50,7 @@ set_if_not_set PKG_SUMMARY     $PACKAGES/pkg_summary.gz
 set_if_not_set PKG_SUFX        .tgz
 set_if_not_set REPORTS_DIR     $HOME/bulk-logs
 set_if_not_set TARGETS         'clean package checksum build install package'
+set_if_not_set TRANSPORT       'ssh -x'
 
 ######################################################################
 
@@ -221,3 +222,4 @@ runpipe0 \
     tsort > $queue_fn
 
 ### main loop - building
+paexec -n "$SLAVES" -t "$TRANSPORT" -c ./distbb_slave < $queue_fn
