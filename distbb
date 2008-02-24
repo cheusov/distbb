@@ -203,27 +203,21 @@ $1 in hash {
 trans_clos_rebuild_fn=$tmpdir/trans_closure_rebuild.txt
 filter_rebuild1 $trans_clos_fn > $trans_clos_rebuild_fn
 
-### generating queue consisting of list of <pkgpath, count> pairs
-### count equal 0 means "ready to be built"
+### tsort'ed list of packages
 queue_fn=$tmpdir/queue.txt
+gen_dep_graph (){
 awk '
 {
-   degree [$NF] += (NF == 2)
+   if (NF == 2)
+      print $1, $2
+   else
+      print $1, $1
 }
-END {
-   for (pkg in degree){
-      print pkg, degree [pkg]
-   }
+' "$@"
 }
-' $rebuild1_fn $trans_clos_rebuild_fn > $queue_fn
+
+runpipe0 \
+    gen_dep_graph $rebuild1_fn $trans_clos_rebuild_fn '|' \
+    tsort > $queue_fn
 
 ### main loop - building
-
-get_package () { # get package ready to be built
-    awk '$2 == 0 {print $1; exit 0} END {exit 1}' $queue_fn
-}
-
-pkg_fn=$tmpdir/pkg.txt
-while get_package > $pkg_fn; do
-    cat $pkg_fn
-done
