@@ -58,10 +58,10 @@ header (){
 }
 
 ######################################################################
-#
+
 rm -rf $REPORTS_DIR
 
-# extracting DEPENDS and BUILDS_DEPENDS
+### extracting DEPENDS and BUILDS_DEPENDS
 extract_depends (){
     awk -v deps_fn="$deps_fn" -v bdeps_fn="$bdeps_fn" '
 /^PKGNAME=/ {
@@ -109,8 +109,8 @@ bdeps_fn=$tmpdir/bdeps.txt
 
 extract_depends
 
-# input: graph as a lines of arcs
-# output: transitive close of this graph
+### input: graph as a lines of arcs
+### output: transitive close of this graph
 transitive_closure (){
     awk '
 # AWK badly suits for this task :-(
@@ -154,7 +154,7 @@ END {
 ' "$@"
 }
 
-# unpacking pkg_summary if it is needed
+### unpacking pkg_summary if it is needed
 txt_summary=$tmpdir/pkg_summary.txt
 if echo $PKG_SUMMARY | grep '[.]gz$' > /dev/null; then
     gzip -dc $PKG_SUMMARY > $txt_summary
@@ -164,15 +164,15 @@ elif echo $PKG_SUMMARY | grep '[.]bz2$' > /dev/null; then
     PKG_SUMMARY=$txt_summary
 fi
 
-# comparison binaries against pkgsrc tree
+### comparison binaries against pkgsrc tree
 cmp_fn=$tmpdir/cmp.txt
 pkg_cmp_summary -p $PKG_SUMMARY $PKG_SRC_SUMMARY > $cmp_fn
 
-# direct packages that need to be rebuilt
+### direct packages that need to be rebuilt
 rebuild1_fn=$tmpdir/rebuild1.txt
 awk '($1 != "=") && ($1 != "-") {print $2}' $cmp_fn > $rebuild1_fn
 
-# all dependancies (transitive closure)
+### all dependancies (transitive closure)
 extract_dep (){
     awk '
 NF == 3 {
@@ -185,7 +185,7 @@ runpipe0 \
     extract_dep $deps_fn $bdeps_fn '|' \
     transitive_closure > $trans_clos_fn
 
-# only those dependancies that depend on packages that need to be rebuilt
+### only those dependancies that depend on packages that need to be rebuilt
 filter_rebuild1 (){
     awk -v rebuild1_fn="$rebuild1_fn" '
 BEGIN {
@@ -203,8 +203,8 @@ $1 in hash {
 trans_clos_rebuild_fn=$tmpdir/trans_closure_rebuild.txt
 filter_rebuild1 $trans_clos_fn > $trans_clos_rebuild_fn
 
-# generating queue consisting of list of <pkgpath, count> pairs
-# count equal 0 means "ready to be built"
+### generating queue consisting of list of <pkgpath, count> pairs
+### count equal 0 means "ready to be built"
 queue_fn=$tmpdir/queue.txt
 awk '
 {
@@ -217,4 +217,7 @@ END {
 }
 ' $rebuild1_fn $trans_clos_rebuild_fn > $queue_fn
 
-#
+### main loop - building
+
+get_package () { # get package ready to be built
+}
