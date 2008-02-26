@@ -52,11 +52,7 @@ set_if_not_set REPORTS_DIR     $HOME/bulk-logs
 set_if_not_set TARGETS         'clean package checksum build install package'
 set_if_not_set TRANSPORT       'ssh -x'
 
-######################################################################
-
-header (){
-    printf ' --**--**-- %8s --**--**--\n' "$1"
-}
+environ="BMAKE=$BMAKE PKGSRCDIR=$PKGSRCDIR REPORTS_DIR=$REPORTS_DIR TARGETS='$TARGETS'"
 
 ######################################################################
 
@@ -110,7 +106,7 @@ bdeps_fn=$tmpdir/bdeps.txt
 
 extract_depends
 
-### input: graph as a lines of arcs
+### input: graph as a list of arcs
 ### output: transitive close of this graph
 transitive_closure (){
     awk '
@@ -206,20 +202,59 @@ filter_rebuild1 $trans_clos_fn > $trans_clos_rebuild_fn
 
 ### tsort'ed list of packages
 queue_fn=$tmpdir/queue.txt
-gen_dep_graph (){
+count_deps (){
 awk '
 {
    if (NF == 2)
-      print $1, $2
+      ++count [$2]
    else
-      print $1, $1
+      print $1, 0
+}
+END {
+   for (i in count){
+      print i, count [i]
+   }
 }
 ' "$@"
 }
 
-runpipe0 \
-    gen_dep_graph $rebuild1_fn $trans_clos_rebuild_fn '|' \
-    tsort > $queue_fn
+count_deps $rebuild1_fn $trans_clos_rebuild_fn > $queue_fn
+
+queue__ready_to_be_built (){
+    awk '$2 == 0 {print $1}' $queue_fn
+}
+
+process_paexec_output (){
+    awk -v pkg="$1" -v tc=$trans_clos_rebuild_fn '
+BEGIN {
+   deps [$1] = deps [$1] " " $2
+}
+
+$1 != pkg {
+   print
+   next
+}
+
+{
+}
+' > $queue_fn.tmp && mv $queue_fn.tmp $queue_fn
+}
 
 ### main loop - building
-paexec -n "$SLAVES" -t "$TRANSPORT" -c ./distbb_slave < $queue_fn
+while test -s $queue_fn; do
+    queue__ready_to_be_built
+    sleep 1
+done #|
+exit
+
+paexec -er -n +1 -c: -t "env $environ ./distbb_slave" < $queue_fn #|
+exit
+awk -v reports_dir=$reports_dir '
+$2 == "package" {
+   pkgpath [$1] = $3
+   next
+}
+{
+   print > (reports_dir "/" 
+}
+'
