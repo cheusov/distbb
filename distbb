@@ -254,7 +254,13 @@ $2 == "package" {
    pkgpath [$1] = $3
    next
 }
+
 {
-   print > (reports_dir "/" 
+   fn = reports_dir "/" pkgpath [$1] "/uu.tmp" }
+
+   if (NF > 1)
+      print > fn
+   else
+      close(fn)
 }
 '
