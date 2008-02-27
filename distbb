@@ -57,6 +57,7 @@ environ="BMAKE=$BMAKE PKGSRCDIR=$PKGSRCDIR REPORTS_DIR=$REPORTS_DIR TARGETS='$TA
 ######################################################################
 
 rm -rf $REPORTS_DIR
+mkdir -p $REPORTS_DIR
 
 ### extracting DEPENDS and BUILDS_DEPENDS
 extract_depends (){
@@ -224,43 +225,128 @@ queue__ready_to_be_built (){
     awk '$2 == 0 {print $1}' $queue_fn
 }
 
-process_paexec_output (){
-    awk -v pkg="$1" -v tc=$trans_clos_rebuild_fn '
-BEGIN {
-   deps [$1] = deps [$1] " " $2
-}
+### main loop - building
+lckfile=$REPORTS_DIR/.lock
 
-$1 != pkg {
-   print
+get_pkgpath (){
+    awk -v queue_fn=$queue_fn '
+$2 == 0 {
+   print $1
+   ok = 1
    next
 }
 
 {
-}
-' > $queue_fn.tmp && mv $queue_fn.tmp $queue_fn
+   print > (queue_fn ".tmp")
 }
 
-### main loop - building
-while test -s $queue_fn; do
-    queue__ready_to_be_built
-    sleep 1
-done #|
-exit
+END {
+   exit (ok != 1)
+}
+' $queue_fn
+}
 
-paexec -er -n +1 -c: -t "env $environ ./distbb_slave" < $queue_fn #|
-exit
-awk -v reports_dir=$reports_dir '
-$2 == "package" {
+tasks_fn=$tmpdir/tasks.txt
+print_tasks (){
+    while test -s $queue_fn; do
+	echo inside loop 1>&2
+	while ! shlock -f ${lckfile} -p $$; do
+	    sleep 1 # This is ugly but works
+	done
+	echo lock obtained 1>&2
+
+	if get_pkgpath > $tasks_fn; then
+	    echo get_pkgpath succeeded 1>&2
+	    mv $queue_fn.tmp $queue_fn
+	    rm ${lckfile}
+	    cat $tasks_fn
+	else
+	    echo get_pkgpath failed 1>&2
+	    rm ${lckfile}
+	    sleep 5
+	fi
+    done
+}
+
+print_tasks |
+while read pkgpath; do
+    mkdir -p $REPORTS_DIR/$pkgpath
+    echo $pkgpath
+done |
+paexec -er -n +1 -c: -t "env $environ queue_fn=$queue_fn ./distbb_slave" |
+awk -v reports_dir=$REPORTS_DIR '
+$2 == "package:" {
    pkgpath [$1] = $3
    next
 }
 
-{
-   fn = reports_dir "/" pkgpath [$1] "/uu.tmp" }
+$2 == "status:" {
+   status [$1] = $3
+   next
+}
 
-   if (NF > 1)
-      print > fn
-   else
-      close(fn)
+{
+   fn = reports_dir "/" pkgpath [$1] "/uu.tmp"
+}
+
+NF > 1 {
+   sub(/^[^ ]+ /, "")
+   print > fn
+   next
+}
+
+{
+   close(fn)
+   print pkgpath [$1], status [$1]
+}
+' |
+awk -v trans_clos_fn=$trans_clos_rebuild_fn -v queue_fn=$queue_fn '
+BEGIN {
+   while (0 < (ret = (getline < trans_clos_fn))){
+      deps [$1, $2] = 1
+   }
+   if (ret < 0){
+      print "reading error from " trans_clos_fn > "/dev/stderr"
+   }
+
+   tmp_fn = (queue_fn ".tmp2")
+}
+
+$2 == 0 {
+   # succeeded
+   print $0 > "/dev/stderr"
+   print pkgpath " succeeded" > "/dev/stderr"
+
+   pkgpath = $1
+
+   # reading counts
+   while (0 < (ret = (getline < queue_fn))){
+      counts [$1] = $2
+   }
+   if (ret < 0){
+      print "reading error from " queue_fn > "/dev/stderr"
+   }
+   close(queue_fn)
+
+   # updating counts
+   for (i in counts){
+      if ((pkgpath SUBSEP i) in deps){
+         --counts [i]
+      }
+   }
+
+   # writing counts
+   for (i in counts){
+      print i, counts [i] > tmp_fn
+   }
+   close(tmp_fn)
+
+   # renaming
+   if (system("mv " tmp_fn " " queue_fn)){
+      print "system(2) failed" > "/dev/stderr"
+      exit 2
+   }
+
+   next
 }
 '

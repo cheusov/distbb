@@ -1,6 +1,7 @@
 #!/bin/sh
 
 set -e
+. pipestatus
 
 ######################################################################
 
@@ -26,14 +27,22 @@ fake_cmd=$2
 shift
 shift
 
-do_this (){
-    mkdir -p $REPORTS_DIR/$pkgpath
+build_package (){
     header build
     echo "building $pkgpath...done"
 }
 
+if test -z $queue_fn; then
+    exit 2
+fi
+
 while read pkgpath; do
-    echo "package $pkgpath"
-    do_this | uuencode -
+#    echo "package: $pkgpath" 1>&2
+    echo "package: $pkgpath"
+    if runpipe_re '. 0' build_package '|' uuencode -; then
+	echo "status: $pipestatus_1"
+    else
+	echo "status: 1" # uuencode failed
+    fi
     echo ''
 done
