@@ -13,19 +13,14 @@ header (){
 
 usage (){
     cat <<EOF
-usage: distbb_slave node
+usage: distbb_slave
 EOF
 }
 
-if test $# -ne 2; then
+if test $# -ne 0; then
     usage
     exit 1
 fi
-
-node=$1
-fake_cmd=$2
-shift
-shift
 
 build_package (){
     header build
@@ -37,7 +32,7 @@ if test -z $queue_fn; then
 fi
 
 while read pkgpath; do
-#    echo "package: $pkgpath" 1>&2
+    echo "package: $pkgpath" 1>&2
     echo "package: $pkgpath"
     if runpipe_re '. 0' build_package '|' uuencode -; then
 	echo "status: $pipestatus_1"
