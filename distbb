@@ -168,7 +168,7 @@ pkg_cmp_summary -p $PKG_SUMMARY $PKG_SRC_SUMMARY > $cmp_fn
 
 ### direct packages that need to be rebuilt
 rebuild1_fn=$tmpdir/rebuild1.txt
-awk '($1 != "=") && ($1 != "-") {print $2}' $cmp_fn > $rebuild1_fn
+awk '($1 != "=") && ($1 != "-") {print $2}' $cmp_fn | head -1000 > $rebuild1_fn
 
 ### all dependancies (transitive closure)
 extract_dep (){
@@ -249,11 +249,9 @@ END {
 tasks_fn=$tmpdir/tasks.txt
 print_tasks (){
     while test -s $queue_fn; do
-	echo inside loop 1>&2
 	while ! shlock -p $$ -f ${lckfile}; do
 	    sleep 1 # This is ugly but works
 	done
-	echo lock obtained 1>&2
 
 	if get_pkgpath > $tasks_fn; then
 	    echo get_pkgpath succeeded 1>&2
@@ -314,10 +312,12 @@ BEGIN {
    if (ret < 0){
       print "reading error from " trans_clos_fn > "/dev/stderr"
    }
+   close(trans_clos_fn)
 
    tmp_fn = (queue_fn ".tmp2")
-   wait_for_lock=sprintf("while ! shlock -p %s -f %s; do sleep 1; done", pid, lckfile)
+   wait_for_lock=sprintf("/bin/sh -c \"while ! shlock -p %s -f %s; do sleep 1; done\"", pid, lckfile)
    rm_lock=sprintf("rm %s", lckfile)
+   print shlock_cmd
 }
 
 $2 == 0 {
@@ -334,9 +334,11 @@ $2 == 0 {
    }
 
    # reading counts
+   delete counts
    while (0 < (ret = (getline < queue_fn))){
       counts [$1] = $2
    }
+
    if (ret < 0){
       print "reading error from " queue_fn > "/dev/stderr"
    }
