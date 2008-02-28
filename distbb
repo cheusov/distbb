@@ -246,15 +246,16 @@ queue__ready_to_be_built (){
 lckfile=$tmpdir/.lock
 
 get_pkgpath (){
-    awk -v queue_fn=$queue_fn '
+    awk -v tmp_queue_fn="$queue_fn.tmp" '
 $2 == 0 {
+   printf "" > tmp_queue_fn
    print $1
    ok = 1
    next
 }
 
 {
-   print > (queue_fn ".tmp")
+   print > tmp_queue_fn
 }
 
 END {
@@ -292,8 +293,7 @@ while read pkgpath; do
     mkdir -p $REPORTS_DIR/$pkgpath
     echo $pkgpath
 done |
-paexec -er -n +1 -c "env $environ queue_fn=$queue_fn ./distbb_slave" #|
-exit
+~/prjs/paexec/paexec -Er -n +1 -c "env $environ queue_fn=$queue_fn ./distbb_slave" |
 awk -v reports_dir=$REPORTS_DIR '
 $2 == "package:" {
    pkgpath [$1] = $3
