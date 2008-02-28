@@ -257,7 +257,7 @@ print_tasks (){
 
 	if get_pkgpath > $tasks_fn; then
 	    echo get_pkgpath succeeded 1>&2
-	    mv $queue_fn.tmp $queue_fn
+	    cp ${queue_fn}.tmp $queue_fn
 	    rm ${lckfile}
 	    cat $tasks_fn
 	else
@@ -300,7 +300,11 @@ NF > 1 {
    print pkgpath [$1], status [$1]
 }
 ' |
-awk -v trans_clos_fn=$trans_clos_rebuild_fn -v queue_fn=$queue_fn '
+awk \
+   -v trans_clos_fn=$trans_clos_rebuild_fn \
+   -v queue_fn=$queue_fn \
+   -v lckfile=$lckfile \
+   -v pid=$$ '
 BEGIN {
    while (0 < (ret = (getline < trans_clos_fn))){
       deps [$1, $2] = 1
@@ -310,14 +314,22 @@ BEGIN {
    }
 
    tmp_fn = (queue_fn ".tmp2")
+   wait_for_lock=sprintf("while ! shlock -f %s -p %s; do sleep 1; done", lckfile, pid)
+   rm_lock=sprintf("rm %s", lckfile)
 }
 
 $2 == 0 {
    # succeeded
-   print $0 > "/dev/stderr"
-   print pkgpath " succeeded" > "/dev/stderr"
+#   print $0 > "/dev/stderr"
+#   print pkgpath " succeeded" > "/dev/stderr"
 
    pkgpath = $1
+
+   # getting lock
+   if (system(wait_for_lock)){
+      print "system(2) failed" > "/dev/stderr"
+      exit 76
+   }
 
    # reading counts
    while (0 < (ret = (getline < queue_fn))){
@@ -345,6 +357,12 @@ $2 == 0 {
    if (system("mv " tmp_fn " " queue_fn)){
       print "system(2) failed" > "/dev/stderr"
       exit 2
+   }
+
+   # removing lock
+   if (system(rm_lock)){
+      print "system(2) failed" > "/dev/stderr"
+      exit 76
    }
 
    next
