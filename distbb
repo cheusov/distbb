@@ -226,7 +226,7 @@ queue__ready_to_be_built (){
 }
 
 ### main loop - building
-lckfile=$REPORTS_DIR/.lock
+lckfile=$tmpdir/.lock
 
 get_pkgpath (){
     awk -v queue_fn=$queue_fn '
@@ -250,14 +250,16 @@ tasks_fn=$tmpdir/tasks.txt
 print_tasks (){
     while test -s $queue_fn; do
 	echo inside loop 1>&2
-	while ! shlock -f ${lckfile} -p $$; do
+	while ! shlock -p $$ -f ${lckfile}; do
 	    sleep 1 # This is ugly but works
 	done
 	echo lock obtained 1>&2
 
 	if get_pkgpath > $tasks_fn; then
 	    echo get_pkgpath succeeded 1>&2
-	    cp ${queue_fn}.tmp $queue_fn
+	    echo mv ${queue_fn}.tmp $queue_fn 1>&2
+	    mv ${queue_fn}.tmp $queue_fn
+
 	    rm ${lckfile}
 	    cat $tasks_fn
 	else
@@ -314,7 +316,7 @@ BEGIN {
    }
 
    tmp_fn = (queue_fn ".tmp2")
-   wait_for_lock=sprintf("while ! shlock -f %s -p %s; do sleep 1; done", lckfile, pid)
+   wait_for_lock=sprintf("while ! shlock -p %s -f %s; do sleep 1; done", pid, lckfile)
    rm_lock=sprintf("rm %s", lckfile)
 }
 
