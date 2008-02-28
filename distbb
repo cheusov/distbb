@@ -178,7 +178,7 @@ verbose_print "done\n"
 ### direct packages that need to be rebuilt
 verbose_print "Generating a list of packages that need to be built..."
 rebuild1_fn=$tmpdir/rebuild1.txt
-awk '($1 != "=") && ($1 != "-") {print $2}' $cmp_fn | head -100 > $rebuild1_fn
+awk '($1 != "=") && ($1 != "-") {print $2}' $cmp_fn | head -3 > $rebuild1_fn
 verbose_print "done\n"
 
 ### all dependancies (transitive closure)
@@ -265,6 +265,7 @@ END {
 
 tasks_fn=$tmpdir/tasks.txt
 print_tasks (){
+    i=0
     while test -s $queue_fn; do
 	while ! shlock -p $$ -f ${lckfile}; do
 	    sleep 1 # This is ugly but works
@@ -272,16 +273,12 @@ print_tasks (){
 
 	if get_pkgpath > $tasks_fn; then
 	    echo get_pkgpath succeeded 1>&2
-	    echo mv ${queue_fn}.tmp $queue_fn 1>&2
+	    cp ${queue_fn} $queue_fn.$i.tmp
 	    mv ${queue_fn}.tmp $queue_fn
+	    i=$(($i+1))
 
 	    rm ${lckfile}
-	    cat $tasks_fn |
-	    while read pkgpath; do
-		verbose_print "Building package $pkgpath..."
-		echo $pkgpath
-		verbose_print "done\n"
-	    done
+	    cat $tasks_fn
 	else
 	    echo get_pkgpath failed 1>&2
 	    rm ${lckfile}
@@ -295,7 +292,8 @@ while read pkgpath; do
     mkdir -p $REPORTS_DIR/$pkgpath
     echo $pkgpath
 done |
-paexec -er -n +1 -c: -t "env $environ queue_fn=$queue_fn ./distbb_slave" |
+paexec -er -n +1 -c "env $environ queue_fn=$queue_fn ./distbb_slave" #|
+exit
 awk -v reports_dir=$REPORTS_DIR '
 $2 == "package:" {
    pkgpath [$1] = $3
@@ -319,7 +317,9 @@ NF > 1 {
 
 {
    close(fn)
+   print pkgpath [$1], status [$1] > "/dev/stderr"
    print pkgpath [$1], status [$1]
+   fflush()
 }
 ' |
 awk \
@@ -339,7 +339,6 @@ BEGIN {
    tmp_fn = (queue_fn ".tmp2")
    wait_for_lock=sprintf("/bin/sh -c \"while ! shlock -p %s -f %s; do sleep 1; done\"", pid, lckfile)
    rm_lock=sprintf("rm %s", lckfile)
-   print shlock_cmd
 }
 
 $2 == 0 {
@@ -392,5 +391,8 @@ $2 == 0 {
    }
 
    next
+}
+{
+   print pkgpath " failed" > "/dev/stderr"
 }
 '
