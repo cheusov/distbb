@@ -168,7 +168,7 @@ pkg_cmp_summary -p $PKG_SUMMARY $PKG_SRC_SUMMARY > $cmp_fn
 
 ### direct packages that need to be rebuilt
 rebuild1_fn=$tmpdir/rebuild1.txt
-awk '($1 != "=") && ($1 != "-") {print $2}' $cmp_fn | head -1000 > $rebuild1_fn
+awk '($1 != "=") && ($1 != "-") {print $2}' $cmp_fn > $rebuild1_fn
 
 ### all dependancies (transitive closure)
 extract_dep (){
