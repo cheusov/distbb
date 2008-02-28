@@ -32,7 +32,6 @@ if test -z $queue_fn; then
 fi
 
 while read pkgpath; do
-    echo "package: $pkgpath" 1>&2
     echo "package: $pkgpath"
     if runpipe_re '. 0' build_package '|' uuencode -; then
 	echo "status: $pipestatus_1"
