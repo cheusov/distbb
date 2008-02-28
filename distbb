@@ -27,11 +27,15 @@ set -e
 . pipestatus
 
 export LC_ALL=C
-############################################################
+######################################################################
 tmpdir=/tmp/distbb_build.$$
 #trap "rm -rf $tmpdir" 0 1 2 15
 
 mkdir -m 700 $tmpdir
+
+verbose_print (){
+    printf "$1" 1>&2
+}
 
 ######################################################################
 set_if_not_set (){
@@ -105,8 +109,11 @@ NF == 0 && curr_pkgpath == pkgpath {
 deps_fn=$tmpdir/deps.txt
 bdeps_fn=$tmpdir/bdeps.txt
 
+verbose_print "Extracting dependencies from pkg_src_summary file..."
 extract_depends
+verbose_print "done\n"
 
+######################################################################
 ### input: graph as a list of arcs
 ### output: transitive close of this graph
 transitive_closure (){
@@ -118,7 +125,7 @@ BEGIN {
 }
 
 {
-   arc     [$1, $2] = 1
+   arc [$1, $2] = 1
 
    outgoing [$1] = outgoing [$1] " " $2
    incoming [$2] = incoming [$2] " " $1
@@ -163,12 +170,16 @@ elif echo $PKG_SUMMARY | grep '[.]bz2$' > /dev/null; then
 fi
 
 ### comparison binaries against pkgsrc tree
+verbose_print "Comparing pkg_summary and pkg_src_summary files..."
 cmp_fn=$tmpdir/cmp.txt
 pkg_cmp_summary -p $PKG_SUMMARY $PKG_SRC_SUMMARY > $cmp_fn
+verbose_print "done\n"
 
 ### direct packages that need to be rebuilt
+verbose_print "Generating a list of packages that need to be built..."
 rebuild1_fn=$tmpdir/rebuild1.txt
-awk '($1 != "=") && ($1 != "-") {print $2}' $cmp_fn > $rebuild1_fn
+awk '($1 != "=") && ($1 != "-") {print $2}' $cmp_fn | head -100 > $rebuild1_fn
+verbose_print "done\n"
 
 ### all dependancies (transitive closure)
 extract_dep (){
@@ -178,10 +189,12 @@ NF == 3 {
 }' "$@"
 }
 
+verbose_print "Building transitive closure for the dependancy graph..."
 trans_clos_fn=$tmpdir/trans_closure.txt
 runpipe0 \
     extract_dep $deps_fn $bdeps_fn '|' \
     transitive_closure > $trans_clos_fn
+verbose_print "done\n"
 
 ### only those dependancies that depend on packages that need to be rebuilt
 filter_rebuild1 (){
@@ -198,8 +211,10 @@ $1 in hash {
 ' "$@"
 }
 
+verbose_print "Packages to be built with their full dependancies..."
 trans_clos_rebuild_fn=$tmpdir/trans_closure_rebuild.txt
 filter_rebuild1 $trans_clos_fn > $trans_clos_rebuild_fn
+verbose_print "done\n"
 
 ### tsort'ed list of packages
 queue_fn=$tmpdir/queue.txt
@@ -219,7 +234,9 @@ END {
 ' "$@"
 }
 
+verbose_print "Initial queue..."
 count_deps $rebuild1_fn $trans_clos_rebuild_fn > $queue_fn
+verbose_print "done\n"
 
 queue__ready_to_be_built (){
     awk '$2 == 0 {print $1}' $queue_fn
@@ -259,7 +276,12 @@ print_tasks (){
 	    mv ${queue_fn}.tmp $queue_fn
 
 	    rm ${lckfile}
-	    cat $tasks_fn
+	    cat $tasks_fn |
+	    while read pkgpath; do
+		verbose_print "Building package $pkgpath..."
+		echo $pkgpath
+		verbose_print "done\n"
+	    done
 	else
 	    echo get_pkgpath failed 1>&2
 	    rm ${lckfile}
@@ -323,7 +345,7 @@ BEGIN {
 $2 == 0 {
    # succeeded
 #   print $0 > "/dev/stderr"
-#   print pkgpath " succeeded" > "/dev/stderr"
+   print pkgpath " succeeded" > "/dev/stderr"
 
    pkgpath = $1
 
