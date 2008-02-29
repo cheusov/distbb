@@ -81,8 +81,12 @@ extract_depends (){
    gsub(/[^ \t]+:[.][.]\/[.][.]\//, "")
 
    for (i=1; i <= NF; ++i){
-      print pkgname, $i, pkgpath > deps_fn
+      deps [$i] = 1
    }
+   for (i in deps){
+      print pkgname, i, pkgpath > deps_fn
+   }
+   delete deps
 
    next
 }
@@ -92,8 +96,12 @@ extract_depends (){
    gsub(/[^ \t]+:[.][.]\/[.][.]\//, "")
 
    for (i=1; i <= NF; ++i){
-      print pkgname, $i, pkgpath > bdeps_fn
+      deps [$i] = 1
    }
+   for (i in deps){
+      print pkgname, i, pkgpath > bdeps_fn
+   }
+   delete deps
 
    next
 }
@@ -178,7 +186,7 @@ verbose_print "done\n"
 ### direct packages that need to be rebuilt
 verbose_print "Generating a list of packages that need to be built..."
 rebuild1_fn=$tmpdir/rebuild1.txt
-awk '($1 != "=") && ($1 != "-") {print $2}' $cmp_fn | head -3 > $rebuild1_fn
+awk '($1 != "=") && ($1 != "-") {print $2}' $cmp_fn > $rebuild1_fn
 verbose_print "done\n"
 
 ### all dependancies (transitive closure)
@@ -317,7 +325,6 @@ NF > 1 {
 
 {
    close(fn)
-   print pkgpath [$1], status [$1] > "/dev/stderr"
    print pkgpath [$1], status [$1]
    fflush()
 }
@@ -373,6 +380,7 @@ $2 == 0 {
    }
 
    # writing counts
+   printf "" > tmp_fn
    for (i in counts){
       print i, counts [i] > tmp_fn
    }
