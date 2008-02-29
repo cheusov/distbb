@@ -117,7 +117,7 @@ NF == 0 && curr_pkgpath == pkgpath {
 deps_fn=$tmpdir/deps.txt
 bdeps_fn=$tmpdir/bdeps.txt
 
-verbose_print "Extracting dependencies from pkg_src_summary file..."
+verbose_print "Dependencies from pkg_src_summary file..."
 extract_depends
 verbose_print "done\n"
 
@@ -178,13 +178,13 @@ elif echo $PKG_SUMMARY | grep '[.]bz2$' > /dev/null; then
 fi
 
 ### comparison binaries against pkgsrc tree
-verbose_print "Comparing pkg_summary and pkg_src_summary files..."
+verbose_print "pkg_summary vs. pkg_src_summary comparison..."
 cmp_fn=$tmpdir/cmp.txt
 pkg_cmp_summary -p $PKG_SUMMARY $PKG_SRC_SUMMARY > $cmp_fn
 verbose_print "done\n"
 
 ### direct packages that need to be rebuilt
-verbose_print "Generating a list of packages that need to be built..."
+verbose_print "List of packages to be (re)built..."
 rebuild1_fn=$tmpdir/rebuild1.txt
 awk '($1 != "=") && ($1 != "-") {print $2}' $cmp_fn > $rebuild1_fn
 verbose_print "done\n"
@@ -197,7 +197,7 @@ NF == 3 {
 }' "$@"
 }
 
-verbose_print "Building transitive closure for the dependancy graph..."
+verbose_print "Transitive closure for the dependancy graph..."
 trans_clos_fn=$tmpdir/trans_closure.txt
 runpipe0 \
     extract_dep $deps_fn $bdeps_fn '|' \
@@ -219,7 +219,7 @@ $1 in hash {
 ' "$@"
 }
 
-verbose_print "Packages to be built with their full dependancies..."
+verbose_print "Packages to be built those that depend on them..."
 trans_clos_rebuild_fn=$tmpdir/trans_closure_rebuild.txt
 filter_rebuild1 $trans_clos_fn > $trans_clos_rebuild_fn
 verbose_print "done\n"
