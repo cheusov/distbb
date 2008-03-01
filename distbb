@@ -593,11 +593,13 @@ Summary
   Build started:$(right_align 38 "${date_start}")
   Build ended:  $(right_align 38 "${date_end}")
 
-  Total packages/in summary       $(right_align 20 $packages_total/$packages_in_summary )
+  Total packages                  $(right_align 20 $packages_total)
   Packages built previously       $(right_align 20 $packages_built_prev_cnt)
   Packages built                  $(right_align 20 $packages_built_cnt)
   Packages failed                 $(right_align 20 $packages_failed_cnt)
   Packages failed due to them     $(right_align 20 $packages_failed_deps_cnt)
+
+  Packages in pkg_summary         $(right_align 20 $packages_in_summary)
 EOF
 }
 
