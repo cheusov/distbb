@@ -56,11 +56,14 @@ set_if_not_set TRANSPORT       'ssh -x'
 
 ######################################################################
 
+verbose_print "Preparations\n"
+
 rm -rf $REPORTS_DIR
 
 tmpdir=$REPORTS_DIR/_distbb/tmp
 mkdir -p -m 700 $tmpdir
 
+######################################################################
 ### extracting DEPENDS and BUILDS_DEPENDS
 extract_depends (){
     awk -v deps_fn="$deps_fn" -v bdeps_fn="$bdeps_fn" '
@@ -115,7 +118,7 @@ NF == 0 && curr_pkgpath == pkgpath {
 deps_fn=$tmpdir/deps.txt
 bdeps_fn=$tmpdir/bdeps.txt
 
-verbose_print "Dependencies from pkg_src_summary file..."
+verbose_print "  Dependencies from pkg_src_summary file..."
 extract_depends
 verbose_print "done\n"
 
@@ -165,6 +168,7 @@ END {
 ' "$@"
 }
 
+######################################################################
 ### unpacking pkg_summary if it is needed
 txt_summary=$tmpdir/pkg_summary.txt
 if echo $PKG_SUMMARY | grep '[.]gz$' > /dev/null; then
@@ -175,19 +179,22 @@ elif echo $PKG_SUMMARY | grep '[.]bz2$' > /dev/null; then
     PKG_SUMMARY=$txt_summary
 fi
 
+######################################################################
 ### comparison binaries against pkgsrc tree
-verbose_print "pkg_summary vs. pkg_src_summary comparison..."
+verbose_print "  pkg_summary vs. pkg_src_summary comparison..."
 cmp_fn=$tmpdir/cmp.txt
 pkg_cmp_summary -p $PKG_SUMMARY $PKG_SRC_SUMMARY > $cmp_fn
 verbose_print "done\n"
 
+######################################################################
 ### direct packages that need to be rebuilt
-verbose_print "List of packages to be built..."
+verbose_print "  List of packages to be built..."
 rebuild1_fn=$tmpdir/rebuild1.txt
 awk '($1 != "=") && ($1 != "-") {print $2}' $cmp_fn |
 head -40 > $rebuild1_fn
 verbose_print "done\n"
 
+######################################################################
 ### all dependancies (transitive closure)
 extract_dep (){
     awk '
@@ -196,13 +203,14 @@ NF == 3 {
 }' "$@"
 }
 
-verbose_print "Transitive closure for the dependancy graph..."
+verbose_print "  Transitive closure for the dependancy graph..."
 trans_clos_fn=$tmpdir/trans_closure.txt
 runpipe0 \
     extract_dep $deps_fn $bdeps_fn '|' \
     transitive_closure > $trans_clos_fn
 verbose_print "done\n"
 
+######################################################################
 ### only those dependancies that depend on packages that need to be rebuilt
 filter_rebuild1 (){
     awk -v rebuild1_fn="$rebuild1_fn" '
@@ -218,12 +226,13 @@ $1 in hash {
 ' "$@"
 }
 
-### 
-verbose_print "Packages to be built with their dependsncies..."
+######################################################################
+verbose_print "  Packages to be built with their dependancies..."
 trans_clos_rebuild_fn=$tmpdir/trans_closure_rebuild.txt
 filter_rebuild1 $trans_clos_fn > $trans_clos_rebuild_fn
 verbose_print "done\n"
 
+######################################################################
 ### counted list of packages / queue
 queue_fn=$tmpdir/queue.txt
 count_deps (){
@@ -237,7 +246,7 @@ END {
 ' "$@"
 }
 
-verbose_print "Initial queue..."
+verbose_print "  Initial queue..."
 count_deps $rebuild1_fn $trans_clos_rebuild_fn > $queue_fn
 verbose_print "done\n"
 
@@ -245,11 +254,12 @@ queue__ready_to_be_built (){
     awk '$2 == 0 {print $1}' $queue_fn
 }
 
-###
-verbose_print "Directories for logging..."
+######################################################################
+verbose_print "  Directories for logging..."
 ( cd $REPORTS_DIR && awk '{print $1}' $queue_fn | xargs mkdir -p )
 verbose_print "done\n"
 
+######################################################################
 ### main loop - building
 lckfile=$tmpdir/.lock
 
@@ -342,7 +352,7 @@ $3 == "status:" {
 }
 
 NF > 2 {
-   sub(/^[^ ]+ ^[^ ]+ /, "")
+   sub(/^[^ ]+ [^ ]+ /, "")
    print > log_fn
    next
 }
@@ -462,9 +472,13 @@ status [$2] == 0 {
 '
 }
 
+verbose_print "Building\n"
 runpipe0 \
     print_tasks '|' \
     ~/prjs/paexec/paexec -EI -lr -n +5 -c "env $environ ./distbb_slave" '|' \
     postfilter
 
+######################################################################
+## remove empty category dirs
+verbose_print "Logs generation and clean-ups\n"
 rmdir $REPORTS_DIR/* 2>/dev/null || true
