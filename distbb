@@ -458,6 +458,8 @@ function decode_logs (uu,                  txt,fn,dir){
    if (fn){
       close(fn) # in order to not exceed system/awk limits...
    }
+
+   xsystem("rm " uu " " txt)
 }
 
 {
