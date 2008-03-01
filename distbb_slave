@@ -23,8 +23,10 @@ if test $# -ne 0; then
 fi
 
 build_package (){
-    header build
-    echo "building $pkgpath...done"
+    for t in $TARGETS; do
+	header build
+	echo "stage $t...done"
+    done
 }
 
 while read pkgpath; do

@@ -26,7 +26,7 @@
 set -e
 . pipestatus
 
-export LC_ALL=C
+export LC_ALL=C # for sort and uniq
 
 ######################################################################
 
@@ -182,7 +182,7 @@ pkg_cmp_summary -p $PKG_SUMMARY $PKG_SRC_SUMMARY > $cmp_fn
 verbose_print "done\n"
 
 ### direct packages that need to be rebuilt
-verbose_print "List of packages to be (re)built..."
+verbose_print "List of packages to be built..."
 rebuild1_fn=$tmpdir/rebuild1.txt
 awk '($1 != "=") && ($1 != "-") {print $2}' $cmp_fn |
 head -40 > $rebuild1_fn
@@ -218,25 +218,21 @@ $1 in hash {
 ' "$@"
 }
 
-verbose_print "Packages to be built those that depend on them..."
+### 
+verbose_print "Packages to be built with their dependsncies..."
 trans_clos_rebuild_fn=$tmpdir/trans_closure_rebuild.txt
 filter_rebuild1 $trans_clos_fn > $trans_clos_rebuild_fn
 verbose_print "done\n"
 
-### tsort'ed list of packages
+### counted list of packages / queue
 queue_fn=$tmpdir/queue.txt
 count_deps (){
 awk '
-{
-   if (NF == 2)
-      ++count [$2]
-   else
-      print $1, 0
-}
+NF == 2 { count [$2] += 1 }
+NF == 1 { count [$1] += 0 }
 END {
-   for (i in count){
+   for (i in count)
       print i, count [i]
-   }
 }
 ' "$@"
 }
@@ -248,6 +244,11 @@ verbose_print "done\n"
 queue__ready_to_be_built (){
     awk '$2 == 0 {print $1}' $queue_fn
 }
+
+###
+verbose_print "Directories for logging..."
+( cd $REPORTS_DIR && awk '{print $1}' $queue_fn | xargs mkdir -p )
+verbose_print "done\n"
 
 ### main loop - building
 lckfile=$tmpdir/.lock
@@ -297,65 +298,17 @@ print_tasks (){
 
 environ="BMAKE=$BMAKE PKGSRCDIR=$PKGSRCDIR REPORTS_DIR=$REPORTS_DIR TARGETS='$TARGETS'"
 
-postfilter1 (){
-    # post filter for paexec's outout.
-    # It creates bulk_log/pkgpath directory and redirects
-    # log message to it.
-    # It also removed bulk_log/pkgpath directory for packages
-    # that were built sucessfully
-awk -v reports_dir=$REPORTS_DIR '
-!($2 in pkgpath) {
-   pkgpath [$2] = $3
-   print $3, "started", $1
-   fflush()
-
-   if (system("mkdir -p " reports_dir "/" $3)){
-      print "system(2) failed" > "/dev/stderr"
-      exit 2
-   }
-   next
-}
-
-$3 == "status:" {
-   status [$2] = $4
-   next
-}
-
-{
-   log_dir = reports_dir "/" pkgpath [$2]
-   log_fn  = log_dir "/uu.tmp"
-}
-
-NF > 2 {
-   sub(/^[^ ]+ /, "")
-   print > log_fn
-   next
-}
-
-{
-   close(log_fn)
-
-   if (status [$2] == 0){
-      if (system("rm -rf " log_dir)){
-         print "system(2) failed" > "/dev/stderr"
-         exit 2
-      }
-   }
-
-   print pkgpath [$2], status [$2]
-   fflush()
-}
-' "$@"
-}
-
-postfilter2 (){
-    # post filter for postfilter1's outout.
-    # It shows progress logging messages and
+postfilter (){
+    # postprocessor for paexec's outout.
+    # It show progress suceess and failure messages,
+    # redirects build logs to bulk_log/pkgpath directory,
     # recalculates counters in a queue file
+    # removes unneeded bulk_log/pkgpath directories etc.
 awk \
    -v trans_clos_fn=$trans_clos_rebuild_fn \
    -v queue_fn=$queue_fn \
    -v lckfile=$lckfile \
+   -v reports_dir=$REPORTS_DIR \
    -v pid=$$ '
 BEGIN {
    while (0 < (ret = (getline < trans_clos_fn))){
@@ -371,14 +324,37 @@ BEGIN {
    rm_lock=sprintf("rm %s", lckfile)
 }
 
-$2 == "started" {
-   print "started:", $1, "on", $3
+!($2 in pkgpaths) {
+   pkgpaths [$2] = $3
+   print "started:", $3, "on", $1
+
    next
 }
 
-$2 == 0 {
+$3 == "status:" {
+   status [$2] = $4
+   next
+}
+
+{
+   log_dir = reports_dir "/" pkgpaths [$2]
+   log_fn  = log_dir "/uu.tmp"
+}
+
+NF > 2 {
+   sub(/^[^ ]+ /, "")
+   print > log_fn
+   next
+}
+
+# end of task
+{
+   close(log_fn)
+}
+
+status [$2] == 0 {
    # succeeded
-   pkgpath = $1
+   pkgpath = pkgpaths [$2]
 
    print "succeeded:", pkgpath
 
@@ -425,10 +401,63 @@ $2 == 0 {
       exit 76
    }
 
+   # removing log directory
+   print " deleted: " log_dir
+   if (system("rm -rf " log_dir)){
+      print "system(2) failed" > "/dev/stderr"
+      exit 2
+   }
+
    next
 }
+
 {
+   # fialed
+   pkgpath = pkgpaths [$2]
+
    print "FAILED:", pkgpath
+
+   # getting lock
+   if (system(wait_for_lock)){
+      print "system(2) failed" > "/dev/stderr"
+      exit 76
+   }
+
+   # indirectly failed
+   delete indirect_failues
+   while (0 < (ret = (getline < queue_fn))){
+      if ($1 == pkgpath){
+         indirect_failues [$2] = 1
+      }
+   }
+
+   if (ret < 0){
+      print "reading error from " queue_fn > "/dev/stderr"
+   }
+   close(queue_fn)
+
+   # writing new queue
+   printf "" > tmp_fn
+   for (i in counts){
+      if (! (i in indirect_failues)){
+         print i, counts [i] > tmp_fn
+      }
+   }
+   close(tmp_fn)
+
+   # renaming
+   if (system("mv " tmp_fn " " queue_fn)){
+      print "system(2) failed" > "/dev/stderr"
+      exit 2
+   }
+
+   # removing lock
+   if (system(rm_lock)){
+      print "system(2) failed" > "/dev/stderr"
+      exit 76
+   }
+
+   next
 }
 '
 }
@@ -436,7 +465,6 @@ $2 == 0 {
 runpipe0 \
     print_tasks '|' \
     ~/prjs/paexec/paexec -EI -lr -n +5 -c "env $environ ./distbb_slave" '|' \
-    postfilter1 '|' \
-    postfilter2
+    postfilter
 
 rmdir $REPORTS_DIR/* 2>/dev/null || true
