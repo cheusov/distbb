@@ -323,6 +323,8 @@ awk \
 BEGIN {
    while (0 < (ret = (getline < trans_clos_fn))){
       deps [$1, $2] = 1
+      all_pkgpaths [$1] = 1
+      all_pkgpaths [$2] = 1
    }
    if (ret < 0){
       print "reading error from " trans_clos_fn " failed" > "/dev/stderr"
@@ -435,11 +437,20 @@ status [$2] == 0 {
 
    # indirectly failed
    delete indirect_failues
-   while (0 < (ret = (getline < queue_fn))){
-      if ($1 == pkgpath){
-         indirect_failues [$2] = 1
+   log_fn  = log_dir "/broken_packages.txt"
+   for (pkgp in all_pkgpaths){
+      if ((pkgpath SUBSEP pkgp) in deps){
+         indirect_failues [pkgp] = 1
+
+         pkgp_log_dir = reports_dir "/" pkgp
+         pkgp_log_fn  = pkgp_log_dir "/failed_because.txt"
+         print pkgpath >> pkgp_log_fn
+         close(log_fn) # in order to not exceed system/awk limits...
+
+         print pkgp > log_fn
       }
    }
+   close(log_fn) # in order to not exceed system/awk limits...
 
    if (ret < 0){
       print "reading error from " queue_fn > "/dev/stderr"
