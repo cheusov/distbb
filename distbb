@@ -297,17 +297,22 @@ print_tasks (){
 
 environ="BMAKE=$BMAKE PKGSRCDIR=$PKGSRCDIR REPORTS_DIR=$REPORTS_DIR TARGETS='$TARGETS'"
 
-print_tasks |
-while read pkgpath; do
-    mkdir -p $REPORTS_DIR/$pkgpath
-    echo $pkgpath
-done |
-~/prjs/paexec/paexec -EI -lr -n +5 -c "env $environ ./distbb_slave" |
+postfilter1 (){
+    # post filter for paexec's outout.
+    # It creates bulk_log/pkgpath directory and redirects
+    # log message to it.
+    # It also removed bulk_log/pkgpath directory for packages
+    # that were built sucessfully
 awk -v reports_dir=$REPORTS_DIR '
 !($2 in pkgpath) {
    pkgpath [$2] = $3
    print $3, "started", $1
    fflush()
+
+   if (system("mkdir -p " reports_dir "/" $3)){
+      print "system(2) failed" > "/dev/stderr"
+      exit 2
+   }
    next
 }
 
@@ -340,7 +345,13 @@ NF > 2 {
    print pkgpath [$2], status [$2]
    fflush()
 }
-' |
+' "$@"
+}
+
+postfilter2 (){
+    # post filter for postfilter1's outout.
+    # It shows progress logging messages and
+    # recalculates counters in a queue file
 awk \
    -v trans_clos_fn=$trans_clos_rebuild_fn \
    -v queue_fn=$queue_fn \
@@ -370,7 +381,6 @@ $2 == 0 {
    pkgpath = $1
 
    print "succeeded:", pkgpath
-
 
    # getting lock
    if (system(wait_for_lock)){
@@ -421,5 +431,10 @@ $2 == 0 {
    print "FAILED:", pkgpath
 }
 '
+}
+
+print_tasks |
+~/prjs/paexec/paexec -EI -lr -n +5 -c "env $environ ./distbb_slave" |
+postfilter1 | postfilter2
 
 rmdir $REPORTS_DIR/* 2>/dev/null || true
