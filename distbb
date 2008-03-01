@@ -53,6 +53,9 @@ set_if_not_set PKG_SUFX        .tgz
 set_if_not_set REPORTS_DIR     $HOME/bulk-logs
 set_if_not_set TARGETS         'clean checksum depends build install package'
 set_if_not_set TRANSPORT       'ssh -x'
+set_if_not_set NOTES           ''
+
+set_if_not_set PACKAGES_URL    ''
 
 ######################################################################
 
@@ -60,8 +63,23 @@ verbose_print "Preparations\n"
 
 rm -rf $REPORTS_DIR
 
-tmpdir=$REPORTS_DIR/_distbb/tmp
+meta_dir=$REPORTS_DIR/META
+tmpdir=$meta_dir/tmp
 mkdir -p -m 700 $tmpdir
+
+date_start="$(date)"
+
+packages_failed_deps_fn=$meta_dir/packages_failed_deps.txt
+printf '' > $packages_failed_deps_fn
+
+packages_failed_fn=$meta_dir/packages_failed.txt
+printf '' > $packages_failed_fn
+
+packages_built_prev_fn=$meta_dir/packages_built_prev.txt
+printf '' > $packages_built_prev_fn
+
+packages_built_fn=$meta_dir/packages_built.txt
+printf '' > $packages_built_prev_fn
 
 ######################################################################
 ### extracting DEPENDS and BUILDS_DEPENDS
@@ -185,6 +203,9 @@ verbose_print "  pkg_summary vs. pkg_src_summary comparison..."
 cmp_fn=$tmpdir/cmp.txt
 pkg_cmp_summary -p $PKG_SUMMARY $PKG_SRC_SUMMARY > $cmp_fn
 verbose_print "done\n"
+
+awk '($1 == "=") {print $2}' $cmp_fn \
+    > $packages_built_prev_fn
 
 ######################################################################
 ### direct packages that need to be rebuilt
@@ -319,6 +340,10 @@ awk \
    -v queue_fn=$queue_fn \
    -v lckfile=$lckfile \
    -v reports_dir=$REPORTS_DIR \
+   -v reports_dir=$REPORTS_DIR \
+   -v meta_dir=$meta_dir \
+   -v packages_failed_fn=$packages_failed_fn \
+   -v packages_built_fn=$packages_built_fn \
    -v pid=$$ '
 BEGIN {
    while (xgetline0(trans_clos_fn)){
@@ -389,6 +414,10 @@ status [$2] == 0 {
    pkgpath = pkgpaths [$2]
 
    print "succeeded:", pkgpath
+
+   #
+   print pkgpath >> packages_built_fn
+   xclose(packages_built_fn)
 
    # getting lock
    xsystem(wait_for_lock)
@@ -468,6 +497,10 @@ function decode_logs (uu,                  txt,fn,dir){
 
    print "FAILED:", pkgpath
 
+   #
+   print pkgpath >> packages_failed_fn
+   xclose(packages_failed_fn)
+
    # getting lock
    xsystem(wait_for_lock)
 
@@ -525,3 +558,49 @@ runpipe0 \
 ## remove empty category dirs
 verbose_print "Logs generation and clean-ups\n"
 rmdir $REPORTS_DIR/* 2>/dev/null || true
+
+date_end="$(date)"
+os="$(uname -s) $(uname -r)/$(uname -m)"
+
+path2pkgpath (){
+    sed -e 's,^.*/\([^/]*/[^/]*\)/failed_because.txt$,\1,'
+}
+find_failed_deps_packages (){
+    runpipe0 find $REPORTS_DIR -name failed_because.txt '|' path2pkgpath
+}
+
+find_failed_deps_packages > $packages_failed_deps_fn
+
+count_lines (){
+    wc -l $1 | awk '{print $1}'
+}
+
+right_align (){
+   printf "%$1s" "$2"
+}
+
+report_txt (){
+    cat <<EOF
+pkgsrc bulk build results (distbb - distributed bulk build)
+
+$os
+
+Summary
+
+  Build started:$(right_align 38 "${date_start}")
+  Build ended:  $(right_align 38 "${date_end}")
+
+  Total packages                  $(right_align 20 $(($packages_built_cnt+$packages_built_prev_cnt)) )
+  Packages built previously       $(right_align 20 $packages_built_prev_cnt)
+  Packages built                  $(right_align 20 $packages_built_cnt)
+  Packages failed                 $(right_align 20 $packages_failed_cnt)
+  Packages failed due to them     $(right_align 20 $packages_failed_deps_cnt)
+EOF
+}
+
+packages_failed_deps_cnt=$(count_lines $packages_failed_deps_fn)
+packages_failed_cnt=$(count_lines $packages_failed_fn)
+packages_built_cnt=$(count_lines $packages_built_fn)
+packages_built_prev_cnt=$(count_lines $packages_built_prev_fn)
+
+report_txt > $meta_dir/report.txt
