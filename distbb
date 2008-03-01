@@ -51,7 +51,7 @@ set_if_not_set PACKAGES        $PKGSRCDIR/packages
 set_if_not_set PKG_SUMMARY     $PACKAGES/pkg_summary.gz
 set_if_not_set PKG_SUFX        .tgz
 set_if_not_set REPORTS_DIR     $HOME/bulk-logs
-set_if_not_set TARGETS         'clean package checksum build install package'
+set_if_not_set TARGETS         'clean checksum depends build install package'
 set_if_not_set TRANSPORT       'ssh -x'
 
 ######################################################################
@@ -321,15 +321,12 @@ awk \
    -v reports_dir=$REPORTS_DIR \
    -v pid=$$ '
 BEGIN {
-   while (0 < (ret = (getline < trans_clos_fn))){
+   while (xgetline0(trans_clos_fn)){
       deps [$1, $2] = 1
       all_pkgpaths [$1] = 1
       all_pkgpaths [$2] = 1
    }
-   if (ret < 0){
-      print "reading error from " trans_clos_fn " failed" > "/dev/stderr"
-   }
-   close(trans_clos_fn)
+   xclose(trans_clos_fn)
 
    tmp_fn = (queue_fn ".tmp2")
    wait_for_lock=sprintf("/bin/sh -c \"while ! shlock -p %s -f %s; do sleep 1; done\"", pid, lckfile)
@@ -361,7 +358,30 @@ NF > 2 {
 
 # end of task
 {
-   close(log_fn)
+   xclose(log_fn)
+}
+
+function xsystem (prog){
+   if (system(prog)){
+      print "system() failed" > "/dev/stderr"
+      exit 1
+   }
+}
+
+function xclose (fn){
+   if (close(fn)){
+      print "close(\"" fn "\") failed" > "/dev/stderr"
+      exit 1
+   }
+}
+
+function xgetline0 (fn,                 ret){
+   ret = (getline < fn)
+   if (ret < 0){
+      print "The function getline failed" > "/dev/stderr"
+      exit 1
+   }
+   return (ret > 0)
 }
 
 status [$2] == 0 {
@@ -371,21 +391,14 @@ status [$2] == 0 {
    print "succeeded:", pkgpath
 
    # getting lock
-   if (system(wait_for_lock)){
-      print "system(2) failed" > "/dev/stderr"
-      exit 76
-   }
+   xsystem(wait_for_lock)
 
    # reading counts
    delete counts
-   while (0 < (ret = (getline < queue_fn))){
+   while (xgetline0(queue_fn)){
       counts [$1] = $2
    }
-
-   if (ret < 0){
-      print "reading error from " queue_fn > "/dev/stderr"
-   }
-   close(queue_fn)
+   xclose(queue_fn)
 
    # updating counts
    for (i in counts){
@@ -399,28 +412,52 @@ status [$2] == 0 {
    for (i in counts){
       print i, counts [i] > tmp_fn
    }
-   close(tmp_fn)
+   xclose(tmp_fn)
 
    # renaming
-   if (system("mv " tmp_fn " " queue_fn)){
-      print "system(2) failed" > "/dev/stderr"
-      exit 2
-   }
+   xsystem("mv " tmp_fn " " queue_fn)
 
    # removing lock
-   if (system(rm_lock)){
-      print "system(2) failed" > "/dev/stderr"
-      exit 76
-   }
+   xsystem(rm_lock)
 
    # removing log directory
-   print " deleted: " log_dir
-   if (system("rm -rf " log_dir)){
-      print "system(2) failed" > "/dev/stderr"
-      exit 2
-   }
+   xsystem("rm -rf " log_dir)
 
    next
+}
+
+function decode_logs (uu,                  txt,fn,dir){
+   txt = uu
+   sub(/[.][^.\/]*$/, ".txt", txt)
+
+   dir = uu
+   sub(/\/[^\/]*$/, "", dir)
+
+   xsystem("uudecode -p < " uu " > " txt)
+
+   #
+   fn = ""
+   while (xgetline0(txt)){
+      if ($1 == "--**--**--" && $3 == "--**--**--"){
+         if (fn){
+            xclose(fn) # in order to not exceed system/awk limits...
+         }
+
+         fn = dir "/stage_" $2 ".txt"
+         printf "  " > fn
+         continue
+      }
+
+      if (fn){
+         print > fn
+      }else{
+         print "this should not happen!" > "/dev/stderr"
+      }
+   }
+
+   if (fn){
+      close(fn) # in order to not exceed system/awk limits...
+   }
 }
 
 {
@@ -430,32 +467,31 @@ status [$2] == 0 {
    print "FAILED:", pkgpath
 
    # getting lock
-   if (system(wait_for_lock)){
-      print "system(2) failed" > "/dev/stderr"
-      exit 76
-   }
+   xsystem(wait_for_lock)
+
+   # decoding logs
+   decode_logs(log_fn)
 
    # indirectly failed
    delete indirect_failues
    log_fn  = log_dir "/broken_packages.txt"
+   indirect_broken_found = 0
    for (pkgp in all_pkgpaths){
       if ((pkgpath SUBSEP pkgp) in deps){
+         indirect_broken_found = 1
+
          indirect_failues [pkgp] = 1
 
          pkgp_log_dir = reports_dir "/" pkgp
          pkgp_log_fn  = pkgp_log_dir "/failed_because.txt"
          print pkgpath >> pkgp_log_fn
-         close(log_fn) # in order to not exceed system/awk limits...
+         xclose(pkgp_log_fn) # in order to not exceed system/awk limits...
 
          print pkgp > log_fn
       }
    }
-   close(log_fn) # in order to not exceed system/awk limits...
-
-   if (ret < 0){
-      print "reading error from " queue_fn > "/dev/stderr"
-   }
-   close(queue_fn)
+   if (indirect_broken_found)
+      xclose(log_fn) # in order to not exceed system/awk limits...
 
    # writing new queue
    printf "" > tmp_fn
@@ -464,19 +500,13 @@ status [$2] == 0 {
          print i, counts [i] > tmp_fn
       }
    }
-   close(tmp_fn)
+   xclose(tmp_fn)
 
    # renaming
-   if (system("mv " tmp_fn " " queue_fn)){
-      print "system(2) failed" > "/dev/stderr"
-      exit 2
-   }
+   xsystem("mv " tmp_fn " " queue_fn)
 
    # removing lock
-   if (system(rm_lock)){
-      print "system(2) failed" > "/dev/stderr"
-      exit 76
-   }
+   xsystem(rm_lock)
 
    next
 }
