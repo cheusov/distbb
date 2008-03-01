@@ -11,21 +11,12 @@ header (){
 
 ######################################################################
 
-usage (){
-    cat <<EOF
-usage: distbb_slave
-EOF
-}
-
-if test $# -ne 0; then
-    usage
-    exit 1
-fi
-
 build_package (){
     for t in $TARGETS; do
 	header build
+	awk 'BEGIN {for (i=0; i < 1000; ++i) {print "zzzz", i} }'
 	echo "stage $t...done"
+	sleep 1
     done
 }
 
