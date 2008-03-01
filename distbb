@@ -342,7 +342,7 @@ $3 == "status:" {
 }
 
 NF > 2 {
-   sub(/^[^ ]+ /, "")
+   sub(/^[^ ]+ ^[^ ]+ /, "")
    print > log_fn
    next
 }
