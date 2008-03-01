@@ -310,7 +310,7 @@ environ="BMAKE=$BMAKE PKGSRCDIR=$PKGSRCDIR REPORTS_DIR=$REPORTS_DIR TARGETS='$TA
 
 postfilter (){
     # postprocessor for paexec's outout.
-    # It show progress suceess and failure messages,
+    # It show progress, suceess and failure messages,
     # redirects build logs to bulk_log/pkgpath directory,
     # recalculates counters in a queue file
     # removes unneeded bulk_log/pkgpath directories etc.
