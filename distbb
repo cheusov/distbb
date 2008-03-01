@@ -48,7 +48,6 @@ set_if_not_set BMAKE           make
 set_if_not_set PKGSRCDIR       /usr/pkgsrc
 set_if_not_set PKG_SRC_SUMMARY $PKGSRCDIR/pkg_src_summary.txt
 set_if_not_set PACKAGES        $PKGSRCDIR/packages
-set_if_not_set PKG_SUMMARY     $PACKAGES/pkg_summary.gz
 set_if_not_set PKG_SUFX        .tgz
 set_if_not_set REPORTS_DIR     $HOME/bulk-logs
 set_if_not_set TARGETS         'clean checksum depends build install package'
@@ -80,6 +79,13 @@ printf '' > $packages_built_prev_fn
 
 packages_built_fn=$meta_dir/packages_built.txt
 printf '' > $packages_built_prev_fn
+
+######################################################################
+
+verbose_print "  updating pkg_summary.txt..."
+pkg_summary=$PACKAGES/pkg_summary.txt
+pkg_update_summary $pkg_summary $PACKAGES
+verbose_print "done\n"
 
 ######################################################################
 ### extracting DEPENDS and BUILDS_DEPENDS
@@ -130,7 +136,7 @@ NF == 0 && curr_pkgpath == pkgpath {
    print deps
    print bdeps
 }
-' $PKG_SRC_SUMMARY
+' "$PKG_SRC_SUMMARY"
 }
 
 deps_fn=$tmpdir/deps.txt
@@ -187,21 +193,10 @@ END {
 }
 
 ######################################################################
-### unpacking pkg_summary if it is needed
-txt_summary=$tmpdir/pkg_summary.txt
-if echo $PKG_SUMMARY | grep '[.]gz$' > /dev/null; then
-    gzip -dc $PKG_SUMMARY > $txt_summary
-    PKG_SUMMARY=$txt_summary
-elif echo $PKG_SUMMARY | grep '[.]bz2$' > /dev/null; then
-    bzip2 -dc $PKG_SUMMARY > $txt_summary
-    PKG_SUMMARY=$txt_summary
-fi
-
-######################################################################
 ### comparison binaries against pkgsrc tree
 verbose_print "  pkg_summary vs. pkg_src_summary comparison..."
 cmp_fn=$tmpdir/cmp.txt
-pkg_cmp_summary -p $PKG_SUMMARY $PKG_SRC_SUMMARY > $cmp_fn
+pkg_cmp_summary -p $pkg_summary $PKG_SRC_SUMMARY > $cmp_fn
 verbose_print "done\n"
 
 awk '($1 == "=") {print $2}' $cmp_fn \
@@ -360,7 +355,7 @@ BEGIN {
 
 !($2 in pkgpaths) {
    pkgpaths [$2] = $3
-   print "started:", $3, "on", $1
+   print "  started:", $3, "on", $1
 
    next
 }
@@ -413,7 +408,7 @@ status [$2] == 0 {
    # succeeded
    pkgpath = pkgpaths [$2]
 
-   print "succeeded:", pkgpath
+   print "    succeeded:", pkgpath
 
    #
    print pkgpath >> packages_built_fn
@@ -495,7 +490,7 @@ function decode_logs (uu,                  txt,fn,dir){
    # fialed
    pkgpath = pkgpaths [$2]
 
-   print "FAILED:", pkgpath
+   print "    FAILED:", pkgpath
 
    #
    print pkgpath >> packages_failed_fn
@@ -555,8 +550,16 @@ runpipe0 \
     postfilter
 
 ######################################################################
-## remove empty category dirs
-verbose_print "Logs generation and clean-ups\n"
+
+verbose_print "Updating pkg_summary.{txt,gz,bz2}..."
+pkg_update_summary $pkg_summary $PACKAGES
+gzip < $pkg_summary > ${pkg_summary%%.txt}.gz
+bzip2 < $pkg_summary > ${pkg_summary%%.txt}.bz2
+verbose_print "done\n"
+
+######################################################################
+
+verbose_print "Logs generation and clean-ups..."
 rmdir $REPORTS_DIR/* 2>/dev/null || true
 
 date_end="$(date)"
@@ -604,3 +607,5 @@ packages_built_cnt=$(count_lines $packages_built_fn)
 packages_built_prev_cnt=$(count_lines $packages_built_prev_fn)
 
 report_txt > $meta_dir/report.txt
+verbose_print "done\n"
+######################################################################
