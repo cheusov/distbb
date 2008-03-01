@@ -433,8 +433,10 @@ $2 == 0 {
 '
 }
 
-print_tasks |
-~/prjs/paexec/paexec -EI -lr -n +5 -c "env $environ ./distbb_slave" |
-postfilter1 | postfilter2
+runpipe0 \
+    print_tasks '|' \
+    ~/prjs/paexec/paexec -EI -lr -n +5 -c "env $environ ./distbb_slave" '|' \
+    postfilter1 '|' \
+    postfilter2
 
 rmdir $REPORTS_DIR/* 2>/dev/null || true
