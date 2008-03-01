@@ -27,17 +27,13 @@ set -e
 . pipestatus
 
 export LC_ALL=C
-######################################################################
-tmpdir=/tmp/distbb_build.$$
-#trap "rm -rf $tmpdir" 0 1 2 15
 
-mkdir -m 700 $tmpdir
+######################################################################
 
 verbose_print (){
     printf "$1" 1>&2
 }
 
-######################################################################
 set_if_not_set (){
     # $1 - varname
     # $2 - value
@@ -45,6 +41,8 @@ set_if_not_set (){
 	eval $1="'$2'"
     fi
 }
+
+######################################################################
 
 set_if_not_set BMAKE           make
 set_if_not_set PKGSRCDIR       /usr/pkgsrc
@@ -56,12 +54,12 @@ set_if_not_set REPORTS_DIR     $HOME/bulk-logs
 set_if_not_set TARGETS         'clean package checksum build install package'
 set_if_not_set TRANSPORT       'ssh -x'
 
-environ="BMAKE=$BMAKE PKGSRCDIR=$PKGSRCDIR REPORTS_DIR=$REPORTS_DIR TARGETS='$TARGETS'"
-
 ######################################################################
 
 rm -rf $REPORTS_DIR
-mkdir -p $REPORTS_DIR
+
+tmpdir=$REPORTS_DIR/_distbb/tmp
+mkdir -p -m 700 $tmpdir
 
 ### extracting DEPENDS and BUILDS_DEPENDS
 extract_depends (){
@@ -297,6 +295,8 @@ print_tasks (){
     done
 }
 
+environ="BMAKE=$BMAKE PKGSRCDIR=$PKGSRCDIR REPORTS_DIR=$REPORTS_DIR TARGETS='$TARGETS'"
+
 print_tasks |
 while read pkgpath; do
     mkdir -p $REPORTS_DIR/$pkgpath
@@ -317,17 +317,26 @@ $3 == "status:" {
 }
 
 {
-   fn = reports_dir "/" pkgpath [$2] "/uu.tmp"
+   log_dir = reports_dir "/" pkgpath [$2]
+   log_fn  = log_dir "/uu.tmp"
 }
 
 NF > 2 {
    sub(/^[^ ]+ /, "")
-   print > fn
+   print > log_fn
    next
 }
 
 {
-   close(fn)
+   close(log_fn)
+
+   if (status [$2] == 0){
+      if (system("rm -rf " log_dir)){
+         print "system(2) failed" > "/dev/stderr"
+         exit 2
+      }
+   }
+
    print pkgpath [$2], status [$2]
    fflush()
 }
@@ -412,3 +421,5 @@ $2 == 0 {
    print "FAILED:", pkgpath
 }
 '
+
+rmdir $REPORTS_DIR/* 2>/dev/null || true
