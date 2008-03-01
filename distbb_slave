@@ -13,15 +13,20 @@ header (){
 
 build_package (){
     for t in $TARGETS; do
-	header build
+	header $t
 	awk 'BEGIN {for (i=0; i < 1000; ++i) {print "zzzz", i} }'
 	echo "stage $t...done"
-	sleep 1
+	case "$t:$1" in
+	    build:x11/compositeproto)
+		return 77;;
+	    *)
+		;;
+	esac
     done
 }
 
 while read pkgpath; do
-    if runpipe_re '. 0' build_package '|' uuencode -; then
+    if runpipe_re '. 0' build_package $pkgpath '|' uuencode -; then
 	echo "status: $pipestatus_1"
     else
 	echo "status: 1" # uuencode failed
