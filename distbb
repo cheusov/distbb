@@ -186,7 +186,8 @@ verbose_print "done\n"
 ### direct packages that need to be rebuilt
 verbose_print "List of packages to be (re)built..."
 rebuild1_fn=$tmpdir/rebuild1.txt
-awk '($1 != "=") && ($1 != "-") {print $2}' $cmp_fn > $rebuild1_fn
+awk '($1 != "=") && ($1 != "-") {print $2}' $cmp_fn |
+head -40 > $rebuild1_fn
 verbose_print "done\n"
 
 ### all dependancies (transitive closure)
@@ -281,7 +282,7 @@ print_tasks (){
 	done
 
 	if get_pkgpath > $tasks_fn; then
-	    echo get_pkgpath succeeded 1>&2
+#	    echo get_pkgpath succeeded 1>&2
 	    cp ${queue_fn} $queue_fn.$i.tmp
 	    mv ${queue_fn}.tmp $queue_fn
 	    i=$(($i+1))
@@ -289,7 +290,7 @@ print_tasks (){
 	    rm ${lckfile}
 	    cat $tasks_fn
 	else
-	    echo get_pkgpath failed 1>&2
+#	    echo get_pkgpath failed 1>&2
 	    rm ${lckfile}
 	    sleep 5
 	fi
@@ -301,23 +302,25 @@ while read pkgpath; do
     mkdir -p $REPORTS_DIR/$pkgpath
     echo $pkgpath
 done |
-~/prjs/paexec/paexec -Er -n +1 -c "env $environ queue_fn=$queue_fn ./distbb_slave" |
+~/prjs/paexec/paexec -EI -lr -n +5 -c "env $environ ./distbb_slave" |
 awk -v reports_dir=$REPORTS_DIR '
-$2 == "package:" {
-   pkgpath [$1] = $3
+!($2 in pkgpath) {
+   pkgpath [$2] = $3
+   print $3, "started", $1
+   fflush()
    next
 }
 
-$2 == "status:" {
-   status [$1] = $3
+$3 == "status:" {
+   status [$2] = $4
    next
 }
 
 {
-   fn = reports_dir "/" pkgpath [$1] "/uu.tmp"
+   fn = reports_dir "/" pkgpath [$2] "/uu.tmp"
 }
 
-NF > 1 {
+NF > 2 {
    sub(/^[^ ]+ /, "")
    print > fn
    next
@@ -325,7 +328,7 @@ NF > 1 {
 
 {
    close(fn)
-   print pkgpath [$1], status [$1]
+   print pkgpath [$2], status [$2]
    fflush()
 }
 ' |
@@ -339,7 +342,7 @@ BEGIN {
       deps [$1, $2] = 1
    }
    if (ret < 0){
-      print "reading error from " trans_clos_fn > "/dev/stderr"
+      print "reading error from " trans_clos_fn " failed" > "/dev/stderr"
    }
    close(trans_clos_fn)
 
@@ -348,12 +351,17 @@ BEGIN {
    rm_lock=sprintf("rm %s", lckfile)
 }
 
+$2 == "started" {
+   print "started:", $1, "on", $3
+   next
+}
+
 $2 == 0 {
    # succeeded
-#   print $0 > "/dev/stderr"
-   print pkgpath " succeeded" > "/dev/stderr"
-
    pkgpath = $1
+
+   print "succeeded:", pkgpath
+
 
    # getting lock
    if (system(wait_for_lock)){
@@ -401,6 +409,6 @@ $2 == 0 {
    next
 }
 {
-   print pkgpath " failed" > "/dev/stderr"
+   print "FAILED:", pkgpath
 }
 '

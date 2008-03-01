@@ -27,16 +27,11 @@ build_package (){
     echo "building $pkgpath...done"
 }
 
-if test -z $queue_fn; then
-    exit 2
-fi
-
 while read pkgpath; do
-    echo "package: $pkgpath"
     if runpipe_re '. 0' build_package '|' uuencode -; then
 	echo "status: $pipestatus_1"
     else
 	echo "status: 1" # uuencode failed
     fi
-    echo ''
+    echo '' # end of task
 done
