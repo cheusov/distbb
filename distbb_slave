@@ -18,6 +18,10 @@ build_package (){
 	echo "stage $t...done"
 	case "$t:$1" in
 	    build:x11/compositeproto)
+		return 75;;
+	    package:x11/damageproto)
+		return 76;;
+	    depends:x11/editres)
 		return 77;;
 	    *)
 		;;
