@@ -593,7 +593,7 @@ Summary
   Build started:$(right_align 38 "${date_start}")
   Build ended:  $(right_align 38 "${date_end}")
 
-  Total packages                  $(right_align 20 $(($packages_built_cnt+$packages_built_prev_cnt)) )
+  Total packages/in summary       $(right_align 20 $packages_total/$packages_in_summary )
   Packages built previously       $(right_align 20 $packages_built_prev_cnt)
   Packages built                  $(right_align 20 $packages_built_cnt)
   Packages failed                 $(right_align 20 $packages_failed_cnt)
@@ -605,6 +605,8 @@ packages_failed_deps_cnt=$(count_lines $packages_failed_deps_fn)
 packages_failed_cnt=$(count_lines $packages_failed_fn)
 packages_built_cnt=$(count_lines $packages_built_fn)
 packages_built_prev_cnt=$(count_lines $packages_built_prev_fn)
+packages_total=$(($packages_built_cnt+$packages_built_prev_cnt))
+packages_in_summary=$(awk '{cnt += ($0 ~ /PKGNAME/)} END {print cnt}' $pkg_summary)
 
 report_txt > $meta_dir/report.txt
 verbose_print "done\n"
