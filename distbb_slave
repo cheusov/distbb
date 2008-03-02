@@ -21,7 +21,7 @@ build_package (){
 		return 75;;
 	    package:x11/damageproto)
 		return 76;;
-	    depends:x11/editres|package:x11/bigreqsproto)
+	    depends:x11/editres|package:x11/bigreqsproto|install:x11/imwheel)
 		return 77;;
 	    *)
 		;;
