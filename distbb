@@ -630,6 +630,12 @@ print_failed_pkg (){
     printf "  <tr><td><a href=\"%s/failed.html\" title=\"build log for %s\">%-20s</a></td> <td class=\"breaks\">%6s</td> <td>%9s</td> <td align=\"right\">%15s</td> <td align=\"right\">%12s</td></tr>\n" "$1" "$1" "$1" "$2" "$3" "$4" "$5"
 }
 
+print_failed_deps_pkg (){
+    # $1 - pkgpath
+    # $2 - dep
+    printf "  <tr><td>%-30s</td> <td align=\"right\"><a href=\"%s/failed.html\" title=\"build log for %s\">%30s</a></td></tr>\n" "$1" "$2" "$2" "$2"
+}
+
 report_txt (){
     cat <<EOF
 <h1>pkgsrc bulk build results (distbb - distributed bulk build)</h1>
@@ -686,9 +692,10 @@ EOF
 
     printf "%s" "<table width=70%>"
 
-    failed_deps_format="  <tr><td>%-30s</td> <td align=\"right\">%30s</td></tr>\n"
     echo ''
-    printf "$failed_deps_format" "<b>Package</b>" "<b>Failed dependencies</b>"
+    print_failed_deps_pkg 'Package' 'Failed dependencies' |
+    sed -e 's,<a[^<>]*>,,' \
+	-e 's,[A-Z][a-z ]*,<b>&</b>,g'
     echo ''
 
     while read pkgpath; do
@@ -696,9 +703,9 @@ EOF
 	cnt=$(count_lines $fn)
 	dep=$(head -1 $fn)
 	depX=$(awk -v cnt=$cnt 'NR > cnt-6 && NR > 1' $fn)
-	printf "$failed_deps_format" "$pkgpath" "$dep"
+	print_failed_deps_pkg "$pkgpath" "$dep"
 	for dep in $depX; do
-	    printf "$failed_deps_format" '' "$dep"
+	    print_failed_deps_pkg '' "$dep"
 	done
     done < $packages_failed_deps_fn
     printf "%s\n" "</table>"
