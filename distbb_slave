@@ -19,7 +19,7 @@ build_package (){
 	case "$t:$1" in
 	    build:x11/compositeproto)
 		return 75;;
-	    package:x11/damageproto)
+	    package:x11/damageproto|package:x11/gnome-desktop)
 		return 76;;
 	    depends:x11/editres|package:x11/bigreqsproto|install:x11/imwheel)
 		return 77;;
