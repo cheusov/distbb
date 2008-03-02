@@ -649,7 +649,7 @@ Results of failed packages are available below.</p>
 EOF
 
     # failed packages
-    failed_format="  <tr><td>%-25s</td> <td>%6s</td> <td>%9s</td> <td align=\"right\">%18s</td> <td align=\"right\">%15s</td></tr>"
+    failed_format="  <tr><td>%-20s</td> <td>%6s</td> <td>%9s</td> <td align=\"right\">%15s</td> <td align=\"right\">%12s</td></tr>"
     printf "%s" "<table width=100%>"
     printf "${failed_format}\n" "<b>Package</b>" "<b>Breaks</b>" "<b>Stage</b>" "<b>Maintainer</b>" "<b>Package name</b>"
     echo ''
@@ -663,11 +663,11 @@ EOF
 
 
     # failed dependencies
-    echo "<h3>Failed dependencies</h3>"
+    echo "<h3>Failed due to dependencies</h3>"
 
     printf "%s" "<table width=70%>"
 
-    failed_deps_format="  <tr><td>%-40s</td> <td align=\"right\">%40s</td></tr>\n"
+    failed_deps_format="  <tr><td>%-30s</td> <td align=\"right\">%30s</td></tr>\n"
     echo ''
     printf "$failed_deps_format" "<b>Package</b>" "<b>Failed dependencies</b>"
     echo ''
