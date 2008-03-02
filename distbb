@@ -642,9 +642,16 @@ print_failed_pkg (){
 
 print_failed_deps_pkg (){
     # $1 - pkgpath
-    # $2 - dep
-    failed_stage=$(get_failed_stage $2)
-    printf "  <tr><td>%-30s</td> <td align=\"right\"><a href=\"../%s/stage_%s.html\" title=\"build log for %s\">%30s</a></td></tr>\n" "$1" "$2" "$failed_stage" "$2" "$2"
+    # $2 - pkgname
+    # $3 - maintainer
+    # $4 - dep
+    failed_stage=$(get_failed_stage $4)
+    printf "  <tr><td>%-30s</td> <td align=\"right\"><a href=\"../%s/stage_%s.html\" title=\"build log for %s\">%30s</a></td><td>%s</td><td>%s</td></tr>\n" "$1" "$4" "$failed_stage" "$4" "$4" "$3" "$2"
+}
+
+pkgpath2maintainer (){
+    # $1 - pkgpath
+    awk -v pkgpath="$1" '$1 == pkgpath {print $2; exit}' $enriched_failed_fn
 }
 
 report_txt (){
@@ -702,24 +709,27 @@ EOF
     # failed dependencies
     echo "<h3>Failed due to dependencies</h3>"
 
-    printf "%s" "<table width=70%>"
+    printf "%s" "<table width=100%>"
 
     echo ''
-    print_failed_deps_pkg 'Package' 'Failed dependencies' |
+    print_failed_deps_pkg 'Package' 'Version' 'Maintainer' \
+	'Failed dependencies' |
     sed -e 's,<a[^<>]*>,,' \
 	-e 's,[A-Z][a-z ]*,<b>&</b>,g'
     echo ''
 
-    while read pkgpath; do
+    while read pkgpath dummy pkgname; do
 	fn=$REPORTS_DIR/$pkgpath/failed_because.txt
 	cnt=$(count_lines $fn)
 	dep=$(head -1 $fn)
 	depX=$(awk -v cnt=$cnt 'NR > cnt-6 && NR > 1' $fn)
-	print_failed_deps_pkg "$pkgpath" "$dep"
+	maintainer=$(pkgpath2maintainer "$dep")
+	print_failed_deps_pkg "$pkgpath" "$pkgname" "$maintainer" "$dep"
 	for dep in $depX; do
-	    print_failed_deps_pkg '' "$dep"
+	    maintainer=$(pkgpath2maintainer "$dep")
+	    print_failed_deps_pkg '' '' "$maintainer" "$dep"
 	done
-    done < $packages_failed_deps_fn
+    done < $enriched_failed_deps_fn
     printf "%s\n" "</table>"
 }
 
@@ -731,7 +741,12 @@ packages_total=$(($packages_built_cnt+$packages_built_prev_cnt))
 packages_in_summary=$(awk '{cnt += ($0 ~ /PKGNAME/)} END {print cnt}' $pkg_summary)
 
 enriched_failed_fn=$tmpdir/enriched_failed.txt
-enrich_pkgpath "MAINTAINER PKGNAME" $packages_failed_fn > $enriched_failed_fn
+enrich_pkgpath "MAINTAINER PKGNAME" \
+    $packages_failed_fn > $enriched_failed_fn
+
+enriched_failed_deps_fn=$tmpdir/enriched_failed_deps.txt
+enrich_pkgpath "MAINTAINER PKGNAME" \
+    $packages_failed_deps_fn > $enriched_failed_deps_fn
 
 html_header (){
     cat <<EOF
