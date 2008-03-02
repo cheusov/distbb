@@ -582,7 +582,7 @@ find_failed_deps_packages (){
 find_failed_deps_packages > $packages_failed_deps_fn
 
 count_lines (){
-    wc -l $1 | awk '{print $1}'
+    awk 'END {print NR}' "$@"
 }
 
 right_align (){
