@@ -66,7 +66,7 @@ meta_dir=$REPORTS_DIR/META
 tmpdir=$meta_dir/tmp
 mkdir -p -m 700 $tmpdir
 
-date_start="$(date)"
+date_start="$(date -u '+%Y-%m-%d %H:%M') UTC"
 
 packages_failed_deps_fn=$meta_dir/packages_failed_deps.txt
 printf '' > $packages_failed_deps_fn
@@ -570,7 +570,7 @@ verbose_print "done\n"
 verbose_print "Logs generation and clean-ups..."
 rmdir $REPORTS_DIR/* 2>/dev/null || true
 
-date_end="$(date)"
+date_end="$(date -u '+%Y-%m-%d %H:%M') UTC"
 os="$(uname -s) $(uname -r)/$(uname -m)"
 
 path2pkgpath (){
@@ -673,6 +673,9 @@ EOF
     done |
     sort -k2,2nr -k1,1 |
     while read pkgpath breaks maintainer pkgname; do
+	if test "$breaks" -eq 0; then
+	    breaks=''
+	fi
 	print_failed_pkg "$pkgpath"  "$breaks" 'build' "$maintainer" "$pkgname"
     done
     printf '%s\n' "</table>"
