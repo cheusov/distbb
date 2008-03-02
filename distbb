@@ -622,36 +622,36 @@ FILENAME != pkg_src_summary {
 
 report_txt (){
     cat <<EOF
-${mkr_h1}pkgsrc bulk build results (distbb - distributed bulk build)${mkr_e_h1}
+<h1>pkgsrc bulk build results (distbb - distributed bulk build)</h1>
 
-${mkr_h2}$os${mkr_e_h2}
+<h2>$os</h2>
 
-${mkr_h3}Summary${mkr_e_h3}
+<h3>Summary</h3>
 
-${mkr_table}${mkr_tr}  ${mkr_td}Build started:${mkr_e_td}${mkr_rtd}$(right_align 38 "${date_start}")${mkr_e_td}${mkr_e_tr}
-  ${mkr_tr}${mkr_td}Build ended:${mkr_e_td}  ${mkr_rtd}$(right_align 38 "${date_end}")${mkr_e_td}${mkr_e_tr}
+<table><tr>  <td>Build started:</td><td align="right">$(right_align 38 "${date_start}")</td></tr>
+  <tr><td>Build ended:</td>  <td align="right">$(right_align 38 "${date_end}")</td></tr>
 
-  ${mkr_tr}${mkr_td}${mkr_spc}${mkr_e_td}                  ${mkr_rtd}${mkr_spc}${mkr_e_td}${mkr_e_tr}
+  <tr><td>&nbsp;</td>                  <td align="right">&nbsp;</td></tr>
 
-  ${mkr_tr}${mkr_td}Total packages${mkr_e_td}                  ${mkr_rtd}$(right_align 20 $packages_total)${mkr_e_td}${mkr_e_tr}
-  ${mkr_tr}${mkr_td}Packages built previously${mkr_e_td}       ${mkr_rtd}$(right_align 20 $packages_built_prev_cnt)${mkr_e_td}${mkr_e_tr}
-  ${mkr_tr_pkgs_built}${mkr_td}Packages built${mkr_e_td}                  ${mkr_rtd}$(right_align 20 $packages_built_cnt)${mkr_e_td}${mkr_e_tr}
-  ${mkr_tr_pkgs_failed}${mkr_td}Packages failed${mkr_e_td}                 ${mkr_rtd}$(right_align 20 $packages_failed_cnt)${mkr_e_td}${mkr_e_tr}
-  ${mkr_tr_pkgs_faileddeps}${mkr_td}Packages failed due to them${mkr_e_td}     ${mkr_rtd}$(right_align 20 $packages_failed_deps_cnt)${mkr_e_td}${mkr_e_tr}
+  <tr><td>Total packages</td>                  <td align="right">$(right_align 20 $packages_total)</td></tr>
+  <tr><td>Packages built previously</td>       <td align="right">$(right_align 20 $packages_built_prev_cnt)</td></tr>
+  <tr  class="pkg-built"><td>Packages built</td>                  <td align="right">$(right_align 20 $packages_built_cnt)</td></tr>
+  <tr  class="pkg-failed"><td>Packages failed</td>                 <td align="right">$(right_align 20 $packages_failed_cnt)</td></tr>
+  <tr  class="pkg-faileddeps"><td>Packages failed due to them</td>     <td align="right">$(right_align 20 $packages_failed_deps_cnt)</td></tr>
 
-  ${mkr_tr}${mkr_td}Packages in pkg_summary${mkr_e_td}         ${mkr_rtd}$(right_align 20 $packages_in_summary)${mkr_e_td}${mkr_e_tr}
-${mkr_e_table}
-${mkr_p}Packages not listed here resulted in a binary package.
-Results of failed packages are available below.${mkr_e_p}
+  <tr><td>Packages in pkg_summary</td>         <td align="right">$(right_align 20 $packages_in_summary)</td></tr>
+</table>
+<p>Packages not listed here resulted in a binary package.
+Results of failed packages are available below.</p>
 
-${mkr_h3}Failed packages${mkr_e_h3}
+<h3>Failed packages</h3>
 
 EOF
 
     # failed packages
-    failed_format="${mkr_tr}${mkr_td}%-25s${mkr_e_td} ${mkr_td}%6s${mkr_e_td} ${mkr_td}%9s${mkr_e_td} ${mkr_rtd}%18s${mkr_e_td} ${mkr_rtd}%15s${mkr_e_td}${mkr_e_tr}"
-    printf "%s" "${mkr_table100}"
-    printf "${failed_format}\n" "${mkr_b}Package${mkr_e_b}" "${mkr_b}Breaks${mkr_e_b}" "${mkr_b}Stage${mkr_e_b}" "${mkr_b}Maintainer${mkr_e_b}" "${mkr_b}Package name${mkr_e_b}"
+    failed_format="  <tr><td>%-25s</td> <td>%6s</td> <td>%9s</td> <td align=\"right\">%18s</td> <td align=\"right\">%15s</td></tr>"
+    printf "%s" "<table width=100%>"
+    printf "${failed_format}\n" "<b>Package</b>" "<b>Breaks</b>" "<b>Stage</b>" "<b>Maintainer</b>" "<b>Package name</b>"
     echo ''
 
     cat $enriched_failed_fn |
@@ -659,17 +659,17 @@ EOF
 	cnt=$(count_lines $REPORTS_DIR/$pkgpath/broken_packages.txt)
 	printf "$failed_format\n" "$pkgpath"  "$cnt" 'build' "$maintainer" "$pkgname"
     done | sort -k2,2nr -k1,1
-    printf '%s\n' "${mkr_e_table}"
+    printf '%s\n' "</table>"
 
 
     # failed dependencies
-    echo "${mkr_h3}Failed dependencies${mkr_e_h3}"
+    echo "<h3>Failed dependencies</h3>"
 
-    printf "%s" "${mkr_table70}"
+    printf "%s" "<table width=70%>"
 
-    failed_deps_format="${mkr_tr}${mkr_td}%-40s${mkr_e_td} ${mkr_rtd}%40s${mkr_e_td}${mkr_e_tr}\n"
+    failed_deps_format="  <tr><td>%-40s</td> <td align=\"right\">%40s</td></tr>\n"
     echo ''
-    printf "$failed_deps_format" "${mkr_b}Package${mkr_e_b}" "${mkr_b}Failed dependencies${mkr_e_b}"
+    printf "$failed_deps_format" "<b>Package</b>" "<b>Failed dependencies</b>"
     echo ''
 
     while read pkgpath; do
@@ -682,7 +682,7 @@ EOF
 	    printf "$failed_deps_format" '' "$dep"
 	done
     done < $packages_failed_deps_fn
-    printf "%s\n" "${mkr_e_table}"
+    printf "%s\n" "</table>"
 }
 
 packages_failed_deps_cnt=$(count_lines $packages_failed_deps_fn)
@@ -694,8 +694,6 @@ packages_in_summary=$(awk '{cnt += ($0 ~ /PKGNAME/)} END {print cnt}' $pkg_summa
 
 enriched_failed_fn=$tmpdir/enriched_failed.txt
 enrich_pkgpath "MAINTAINER PKGNAME" $packages_failed_fn > $enriched_failed_fn
-
-report_txt > $meta_dir/report.txt
 
 html_header (){
     cat <<EOF
@@ -804,36 +802,14 @@ EOF
 report_html (){
     html_header
 
-    mkr_h1='<h1>'
-    mkr_e_h1='</h1>'
-    mkr_h2='<h2>'
-    mkr_e_h2='</h2>'
-    mkr_h3='<h3>'
-    mkr_e_h3='</h3>'
-    mkr_table='<table>'
-    mkr_table70='<table width=70%>'
-    mkr_table100='<table width=100%>'
-    mkr_e_table='</table>'
-    mkr_tr='<tr>'
-    mkr_tr_pkgs_failed='<tr  class="pkg-failed">'
-    mkr_tr_pkgs_faileddeps='<tr  class="pkg-faileddeps">'
-    mkr_tr_pkgs_built='<tr  class="pkg-built">'
-    mkr_e_tr='</tr>'
-    mkr_td='<td>'
-    mkr_rtd='<td align="right">'
-    mkr_e_td='</td>'
-    mkr_p='<p>'
-    mkr_e_p='</p>'
-    mkr_b='<b>'
-    mkr_e_b='</b>'
-    mkr_spc='&nbsp;'
-
     report_txt
 
     html_footer
 }
 
 report_html > $meta_dir/report.html
+
+report_txt | sed -e 's,<[^<>]*>,,g' -e 's,&[a-z]*;,,g' > $meta_dir/report.txt
 
 verbose_print "done\n"
 
