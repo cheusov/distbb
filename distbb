@@ -50,7 +50,7 @@ set_if_not_set PKG_SRC_SUMMARY $PKGSRCDIR/pkg_src_summary.txt
 set_if_not_set PACKAGES        $PKGSRCDIR/packages
 set_if_not_set PKG_SUFX        .tgz
 set_if_not_set REPORTS_DIR     $HOME/bulk-logs
-set_if_not_set TARGETS         'clean checksum depends build install package'
+set_if_not_set TARGETS         'clean checksum depends build install package delete'
 set_if_not_set TRANSPORT       'ssh -x'
 set_if_not_set NOTES           ''
 
@@ -627,13 +627,13 @@ print_failed_pkg (){
     # $3 - stage
     # $4 - maintainer
     # $5 - pkgname
-    printf "  <tr><td><a href=\"%s/failed.html\" title=\"build log for %s\">%-20s</a></td> <td class=\"breaks\">%6s</td> <td>%9s</td> <td align=\"right\">%15s</td> <td align=\"right\">%12s</td></tr>\n" "$1" "$1" "$1" "$2" "$3" "$4" "$5"
+    printf "  <tr><td><a href=\"../%s/failed.html\" title=\"build log for %s\">%-20s</a></td> <td class=\"breaks\">%6s</td> <td>%9s</td> <td align=\"right\">%15s</td> <td align=\"right\">%12s</td></tr>\n" "$1" "$1" "$1" "$2" "$3" "$4" "$5"
 }
 
 print_failed_deps_pkg (){
     # $1 - pkgpath
     # $2 - dep
-    printf "  <tr><td>%-30s</td> <td align=\"right\"><a href=\"%s/failed.html\" title=\"build log for %s\">%30s</a></td></tr>\n" "$1" "$2" "$2" "$2"
+    printf "  <tr><td>%-30s</td> <td align=\"right\"><a href=\"../%s/failed.html\" title=\"build log for %s\">%30s</a></td></tr>\n" "$1" "$2" "$2" "$2"
 }
 
 report_txt (){
@@ -817,7 +817,7 @@ tt.filename {
 
 <body>
 
-<a name="report"></a>
+<a name="$1"></a>
 
 EOF
 }
@@ -830,7 +830,7 @@ EOF
 }
 
 report_html (){
-    html_header
+    html_header report
 
     report_txt
 
@@ -840,6 +840,38 @@ report_html (){
 report_html > $meta_dir/report.html
 
 report_txt | sed -e 's,<[^<>]*>,,g' -e 's,&[a-z]*;,,g' > $meta_dir/report.txt
+
+### generate per file HTMLs
+stage2html (){
+    html_header
+
+    pkgdir="$(echo $stage_fn | sed 's,/[^/]*$,,')"
+    pkgpath="$(echo $stage_fn | sed 's,^.*/\([^/]*/[^/]*\)/[^/]*$,\1,')"
+    stage="$(echo $stage_fn | sed 's,^.*stage_\(.*\)[.].*$,\1,')"
+
+    for t in $TARGETS; do
+	printf '&nbsp;'
+
+	if test -f $pkgdir/stage_$t.txt; then
+	    if test "$t" = "$stage"; then
+		printf "$stage"
+	    else
+		printf "<a href=\"stage_%s.html\" title=\"build log for %s\">%s</a>\n" "$t" "$pkgpath" "$t"
+	    fi
+	fi
+
+	printf '&nbsp;'
+    done
+    printf '<br>\n'
+
+    html_footer
+}
+
+find $REPORTS_DIR -name 'stage_*.txt' |
+while read stage_fn; do
+    html_fn=${stage_fn%%.txt}.html
+    stage2html $stage_fn >$html_fn
+done
 
 verbose_print "done\n"
 
