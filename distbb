@@ -621,19 +621,30 @@ FILENAME != pkg_src_summary {
 ' "$PKG_SRC_SUMMARY" "$@"
 }
 
+get_failed_stage (){
+    # $1 - pkgpath
+    for t in $TARGETS; do
+	if test -f $REPORTS_DIR/$1/stage_$t.txt; then
+	    failed_stage="$t"
+	fi
+    done
+    echo $failed_stage
+}
+
 print_failed_pkg (){
     # $1 - pkgpath
     # $2 - breaks
     # $3 - stage
     # $4 - maintainer
     # $5 - pkgname
-    printf "  <tr><td><a href=\"../%s/failed.html\" title=\"build log for %s\">%-20s</a></td> <td class=\"breaks\">%6s</td> <td>%9s</td> <td align=\"right\">%15s</td> <td align=\"right\">%12s</td></tr>\n" "$1" "$1" "$1" "$2" "$3" "$4" "$5"
+    printf "  <tr><td><a href=\"../%s/stage_%s.html\" title=\"build log for %s\">%-20s</a></td> <td class=\"breaks\">%6s</td> <td>%9s</td> <td align=\"right\">%15s</td> <td align=\"right\">%12s</td></tr>\n" "$1" "$3" "$1" "$1" "$2" "$3" "$4" "$5"
 }
 
 print_failed_deps_pkg (){
     # $1 - pkgpath
     # $2 - dep
-    printf "  <tr><td>%-30s</td> <td align=\"right\"><a href=\"../%s/failed.html\" title=\"build log for %s\">%30s</a></td></tr>\n" "$1" "$2" "$2" "$2"
+    failed_stage=$(get_failed_stage $2)
+    printf "  <tr><td>%-30s</td> <td align=\"right\"><a href=\"../%s/stage_%s.html\" title=\"build log for %s\">%30s</a></td></tr>\n" "$1" "$2" "$failed_stage" "$2" "$2"
 }
 
 report_txt (){
@@ -674,15 +685,16 @@ EOF
 
     cat $enriched_failed_fn |
     while read pkgpath maintainer pkgname; do
-	cnt=$(count_lines $REPORTS_DIR/$pkgpath/broken_packages.txt)
-	echo "$pkgpath $cnt $maintainer $pkgname"
+	breaks=$(count_lines $REPORTS_DIR/$pkgpath/broken_packages.txt)
+	failed_stage=$(get_failed_stage $pkgpath)
+	echo "$pkgpath $breaks $failed_stage $maintainer $pkgname"
     done |
     sort -k2,2nr -k1,1 |
-    while read pkgpath breaks maintainer pkgname; do
+    while read pkgpath breaks failed_stage maintainer pkgname; do
 	if test "$breaks" -eq 0; then
 	    breaks=''
 	fi
-	print_failed_pkg "$pkgpath"  "$breaks" 'build' "$maintainer" "$pkgname"
+	print_failed_pkg "$pkgpath"  "$breaks" "$failed_stage" "$maintainer" "$pkgname"
     done
     printf '%s\n' "</table>"
 
@@ -845,9 +857,9 @@ report_txt | sed -e 's,<[^<>]*>,,g' -e 's,&[a-z]*;,,g' > $meta_dir/report.txt
 stage2html (){
     html_header
 
-    pkgdir="$(echo $stage_fn | sed 's,/[^/]*$,,')"
-    pkgpath="$(echo $stage_fn | sed 's,^.*/\([^/]*/[^/]*\)/[^/]*$,\1,')"
-    stage="$(echo $stage_fn | sed 's,^.*stage_\(.*\)[.].*$,\1,')"
+    pkgdir="$(echo $1 | sed 's,/[^/]*$,,')"
+    pkgpath="$(echo $1 | sed 's,^.*/\([^/]*/[^/]*\)/[^/]*$,\1,')"
+    stage="$(echo $1 | sed 's,^.*stage_\(.*\)[.].*$,\1,')"
 
     for t in $TARGETS; do
 	printf '&nbsp;'
@@ -864,6 +876,10 @@ stage2html (){
     done
     printf '<br>\n'
 
+    # log itself
+    printf "<pre>"
+    cat $1
+    printf "</pre>"
     html_footer
 }
 
