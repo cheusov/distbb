@@ -739,37 +739,6 @@ html_header (){
 <style type="text/css">
 <!--
 
-body {
-	Font-Family: Tahoma, Verdana, sans-serif;
-	Line-Height: 1.3em;
-	Text-Decoration: None;
-	Color: black;
-	Background-Color: white;
-	Border-Width: 0;
-}
-
-table {
-	Border-Width: 0;
-}
-
-table td {
-	Font-Family: Tahoma, Verdana, sans-serif;
-	line-height: 1em;
-}
-
-a:link {
-	Color: #3535c5;
-}
-
-a:visited {
-	Color: #700080;
-}
-
-a:hover {
-	Color: #6565e5;
-	Text-Decoration: underline;
-}
-
 tr {
 	Vertical-Align: top;
 }
@@ -795,18 +764,6 @@ h3 {
 	Color: #660066;
 }
 
-tt.filename {
-	Line-Height: 1.3em;
-	Color: #AA0000;
-}
-
-.pkgname {
-	Font-Family: Arial, Helvetica, Courier, fixed;
-	Font-Style: Italic;
-	Text-Decoration: none;
-	Line-Height: 1.3em;
-}
-
 .pkg-built {
 	Color: green;
 }
@@ -815,12 +772,12 @@ tt.filename {
 	Color: red;
 }
 
-.breaks {
-	Color: red;
-}
-
 .pkg-faileddeps {
 	Color: orange;
+}
+
+.breaks {
+	Color: red;
 }
 
 -->
