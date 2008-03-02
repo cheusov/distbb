@@ -513,6 +513,7 @@ function decode_logs (uu,                  txt,fn,dir){
    delete indirect_failures
    log_fn  = log_dir "/broken_packages.txt"
    indirect_broken_found = 0
+   printf "" >> log_fn
    for (pkgp in all_pkgpaths){
       if ((pkgpath SUBSEP pkgp) in deps){
          indirect_broken_found = 1
@@ -620,6 +621,15 @@ FILENAME != pkg_src_summary {
 ' "$PKG_SRC_SUMMARY" "$@"
 }
 
+print_failed_pkg (){
+    # $1 - pkgpath
+    # $2 - breaks
+    # $3 - stage
+    # $4 - maintainer
+    # $5 - pkgname
+    printf "  <tr><td><a href=\"%s/failed.html\" title=\"build log for %s\">%-20s</a></td> <td class=\"breaks\">%6s</td> <td>%9s</td> <td align=\"right\">%15s</td> <td align=\"right\">%12s</td></tr>\n" "$1" "$1" "$1" "$2" "$3" "$4" "$5"
+}
+
 report_txt (){
     cat <<EOF
 <h1>pkgsrc bulk build results (distbb - distributed bulk build)</h1>
@@ -649,16 +659,22 @@ Results of failed packages are available below.</p>
 EOF
 
     # failed packages
-    failed_format="  <tr><td>%-20s</td> <td>%6s</td> <td>%9s</td> <td align=\"right\">%15s</td> <td align=\"right\">%12s</td></tr>"
     printf "%s" "<table width=100%>"
-    printf "${failed_format}\n" "<b>Package</b>" "<b>Breaks</b>" "<b>Stage</b>" "<b>Maintainer</b>" "<b>Package name</b>"
+    print_failed_pkg "Package" "Breaks" "Stage" "Maintainer" "Package name" |
+    sed -e 's,<a[^<>]*>,,' \
+	-e 's,class="[^"]*",,g' \
+	-e 's,[A-Z][a-z ]*,<b>&</b>,g'
     echo ''
 
     cat $enriched_failed_fn |
     while read pkgpath maintainer pkgname; do
 	cnt=$(count_lines $REPORTS_DIR/$pkgpath/broken_packages.txt)
-	printf "$failed_format\n" "$pkgpath"  "$cnt" 'build' "$maintainer" "$pkgname"
-    done | sort -k2,2nr -k1,1
+	echo "$pkgpath $cnt $maintainer $pkgname"
+    done |
+    sort -k2,2nr -k1,1 |
+    while read pkgpath breaks maintainer pkgname; do
+	print_failed_pkg "$pkgpath"  "$breaks" 'build' "$maintainer" "$pkgname"
+    done
     printf '%s\n' "</table>"
 
 
@@ -774,6 +790,10 @@ tt.filename {
 }
 
 .pkg-failed {
+	Color: red;
+}
+
+.breaks {
 	Color: red;
 }
 
