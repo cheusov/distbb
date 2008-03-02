@@ -219,7 +219,7 @@ NF == 3 {
 }' "$@"
 }
 
-verbose_print "  Transitive closure for the dependancy graph..."
+verbose_print "  Transitive closure of the dependancy graph..."
 trans_clos_fn=$tmpdir/trans_closure.txt
 runpipe0 \
     extract_dep $deps_fn $bdeps_fn '|' \
@@ -502,15 +502,22 @@ function decode_logs (uu,                  txt,fn,dir){
    # decoding logs
    decode_logs(log_fn)
 
+   # reading counts
+   delete counts
+   while (xgetline0(queue_fn)){
+      counts [$1] = $2
+   }
+   xclose(queue_fn)
+
    # indirectly failed
-   delete indirect_failues
+   delete indirect_failures
    log_fn  = log_dir "/broken_packages.txt"
    indirect_broken_found = 0
    for (pkgp in all_pkgpaths){
       if ((pkgpath SUBSEP pkgp) in deps){
          indirect_broken_found = 1
 
-         indirect_failues [pkgp] = 1
+         indirect_failures [pkgp] = 1
 
          pkgp_log_dir = reports_dir "/" pkgp
          pkgp_log_fn  = pkgp_log_dir "/failed_because.txt"
@@ -526,7 +533,7 @@ function decode_logs (uu,                  txt,fn,dir){
    # writing new queue
    printf "" > tmp_fn
    for (i in counts){
-      if (! (i in indirect_failues)){
+      if (! (i in indirect_failures)){
          print i, counts [i] > tmp_fn
       }
    }
@@ -636,15 +643,39 @@ Failed packages
 
 EOF
 
-    failure_format='%20s %6s %9s %18s %20s'
-    printf "$failure_format\n" 'Package' 'Breaks' 'Stage' 'Maintainer' 'Package name'
+    # failed packages
+    failed_format='%-25s %6s %9s %18s %15s'
+    printf "$failed_format\n" 'Package' 'Breaks' 'Stage' 'Maintainer' 'Package name'
     echo ''
 
     enrich_pkgpath "MAINTAINER PKGNAME" $packages_failed_fn |
     while read pkgpath maintainer pkgname; do
 	cnt=$(count_lines $REPORTS_DIR/$pkgpath/broken_packages.txt)
-	printf "$failure_format\n" "$pkgpath"  "$cnt" 'build' "$maintainer" "$pkgname"
+	printf "$failed_format\n" "$pkgpath"  "$cnt" 'build' "$maintainer" "$pkgname"
     done | sort -k2,2nr -k1,1
+
+    echo ''
+
+    # failed dependencies
+    echo 'Failed dependencies'
+
+    failed_deps_format='%-40s %40s\n'
+    echo ''
+    printf "$failed_deps_format" 'Package' 'Failed dependencies'
+    echo ''
+
+    while read pkgpath; do
+	fn=$REPORTS_DIR/$pkgpath/failed_because.txt
+	cnt=$(count_lines $fn)
+	dep=$(head -1 $fn)
+	depX=$(awk -v cnt=$cnt 'NR > cnt-6 && NR > 1' $fn)
+	printf "$failed_deps_format" "$pkgpath" "$dep"
+	for dep in $depX; do
+	    printf "$failed_deps_format" '' "$dep"
+	done
+    done < $packages_failed_deps_fn
+
+    echo ''
 }
 
 packages_failed_deps_cnt=$(count_lines $packages_failed_deps_fn)
