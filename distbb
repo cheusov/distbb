@@ -631,11 +631,13 @@ ${mkr_h3}Summary${mkr_e_h3}
 ${mkr_table}${mkr_tr}  ${mkr_td}Build started:${mkr_e_td}${mkr_rtd}$(right_align 38 "${date_start}")${mkr_e_td}${mkr_e_tr}
   ${mkr_tr}${mkr_td}Build ended:${mkr_e_td}  ${mkr_rtd}$(right_align 38 "${date_end}")${mkr_e_td}${mkr_e_tr}
 
+  ${mkr_tr}${mkr_td}${mkr_spc}${mkr_e_td}                  ${mkr_rtd}${mkr_spc}${mkr_e_td}${mkr_e_tr}
+
   ${mkr_tr}${mkr_td}Total packages${mkr_e_td}                  ${mkr_rtd}$(right_align 20 $packages_total)${mkr_e_td}${mkr_e_tr}
   ${mkr_tr}${mkr_td}Packages built previously${mkr_e_td}       ${mkr_rtd}$(right_align 20 $packages_built_prev_cnt)${mkr_e_td}${mkr_e_tr}
-  ${mkr_tr}${mkr_td}Packages built${mkr_e_td}                  ${mkr_rtd}$(right_align 20 $packages_built_cnt)${mkr_e_td}${mkr_e_tr}
-  ${mkr_tr}${mkr_td}Packages failed${mkr_e_td}                 ${mkr_rtd}$(right_align 20 $packages_failed_cnt)${mkr_e_td}${mkr_e_tr}
-  ${mkr_tr}${mkr_td}Packages failed due to them${mkr_e_td}     ${mkr_rtd}$(right_align 20 $packages_failed_deps_cnt)${mkr_e_td}${mkr_e_tr}
+  ${mkr_tr_pkgs_built}${mkr_td}Packages built${mkr_e_td}                  ${mkr_rtd}$(right_align 20 $packages_built_cnt)${mkr_e_td}${mkr_e_tr}
+  ${mkr_tr_pkgs_failed}${mkr_td}Packages failed${mkr_e_td}                 ${mkr_rtd}$(right_align 20 $packages_failed_cnt)${mkr_e_td}${mkr_e_tr}
+  ${mkr_tr_pkgs_faileddeps}${mkr_td}Packages failed due to them${mkr_e_td}     ${mkr_rtd}$(right_align 20 $packages_failed_deps_cnt)${mkr_e_td}${mkr_e_tr}
 
   ${mkr_tr}${mkr_td}Packages in pkg_summary${mkr_e_td}         ${mkr_rtd}$(right_align 20 $packages_in_summary)${mkr_e_td}${mkr_e_tr}
 ${mkr_e_table}
@@ -697,7 +699,93 @@ report_txt > $meta_dir/report.txt
 
 html_header (){
     cat <<EOF
-<html> <head> <title>$os</title> </head>
+<html> <head> <title>$os</title>
+<style type="text/css">
+<!--
+
+body {
+	Font-Family: Tahoma, Verdana, sans-serif;
+	Line-Height: 1.3em;
+	Text-Decoration: None;
+	Color: black;
+	Background-Color: white;
+	Border-Width: 0;
+}
+
+table {
+	Border-Width: 0;
+}
+
+table td {
+	Font-Family: Tahoma, Verdana, sans-serif;
+	line-height: 1em;
+}
+
+a:link {
+	Color: #3535c5;
+}
+
+a:visited {
+	Color: #700080;
+}
+
+a:hover {
+	Color: #6565e5;
+	Text-Decoration: underline;
+}
+
+tr {
+	Vertical-Align: top;
+}
+
+td {
+	Vertical-Align: top;
+}
+
+h1 {
+	Font-Size: 3.5ex;
+	Line-Height: 1em;
+	Color: #000066;
+}
+
+h2 {
+	Font-Size: 2.5ex;
+	Line-Height: 1em;
+	Color: #660000;
+}
+
+h3 {
+	Font-Size: 2ex;
+	Color: #660066;
+}
+
+tt.filename {
+	Line-Height: 1.3em;
+	Color: #AA0000;
+}
+
+.pkgname {
+	Font-Family: Arial, Helvetica, Courier, fixed;
+	Font-Style: Italic;
+	Text-Decoration: none;
+	Line-Height: 1.3em;
+}
+
+.pkg-built {
+	Color: green;
+}
+
+.pkg-failed {
+	Color: red;
+}
+
+.pkg-faileddeps {
+	Color: orange;
+}
+
+-->
+</style>
+</head>
 
 <body>
 
@@ -727,6 +815,9 @@ report_html (){
     mkr_table100='<table width=100%>'
     mkr_e_table='</table>'
     mkr_tr='<tr>'
+    mkr_tr_pkgs_failed='<tr  class="pkg-failed">'
+    mkr_tr_pkgs_faileddeps='<tr  class="pkg-faileddeps">'
+    mkr_tr_pkgs_built='<tr  class="pkg-built">'
     mkr_e_tr='</tr>'
     mkr_td='<td>'
     mkr_rtd='<td align="right">'
@@ -735,6 +826,7 @@ report_html (){
     mkr_e_p='</p>'
     mkr_b='<b>'
     mkr_e_b='</b>'
+    mkr_spc='&nbsp;'
 
     report_txt
 
