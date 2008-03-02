@@ -622,49 +622,52 @@ FILENAME != pkg_src_summary {
 
 report_txt (){
     cat <<EOF
-pkgsrc bulk build results (distbb - distributed bulk build)
+${mkr_h1}pkgsrc bulk build results (distbb - distributed bulk build)${mkr_e_h1}
 
-$os
+${mkr_h2}$os${mkr_e_h2}
 
-Summary
+${mkr_h3}Summary${mkr_e_h3}
 
-  Build started:$(right_align 38 "${date_start}")
-  Build ended:  $(right_align 38 "${date_end}")
+${mkr_table}${mkr_tr}  ${mkr_td}Build started:${mkr_e_td}${mkr_rtd}$(right_align 38 "${date_start}")${mkr_e_td}${mkr_e_tr}
+  ${mkr_tr}${mkr_td}Build ended:${mkr_e_td}  ${mkr_rtd}$(right_align 38 "${date_end}")${mkr_e_td}${mkr_e_tr}
 
-  Total packages                  $(right_align 20 $packages_total)
-  Packages built previously       $(right_align 20 $packages_built_prev_cnt)
-  Packages built                  $(right_align 20 $packages_built_cnt)
-  Packages failed                 $(right_align 20 $packages_failed_cnt)
-  Packages failed due to them     $(right_align 20 $packages_failed_deps_cnt)
+  ${mkr_tr}${mkr_td}Total packages${mkr_e_td}                  ${mkr_rtd}$(right_align 20 $packages_total)${mkr_e_td}${mkr_e_tr}
+  ${mkr_tr}${mkr_td}Packages built previously${mkr_e_td}       ${mkr_rtd}$(right_align 20 $packages_built_prev_cnt)${mkr_e_td}${mkr_e_tr}
+  ${mkr_tr}${mkr_td}Packages built${mkr_e_td}                  ${mkr_rtd}$(right_align 20 $packages_built_cnt)${mkr_e_td}${mkr_e_tr}
+  ${mkr_tr}${mkr_td}Packages failed${mkr_e_td}                 ${mkr_rtd}$(right_align 20 $packages_failed_cnt)${mkr_e_td}${mkr_e_tr}
+  ${mkr_tr}${mkr_td}Packages failed due to them${mkr_e_td}     ${mkr_rtd}$(right_align 20 $packages_failed_deps_cnt)${mkr_e_td}${mkr_e_tr}
 
-  Packages in pkg_summary         $(right_align 20 $packages_in_summary)
+  ${mkr_tr}${mkr_td}Packages in pkg_summary${mkr_e_td}         ${mkr_rtd}$(right_align 20 $packages_in_summary)${mkr_e_td}${mkr_e_tr}
+${mkr_e_table}
+${mkr_p}Packages not listed here resulted in a binary package.
+Results of failed packages are available below.${mkr_e_p}
 
-Packages not listed here resulted in a binary package.
-Results of failed packages are available below.
-
-Failed packages
+${mkr_h3}Failed packages${mkr_e_h3}
 
 EOF
 
     # failed packages
-    failed_format='%-25s %6s %9s %18s %15s'
-    printf "$failed_format\n" 'Package' 'Breaks' 'Stage' 'Maintainer' 'Package name'
+    failed_format="${mkr_tr}${mkr_td}%-25s${mkr_e_td} ${mkr_td}%6s${mkr_e_td} ${mkr_td}%9s${mkr_e_td} ${mkr_rtd}%18s${mkr_e_td} ${mkr_rtd}%15s${mkr_e_td}${mkr_e_tr}"
+    printf "%s" "${mkr_table100}"
+    printf "${failed_format}\n" "${mkr_b}Package${mkr_e_b}" "${mkr_b}Breaks${mkr_e_b}" "${mkr_b}Stage${mkr_e_b}" "${mkr_b}Maintainer${mkr_e_b}" "${mkr_b}Package name${mkr_e_b}"
     echo ''
 
-    enrich_pkgpath "MAINTAINER PKGNAME" $packages_failed_fn |
+    cat $enriched_failed_fn |
     while read pkgpath maintainer pkgname; do
 	cnt=$(count_lines $REPORTS_DIR/$pkgpath/broken_packages.txt)
 	printf "$failed_format\n" "$pkgpath"  "$cnt" 'build' "$maintainer" "$pkgname"
     done | sort -k2,2nr -k1,1
+    printf '%s\n' "${mkr_e_table}"
 
-    echo ''
 
     # failed dependencies
-    echo 'Failed dependencies'
+    echo "${mkr_h3}Failed dependencies${mkr_e_h3}"
 
-    failed_deps_format='%-40s %40s\n'
+    printf "%s" "${mkr_table70}"
+
+    failed_deps_format="${mkr_tr}${mkr_td}%-40s${mkr_e_td} ${mkr_rtd}%40s${mkr_e_td}${mkr_e_tr}\n"
     echo ''
-    printf "$failed_deps_format" 'Package' 'Failed dependencies'
+    printf "$failed_deps_format" "${mkr_b}Package${mkr_e_b}" "${mkr_b}Failed dependencies${mkr_e_b}"
     echo ''
 
     while read pkgpath; do
@@ -677,8 +680,7 @@ EOF
 	    printf "$failed_deps_format" '' "$dep"
 	done
     done < $packages_failed_deps_fn
-
-    echo ''
+    printf "%s\n" "${mkr_e_table}"
 }
 
 packages_failed_deps_cnt=$(count_lines $packages_failed_deps_fn)
@@ -688,7 +690,59 @@ packages_built_prev_cnt=$(count_lines $packages_built_prev_fn)
 packages_total=$(($packages_built_cnt+$packages_built_prev_cnt))
 packages_in_summary=$(awk '{cnt += ($0 ~ /PKGNAME/)} END {print cnt}' $pkg_summary)
 
+enriched_failed_fn=$tmpdir/enriched_failed.txt
+enrich_pkgpath "MAINTAINER PKGNAME" $packages_failed_fn > $enriched_failed_fn
+
 report_txt > $meta_dir/report.txt
+
+html_header (){
+    cat <<EOF
+<html> <head> <title>$os</title> </head>
+
+<body>
+
+<a name="report"></a>
+
+EOF
+}
+
+html_footer (){
+    cat <<EOF
+</body>
+</html>
+EOF
+}
+
+report_html (){
+    html_header
+
+    mkr_h1='<h1>'
+    mkr_e_h1='</h1>'
+    mkr_h2='<h2>'
+    mkr_e_h2='</h2>'
+    mkr_h3='<h3>'
+    mkr_e_h3='</h3>'
+    mkr_table='<table>'
+    mkr_table70='<table width=70%>'
+    mkr_table100='<table width=100%>'
+    mkr_e_table='</table>'
+    mkr_tr='<tr>'
+    mkr_e_tr='</tr>'
+    mkr_td='<td>'
+    mkr_rtd='<td align="right">'
+    mkr_e_td='</td>'
+    mkr_p='<p>'
+    mkr_e_p='</p>'
+    mkr_b='<b>'
+    mkr_e_b='</b>'
+
+    report_txt
+
+    html_footer
+}
+
+report_html > $meta_dir/report.html
+
 verbose_print "done\n"
 
 ######################################################################
