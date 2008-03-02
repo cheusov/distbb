@@ -639,6 +639,9 @@ Summary
 
   Packages in pkg_summary         $(right_align 20 $packages_in_summary)
 
+Packages not listed here resulted in a binary package.
+Results of failed packages are available below.
+
 Failed packages
 
 EOF
