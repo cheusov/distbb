@@ -646,7 +646,7 @@ print_failed_deps_pkg (){
     # $3 - maintainer
     # $4 - dep
     failed_stage=$(get_failed_stage $4)
-    printf "  <tr><td>%-30s</td> <td align=\"right\"><a href=\"../%s/stage_%s.html\" title=\"build log for %s\">%30s</a></td><td>%s</td><td>%s</td></tr>\n" "$1" "$4" "$failed_stage" "$4" "$4" "$3" "$2"
+    printf "  <tr><td>%-22s</td> <td align=\"left\"><a href=\"../%s/stage_%s.html\" title=\"build log for %s\">%22s</a></td><td> %12s</td><td> %-15s</td></tr>\n" "$1" "$4" "$failed_stage" "$4" "$4" "$3" "$2"
 }
 
 pkgpath2maintainer (){
@@ -684,7 +684,7 @@ EOF
 
     # failed packages
     printf "%s" "<table width=100%>"
-    print_failed_pkg "Package" "Breaks" "Stage" "Maintainer" "Package name" |
+    print_failed_pkg "Location" "Breaks" "Stage" "Maintainer" "Package" |
     sed -e 's,<a[^<>]*>,,' \
 	-e 's,class="[^"]*",,g' \
 	-e 's,[A-Z][a-z ]*,<b>&</b>,g'
@@ -712,7 +712,7 @@ EOF
     printf "%s" "<table width=100%>"
 
     echo ''
-    print_failed_deps_pkg 'Package' 'Version' 'Maintainer' \
+    print_failed_deps_pkg 'Location' 'Version' 'Maintainer' \
 	'Failed dependencies' |
     sed -e 's,<a[^<>]*>,,' \
 	-e 's,[A-Z][a-z ]*,<b>&</b>,g'
