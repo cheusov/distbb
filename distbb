@@ -28,14 +28,16 @@ set -e
 
 export LC_ALL=C # for sort and uniq
 
-date_start="$(date -u '+%Y-%m-%d %H:%M') UTC"
-
-. @@SYSCONFDIR@@/distbb.conf
-if test "$THISISME"; then
-    . distbb.conf
+if test "$THIS_IS_ME"; then
+    . ./distbb.conf
+    DISTBB_SLAVE=./distbb_slave
+else
+    . @@SYSCONFDIR@@/distbb.conf
 fi
 
 ######################################################################
+
+date_start="$(date -u '+%Y-%m-%d %H:%M') UTC"
 
 verbose_print (){
     printf "$1" 1>&2
@@ -305,8 +307,6 @@ print_tasks (){
     done
 }
 
-environ="BMAKE=$BMAKE PKGSRCDIR=$PKGSRCDIR REPORTS_DIR=$REPORTS_DIR TARGETS='$TARGETS'"
-
 postfilter (){
     # postprocessor for paexec's outout.
     # It show progress, suceess and failure messages,
@@ -317,7 +317,6 @@ awk \
    -v trans_clos_fn=$trans_clos_rebuild_fn \
    -v queue_fn=$queue_fn \
    -v lckfile=$lckfile \
-   -v reports_dir=$REPORTS_DIR \
    -v reports_dir=$REPORTS_DIR \
    -v meta_dir=$meta_dir \
    -v packages_failed_fn=$packages_failed_fn \
@@ -537,7 +536,7 @@ function decode_logs (uu,                  txt,fn,dir){
 verbose_print "Building\n"
 runpipe0 \
     print_tasks '|' \
-    ~/prjs/paexec/paexec -EI -lr -n +5 -c "env $environ ./distbb_slave" '|' \
+    ~/prjs/paexec/paexec -EI -lr -n +5 -c "$DISTBB_SLAVE" '|' \
     postfilter
 
 ######################################################################
