@@ -28,6 +28,8 @@ set -e
 
 export LC_ALL=C # for sort and uniq
 
+date_start="$(date -u '+%Y-%m-%d %H:%M') UTC"
+
 ######################################################################
 
 verbose_print (){
@@ -42,19 +44,36 @@ set_if_not_set (){
     fi
 }
 
+should_be_set (){
+    # $1 - variable name
+    if eval test -z $1; then
+	echo "Variable $1 should be set"
+	exit 1
+    fi
+}
+
 ######################################################################
 
-set_if_not_set BMAKE           make
-set_if_not_set PKGSRCDIR       /usr/pkgsrc
-set_if_not_set PKG_SRC_SUMMARY $PKGSRCDIR/pkg_src_summary.txt
-set_if_not_set PACKAGES        $PKGSRCDIR/packages
-set_if_not_set PKG_SUFX        .tgz
-set_if_not_set REPORTS_DIR     $HOME/bulk-logs
-set_if_not_set TARGETS         'clean checksum depends build install package delete'
-set_if_not_set TRANSPORT       'ssh -x'
-set_if_not_set NOTES           ''
+set_if_not_set BMAKE              make
+set_if_not_set PKGSRCDIR          /usr/pkgsrc
+set_if_not_set PKG_SRC_SUMMARY    $PKGSRCDIR/pkg_src_summary.txt
+set_if_not_set PACKAGES           $PKGSRCDIR/packages
+set_if_not_set PKG_SUFX           .tgz
+set_if_not_set REPORTS_DIR        $HOME/bulk-logs
+set_if_not_set TARGETS     'clean checksum depends build install package delete'
+set_if_not_set TRANSPORT   'ssh -x'
+set_if_not_set NOTES       ''
 
-set_if_not_set PACKAGES_URL    ''
+set_if_not_set PACKAGES_URL ''
+set_if_not_set MASTER_MODE  no
+set_if_not_set OS           "$(uname -s)" 
+set_if_not_set OSVER        "$OSREV/$(uname -m)"
+set_if_not_set PKGSRCVER    '2007Q4'
+
+set_if_not_set REPORTS_URL     "http://www.mova.org/~cheusov/pub/pkgsrc-pbulk/$OS/$PKGSRCVER/log/$date_start/meta/report.html"
+set_if_not_set REPORT_CMD      "mail -s \"pkgsrc-$PKGSRCVER $OS $OSVER bulk build results $date_start\" cheusov@tut.by"
+set_if_not_set UPLOAD_PKGS_CMD "rsync -av --delete-excluded -e ssh cheusov@mova.org:~/public_html/pub/pkgsrc-pbulk/$OS/$PKGSRCVER/packages"
+set_if_not_set UPLOAD_LOGS_CMD 'rsync -av --delete-excluded -e ssh cheusov@mova.org:~/public_html/pub/pkgsrc-pbulk/$OS/$PKGSRCVER/log'
 
 ######################################################################
 
@@ -65,8 +84,6 @@ rm -rf $REPORTS_DIR
 meta_dir=$REPORTS_DIR/META
 tmpdir=$meta_dir/tmp
 mkdir -p -m 700 $tmpdir
-
-date_start="$(date -u '+%Y-%m-%d %H:%M') UTC"
 
 packages_failed_deps_fn=$meta_dir/packages_failed_deps.txt
 printf '' > $packages_failed_deps_fn
@@ -571,7 +588,6 @@ verbose_print "Logs generation and clean-ups..."
 rmdir $REPORTS_DIR/* 2>/dev/null || true
 
 date_end="$(date -u '+%Y-%m-%d %H:%M') UTC"
-os="$(uname -s) $(uname -r)/$(uname -m)"
 
 path2pkgpath (){
     sed -e 's,^.*/\([^/]*/[^/]*\)/failed_because.txt$,\1,'
@@ -658,7 +674,7 @@ report_txt (){
     cat <<EOF
 <h1>pkgsrc bulk build results (distbb - distributed bulk build)</h1>
 
-<h2>$os</h2>
+<h2>$OS $OSVER</h2>
 
 <h3>Summary</h3>
 
@@ -712,7 +728,7 @@ EOF
     printf "%s" "<table width=100%>"
 
     echo ''
-    print_failed_deps_pkg 'Location' 'Version' 'Maintainer' \
+    print_failed_deps_pkg 'Location' 'Package' 'Maintainer' \
 	'Failed dependencies' |
     sed -e 's,<a[^<>]*>,,' \
 	-e 's,[A-Z][a-z ]*,<b>&</b>,g'
