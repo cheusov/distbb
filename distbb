@@ -648,11 +648,11 @@ report_txt (){
 
   <tr><td>&nbsp;</td>                  <td align="right">&nbsp;</td></tr>
 
-  <tr><td>Total packages</td>                  <td align="right">$(right_align 20 $packages_total)</td></tr>
+  <tr class="pkg-total"><td>Total packages</td>                  <td align="right">$(right_align 20 $packages_total)</td></tr>
   <tr><td>Packages built previously</td>       <td align="right">$(right_align 20 $packages_built_prev_cnt)</td></tr>
-  <tr  class="pkg-built"><td>Packages built</td>                  <td align="right">$(right_align 20 $packages_built_cnt)</td></tr>
-  <tr  class="pkg-failed"><td>Packages failed</td>                 <td align="right">$(right_align 20 $packages_failed_cnt)</td></tr>
-  <tr  class="pkg-faileddeps"><td>Packages failed due to them</td>     <td align="right">$(right_align 20 $packages_failed_deps_cnt)</td></tr>
+  <tr class="pkg-built"><td>Packages built</td>                  <td align="right">$(right_align 20 $packages_built_cnt)</td></tr>
+  <tr class="pkg-failed"><td>Packages failed</td>                 <td align="right">$(right_align 20 $packages_failed_cnt)</td></tr>
+  <tr class="pkg-faileddeps"><td>Packages failed due to them</td>     <td align="right">$(right_align 20 $packages_failed_deps_cnt)</td></tr>
 
   <tr><td>Packages in pkg_summary</td>         <td align="right">$(right_align 20 $packages_in_summary)</td></tr>
 </table>
@@ -760,6 +760,10 @@ h3 {
 	Color: #660066;
 }
 
+.pkg-total {
+	Color: blue;
+}
+
 .pkg-built {
 	Color: green;
 }
@@ -780,7 +784,7 @@ h3 {
 </style>
 </head>
 
-<body>
+<body vlink="#3535c5">
 
 <a name="$1"></a>
 
