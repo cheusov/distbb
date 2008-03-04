@@ -41,19 +41,20 @@ header (){
 ######################################################################
 
 build_package (){
-    for t in $TARGETS; do
+    for t in init $TARGETS; do
 	header $t
-	awk 'BEGIN {for (i=0; i < 1000; ++i) {print "zzzz", i} }'
-	echo "stage $t...done"
-	case "$t:$1" in
-	    build:x11/compositeproto)
-		return 75;;
-	    package:x11/damageproto|package:x11/gnome-desktop)
-		return 76;;
-	    depends:x11/editres|package:x11/bigreqsproto|install:x11/imwheel)
-		return 77;;
+	case "$t" in
+	    init)
+		rm -rf $DEL_DIRS
+		cd /
+		if test "$BOOTSTRAP"; then
+		    gzip -dc "$BOOTSTRAP" | tar -cf-
+		fi
+		cd $PKGSRCDIR/$1;;
+	    delete)
+		$PKG_DELETE "`$BMAKE show-var VARNAME=PKGNAME`";;
 	    *)
-		;;
+		$BMAKE $t;;
 	esac
     done
 }
