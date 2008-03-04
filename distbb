@@ -30,50 +30,16 @@ export LC_ALL=C # for sort and uniq
 
 date_start="$(date -u '+%Y-%m-%d %H:%M') UTC"
 
+. @@SYSCONFDIR@@/distbb.conf
+if test "$THISISME"; then
+    . distbb.conf
+fi
+
 ######################################################################
 
 verbose_print (){
     printf "$1" 1>&2
 }
-
-set_if_not_set (){
-    # $1 - varname
-    # $2 - value
-    if eval test -z "\$$1"; then
-	eval $1="'$2'"
-    fi
-}
-
-should_be_set (){
-    # $1 - variable name
-    if eval test -z $1; then
-	echo "Variable $1 should be set"
-	exit 1
-    fi
-}
-
-######################################################################
-
-set_if_not_set BMAKE              make
-set_if_not_set PKGSRCDIR          /usr/pkgsrc
-set_if_not_set PKG_SRC_SUMMARY    $PKGSRCDIR/pkg_src_summary.txt
-set_if_not_set PACKAGES           $PKGSRCDIR/packages
-set_if_not_set PKG_SUFX           .tgz
-set_if_not_set REPORTS_DIR        $HOME/bulk-logs
-set_if_not_set TARGETS     'clean checksum depends build install package delete'
-set_if_not_set TRANSPORT   'ssh -x'
-set_if_not_set NOTES       ''
-
-set_if_not_set PACKAGES_URL ''
-set_if_not_set MASTER_MODE  no
-set_if_not_set OS           "$(uname -s)" 
-set_if_not_set OSVER        "$OSREV/$(uname -m)"
-set_if_not_set PKGSRCVER    '2007Q4'
-
-set_if_not_set REPORTS_URL     "http://www.mova.org/~cheusov/pub/pkgsrc-pbulk/$OS/$PKGSRCVER/log/$date_start/meta/report.html"
-set_if_not_set REPORT_CMD      "mail -s \"pkgsrc-$PKGSRCVER $OS $OSVER bulk build results $date_start\" cheusov@tut.by"
-set_if_not_set UPLOAD_PKGS_CMD "rsync -av --delete-excluded -e ssh cheusov@mova.org:~/public_html/pub/pkgsrc-pbulk/$OS/$PKGSRCVER/packages"
-set_if_not_set UPLOAD_LOGS_CMD 'rsync -av --delete-excluded -e ssh cheusov@mova.org:~/public_html/pub/pkgsrc-pbulk/$OS/$PKGSRCVER/log'
 
 ######################################################################
 
