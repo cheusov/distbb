@@ -588,18 +588,18 @@ function decode_logs (uu,                  txt,fn,dir){
 '
 }
 
-if test $NODES; then
-    NODES="-n $NODES"
+if test $SLAVES; then
+    SLAVES="-n $SLAVES"
     TRANSPORT="-t $TRANSPORT"
 else
-    NODES='-n +1' # no distributed local building
+    SLAVES='-n +1' # no distributed local building
     unset TRANSPORT
 fi
 
 verbose_print "Building\n"
 runpipe0 \
     print_tasks '|' \
-    paexec -EI -lr $TRANSPORT $NODES -c "$DISTBB_SLAVE" '|' \
+    paexec -EI -lr $TRANSPORT $SLAVES -c "$DISTBB_SLAVE" '|' \
     postfilter
 
 ######################################################################
