@@ -115,7 +115,7 @@ build_package (){
 }
 
 build_package2 (){
-    build_package 2>&1
+    build_package "$@" 2>&1
 }
 
 while read pkgpath; do
