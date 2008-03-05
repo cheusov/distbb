@@ -52,7 +52,7 @@ build_package (){
 		fi
 		cd $PKGSRCDIR/$1;;
 	    delete)
-		$PKG_DELETE "`$BMAKE show-var VARNAME=PKGNAME`";;
+		$PKG_DELETE "$($BMAKE show-var VARNAME=PKGNAME)";;
 	    *)
 		$BMAKE $t;;
 	esac
