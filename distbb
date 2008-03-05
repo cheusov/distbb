@@ -112,7 +112,7 @@ packages_built_prev_fn=$meta_dir/packages_built_prev.txt
 printf '' > $packages_built_prev_fn
 
 packages_built_fn=$meta_dir/packages_built.txt
-printf '' > $packages_built_prev_fn
+printf '' > $packages_built_fn
 
 ######################################################################
 
