@@ -35,6 +35,7 @@ set -e
 #fi
 
 unset PKG_PATH || true
+export BINPKG_SITES=$PACKAGES
 
 ######################################################################
 
@@ -107,7 +108,7 @@ build_package (){
 		$cmd
 		;;
 	    *)
-		if ! $BMAKE DEPENDS_TARGET=bin-install $t; then
+		if ! $BMAKE DEPENDS_TARGET=do-bin-install $t; then
 		    return 1
 		fi;;
 	esac
