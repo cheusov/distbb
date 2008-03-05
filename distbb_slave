@@ -26,10 +26,56 @@
 set -e
 . pipestatus
 
-if test "$THIS_IS_ME"; then
-    . ./distbb.conf
-else
-    . @@SYSCONFDIR@@/distbb.conf
+#if test "$THIS_IS_ME"; then
+    . /home/cheusov/pkg_distbb/etc/distbb.conf
+    DISTBB_SLAVE=/home/cheusov/pkg_distbb/bin/distbb_slave
+#    . ./distbb.conf
+#else
+#    . @@SYSCONFDIR@@/distbb.conf
+#fi
+
+######################################################################
+
+usage (){
+    cat <<EOF
+distbb_slave - distributed bulk build
+
+usage: distbb_slave [OPTIONS]
+OPTIONS:
+  -h|--help              display this help message
+  -e|--encode <cmd>      encode command, defaults to uuencode
+EOF
+}
+
+encode_cmd='uuencode -'
+
+while test $# -ne 0; do
+    case "$1" in
+	-h|--help)
+	    usage
+	    exit 0;;
+	-e|--encode)
+	    encode_cmd="$2"
+	    shift;;
+	--encode=*|-e=*)
+	    encode_cmd="$(printf '%s\n' \"$1\" | sed 's,^[^=]*=,,')";;
+	-e*)
+	    encode_cmd="$(printf '%s\n' \"$1\" | cut -b3-)";;
+	--)
+	    shift
+	    break;;
+	-*)
+	    echo "Bad option $1" 1>&2
+	    exit 1;;
+	*)
+	    break
+    esac
+    shift
+done
+
+if test $# -ne 0; then
+    usage
+    exit 1
 fi
 
 ######################################################################
@@ -37,8 +83,6 @@ fi
 header (){
     printf ' --**--**-- %8s --**--**--\n' "$1"
 }
-
-######################################################################
 
 build_package (){
     for t in init $TARGETS; do
@@ -48,19 +92,20 @@ build_package (){
 		rm -rf $DEL_DIRS
 		cd /
 		if test "$BOOTSTRAP"; then
-		    gzip -dc "$BOOTSTRAP" | tar -cf-
+		    cd /
+		    gzip -dc "$BOOTSTRAP" | tar -xf-
 		fi
 		cd $PKGSRCDIR/$1;;
 	    delete)
 		$PKG_DELETE "$($BMAKE show-var VARNAME=PKGNAME)";;
 	    *)
-		$BMAKE $t;;
+		$BMAKE DEPENDS_TARGET=bin-install $t;;
 	esac
     done
 }
 
 while read pkgpath; do
-    if runpipe_re '. 0' build_package $pkgpath '|' uuencode -; then
+    if runpipe_re '. 0' build_package $pkgpath 2>&1 '|' $encode_cmd; then
 	echo "status: $pipestatus_1"
     else
 	echo "status: 1" # uuencode failed
