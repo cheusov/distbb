@@ -29,10 +29,57 @@ set -e
 export LC_ALL=C # for sort and uniq
 
 if test "$THIS_IS_ME"; then
-    . ./distbb.conf
-    DISTBB_SLAVE=./distbb_slave
+    . /home/cheusov/pkg_distbb/etc/distbb.conf
+    DISTBB_SLAVE=/home/cheusov/pkg_distbb/bin/distbb_slave
 else
     . @@SYSCONFDIR@@/distbb.conf
+fi
+
+######################################################################
+
+usage (){
+    cat <<EOF
+distbb - distributed bulk build
+
+usage: distbb [OPTIONS]
+OPTIONS:
+  -h|--help              display this help message
+  -f|--file <filename>   obtain package names from
+                         a specified file, - for stdin,
+                         by default package names are obtained from
+                         pkgsrc source tree.
+EOF
+}
+
+pkg_src_summary_opts=''
+
+while test $# -ne 0; do
+    case "$1" in
+	-h|--help)
+	    usage
+	    exit 0;;
+	-f|--file)
+	    pkg_src_summary_opts="-f $2"
+	    shift;;
+	--file=*|-f=*)
+	    pkg_src_summary_opts="-f $(printf '%s\n' \"$1\" | sed 's,^[^=]*=,,')";;
+	-f*)
+	    pkg_src_summary_opts="-f $(printf '%s\n' \"$1\" | cut -b3-)";;
+	--)
+	    shift
+	    break;;
+	-*)
+	    echo "Bad option $1" 1>&2
+	    exit 1;;
+	*)
+	    break
+    esac
+    shift
+done
+
+if test $# -ne 0; then
+    usage
+    exit 1
 fi
 
 ######################################################################
@@ -124,8 +171,16 @@ NF == 0 && curr_pkgpath == pkgpath {
 ' "$PKG_SRC_SUMMARY"
 }
 
+if test -z "$PKG_SRC_SUMMARY"; then
+    PKG_SRC_SUMMARY=$tmpdir/pkg_src_summary.txt
+fi
+
 deps_fn=$tmpdir/deps.txt
 bdeps_fn=$tmpdir/bdeps.txt
+
+verbose_print "  Updating pkg_src_summary..."
+pkg_src_update_summary $pkg_src_summary_opts "$PKG_SRC_SUMMARY"
+verbose_print "done\n"
 
 verbose_print "  Dependencies from pkg_src_summary file..."
 extract_depends
@@ -533,10 +588,18 @@ function decode_logs (uu,                  txt,fn,dir){
 '
 }
 
+if test $NODES; then
+    NODES="-n $NODES"
+    TRANSPORT="-t $TRANSPORT"
+else
+    NODES='-n +1' # no distributed local building
+    unset TRANSPORT
+fi
+
 verbose_print "Building\n"
 runpipe0 \
     print_tasks '|' \
-    ~/prjs/paexec/paexec -EI -lr -n +5 -c "$DISTBB_SLAVE" '|' \
+    paexec -EI -lr $TRANSPORT $NODES -c "$DISTBB_SLAVE" '|' \
     postfilter
 
 ######################################################################
