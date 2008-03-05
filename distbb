@@ -35,6 +35,8 @@ else
     . @@SYSCONFDIR@@/distbb.conf
 fi
 
+unset PKG_PATH || true
+
 ######################################################################
 
 usage (){
