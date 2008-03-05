@@ -34,6 +34,8 @@ set -e
 #    . @@SYSCONFDIR@@/distbb.conf
 #fi
 
+unset PKG_PATH || true
+
 ######################################################################
 
 usage (){
@@ -89,23 +91,35 @@ build_package (){
 	header $t
 	case "$t" in
 	    init)
+		printf '===> Removing %s\n' "$DEL_DIRS"
 		rm -rf $DEL_DIRS
 		cd /
 		if test "$BOOTSTRAP"; then
 		    cd /
+		    printf '===> Unpacking bootstrap\n'
 		    gzip -dc "$BOOTSTRAP" | tar -xf-
 		fi
+		echo "===> cd-ing to $PKGSRCDIR/$1"
 		cd $PKGSRCDIR/$1;;
 	    delete)
-		$PKG_DELETE "$($BMAKE show-var VARNAME=PKGNAME)";;
+		cmp_del="$PKG_DELETE \"$($BMAKE show-var VARNAME=PKGNAME)\""
+		printf '===> Running %s\n' "$cmd"
+		$cmd
+		;;
 	    *)
-		$BMAKE DEPENDS_TARGET=bin-install $t;;
+		if ! $BMAKE DEPENDS_TARGET=bin-install $t; then
+		    return 1
+		fi;;
 	esac
     done
 }
 
+build_package2 (){
+    build_package 2>&1
+}
+
 while read pkgpath; do
-    if runpipe_re '. 0' build_package $pkgpath 2>&1 '|' $encode_cmd; then
+    if runpipe_re '. 0' build_package2 $pkgpath '|' $encode_cmd; then
 	echo "status: $pipestatus_1"
     else
 	echo "status: 1" # uuencode failed
