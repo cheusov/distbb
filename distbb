@@ -28,6 +28,9 @@ set -e
 
 export LC_ALL=C # for sort and uniq
 
+date_start="$(date -u '+%Y-%m-%d %H:%M') UTC"
+BUILD_START="$(echo $date_start | cut -f2 -d' ' | tr -d :)"
+
 if test "$THIS_IS_ME"; then
     . /home/cheusov/pkg_distbb/etc/distbb.conf
     DISTBB_SLAVE=/home/cheusov/pkg_distbb/bin/distbb_slave
@@ -50,10 +53,11 @@ OPTIONS:
                          a specified file, - for stdin,
                          by default package names are obtained from
                          pkgsrc source tree.
+  -k                     skip pkg_src_update_summary stage
 EOF
 }
 
-pkg_src_summary_opts=''
+pkg_src_packages=''
 
 while test $# -ne 0; do
     case "$1" in
@@ -61,12 +65,14 @@ while test $# -ne 0; do
 	    usage
 	    exit 0;;
 	-f|--file)
-	    pkg_src_summary_opts="-f $2"
+	    pkg_src_packages="$2"
 	    shift;;
 	--file=*|-f=*)
-	    pkg_src_summary_opts="-f $(printf '%s\n' \"$1\" | sed 's,^[^=]*=,,')";;
+	    pkg_src_packages="$(printf '%s\n' \"$1\" | sed 's,^[^=]*=,,')";;
 	-f*)
-	    pkg_src_summary_opts="-f $(printf '%s\n' \"$1\" | cut -b3-)";;
+	    pkg_src_packages="$(printf '%s\n' \"$1\" | cut -b3-)";;
+	-k)
+	    pkg_src_update_summary=1;;
 	--)
 	    shift
 	    break;;
@@ -85,8 +91,6 @@ if test $# -ne 0; then
 fi
 
 ######################################################################
-
-date_start="$(date -u '+%Y-%m-%d %H:%M') UTC"
 
 verbose_print (){
     printf "$1" 1>&2
@@ -173,16 +177,14 @@ NF == 0 && curr_pkgpath == pkgpath {
 ' "$PKG_SRC_SUMMARY"
 }
 
-if test -z "$PKG_SRC_SUMMARY"; then
-    PKG_SRC_SUMMARY=$tmpdir/pkg_src_summary.txt
-fi
-
 deps_fn=$tmpdir/deps.txt
 bdeps_fn=$tmpdir/bdeps.txt
 
-verbose_print "  Updating pkg_src_summary..."
-pkg_src_update_summary $pkg_src_summary_opts "$PKG_SRC_SUMMARY"
-verbose_print "done\n"
+if test -z "$pkg_src_update_summary"; then
+    verbose_print "  Updating pkg_src_summary..."
+    pkg_src_update_summary "$PKG_SRC_SUMMARY"
+    verbose_print "done\n"
+fi
 
 verbose_print "  Dependencies from pkg_src_summary file..."
 extract_depends
@@ -234,26 +236,6 @@ END {
 ' "$@"
 }
 
-######################################################################
-### comparison binaries against pkgsrc tree
-verbose_print "  pkg_summary vs. pkg_src_summary comparison..."
-cmp_fn=$tmpdir/cmp.txt
-pkg_cmp_summary -p $pkg_summary $PKG_SRC_SUMMARY > $cmp_fn
-verbose_print "done\n"
-
-awk '($1 == "=") {print $2}' $cmp_fn \
-    > $packages_built_prev_fn
-
-######################################################################
-### direct packages that need to be rebuilt
-verbose_print "  List of packages to be built..."
-rebuild1_fn=$tmpdir/rebuild1.txt
-awk '($1 != "=") && ($1 != "-") {print $2}' $cmp_fn |
-head -40 > $rebuild1_fn
-verbose_print "done\n"
-
-######################################################################
-### all dependancies (transitive closure)
 extract_dep (){
     awk '
 NF == 3 {
@@ -269,16 +251,62 @@ runpipe0 \
 verbose_print "done\n"
 
 ######################################################################
+### comparison binaries against pkgsrc tree
+verbose_print "  pkg_summary vs. pkg_src_summary comparison..."
+cmp_fn=$tmpdir/cmp.txt
+pkg_cmp_summary -p $pkg_summary $PKG_SRC_SUMMARY > $cmp_fn
+verbose_print "done\n"
+
+awk '($1 == "=") {print $2}' $cmp_fn \
+    > $packages_built_prev_fn
+
+######################################################################
+### direct packages that need to be rebuilt
+verbose_print "  List of packages to be built..."
+rebuild1_fn=$tmpdir/rebuild1.txt
+rebuild2_fn=$tmpdir/rebuild2.txt
+rebuild3_fn=$tmpdir/rebuild3.txt
+awk '($1 != "=") && ($1 != "-") {print $2}' $cmp_fn > $rebuild1_fn
+
+filter_rebuild2 (){
+    # also selects packages required by a given package
+    awk -v pkg_src_packages="$pkg_src_packages" '
+BEGIN {
+   while (getline < pkg_src_packages){
+      hash [$1] = 1
+      print $1
+   }
+}
+
+$2 in hash {
+   print $1
+}
+' "$@"
+}
+
+if test $pkg_src_packages; then
+    filter_rebuild2 $trans_clos_fn > $rebuild3_fn
+    if ! grep -f $rebuild3_fn $rebuild1_fn > $rebuild2_fn; then
+	: # because of 'set -e'
+    fi
+    rebuild1_fn=$rebuild2_fn
+fi
+verbose_print "done\n"
+
+######################################################################
 ### only those dependancies that depend on packages that need to be rebuilt
 filter_rebuild1 (){
-    awk -v rebuild1_fn="$rebuild1_fn" '
+    # also selects packages that depends on a given package
+    awk \
+	-v rebuild1_fn="$rebuild1_fn" \
+	-v pkg_src_packages="$pkg_src_packages" '
 BEGIN {
    while (getline < rebuild1_fn){
       hash [$1] = 1
    }
 }
 
-$1 in hash {
+($1 in hash) && (pkg_src_packages == "" || ($2 in hash)) {
    print $0
 }
 ' "$@"
@@ -286,8 +314,10 @@ $1 in hash {
 
 ######################################################################
 verbose_print "  Packages to be built with their dependancies..."
+
 trans_clos_rebuild_fn=$tmpdir/trans_closure_rebuild.txt
 filter_rebuild1 $trans_clos_fn > $trans_clos_rebuild_fn
+
 verbose_print "done\n"
 
 ######################################################################
@@ -913,4 +943,8 @@ done
 
 verbose_print "done\n"
 
+######################################################################
+verbose_print "Uploading logs..."
+$UPLOAD_LOGS_CMD
+verbose_print "done\n"
 ######################################################################
