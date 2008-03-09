@@ -132,6 +132,24 @@ pkg_refresh_summary $pkg_summary >$refreshed_summary_fn
 verbose_print "done\n"
 
 ######################################################################
+
+verbose_print "Clean-up package list..."
+
+if test $pkg_src_packages; then
+    awk '
+{
+   sub(/#.*$/, "")
+}
+NF > 0 {
+   print $1
+}' $pkg_src_packages > $tmpdir/packages.tmp
+
+    pkg_src_packages=$tmpdir/packages.tmp
+fi
+
+verbose_print "done\n"
+
+######################################################################
 ### extracting DEPENDS and BUILDS_DEPENDS
 extract_depends (){
     awk -v deps_fn="$deps_fn" -v bdeps_fn="$bdeps_fn" '
