@@ -103,7 +103,7 @@ build_package (){
 		echo "===> cd-ing to $PKGSRCDIR/$1"
 		cd $PKGSRCDIR/$1;;
 	    *)
-		if ! $BMAKE PKG_VERBOSE=1 DEPENDS_TARGET=do-bin-install $t; then
+		if ! $BMAKE $EXTRA_VARS PKG_VERBOSE=1 DEPENDS_TARGET=do-bin-install $t; then
 		    return 1
 		fi;;
 	esac
