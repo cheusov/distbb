@@ -40,7 +40,7 @@ export BINPKG_SITES=$PACKAGES
 ######################################################################
 
 usage (){
-    cat <<EOF
+    cat 1>&2 <<EOF
 distbb_slave - distributed bulk build
 
 usage: distbb_slave [OPTIONS]
@@ -120,5 +120,5 @@ while read pkgpath; do
     else
 	echo "status: 1" # uuencode failed
     fi
-    echo '' # end of task
+    echo '' # end of task marker
 done
