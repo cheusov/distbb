@@ -100,14 +100,12 @@ verbose_print (){
 
 verbose_print "Preparations\n"
 
-test -n "$REPORTS_DIR"
-test -n "$BUILD_START"
+REPORT1_DIR=$REPORTS_DIR/$BUILD_START
 
-REPORTS_DIR=$REPORTS_DIR/$BUILD_START
+test -n "$REPORT1_DIR" # who knows...
+rm -rf $REPORT1_DIR
 
-rm -rf $REPORTS_DIR
-
-meta_dir=$REPORTS_DIR/META
+meta_dir=$REPORT1_DIR/META
 tmpdir=$meta_dir/tmp
 mkdir -p -m 700 $tmpdir
 
@@ -292,11 +290,23 @@ $2 in hash {
 ' "$@"
 }
 
+grep_packages (){
+    awk -v pkgs=$1 '
+BEGIN {
+   while ((getline < pkgs) > 0){
+      hash [$1] = 1
+   }
+}
+
+$1 in hash
+' $2
+}
+
 if test $pkg_src_packages; then
     filter_rebuild2 $trans_clos_fn > $rebuild3_fn
-    if ! grep -f $rebuild3_fn $rebuild1_fn > $rebuild2_fn; then
-	: # because of 'set -e'
-    fi
+
+    grep_packages $rebuild3_fn $rebuild1_fn > $rebuild2_fn
+
     rebuild1_fn=$rebuild2_fn
 fi
 verbose_print "done\n"
@@ -352,7 +362,7 @@ queue__ready_to_be_built (){
 
 ######################################################################
 verbose_print "  Directories for logging..."
-( cd $REPORTS_DIR && awk '{print $1}' $queue_fn | xargs mkdir -p )
+( cd $REPORT1_DIR && awk '{print $1}' $queue_fn | xargs mkdir -p )
 verbose_print "done\n"
 
 ######################################################################
@@ -412,7 +422,7 @@ awk \
    -v trans_clos_fn=$trans_clos_rebuild_fn \
    -v queue_fn=$queue_fn \
    -v lckfile=$lckfile \
-   -v reports_dir=$REPORTS_DIR \
+   -v report1_dir=$REPORT1_DIR \
    -v meta_dir=$meta_dir \
    -v packages_failed_fn=$packages_failed_fn \
    -v packages_built_fn=$packages_built_fn \
@@ -443,7 +453,7 @@ $3 == "status:" {
 }
 
 {
-   log_dir = reports_dir "/" pkgpaths [$2]
+   log_dir = report1_dir "/" pkgpaths [$2]
    log_fn  = log_dir "/uu.tmp"
 }
 
@@ -597,7 +607,7 @@ function decode_logs (uu,                  txt,fn,dir){
 
          indirect_failures [pkgp] = 1
 
-         pkgp_log_dir = reports_dir "/" pkgp
+         pkgp_log_dir = report1_dir "/" pkgp
          pkgp_log_fn  = pkgp_log_dir "/failed_because.txt"
          print pkgpath >> pkgp_log_fn
          xclose(pkgp_log_fn) # in order to not exceed system/awk limits...
@@ -653,7 +663,7 @@ verbose_print "done\n"
 ######################################################################
 
 verbose_print "Logs generation and clean-ups..."
-rmdir $REPORTS_DIR/* 2>/dev/null || true
+rmdir $REPORT1_DIR/* 2>/dev/null || true
 
 date_end="$(date -u '+%Y-%m-%d %H:%M') UTC"
 
@@ -661,7 +671,7 @@ path2pkgpath (){
     sed -e 's,^.*/\([^/]*/[^/]*\)/failed_because.txt$,\1,'
 }
 find_failed_deps_packages (){
-    runpipe0 find $REPORTS_DIR -name failed_because.txt '|' path2pkgpath
+    runpipe0 find $REPORT1_DIR -name failed_because.txt '|' path2pkgpath
 }
 
 find_failed_deps_packages > $packages_failed_deps_fn
@@ -708,7 +718,7 @@ FILENAME != pkg_src_summary {
 get_failed_stage (){
     # $1 - pkgpath
     for t in $TARGETS; do
-	if test -f $REPORTS_DIR/$1/stage_$t.txt; then
+	if test -f $REPORT1_DIR/$1/stage_$t.txt; then
 	    failed_stage="$t"
 	fi
     done
@@ -776,7 +786,7 @@ EOF
 
     cat $enriched_failed_fn |
     while read pkgpath maintainer pkgname; do
-	breaks=$(count_lines $REPORTS_DIR/$pkgpath/broken_packages.txt)
+	breaks=$(count_lines $REPORT1_DIR/$pkgpath/broken_packages.txt)
 	failed_stage=$(get_failed_stage $pkgpath)
 	echo "$pkgpath $breaks $failed_stage $maintainer $pkgname"
     done |
@@ -803,7 +813,7 @@ EOF
     echo ''
 
     while read pkgpath dummy pkgname; do
-	fn=$REPORTS_DIR/$pkgpath/failed_because.txt
+	fn=$REPORT1_DIR/$pkgpath/failed_because.txt
 	cnt=$(count_lines $fn)
 	dep=$(head -1 $fn)
 	depX=$(awk -v cnt=$cnt 'NR > cnt-6 && NR > 1' $fn)
@@ -911,7 +921,8 @@ report_html (){
 
 report_html > $meta_dir/report.html
 
-report_txt | sed -e 's,<[^<>]*>,,g' -e 's,&[a-z]*;,,g' > $meta_dir/report.txt
+report_txt_fn=$meta_dir/report.txt
+report_txt | sed -e 's,<[^<>]*>,,g' -e 's,&[a-z]*;,,g' > $report_txt_fn
 
 ### generate per file HTMLs
 stage2html (){
@@ -943,7 +954,7 @@ stage2html (){
     html_footer
 }
 
-find $REPORTS_DIR -name 'stage_*.txt' |
+find $REPORT1_DIR -name 'stage_*.txt' |
 while read stage_fn; do
     html_fn=${stage_fn%%.txt}.html
     stage2html $stage_fn >$html_fn
@@ -954,5 +965,13 @@ verbose_print "done\n"
 ######################################################################
 verbose_print "Uploading logs..."
 $UPLOAD_LOGS_CMD
+verbose_print "done\n"
+######################################################################
+verbose_print "Uploading packages..."
+$UPLOAD_PKGS_CMD
+verbose_print "done\n"
+######################################################################
+verbose_print "Sending report..."
+$REPORT_CMD < $report_txt_fn
 verbose_print "done\n"
 ######################################################################
