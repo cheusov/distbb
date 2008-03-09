@@ -102,13 +102,8 @@ build_package (){
 		fi
 		echo "===> cd-ing to $PKGSRCDIR/$1"
 		cd $PKGSRCDIR/$1;;
-	    delete)
-		cmp_del="$PKG_DELETE \"$($BMAKE show-var VARNAME=PKGNAME)\""
-		printf '===> Running %s\n' "$cmd"
-		$cmd
-		;;
 	    *)
-		if ! $BMAKE DEPENDS_TARGET=do-bin-install $t; then
+		if ! $BMAKE PKG_VERBOSE=1 DEPENDS_TARGET=do-bin-install $t; then
 		    return 1
 		fi;;
 	esac
