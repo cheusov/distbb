@@ -963,15 +963,21 @@ done
 verbose_print "done\n"
 
 ######################################################################
+
 verbose_print "Uploading logs..."
-$UPLOAD_LOGS_CMD
+eval $UPLOAD_LOGS_CMD
 verbose_print "done\n"
+
 ######################################################################
+
 verbose_print "Uploading packages..."
-$UPLOAD_PKGS_CMD
+eval $UPLOAD_PKGS_CMD
 verbose_print "done\n"
+
 ######################################################################
+
 verbose_print "Sending report..."
-$REPORT_CMD < $report_txt_fn
+eval $REPORT_CMD < $report_txt_fn
 verbose_print "done\n"
+
 ######################################################################
