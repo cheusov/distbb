@@ -133,7 +133,7 @@ verbose_print "done\n"
 
 ######################################################################
 
-verbose_print "Clean-up package list..."
+verbose_print "  clean-up package list..."
 
 if test $pkg_src_packages; then
     awk '
@@ -656,11 +656,11 @@ function decode_logs (uu,                  txt,fn,dir){
 '
 }
 
-if test $SLAVES; then
+if test "$MASTER_MODE"; then
     SLAVES="-n $SLAVES"
     TRANSPORT="-t $TRANSPORT"
 else
-    SLAVES='-n +1' # no distributed local building
+    SLAVES='-n +1' # building on localhost
     unset TRANSPORT
 fi
 
