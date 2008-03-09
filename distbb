@@ -29,7 +29,7 @@ set -e
 export LC_ALL=C # for sort and uniq
 
 date_start="$(date -u '+%Y-%m-%d %H:%M') UTC"
-BUILD_START="$(echo $date_start | cut -f2 -d' ' | tr -d :)"
+BUILD_START="$(echo $date_start | awk '{gsub(/[:-]/, ""); print $1 "-" $2}')"
 
 if test "$THIS_IS_ME"; then
     . /home/cheusov/pkg_distbb/etc/distbb.conf
@@ -100,6 +100,11 @@ verbose_print (){
 
 verbose_print "Preparations\n"
 
+test -n "$REPORTS_DIR"
+test -n "$BUILD_START"
+
+REPORTS_DIR=$REPORTS_DIR/$BUILD_START
+
 rm -rf $REPORTS_DIR
 
 meta_dir=$REPORTS_DIR/META
@@ -120,9 +125,12 @@ printf '' > $packages_built_fn
 
 ######################################################################
 
+refreshed_summary_fn=$tmpdir/refreshed_summary.tmp
+
 verbose_print "  updating pkg_summary.txt..."
 pkg_summary=$PACKAGES/pkg_summary.txt
-pkg_update_summary $pkg_summary $PACKAGES
+pkg_update_summary $pkg_summary $PACKAGES/All
+pkg_refresh_summary $pkg_summary >$refreshed_summary_fn
 verbose_print "done\n"
 
 ######################################################################
@@ -177,8 +185,8 @@ NF == 0 && curr_pkgpath == pkgpath {
 ' "$PKG_SRC_SUMMARY"
 }
 
-deps_fn=$tmpdir/deps.txt
-bdeps_fn=$tmpdir/bdeps.txt
+deps_fn=$tmpdir/deps.tmp
+bdeps_fn=$tmpdir/bdeps.tmp
 
 if test -z "$pkg_src_update_summary"; then
     verbose_print "  Updating pkg_src_summary..."
@@ -244,7 +252,7 @@ NF == 3 {
 }
 
 verbose_print "  Transitive closure of the dependancy graph..."
-trans_clos_fn=$tmpdir/trans_closure.txt
+trans_clos_fn=$tmpdir/trans_closure.tmp
 runpipe0 \
     extract_dep $deps_fn $bdeps_fn '|' \
     transitive_closure > $trans_clos_fn
@@ -253,8 +261,8 @@ verbose_print "done\n"
 ######################################################################
 ### comparison binaries against pkgsrc tree
 verbose_print "  pkg_summary vs. pkg_src_summary comparison..."
-cmp_fn=$tmpdir/cmp.txt
-pkg_cmp_summary -p $pkg_summary $PKG_SRC_SUMMARY > $cmp_fn
+cmp_fn=$tmpdir/cmp.tmp
+pkg_cmp_summary -p $refreshed_summary_fn $PKG_SRC_SUMMARY > $cmp_fn
 verbose_print "done\n"
 
 awk '($1 == "=") {print $2}' $cmp_fn \
@@ -263,9 +271,9 @@ awk '($1 == "=") {print $2}' $cmp_fn \
 ######################################################################
 ### direct packages that need to be rebuilt
 verbose_print "  List of packages to be built..."
-rebuild1_fn=$tmpdir/rebuild1.txt
-rebuild2_fn=$tmpdir/rebuild2.txt
-rebuild3_fn=$tmpdir/rebuild3.txt
+rebuild1_fn=$tmpdir/rebuild1.tmp
+rebuild2_fn=$tmpdir/rebuild2.tmp
+rebuild3_fn=$tmpdir/rebuild3.tmp
 awk '($1 != "=") && ($1 != "-") {print $2}' $cmp_fn > $rebuild1_fn
 
 filter_rebuild2 (){
@@ -315,14 +323,14 @@ BEGIN {
 ######################################################################
 verbose_print "  Packages to be built with their dependancies..."
 
-trans_clos_rebuild_fn=$tmpdir/trans_closure_rebuild.txt
+trans_clos_rebuild_fn=$tmpdir/trans_closure_rebuild.tmp
 filter_rebuild1 $trans_clos_fn > $trans_clos_rebuild_fn
 
 verbose_print "done\n"
 
 ######################################################################
 ### counted list of packages / queue
-queue_fn=$tmpdir/queue.txt
+queue_fn=$tmpdir/queue.tmp
 count_deps (){
 awk '
 NF == 2 { count [$2] += 1 }
@@ -370,7 +378,7 @@ END {
 ' $queue_fn
 }
 
-tasks_fn=$tmpdir/tasks.txt
+tasks_fn=$tmpdir/tasks.tmp
 print_tasks (){
     i=0
     while test -s $queue_fn; do
@@ -637,7 +645,7 @@ runpipe0 \
 ######################################################################
 
 verbose_print "Updating pkg_summary.{txt,gz,bz2}..."
-pkg_update_summary $pkg_summary $PACKAGES
+pkg_update_summary $pkg_summary $PACKAGES/All
 gzip < $pkg_summary > ${pkg_summary%%.txt}.gz
 bzip2 < $pkg_summary > ${pkg_summary%%.txt}.bz2
 verbose_print "done\n"
@@ -816,11 +824,11 @@ packages_built_prev_cnt=$(count_lines $packages_built_prev_fn)
 packages_total=$(($packages_built_cnt+$packages_built_prev_cnt))
 packages_in_summary=$(awk '{cnt += ($0 ~ /PKGNAME/)} END {print cnt}' $pkg_summary)
 
-enriched_failed_fn=$tmpdir/enriched_failed.txt
+enriched_failed_fn=$tmpdir/enriched_failed.tmp
 enrich_pkgpath "MAINTAINER PKGNAME" \
     $packages_failed_fn > $enriched_failed_fn
 
-enriched_failed_deps_fn=$tmpdir/enriched_failed_deps.txt
+enriched_failed_deps_fn=$tmpdir/enriched_failed_deps.tmp
 enrich_pkgpath "MAINTAINER PKGNAME" \
     $packages_failed_deps_fn > $enriched_failed_deps_fn
 
