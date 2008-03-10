@@ -33,7 +33,6 @@ BUILD_START="$(echo $date_start | awk '{gsub(/[:-]/, ""); print $1 "-" $2}')"
 
 if test "$THIS_IS_ME"; then
     . /home/cheusov/pkg_distbb/etc/distbb.conf
-    DISTBB_SLAVE=/home/cheusov/pkg_distbb/bin/distbb_slave
 else
     . @@SYSCONFDIR@@/distbb.conf
 fi
@@ -410,9 +409,7 @@ tasks_fn=$tmpdir/tasks.tmp
 print_tasks (){
     i=0
     while test -s $queue_fn; do
-	while ! shlock -p $$ -f ${lckfile}; do
-	    sleep 1 # This is ugly but works
-	done
+	$DISTBB_LOCK ${lckfile}
 
 	if get_pkgpath > $tasks_fn; then
 #	    echo get_pkgpath succeeded 1>&2
@@ -444,7 +441,7 @@ awk \
    -v meta_dir=$meta_dir \
    -v packages_failed_fn=$packages_failed_fn \
    -v packages_built_fn=$packages_built_fn \
-   -v pid=$$ '
+   -v distbb_lock="$DISTBB_LOCK" '
 BEGIN {
    while (xgetline0(trans_clos_fn)){
       deps [$1, $2] = 1
@@ -454,8 +451,8 @@ BEGIN {
    xclose(trans_clos_fn)
 
    tmp_fn = (queue_fn ".tmp2")
-   wait_for_lock=sprintf("/bin/sh -c \"while ! shlock -p %s -f %s; do sleep 1; done\"", pid, lckfile)
-   rm_lock=sprintf("rm %s", lckfile)
+   wait_for_lock=(distbb_lock " " lckfile)
+   rm_lock=("rm " lckfile)
 }
 
 !($2 in pkgpaths) {

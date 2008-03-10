@@ -1,0 +1,13 @@
+#!/bin/sh
+
+# $1 - lock filename
+
+set -e
+
+test $# = 1
+
+# This is ugly but works.
+# ...until I find a better lightweight and commonly used tool
+while ! shlock -p $$ -f "$1"; do
+    sleep 1
+done
