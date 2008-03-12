@@ -1,13 +1,14 @@
 #!/bin/sh
 
-# $1 - lock filename
+# $1 - pid of locking process
+# $2 - lock filename
 
 set -e
 
-test $# = 1
+test $# = 2
 
 # This is ugly but works.
 # ...until I find a better lightweight and commonly used tool
-while ! shlock -p $$ -f "$1"; do
+while ! shlock -p $1 -f "$2"; do
     sleep 1
 done

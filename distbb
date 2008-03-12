@@ -409,7 +409,7 @@ tasks_fn=$tmpdir/tasks.tmp
 print_tasks (){
     i=0
     while test -s $queue_fn; do
-	$DISTBB_LOCK ${lckfile}
+	$DISTBB_LOCK $$ ${lckfile}
 
 	if get_pkgpath > $tasks_fn; then
 #	    echo get_pkgpath succeeded 1>&2
@@ -441,7 +441,7 @@ awk \
    -v meta_dir=$meta_dir \
    -v packages_failed_fn=$packages_failed_fn \
    -v packages_built_fn=$packages_built_fn \
-   -v distbb_lock="$DISTBB_LOCK" '
+   -v distbb_lock_pid="$DISTBB_LOCK $$" '
 BEGIN {
    while (xgetline0(trans_clos_fn)){
       deps [$1, $2] = 1
@@ -451,7 +451,7 @@ BEGIN {
    xclose(trans_clos_fn)
 
    tmp_fn = (queue_fn ".tmp2")
-   wait_for_lock=(distbb_lock " " lckfile)
+   wait_for_lock=(distbb_lock_pid " " lckfile)
    rm_lock=("rm " lckfile)
 }
 
@@ -732,7 +732,7 @@ FILENAME != pkg_src_summary {
 
 get_failed_stage (){
     # $1 - pkgpath
-    for t in $TARGETS; do
+    for t in init $TARGETS; do
 	if test -f $REPORT1_DIR/$1/stage_$t.txt; then
 	    failed_stage="$t"
 	fi
