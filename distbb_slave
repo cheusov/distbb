@@ -88,22 +88,44 @@ header (){
 }
 
 build_package (){
-    for t in init $TARGETS; do
+    header init
+
+    #
+    printf '=> Removing %s\n' "$DEL_DIRS"
+    if ! rm -rf $DEL_DIRS; then
+	return 1
+    fi
+
+    #
+    printf '=> cd /\n'
+    cd /
+
+    #
+    if test "$BOOTSTRAP"; then
+	printf '===> Unpacking bootstrap\n'
+	if ! gzip -dc "$BOOTSTRAP" | tar -xf-; then
+	    return 1
+	fi
+    fi
+
+    #
+    echo "=> cd $PKGSRCDIR/$1"
+    if ! cd $PKGSRCDIR/$1; then
+	return 1
+    fi
+
+    #
+    if ! $BMAKE $EXTRA_VARS PKG_VERBOSE=1 clean; then
+	return 1
+    fi
+
+    # $TARGETS
+    bmake_opts="$EXTRA_VARS PKG_VERBOSE=1 DEPENDS_TARGET=do-bin-install"
+    for t in $TARGETS clean; do
 	header $t
 	case "$t" in
-	    init)
-		printf '===> Removing %s\n' "$DEL_DIRS"
-		rm -rf $DEL_DIRS
-		cd /
-		if test "$BOOTSTRAP"; then
-		    cd /
-		    printf '===> Unpacking bootstrap\n'
-		    gzip -dc "$BOOTSTRAP" | tar -xf-
-		fi
-		echo "===> cd-ing to $PKGSRCDIR/$1"
-		cd $PKGSRCDIR/$1;;
 	    *)
-		if ! $BMAKE $EXTRA_VARS PKG_VERBOSE=1 DEPENDS_TARGET=do-bin-install $t; then
+		if ! $BMAKE $bmake_opts $t; then
 		    return 1
 		fi;;
 	esac

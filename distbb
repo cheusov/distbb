@@ -947,7 +947,7 @@ stage2html (){
     pkgpath="$(echo $1 | sed 's,^.*/\([^/]*/[^/]*\)/[^/]*$,\1,')"
     stage="$(echo $1 | sed 's,^.*stage_\(.*\)[.].*$,\1,')"
 
-    for t in $TARGETS; do
+    for t in init $TARGETS; do
 	printf '&nbsp;'
 
 	if test -f $pkgdir/stage_$t.txt; then
