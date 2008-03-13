@@ -198,10 +198,19 @@ NF == 0 && curr_pkgpath == pkgpath {
    print bdeps
 }
 ' "$PKG_SRC_SUMMARY"
+
+    bootstr_deps="$(cd $PKGSRCDIR/devel/bmake && $BMAKE show-var VARNAME=BOOTSTRAP_DEPENDS | sed 's,[^ ]*[.][.]/[.][.]/,,g')"
+    echo $bootstr_deps
+    printf '' > $bsdeps_fn
+    for d in $bootstr_deps; do
+	awk -v d=$d -F= '$1 == "PKGPATH" {print d, $2}' \
+	    $PKG_SRC_SUMMARY > $bsdeps_fn
+    done
 }
 
 deps_fn=$tmpdir/deps.tmp
 bdeps_fn=$tmpdir/bdeps.tmp
+bsdeps_fn=$tmpdir/bsdeps.tmp
 
 if test -z "$pkg_src_update_summary"; then
     verbose_print "  Updating pkg_src_summary..."
@@ -269,7 +278,7 @@ NF == 3 {
 verbose_print "  Transitive closure of the dependancy graph..."
 trans_clos_fn=$tmpdir/trans_closure.tmp
 runpipe0 \
-    extract_dep $deps_fn $bdeps_fn '|' \
+    extract_dep $deps_fn $bdeps_fn $bsdeps '|' \
     transitive_closure > $trans_clos_fn
 verbose_print "done\n"
 
