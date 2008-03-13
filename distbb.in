@@ -34,7 +34,7 @@ BUILD_START="$(echo $date_start | awk '{gsub(/[:-]/, ""); print $1 "-" $2}')"
 if test "$THIS_IS_ME"; then
     . /home/cheusov/pkg_distbb/etc/distbb.conf
 else
-    . @@SYSCONFDIR@@/distbb.conf
+    . @@sysconfdir@@/distbb.conf
 fi
 
 unset PKG_PATH || true
