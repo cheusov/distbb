@@ -4,6 +4,7 @@ PREFIX?=/usr/local
 SYSCONFDIR?=${PREFIX}/etc
 BINDIR?=${PREFIX}/bin
 MANDIR?=${PREFIX}/man
+EGDIR?=${PREFIX}/share/distbb
 
 POD2MAN?=		pod2man
 POD2HTML?=		pod2html
@@ -15,14 +16,20 @@ SRCROOT?=		${.PARSEDIR}
 
 ##################################################
 
-VERSION=		0.1.0
+.include "Makefile.version"
+
+SCRIPTS=		distbb distbb_slave
+FILES=			distbb.conf
+
+FILESDIR=		${EGDIR}
+
+MKMAN=			no
 
 WARNS=			4
 
 BIRTHDATE=		2008-12-31
 
-FILES=			${MODULES}
-FILESDIR=		${MODULESDIR}
+PROJECTNAME=		distbb
 
 distbb: distbb.in
 	sed 's,@@sysconfdir@@,${SYSCONFDIR},g' ${.ALLSRC} > ${.TARGET}
@@ -45,7 +52,7 @@ clean-my:
 .PHONY: install-dirs
 install-dirs:
 	$(INST_DIR) ${DESTDIR}${BINDIR}
-	$(INST_DIR) ${DESTDIR}${MODULESDIR}
+	$(INST_DIR) ${DESTDIR}${EGDIR}
 .if "$(MKMAN)" != "no"
 	$(INST_DIR) ${DESTDIR}${MANDIR}/man1
 .if "$(MKCATPAGES)" != "no"
