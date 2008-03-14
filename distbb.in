@@ -25,6 +25,7 @@
 
 set -e
 . pipestatus
+. @@libexecdir@@/distbb_common
 
 export LC_ALL=C # for sort and uniq
 

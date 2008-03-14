@@ -19,14 +19,15 @@ SRCROOT?=		${.PARSEDIR}
 
 .include "Makefile.version"
 
-SCRIPTS=		distbb distbb_slave distbb_upload_logs \
-			distbb_upload_pkgs distbb_report \
-			distbb_lock
+SCRIPTS=			distbb distbb_slave distbb_upload_logs \
+				distbb_upload_pkgs distbb_report \
+				distbb_lock distbb_slave distbb_slave_test
+SCRIPTSDIR_distbb_slave=	${LIBEXECDIR}
+SCRIPTSDIR_distbb_slave_test=	${LIBEXECDIR}
 
-FILES=			distbb.conf distbb_common
-
+FILES=				distbb.conf distbb_common
 FILESDIR=			${EGDIR}
-FILESDIR_distbb_common.sh=	${LIBEXECDIR}
+FILESDIR_distbb_common=		${LIBEXECDIR}
 
 MKMAN=			no
 

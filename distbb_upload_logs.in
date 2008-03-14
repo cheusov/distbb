@@ -25,6 +25,7 @@
 
 set -e
 . pipestatus
+. @@libexecdir@@/distbb_common
 
 # usage: distbb_upload_logs BUILD_START
 test $# -eq 1

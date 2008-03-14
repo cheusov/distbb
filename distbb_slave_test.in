@@ -25,6 +25,7 @@
 
 set -e
 . pipestatus
+. @@libexecdir@@/distbb_common
 
 if test "$THIS_IS_ME"; then
     . ./distbb.conf
