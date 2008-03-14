@@ -200,7 +200,7 @@ NF == 0 && curr_pkgpath == pkgpath {
 ' "$PKG_SRC_SUMMARY"
 
     bootstr_deps="$(cd $PKGSRCDIR/devel/bmake && $BMAKE show-var VARNAME=BOOTSTRAP_DEPENDS | sed 's,[^ ]*[.][.]/[.][.]/,,g')"
-    echo $bootstr_deps
+
     printf '' > $bsdeps_fn
     for d in $bootstr_deps; do
 	awk -v d=$d -F= '$1 == "PKGPATH" {print d, $2}' \
@@ -773,6 +773,12 @@ pkgpath2maintainer (){
 }
 
 report_txt (){
+    if test "$PACKAGES_URL"; then
+	url="<a href=\"$PACKAGES_URL\" title=\"binary packages\">binary packages</a>"
+    else
+	url='binary packages'
+    fi
+
     cat <<EOF
 <h1>pkgsrc bulk build results (distbb - distributed bulk build)</h1>
 
@@ -793,7 +799,7 @@ report_txt (){
 
   <tr><td>Packages in pkg_summary</td>         <td align="right">$(right_align 20 $packages_in_summary)</td></tr>
 </table>
-<p>Packages not listed here resulted in a binary package.
+<p>Packages not listed here resulted in a $url.<br>
 Results of failed packages are available below.</p>
 
 <h3>Failed packages</h3>
@@ -822,7 +828,6 @@ EOF
 	print_failed_pkg "$pkgpath"  "$breaks" "$failed_stage" "$maintainer" "$pkgname"
     done
     printf '%s\n' "</table>"
-
 
     # failed dependencies
     echo "<h3>Failed due to dependencies</h3>"
