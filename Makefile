@@ -20,7 +20,8 @@ SRCROOT?=		${.PARSEDIR}
 .include "Makefile.version"
 
 SCRIPTS=		distbb distbb_slave distbb_upload_logs \
-			distbb_upload_pkgs distbb_report
+			distbb_upload_pkgs distbb_report \
+			distbb_lock
 
 FILES=			distbb.conf distbb_common.sh
 
@@ -52,6 +53,7 @@ distbb.html : distbb.pod
 clean: clean-my
 clean-my:
 	rm -f *~ core* distbb.1 distbb.cat1 ChangeLog
+	rm -rf ${SCRIPTS} distbb.conf
 	rm -f distbb.html
 
 ##################################################
