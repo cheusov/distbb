@@ -39,9 +39,9 @@ TRANSPORT='/usr/bin/ssh -x'
 # hosts|chroots where actual builds are done
 SLAVES='host1 host2 host3'
 
-#
-DISTBB_SLAVE=$DISTBB_ROOT/bin/distbb_slave
-DISTBB_LOCK=$DISTBB_ROOT/libexec/distbb/distbb_lock
+# do not change the following unless you know what you are doing
+DISTBB_SLAVE=@@libexecdir@@/distbb_slave
+DISTBB_LOCK=@@libexecdir@@/distbb_lock
 
 # filename containing notes of bulk build
 NOTES=''
