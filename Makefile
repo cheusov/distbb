@@ -19,12 +19,12 @@ SRCROOT?=		${.PARSEDIR}
 
 .include "Makefile.version"
 
-SCRIPTS=		distbb distbb_slave distbb_upload_logs \
-			distbb_upload_pkgs distbb_report \
-			distbb_lock
+SCRIPTS=			distbb distbb_slave distbb_upload_logs \
+				distbb_upload_pkgs distbb_report \
+				distbb_lock distbb_slave distbb_slave_test
+SCRIPTSDIR_distbb_slave=	${LIBEXECDIR}
 
-FILES=			distbb.conf distbb_common.sh
-
+FILES=				distbb.conf distbb_common
 FILESDIR=			${EGDIR}
 FILESDIR_distbb_common.sh=	${LIBEXECDIR}
 
@@ -53,7 +53,7 @@ distbb.html : distbb.pod
 clean: clean-my
 clean-my:
 	rm -f *~ core* distbb.1 distbb.cat1 ChangeLog
-	rm -rf ${SCRIPTS} distbb.conf
+	rm -rf ${SCRIPTS} ${FILES}
 	rm -f distbb.html
 
 ##################################################
