@@ -35,16 +35,12 @@ BIRTHDATE=		2008-12-31
 
 PROJECTNAME=		distbb
 
-distbb: distbb.in
-	sed 's,@@sysconfdir@@,${SYSCONFDIR},g' ${.ALLSRC} > ${.TARGET}
-distbb_slave: distbb_slave.in
-	sed 's,@@sysconfdir@@,${SYSCONFDIR},g' ${.ALLSRC} > ${.TARGET}
-distbb_upload_logs: distbb_upload_logs.in
-	sed 's,@@sysconfdir@@,${SYSCONFDIR},g' ${.ALLSRC} > ${.TARGET}
-distbb_upload_pkgs: distbb_upload_pkgs.in
-	sed 's,@@sysconfdir@@,${SYSCONFDIR},g' ${.ALLSRC} > ${.TARGET}
-distbb_report: distbb_report.in
-	sed 's,@@sysconfdir@@,${SYSCONFDIR},g' ${.ALLSRC} > ${.TARGET}
+.SUFFIXES:		.in
+
+.in:
+	sed -e 's,@@sysconfdir@@,${SYSCONFDIR},g' \
+	    -e 's,@@libexecdir@@,${LIBEXECDIR},g' \
+	    ${.ALLSRC} > ${.TARGET}
 
 distbb.1 : distbb.pod
 	$(POD2MAN) -s 1 -r 'AWK Wrapper' -n distbb \
