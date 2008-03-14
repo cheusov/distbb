@@ -23,7 +23,7 @@ SCRIPTS=		distbb distbb_slave distbb_upload_logs \
 			distbb_upload_pkgs distbb_report \
 			distbb_lock
 
-FILES=			distbb.conf distbb_common.sh
+FILES=			distbb.conf distbb_common
 
 FILESDIR=			${EGDIR}
 FILESDIR_distbb_common.sh=	${LIBEXECDIR}
