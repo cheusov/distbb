@@ -4,6 +4,7 @@ PREFIX?=/usr/local
 SYSCONFDIR?=${PREFIX}/etc
 BINDIR?=${PREFIX}/bin
 MANDIR?=${PREFIX}/man
+LIBEXECDIR?=${PREFIX}/libexec/distbb
 EGDIR?=${PREFIX}/share/distbb
 
 POD2MAN?=		pod2man
@@ -18,10 +19,13 @@ SRCROOT?=		${.PARSEDIR}
 
 .include "Makefile.version"
 
-SCRIPTS=		distbb distbb_slave
-FILES=			distbb.conf
+SCRIPTS=		distbb distbb_slave distbb_upload_logs \
+			distbb_upload_pkgs distbb_report
 
-FILESDIR=		${EGDIR}
+FILES=			distbb.conf distbb_common.sh
+
+FILESDIR=			${EGDIR}
+FILESDIR_distbb_common.sh=	${LIBEXECDIR}
 
 MKMAN=			no
 
@@ -34,6 +38,12 @@ PROJECTNAME=		distbb
 distbb: distbb.in
 	sed 's,@@sysconfdir@@,${SYSCONFDIR},g' ${.ALLSRC} > ${.TARGET}
 distbb_slave: distbb_slave.in
+	sed 's,@@sysconfdir@@,${SYSCONFDIR},g' ${.ALLSRC} > ${.TARGET}
+distbb_upload_logs: distbb_upload_logs.in
+	sed 's,@@sysconfdir@@,${SYSCONFDIR},g' ${.ALLSRC} > ${.TARGET}
+distbb_upload_pkgs: distbb_upload_pkgs.in
+	sed 's,@@sysconfdir@@,${SYSCONFDIR},g' ${.ALLSRC} > ${.TARGET}
+distbb_report: distbb_report.in
 	sed 's,@@sysconfdir@@,${SYSCONFDIR},g' ${.ALLSRC} > ${.TARGET}
 
 distbb.1 : distbb.pod
@@ -53,6 +63,7 @@ clean-my:
 install-dirs:
 	$(INST_DIR) ${DESTDIR}${BINDIR}
 	$(INST_DIR) ${DESTDIR}${EGDIR}
+	$(INST_DIR) ${DESTDIR}${LIBEXECDIR}
 .if "$(MKMAN)" != "no"
 	$(INST_DIR) ${DESTDIR}${MANDIR}/man1
 .if "$(MKCATPAGES)" != "no"

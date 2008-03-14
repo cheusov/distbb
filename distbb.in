@@ -28,7 +28,9 @@ set -e
 
 export LC_ALL=C # for sort and uniq
 
+# date start for placint it to html/txt report
 date_start="$(date -u '+%Y-%m-%d %H:%M') UTC"
+# date start in YYYYMMDD-HHMM format
 BUILD_START="$(echo $date_start | awk '{gsub(/[:-]/, ""); print $1 "-" $2}')"
 
 if test "$THIS_IS_ME"; then
@@ -88,12 +90,6 @@ if test $# -ne 0; then
     usage
     exit 1
 fi
-
-######################################################################
-
-verbose_print (){
-    printf "$1" 1>&2
-}
 
 ######################################################################
 
@@ -993,20 +989,14 @@ verbose_print "done\n"
 
 ######################################################################
 
-verbose_print "Uploading logs..."
-eval $UPLOAD_LOGS_CMD
-verbose_print "done\n"
+distbb_upload_logs "$BUILD_START"
 
 ######################################################################
 
-verbose_print "Uploading packages..."
-eval $UPLOAD_PKGS_CMD
-verbose_print "done\n"
+distbb_upload_pkgs "$BUILD_START"
 
 ######################################################################
 
-verbose_print "Sending report..."
-eval $REPORT_CMD < $report_txt_fn
-verbose_print "done\n"
+distbb_report "$BUILD_START"
 
 ######################################################################
