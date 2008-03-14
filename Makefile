@@ -43,6 +43,7 @@ PROJECTNAME=		distbb
 .in:
 	sed -e 's,@@sysconfdir@@,${SYSCONFDIR},g' \
 	    -e 's,@@libexecdir@@,${LIBEXECDIR},g' \
+	    -e 's,@@prefix@@,${PREFIX},g' \
 	    ${.ALLSRC} > ${.TARGET}
 
 distbb.1 : distbb.pod
