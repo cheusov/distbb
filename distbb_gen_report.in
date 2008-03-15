@@ -218,7 +218,7 @@ packages_failed_cnt=$(count_lines "$packages_failed_fn")
 packages_built_cnt=$(count_lines "$packages_built_fn")
 packages_built_prev_cnt=$(count_lines "$packages_built_prev_fn")
 packages_total=$(($packages_built_cnt+$packages_built_prev_cnt))
-packages_in_summary=$(awk '{cnt += ($0 ~ /PKGNAME/)} END {print cnt}' "$pkg_summary")
+packages_in_summary=$(awk '{cnt += ($0 ~ /^PKGNAME=/)} END {print cnt}' "$pkg_summary")
 
 enriched_failed_fn="$tmpdir/enriched_failed.tmp"
 enrich_pkgpath "MAINTAINER PKGNAME" \
