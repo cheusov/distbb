@@ -1,0 +1,349 @@
+#!/bin/sh
+
+# Copyright (c) 2007-2008 Aleksey Cheusov <vle@gmx.net>
+#
+# Permission is hereby granted, free of charge, to any person obtaining
+# a copy of this software and associated documentation files (the
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
+# distribute, sublicense, and/or sell copies of the Software, and to
+# permit persons to whom the Software is furnished to do so, subject to
+# the following conditions:
+#
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+# LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+# OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+# WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+######################################################################
+
+set -e
+. pipestatus
+
+# usage: distbb_gen_report BUILD_START
+test $# -eq 1
+
+# init
+BUILD_START="$1"
+
+if test "$THIS_IS_ME"; then
+    . /home/cheusov/pkg_distbb/etc/distbb.conf
+else
+    . @@sysconfdir@@/distbb.conf
+fi
+
+REPORT1_DIR=$REPORTS_DIR/$BUILD_START
+. @@libexecdir@@/distbb_common
+
+# main
+verbose_print "Logs generation and clean-ups..."
+rmdir $REPORT1_DIR/* 2>/dev/null || true
+
+date_start=$(cat $date_start_fn)
+date_end="$(date -u '+%Y-%m-%d %H:%M') UTC"
+
+path2pkgpath (){
+    sed -e 's,^.*/\([^/]*/[^/]*\)/failed_because.txt$,\1,'
+}
+find_failed_deps_packages (){
+    runpipe0 find $REPORT1_DIR -name failed_because.txt '|' path2pkgpath
+}
+
+find_failed_deps_packages > $packages_failed_deps_fn
+
+count_lines (){
+    awk 'END {print NR}' "$@"
+}
+
+right_align (){
+   printf "%$1s" "$2"
+}
+
+enrich_pkgpath (){
+    fields=$1
+    shift
+
+    awk -v pkg_src_summary="$PKG_SRC_SUMMARY" -v fields="$fields" -F= '
+BEGIN {
+   fields = ("PKGPATH " fields)
+   cnt=split(fields, n2f, / /)
+   for (i=1; i <= cnt; ++i){
+      f2n [n2f [i]] = i
+   }
+}
+FILENAME == pkg_src_summary && ($1 in f2n) {
+   v [$1] = $2
+   next
+}
+FILENAME == pkg_src_summary && NF == 0 {
+   for (f in v){
+      value [v["PKGPATH"], f] = v[f]
+   }
+   delete v
+}
+FILENAME != pkg_src_summary {
+   for (i=1; i <= cnt; ++i){
+      printf " %s", value[$1, n2f[i]]
+   }
+   printf "\n"
+}
+' "$PKG_SRC_SUMMARY" "$@"
+}
+
+get_failed_stage (){
+    # $1 - pkgpath
+    for t in init $TARGETS; do
+	if test -f $REPORT1_DIR/$1/stage_$t.txt; then
+	    failed_stage="$t"
+	fi
+    done
+    echo $failed_stage
+}
+
+print_failed_pkg (){
+    # $1 - pkgpath
+    # $2 - breaks
+    # $3 - stage
+    # $4 - maintainer
+    # $5 - pkgname
+    printf "  <tr><td><a href=\"../%s/stage_%s.html\" title=\"build log for %s\">%-20s</a></td> <td class=\"breaks\">%6s</td> <td>%9s</td> <td align=\"right\">%15s</td> <td align=\"right\">%12s</td></tr>\n" "$1" "$3" "$1" "$1" "$2" "$3" "$4" "$5"
+}
+
+print_failed_deps_pkg (){
+    # $1 - pkgpath
+    # $2 - pkgname
+    # $3 - maintainer
+    # $4 - dep
+    failed_stage=$(get_failed_stage $4)
+    printf "  <tr><td>%-22s</td> <td align=\"left\"><a href=\"../%s/stage_%s.html\" title=\"build log for %s\">%22s</a></td><td> %12s</td><td> %-15s</td></tr>\n" "$1" "$4" "$failed_stage" "$4" "$4" "$3" "$2"
+}
+
+pkgpath2maintainer (){
+    # $1 - pkgpath
+    awk -v pkgpath="$1" '$1 == pkgpath {print $2; exit}' $enriched_failed_fn
+}
+
+report_txt (){
+    if test "$PACKAGES_URL"; then
+	url="<a href=\"$PACKAGES_URL\" title=\"binary packages\">binary packages</a>"
+    else
+	url='binary packages'
+    fi
+
+    cat <<EOF
+<h1>pkgsrc bulk build results (distbb - distributed bulk build)</h1>
+
+<h2>$OS $OSVER</h2>
+
+<h3>Summary</h3>
+
+<table><tr>  <td>Build started:</td><td align="right">$(right_align 38 "${date_start}")</td></tr>
+  <tr><td>Build ended:</td>  <td align="right">$(right_align 38 "${date_end}")</td></tr>
+
+  <tr><td>&nbsp;</td>                  <td align="right">&nbsp;</td></tr>
+
+  <tr class="pkg-total"><td>Total packages</td>                  <td align="right">$(right_align 20 $packages_total)</td></tr>
+  <tr><td>Packages built previously</td>       <td align="right">$(right_align 20 $packages_built_prev_cnt)</td></tr>
+  <tr class="pkg-built"><td>Packages built</td>                  <td align="right">$(right_align 20 $packages_built_cnt)</td></tr>
+  <tr class="pkg-failed"><td>Packages failed</td>                 <td align="right">$(right_align 20 $packages_failed_cnt)</td></tr>
+  <tr class="pkg-faileddeps"><td>Packages failed due to them</td>     <td align="right">$(right_align 20 $packages_failed_deps_cnt)</td></tr>
+
+  <tr><td>Packages in pkg_summary</td>         <td align="right">$(right_align 20 $packages_in_summary)</td></tr>
+</table>
+<p>Packages not listed here resulted in a $url.<br>
+Results of failed packages are available below.</p>
+
+<h3>Failed packages</h3>
+
+EOF
+
+    # failed packages
+    printf "%s" "<table width=100%>"
+    print_failed_pkg "Location" "Breaks" "Stage" "Maintainer" "Package" |
+    sed -e 's,<a[^<>]*>,,' \
+	-e 's,class="[^"]*",,g' \
+	-e 's,[A-Z][a-z ]*,<b>&</b>,g'
+    echo ''
+
+    cat $enriched_failed_fn |
+    while read pkgpath maintainer pkgname; do
+	breaks=$(count_lines $REPORT1_DIR/$pkgpath/broken_packages.txt)
+	failed_stage=$(get_failed_stage $pkgpath)
+	echo "$pkgpath $breaks $failed_stage $maintainer $pkgname"
+    done |
+    sort -k2,2nr -k1,1 |
+    while read pkgpath breaks failed_stage maintainer pkgname; do
+	if test "$breaks" -eq 0; then
+	    breaks=''
+	fi
+	print_failed_pkg "$pkgpath"  "$breaks" "$failed_stage" "$maintainer" "$pkgname"
+    done
+    printf '%s\n' "</table>"
+
+    # failed dependencies
+    echo "<h3>Failed due to dependencies</h3>"
+
+    printf "%s" "<table width=100%>"
+
+    echo ''
+    print_failed_deps_pkg 'Location' 'Package' 'Maintainer' \
+	'Failed dependencies' |
+    sed -e 's,<a[^<>]*>,,' \
+	-e 's,[A-Z][a-z ]*,<b>&</b>,g'
+    echo ''
+
+    while read pkgpath dummy pkgname; do
+	fn=$REPORT1_DIR/$pkgpath/failed_because.txt
+	cnt=$(count_lines $fn)
+	dep=$(head -1 $fn)
+	depX=$(awk -v cnt=$cnt 'NR > cnt-6 && NR > 1' $fn)
+	maintainer=$(pkgpath2maintainer "$dep")
+	print_failed_deps_pkg "$pkgpath" "$pkgname" "$maintainer" "$dep"
+	for dep in $depX; do
+	    maintainer=$(pkgpath2maintainer "$dep")
+	    print_failed_deps_pkg '' '' "$maintainer" "$dep"
+	done
+    done < $enriched_failed_deps_fn
+    printf "%s\n" "</table>"
+}
+
+packages_failed_deps_cnt=$(count_lines $packages_failed_deps_fn)
+packages_failed_cnt=$(count_lines $packages_failed_fn)
+packages_built_cnt=$(count_lines $packages_built_fn)
+packages_built_prev_cnt=$(count_lines $packages_built_prev_fn)
+packages_total=$(($packages_built_cnt+$packages_built_prev_cnt))
+packages_in_summary=$(awk '{cnt += ($0 ~ /PKGNAME/)} END {print cnt}' $pkg_summary)
+
+enriched_failed_fn=$tmpdir/enriched_failed.tmp
+enrich_pkgpath "MAINTAINER PKGNAME" \
+    $packages_failed_fn > $enriched_failed_fn
+
+enriched_failed_deps_fn=$tmpdir/enriched_failed_deps.tmp
+enrich_pkgpath "MAINTAINER PKGNAME" \
+    $packages_failed_deps_fn > $enriched_failed_deps_fn
+
+html_header (){
+    cat <<EOF
+<html> <head> <title>$os</title>
+<style type="text/css">
+<!--
+
+tr {
+	Vertical-Align: top;
+}
+
+td {
+	Vertical-Align: top;
+}
+
+h1 {
+	Font-Size: 3.5ex;
+	Line-Height: 1em;
+	Color: #000066;
+}
+
+h2 {
+	Font-Size: 2.5ex;
+	Line-Height: 1em;
+	Color: #660000;
+}
+
+h3 {
+	Font-Size: 2ex;
+	Color: #660066;
+}
+
+.pkg-total {
+	Color: blue;
+}
+
+.pkg-built {
+	Color: green;
+}
+
+.pkg-failed {
+	Color: red;
+}
+
+.pkg-faileddeps {
+	Color: orange;
+}
+
+.breaks {
+	Color: red;
+}
+
+-->
+</style>
+</head>
+
+<body vlink="#3535c5">
+
+<a name="$1"></a>
+
+EOF
+}
+
+html_footer (){
+    cat <<EOF
+</body>
+</html>
+EOF
+}
+
+report_html (){
+    html_header report
+
+    report_txt
+
+    html_footer
+}
+
+report_html > $meta_dir/report.html
+
+report_txt_fn=$meta_dir/report.txt
+report_txt | sed -e 's,<[^<>]*>,,g' -e 's,&[a-z]*;,,g' > $report_txt_fn
+
+### generate per file HTMLs
+stage2html (){
+    html_header
+
+    pkgdir="$(echo $1 | sed 's,/[^/]*$,,')"
+    pkgpath="$(echo $1 | sed 's,^.*/\([^/]*/[^/]*\)/[^/]*$,\1,')"
+    stage="$(echo $1 | sed 's,^.*stage_\(.*\)[.].*$,\1,')"
+
+    for t in init $TARGETS; do
+	printf '&nbsp;'
+
+	if test -f $pkgdir/stage_$t.txt; then
+	    if test "$t" = "$stage"; then
+		printf "$stage"
+	    else
+		printf "<a href=\"stage_%s.html\" title=\"build log for %s\">%s</a>\n" "$t" "$pkgpath" "$t"
+	    fi
+	fi
+
+	printf '&nbsp;'
+    done
+    printf '<br>\n'
+
+    # log itself
+    printf "<pre>"
+    cat $1
+    printf "</pre>"
+    html_footer
+}
+
+find $REPORT1_DIR -name 'stage_*.txt' |
+while read stage_fn; do
+    html_fn=${stage_fn%%.txt}.html
+    stage2html $stage_fn >$html_fn
+done
+
+verbose_print "done\n"

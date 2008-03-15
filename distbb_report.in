@@ -25,7 +25,6 @@
 
 set -e
 . pipestatus
-. @@libexecdir@@/distbb_common
 
 # usage: distbb_upload_pkgs BUILD_START
 test $# -eq 1
@@ -38,6 +37,9 @@ if test "$THIS_IS_ME"; then
 else
     . @@sysconfdir@@/distbb.conf
 fi
+
+REPORT1_DIR=$REPORTS_DIR/$BUILD_START
+. @@libexecdir@@/distbb_common
 
 # main
 verbose_print "Sending report..."

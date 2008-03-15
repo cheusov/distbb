@@ -7,3 +7,16 @@ verbose_print (){
 }
 
 ######################################################################
+
+meta_dir=$REPORT1_DIR/META
+tmpdir=$meta_dir/tmp
+mkdir -p -m 700 $tmpdir
+
+packages_failed_deps_fn=$meta_dir/packages_failed_deps.txt
+packages_failed_fn=$meta_dir/packages_failed.txt
+packages_built_prev_fn=$meta_dir/packages_built_prev.txt
+packages_built_fn=$meta_dir/packages_built.txt
+
+date_start_fn=$meta_dir/date_start.tmp
+
+######################################################################

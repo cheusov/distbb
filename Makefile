@@ -21,6 +21,7 @@ SRCROOT?=		${.PARSEDIR}
 
 SCRIPTS=			distbb distbb_slave distbb_upload_logs \
 				distbb_upload_pkgs distbb_report \
+				distbb_gen_report \
 				distbb_lock distbb_slave distbb_slave_test
 SCRIPTSDIR_distbb_slave=	${LIBEXECDIR}
 SCRIPTSDIR_distbb_slave_test=	${LIBEXECDIR}
