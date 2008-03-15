@@ -40,6 +40,7 @@ else
     . @@sysconfdir@@/distbb.conf
 fi
 
+export PKG_SUFX
 unset PKG_PATH || true
 
 ######################################################################
