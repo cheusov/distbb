@@ -4,17 +4,18 @@
 BMAKE=make
 #BMAKE=bmake
 
-# pkgsrc root
+# pkgsrc prefix
 PKGSRCDIR=/usr/pkgsrc
 # 
-PKGSRC_ROOT="/usr/pkg"
-# directories to be deleted before actual work begins
-DEL_DIRS="$PKGSRC_ROOT /var/db/pkg"
+PKGSRC_PREFIX="/usr/pkg"
+# directories to be deleted before installing bootstrap
+# and building a package
+DEL_DIRS="$PKGSRC_PREFIX /var/db/pkg"
 # bootstrap, may be empty for NetBSD
 BOOTSTRAP="/path/to/bootstrap.tar.gz"
 # pkgsrc_src_summary (similar to pkg_summary(5) but for source packages)
 PKG_SRC_SUMMARY=$PKGSRCDIR/pkg_src_summary.txt
-# binary packages root
+# binary packages
 PACKAGES=$PKGSRCDIR/packages
 # dierectory where reports are saved
 REPORTS_DIR=$HOME/bulk-logs
