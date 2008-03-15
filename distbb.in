@@ -94,13 +94,13 @@ fi
 
 ######################################################################
 
-distbb_init        "$BUILD_START" \
-                   "$pkg_src_update_summary" \
-                   "$pkg_src_packages" "$date_start"
-distbb_build       "$BUILD_START"
-distbb_gen_report  "$BUILD_START"
-distbb_upload_logs "$BUILD_START"
-distbb_upload_pkgs "$BUILD_START"
-distbb_report      "$BUILD_START"
+@@libexecdir@@/distbb_init        "$BUILD_START" \
+                                  "$pkg_src_update_summary" \
+                                  "$pkg_src_packages" "$date_start"
+@@libexecdir@@/distbb_build       "$BUILD_START"
+@@libexecdir@@/distbb_gen_report  "$BUILD_START"
+@@libexecdir@@/distbb_upload_logs "$BUILD_START"
+@@libexecdir@@/distbb_upload_pkgs "$BUILD_START"
+@@libexecdir@@/distbb_report      "$BUILD_START"
 
 ######################################################################

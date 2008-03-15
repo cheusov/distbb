@@ -25,9 +25,8 @@ SCRIPTS=			distbb distbb_slave distbb_upload_logs \
 				distbb_lock distbb_slave distbb_slave_test \
 				distbb_init
 
-SCRIPTSDIR_distbb_slave=	${LIBEXECDIR}
-SCRIPTSDIR_distbb_slave_test=	${LIBEXECDIR}
-SCRIPTSDIR_distbb_lock=		${LIBEXECDIR}
+SCRIPTSDIR=			${LIBEXECDIR}
+SCRIPTSDIR_distbb=		${BINDIR}
 
 FILES=				distbb.conf distbb_common
 FILESDIR=			${EGDIR}
