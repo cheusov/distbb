@@ -39,7 +39,7 @@ else
     . @@sysconfdir@@/distbb.conf
 fi
 
-export PKG_SUFX
+export PKG_SUFX PACKAGES PKGSRCDIR
 unset PKG_PATH || true
 
 ######################################################################
