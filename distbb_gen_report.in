@@ -45,17 +45,17 @@ REPORT1_DIR=$REPORTS_DIR/$BUILD_START
 verbose_print "Logs generation and clean-ups..."
 rmdir $REPORT1_DIR/* 2>/dev/null || true
 
-date_start=$(cat $date_start_fn)
+date_start=$(cat "$date_start_fn")
 date_end="$(date -u '+%Y-%m-%d %H:%M') UTC"
 
 path2pkgpath (){
     sed -e 's,^.*/\([^/]*/[^/]*\)/failed_because.txt$,\1,'
 }
 find_failed_deps_packages (){
-    runpipe0 find $REPORT1_DIR -name failed_because.txt '|' path2pkgpath
+    runpipe0 find "$REPORT1_DIR" -name failed_because.txt '|' path2pkgpath
 }
 
-find_failed_deps_packages > $packages_failed_deps_fn
+find_failed_deps_packages > "$packages_failed_deps_fn"
 
 count_lines (){
     awk 'END {print NR}' "$@"
@@ -66,7 +66,7 @@ right_align (){
 }
 
 enrich_pkgpath (){
-    fields=$1
+    fields="$1"
     shift
 
     awk -v pkg_src_summary="$PKG_SRC_SUMMARY" -v fields="$fields" -F= '
@@ -99,11 +99,11 @@ FILENAME != pkg_src_summary {
 get_failed_stage (){
     # $1 - pkgpath
     for t in init $TARGETS; do
-	if test -f $REPORT1_DIR/$1/stage_$t.txt; then
+	if test -f "$REPORT1_DIR/$1/stage_$t.txt"; then
 	    failed_stage="$t"
 	fi
     done
-    echo $failed_stage
+    echo "$failed_stage"
 }
 
 print_failed_pkg (){
@@ -126,7 +126,7 @@ print_failed_deps_pkg (){
 
 pkgpath2maintainer (){
     # $1 - pkgpath
-    awk -v pkgpath="$1" '$1 == pkgpath {print $2; exit}' $enriched_failed_fn
+    awk -v pkgpath="$1" '$1 == pkgpath {print $2; exit}' "$enriched_failed_fn"
 }
 
 report_txt (){
@@ -171,10 +171,10 @@ EOF
 	-e 's,[A-Z][a-z ]*,<b>&</b>,g'
     echo ''
 
-    cat $enriched_failed_fn |
+    cat "$enriched_failed_fn" |
     while read pkgpath maintainer pkgname; do
-	breaks=$(count_lines $REPORT1_DIR/$pkgpath/broken_packages.txt)
-	failed_stage=$(get_failed_stage $pkgpath)
+	breaks=$(count_lines "$REPORT1_DIR/$pkgpath/broken_packages.txt")
+	failed_stage=$(get_failed_stage "$pkgpath")
 	echo "$pkgpath $breaks $failed_stage $maintainer $pkgname"
     done |
     sort -k2,2nr -k1,1 |
@@ -199,34 +199,34 @@ EOF
     echo ''
 
     while read pkgpath dummy pkgname; do
-	fn=$REPORT1_DIR/$pkgpath/failed_because.txt
-	cnt=$(count_lines $fn)
-	dep=$(head -1 $fn)
-	depX=$(awk -v cnt=$cnt 'NR > cnt-6 && NR > 1' $fn)
+	fn="$REPORT1_DIR/$pkgpath/failed_because.txt"
+	cnt=$(count_lines "$fn")
+	dep=$(head -1 "$fn")
+	depX=$(awk -v cnt="$cnt" 'NR > cnt-6 && NR > 1' "$fn")
 	maintainer=$(pkgpath2maintainer "$dep")
 	print_failed_deps_pkg "$pkgpath" "$pkgname" "$maintainer" "$dep"
 	for dep in $depX; do
 	    maintainer=$(pkgpath2maintainer "$dep")
 	    print_failed_deps_pkg '' '' "$maintainer" "$dep"
 	done
-    done < $enriched_failed_deps_fn
+    done < "$enriched_failed_deps_fn"
     printf "%s\n" "</table>"
 }
 
-packages_failed_deps_cnt=$(count_lines $packages_failed_deps_fn)
-packages_failed_cnt=$(count_lines $packages_failed_fn)
-packages_built_cnt=$(count_lines $packages_built_fn)
-packages_built_prev_cnt=$(count_lines $packages_built_prev_fn)
+packages_failed_deps_cnt=$(count_lines "$packages_failed_deps_fn")
+packages_failed_cnt=$(count_lines "$packages_failed_fn")
+packages_built_cnt=$(count_lines "$packages_built_fn")
+packages_built_prev_cnt=$(count_lines "$packages_built_prev_fn")
 packages_total=$(($packages_built_cnt+$packages_built_prev_cnt))
-packages_in_summary=$(awk '{cnt += ($0 ~ /PKGNAME/)} END {print cnt}' $pkg_summary)
+packages_in_summary=$(awk '{cnt += ($0 ~ /PKGNAME/)} END {print cnt}' "$pkg_summary")
 
-enriched_failed_fn=$tmpdir/enriched_failed.tmp
+enriched_failed_fn="$tmpdir/enriched_failed.tmp"
 enrich_pkgpath "MAINTAINER PKGNAME" \
-    $packages_failed_fn > $enriched_failed_fn
+    "$packages_failed_fn" > "$enriched_failed_fn"
 
-enriched_failed_deps_fn=$tmpdir/enriched_failed_deps.tmp
+enriched_failed_deps_fn="$tmpdir/enriched_failed_deps.tmp"
 enrich_pkgpath "MAINTAINER PKGNAME" \
-    $packages_failed_deps_fn > $enriched_failed_deps_fn
+    "$packages_failed_deps_fn" > "$enriched_failed_deps_fn"
 
 html_header (){
     cat <<EOF
@@ -305,10 +305,10 @@ report_html (){
     html_footer
 }
 
-report_html > $meta_dir/report.html
+report_html > "$meta_dir/report.html"
 
-report_txt_fn=$meta_dir/report.txt
-report_txt | sed -e 's,<[^<>]*>,,g' -e 's,&[a-z]*;,,g' > $report_txt_fn
+report_txt_fn="$meta_dir/report.txt"
+report_txt | sed -e 's,<[^<>]*>,,g' -e 's,&[a-z]*;,,g' > "$report_txt_fn"
 
 ### generate per file HTMLs
 stage2html (){
@@ -321,7 +321,7 @@ stage2html (){
     for t in init $TARGETS; do
 	printf '&nbsp;'
 
-	if test -f $pkgdir/stage_$t.txt; then
+	if test -f "$pkgdir/stage_$t.txt"; then
 	    if test "$t" = "$stage"; then
 		printf "$stage"
 	    else
@@ -335,15 +335,15 @@ stage2html (){
 
     # log itself
     printf "<pre>"
-    cat $1
+    cat "$1"
     printf "</pre>"
     html_footer
 }
 
-find $REPORT1_DIR -name 'stage_*.txt' |
+find "$REPORT1_DIR" -name 'stage_*.txt' |
 while read stage_fn; do
     html_fn=${stage_fn%%.txt}.html
-    stage2html $stage_fn >$html_fn
+    stage2html "$stage_fn" >"$html_fn"
 done
 
 verbose_print "done\n"

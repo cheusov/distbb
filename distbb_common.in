@@ -7,6 +7,10 @@ verbose_print (){
 }
 
 ######################################################################
+if test -z "$REPORT1_DIR"; then
+    echo "REPORT1_DIR MUST be set" 1>&2
+    exit 2
+fi
 
 meta_dir=$REPORT1_DIR/META
 tmpdir=$meta_dir/tmp
@@ -18,5 +22,7 @@ packages_built_prev_fn=$meta_dir/packages_built_prev.txt
 packages_built_fn=$meta_dir/packages_built.txt
 
 date_start_fn=$meta_dir/date_start.tmp
+
+pkg_summary=$PACKAGES/pkg_summary.txt
 
 ######################################################################
