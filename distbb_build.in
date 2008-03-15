@@ -1,0 +1,341 @@
+#!/bin/sh
+
+# Copyright (c) 2007-2008 Aleksey Cheusov <vle@gmx.net>
+#
+# Permission is hereby granted, free of charge, to any person obtaining
+# a copy of this software and associated documentation files (the
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
+# distribute, sublicense, and/or sell copies of the Software, and to
+# permit persons to whom the Software is furnished to do so, subject to
+# the following conditions:
+#
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+# LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+# OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+# WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+######################################################################
+
+set -e
+. pipestatus
+
+# usage: distbb_upload_logs BUILD_START
+test $# -eq 1
+
+# init
+BUILD_START="$1"
+
+if test "$THIS_IS_ME"; then
+    . /home/cheusov/pkg_distbb/etc/distbb.conf
+else
+    . @@sysconfdir@@/distbb.conf
+fi
+
+REPORT1_DIR=$REPORTS_DIR/$BUILD_START
+. @@libexecdir@@/distbb_common
+
+# main
+######################################################################
+verbose_print "  Directories for logging..."
+( cd $REPORT1_DIR && awk '{print $1}' $queue_fn | xargs mkdir -p )
+verbose_print "done\n"
+
+######################################################################
+### main loop - building
+lckfile=$tmpdir/.lock
+
+get_pkgpath (){
+    awk -v tmp_queue_fn="$queue_fn.tmp" '
+$2 == 0 {
+   printf "" > tmp_queue_fn
+   print $1
+   ok = 1
+   next
+}
+
+{
+   print > tmp_queue_fn
+}
+
+END {
+   exit (ok != 1)
+}
+' $queue_fn
+}
+
+tasks_fn=$tmpdir/tasks.tmp
+print_tasks (){
+    i=0
+    while test -s $queue_fn; do
+	$DISTBB_LOCK $$ ${lckfile}
+
+	if get_pkgpath > $tasks_fn; then
+#	    echo get_pkgpath succeeded 1>&2
+	    cp ${queue_fn} $queue_fn.$i.tmp
+	    mv ${queue_fn}.tmp $queue_fn
+	    i=$(($i+1))
+
+	    rm ${lckfile}
+	    cat $tasks_fn
+	else
+#	    echo get_pkgpath failed 1>&2
+	    rm ${lckfile}
+	    sleep 5
+	fi
+    done
+}
+
+postfilter (){
+    # postprocessor for paexec's outout.
+    # It show progress, suceess and failure messages,
+    # redirects build logs to bulk_log/pkgpath directory,
+    # recalculates counters in a queue file
+    # removes unneeded bulk_log/pkgpath directories etc.
+awk \
+   -v trans_clos_fn=$trans_clos_rebuild_fn \
+   -v queue_fn=$queue_fn \
+   -v lckfile=$lckfile \
+   -v report1_dir=$REPORT1_DIR \
+   -v meta_dir=$meta_dir \
+   -v packages_failed_fn=$packages_failed_fn \
+   -v packages_built_fn=$packages_built_fn \
+   -v distbb_lock_pid="$DISTBB_LOCK $$" '
+BEGIN {
+   while (xgetline0(trans_clos_fn)){
+      deps [$1, $2] = 1
+      all_pkgpaths [$1] = 1
+      all_pkgpaths [$2] = 1
+   }
+   xclose(trans_clos_fn)
+
+   tmp_fn = (queue_fn ".tmp2")
+   wait_for_lock=(distbb_lock_pid " " lckfile)
+   rm_lock=("rm " lckfile)
+}
+
+!($2 in pkgpaths) {
+   pkgpaths [$2] = $3
+   print "  started:", $3, "on", $1
+
+   next
+}
+
+$3 == "status:" {
+   status [$2] = $4
+   next
+}
+
+{
+   log_dir = report1_dir "/" pkgpaths [$2]
+   log_fn  = log_dir "/uu.tmp"
+}
+
+NF > 2 {
+   sub(/^[^ ]+ [^ ]+ /, "")
+   print > log_fn
+   next
+}
+
+# end of task
+{
+   xclose(log_fn)
+}
+
+function xsystem (prog){
+   if (system(prog)){
+      print "system() failed" > "/dev/stderr"
+      exit 1
+   }
+}
+
+function xclose (fn){
+   if (close(fn)){
+      print "close(\"" fn "\") failed" > "/dev/stderr"
+      exit 1
+   }
+}
+
+function xgetline0 (fn,                 ret){
+   ret = (getline < fn)
+   if (ret < 0){
+      print "The function getline failed" > "/dev/stderr"
+      exit 1
+   }
+   return (ret > 0)
+}
+
+status [$2] == 0 {
+   # succeeded
+   pkgpath = pkgpaths [$2]
+
+   print "    succeeded:", pkgpath
+
+   #
+   print pkgpath >> packages_built_fn
+   xclose(packages_built_fn)
+
+   # getting lock
+   xsystem(wait_for_lock)
+
+   # reading counts
+   delete counts
+   while (xgetline0(queue_fn)){
+      counts [$1] = $2
+   }
+   xclose(queue_fn)
+
+   # updating counts
+   for (i in counts){
+      if ((pkgpath SUBSEP i) in deps){
+         --counts [i]
+      }
+   }
+
+   # writing counts
+   printf "" > tmp_fn
+   for (i in counts){
+      print i, counts [i] > tmp_fn
+   }
+   xclose(tmp_fn)
+
+   # renaming
+   xsystem("mv " tmp_fn " " queue_fn)
+
+   # removing lock
+   xsystem(rm_lock)
+
+   # removing log directory
+   xsystem("rm -rf " log_dir)
+
+   next
+}
+
+function decode_logs (uu,                  txt,fn,dir){
+   txt = uu
+   sub(/[.][^.\/]*$/, ".txt", txt)
+
+   dir = uu
+   sub(/\/[^\/]*$/, "", dir)
+
+   xsystem("uudecode -p < " uu " > " txt)
+
+   #
+   fn = ""
+   while (xgetline0(txt)){
+      if ($1 == "--**--**--" && $3 == "--**--**--"){
+         if (fn){
+            xclose(fn) # in order to not exceed system/awk limits...
+         }
+
+         fn = dir "/stage_" $2 ".txt"
+         printf "  " > fn
+         continue
+      }
+
+      if (fn){
+         print > fn
+      }else{
+         print "this should not happen!" > "/dev/stderr"
+      }
+   }
+
+   if (fn){
+      close(fn) # in order to not exceed system/awk limits...
+   }
+
+   xsystem("rm " uu " " txt)
+}
+
+{
+   # fialed
+   pkgpath = pkgpaths [$2]
+
+   print "    FAILED:", pkgpath
+
+   #
+   print pkgpath >> packages_failed_fn
+   xclose(packages_failed_fn)
+
+   # getting lock
+   xsystem(wait_for_lock)
+
+   # decoding logs
+   decode_logs(log_fn)
+
+   # reading counts
+   delete counts
+   while (xgetline0(queue_fn)){
+      counts [$1] = $2
+   }
+   xclose(queue_fn)
+
+   # indirectly failed
+   delete indirect_failures
+   log_fn  = log_dir "/broken_packages.txt"
+   indirect_broken_found = 0
+   printf "" >> log_fn
+   for (pkgp in all_pkgpaths){
+      if ((pkgpath SUBSEP pkgp) in deps){
+         indirect_broken_found = 1
+
+         indirect_failures [pkgp] = 1
+
+         pkgp_log_dir = report1_dir "/" pkgp
+         pkgp_log_fn  = pkgp_log_dir "/failed_because.txt"
+         print pkgpath >> pkgp_log_fn
+         xclose(pkgp_log_fn) # in order to not exceed system/awk limits...
+
+         print pkgp > log_fn
+      }
+   }
+   if (indirect_broken_found)
+      xclose(log_fn) # in order to not exceed system/awk limits...
+
+   # writing new queue
+   printf "" > tmp_fn
+   for (i in counts){
+      if (! (i in indirect_failures)){
+         print i, counts [i] > tmp_fn
+      }
+   }
+   xclose(tmp_fn)
+
+   # renaming
+   xsystem("mv " tmp_fn " " queue_fn)
+
+   # removing lock
+   xsystem(rm_lock)
+
+   next
+}
+'
+}
+
+if test "$MASTER_MODE"; then
+    SLAVES="-n $SLAVES"
+    TRANSPORT="-t $TRANSPORT"
+else
+    SLAVES='-n +1' # building on localhost
+    unset TRANSPORT
+fi
+
+verbose_print "Building\n"
+runpipe0 \
+    print_tasks '|' \
+    paexec -EI -lr $TRANSPORT $SLAVES -c "$DISTBB_SLAVE" '|' \
+    postfilter
+
+######################################################################
+
+verbose_print "Updating pkg_summary.{txt,gz,bz2}..."
+pkg_update_summary $pkg_summary $PACKAGES/All
+gzip < $pkg_summary > ${pkg_summary%%.txt}.gz
+bzip2 < $pkg_summary > ${pkg_summary%%.txt}.bz2
+verbose_print "done\n"
