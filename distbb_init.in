@@ -27,12 +27,13 @@ set -e
 . pipestatus
 
 # usage: distbb_init BUILD_START UPDATE_SRC_SUMMARY PKG_SRC_PACKAGES
-test $# -eq 3
+test $# -eq 4
 
 # init
 BUILD_START="$1"
 pkg_src_update_summary="$2"
 pkg_src_packages="$3"
+date_start="$4"
 
 if test "$THIS_IS_ME"; then
     . /home/cheusov/pkg_distbb/etc/distbb.conf
@@ -45,9 +46,9 @@ test -n "$REPORT1_DIR" # who knows...
 rm -rf $REPORT1_DIR
 . @@libexecdir@@/distbb_common
 
-# main
 echo "$date_start" > $date_start_fn
 
+# main
 verbose_print "Preparations\n"
 
 printf '' > $packages_failed_deps_fn
