@@ -42,7 +42,7 @@ PROJECTNAME=		distbb
 
 .SUFFIXES:		.in
 
-all: distbb.conf
+all: distbb.conf distbb_common
 
 .in:
 	sed -e 's,@@sysconfdir@@,${SYSCONFDIR},g' \
