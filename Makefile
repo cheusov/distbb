@@ -42,6 +42,8 @@ PROJECTNAME=		distbb
 
 .SUFFIXES:		.in
 
+all: distbb.conf
+
 .in:
 	sed -e 's,@@sysconfdir@@,${SYSCONFDIR},g' \
 	    -e 's,@@libexecdir@@,${LIBEXECDIR},g' \
