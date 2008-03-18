@@ -323,7 +323,7 @@ if test "$MASTER_MODE"; then
     TRANSPORT="-t $TRANSPORT"
 else
     SLAVES='-n +1' # building on localhost
-    unset TRANSPORT
+    unset TRANSPORT || true
 fi
 
 verbose_print "Building\n"

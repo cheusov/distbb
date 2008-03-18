@@ -137,7 +137,7 @@ NF == 0 && curr_pkgpath == pkgpath {
 
     printf '' > $bsdeps_fn
     for d in $bootstr_deps; do
-	awk -v d=$d -F= '$1 == "PKGPATH" {print d, $2}' \
+	awk -v d=$d -F= '$1 == "PKGPATH" {print "dummy", d, $2}' \
 	    $PKG_SRC_SUMMARY > $bsdeps_fn
     done
 }
