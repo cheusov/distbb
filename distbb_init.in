@@ -24,7 +24,7 @@
 ######################################################################
 
 set -e
-. pipestatus
+. @@bindir@@/pipestatus
 
 # usage: distbb_init BUILD_START UPDATE_SRC_SUMMARY PKG_SRC_PACKAGES
 test $# -eq 4

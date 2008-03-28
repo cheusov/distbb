@@ -24,7 +24,7 @@
 ######################################################################
 
 set -e
-. pipestatus
+. @@bindir@@/pipestatus
 
 export LC_ALL=C # for sort and uniq
 

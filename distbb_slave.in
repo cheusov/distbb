@@ -24,7 +24,7 @@
 ######################################################################
 
 set -e
-. pipestatus
+. @@bindir@@/pipestatus
 
 if test "$THIS_IS_ME"; then
     . /home/cheusov/pkg_distbb/etc/distbb.conf

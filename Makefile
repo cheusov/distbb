@@ -48,6 +48,7 @@ all: distbb.conf distbb_common
 	sed -e 's,@@sysconfdir@@,${SYSCONFDIR},g' \
 	    -e 's,@@libexecdir@@,${LIBEXECDIR},g' \
 	    -e 's,@@prefix@@,${PREFIX},g' \
+	    -e 's,@@bindir@@,${BINDIR},g' \
 	    ${.ALLSRC} > ${.TARGET}
 
 distbb.1 : distbb.pod

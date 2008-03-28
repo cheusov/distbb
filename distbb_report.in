@@ -24,7 +24,7 @@
 ######################################################################
 
 set -e
-. pipestatus
+. @@bindir@@/pipestatus
 
 # usage: distbb_upload_pkgs BUILD_START
 test $# -eq 1
