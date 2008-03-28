@@ -320,7 +320,7 @@ function decode_logs (uu,                  txt,fn,dir){
 
 if test "$MASTER_MODE"; then
     SLAVES="-n $SLAVES"
-    TRANSPORT="-t $TRANSPORT"
+    TRANSPORT="-t '$TRANSPORT'"
 else
     SLAVES='-n +1' # building on localhost
     unset TRANSPORT || true
