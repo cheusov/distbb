@@ -319,7 +319,7 @@ function decode_logs (uu,                  txt,fn,dir){
 }
 
 if test "$MASTER_MODE"; then
-    SLAVES="-n $SLAVES"
+    SLAVES="-n '$SLAVES'"
     TRANSPORT="-t '$TRANSPORT'"
 else
     SLAVES='-n +1' # building on localhost
@@ -327,7 +327,7 @@ else
 fi
 
 verbose_print "Building\n"
-runpipe0 \
+eval runpipe0 \
     print_tasks '|' \
     paexec -EI -lr $TRANSPORT $SLAVES -c "$DISTBB_SLAVE" '|' \
     postfilter
