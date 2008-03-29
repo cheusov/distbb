@@ -1,0 +1,32 @@
+#-*-mode:  sh -*-
+
+######################################################################
+
+verbose_print (){
+    printf "$1" 1>&2
+}
+
+######################################################################
+if test -z "$REPORT1_DIR"; then
+    echo "REPORT1_DIR MUST be set" 1>&2
+    exit 2
+fi
+
+meta_dir=$REPORT1_DIR/META
+tmpdir=$meta_dir/tmp
+mkdir -p -m 700 $tmpdir
+
+packages_failed_deps_fn=$meta_dir/packages_failed_deps.txt
+packages_failed_fn=$meta_dir/packages_failed.txt
+packages_built_prev_fn=$meta_dir/packages_built_prev.txt
+packages_built_fn=$meta_dir/packages_built.txt
+
+date_start_fn=$meta_dir/date_start.tmp
+
+pkg_summary=$PACKAGES/pkg_summary.txt
+
+queue_fn=$tmpdir/queue.tmp
+
+trans_clos_rebuild_fn=$tmpdir/trans_closure_rebuild.tmp
+
+######################################################################
