@@ -143,7 +143,7 @@ report_txt (){
 <h2>$OS $OSVER</h2>
 
 <h3>Full report</h3>
-  $REPORT_URL
+  <a href="$REPORT_URL" title="Full report">here</a>
 
 <h3>Summary</h3>
 
