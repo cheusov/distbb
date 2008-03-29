@@ -120,7 +120,7 @@ build_package (){
 
     # $TARGETS
     bmake_opts="$EXTRA_VARS PKG_VERBOSE=1 DEPENDS_TARGET=do-bin-install"
-    for t in $TARGETS clean; do
+    for t in $TARGETS; do
 	header $t
 	case "$t" in
 	    *)
@@ -133,6 +133,13 @@ build_package (){
 
 build_package2 (){
     build_package "$@" 2>&1
+    ex=$?
+
+    # clean even if it failes
+    $BMAKE clean > /dev/null 2>&1
+
+    #
+    return $ex
 }
 
 while read pkgpath; do
@@ -141,5 +148,7 @@ while read pkgpath; do
     else
 	echo "status: 1" # uuencode failed
     fi
+
+    #
     echo '' # end of task marker
 done
