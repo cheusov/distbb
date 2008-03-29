@@ -20,17 +20,17 @@ SRCROOT?=		${.PARSEDIR}
 .include "Makefile.version"
 
 SCRIPTS=			distbb stage_init \
-				stage_build stage_gen_report
+				stage_build stage_gen_report \
 				stage_upload_logs \
 				stage_upload_pkgs stage_report \
-				lock slave slave_test \
+				lock slave slave_test
 
 SCRIPTSDIR=			${LIBEXECDIR}
 SCRIPTSDIR_distbb=		${BINDIR}
 
 FILES=				distbb.conf common
 FILESDIR=			${EGDIR}
-FILESDIR_distbb_common=		${LIBEXECDIR}
+FILESDIR_common=		${LIBEXECDIR}
 
 MKMAN=			no
 
