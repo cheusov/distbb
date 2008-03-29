@@ -33,6 +33,8 @@ date_start="$(date -u '+%Y-%m-%d %H:%M') UTC"
 # date start in YYYYMMDD-HHMM format
 BUILD_START="$(echo $date_start | awk '{gsub(/[:-]/, ""); print $1 "." $2}')"
 
+echo "BUILD_START: $BUILD_START"
+
 if test "$THIS_IS_ME"; then
     . /home/cheusov/pkg_distbb/etc/distbb.conf
 else
