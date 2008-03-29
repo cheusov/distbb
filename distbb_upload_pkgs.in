@@ -26,7 +26,7 @@
 set -e
 . @@bindir@@/pipestatus
 
-# usage: distbb_upload_pkgs BUILD_START
+# usage: stage_upload_pkgs BUILD_START
 test $# -eq 1
 
 # init
@@ -39,7 +39,7 @@ else
 fi
 
 REPORT1_DIR=$REPORTS_DIR/$BUILD_START
-. @@libexecdir@@/distbb_common
+. @@libexecdir@@/common
 
 # main
 verbose_print "Uploading packages..."

@@ -28,7 +28,7 @@ set -e
 
 if test "$THIS_IS_ME"; then
     . /home/cheusov/pkg_distbb/etc/distbb.conf
-    DISTBB_SLAVE=/home/cheusov/pkg_distbb/bin/distbb_slave
+    DISTBB_SLAVE=/home/cheusov/pkg_distbb/libexec/distbb/slave
 else
     . @@sysconfdir@@/distbb.conf
 fi
@@ -40,9 +40,9 @@ export BINPKG_SITES=$PACKAGES
 
 usage (){
     cat 1>&2 <<EOF
-distbb_slave - distributed bulk build
+slave - program run on slave hosts
 
-usage: distbb_slave [OPTIONS]
+usage: slave [OPTIONS]
 OPTIONS:
   -h|--help              display this help message
   -e|--encode <cmd>      encode command, defaults to uuencode

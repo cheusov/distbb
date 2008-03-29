@@ -26,7 +26,7 @@
 set -e
 . @@bindir@@/pipestatus
 
-# usage: distbb_init BUILD_START UPDATE_SRC_SUMMARY PKG_SRC_PACKAGES
+# usage: stage_init BUILD_START UPDATE_SRC_SUMMARY PKG_SRC_PACKAGES
 test $# -eq 4
 
 # init
@@ -44,7 +44,7 @@ fi
 REPORT1_DIR=$REPORTS_DIR/$BUILD_START
 test -n "$REPORT1_DIR" # who knows...
 rm -rf $REPORT1_DIR
-. @@libexecdir@@/distbb_common
+. @@libexecdir@@/common
 
 echo "$date_start" > $date_start_fn
 
