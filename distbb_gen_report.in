@@ -142,6 +142,8 @@ report_txt (){
 
 <h2>$OS $OSVER</h2>
 
+<h3>Full report</h3>
+  $REPORT_URL
 <h3>Summary</h3>
 
 <table><tr>  <td>Build started:</td><td align="right">$(right_align 38 "${date_start}")</td></tr>
