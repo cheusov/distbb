@@ -58,7 +58,7 @@ PKGSRCVER='2007Q4'
 #
 PACKAGES_URL="http://mova.org/~cheusov/pub/pkgsrc-distbb/$OS/$PKGSRCVER/packages/"
 #
-REPORT_URL="http://www.mova.org/~cheusov/pub/pkgsrc-distbb/$OS/$PKGSRCVER/log/$date_start/meta/report.html"
+REPORT_URL="http://www.mova.org/~cheusov/pub/pkgsrc-distbb/$OS/$PKGSRCVER/log/$BUILD_START/META/report.html"
 
 #
 REPORT_CMD="@@prefix@@/bin/mail -s \"pkgsrc-$PKGSRCVER $OS $OSVER bulk build results $BUILD_START\" cheusov@tut.by"

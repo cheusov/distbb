@@ -144,13 +144,13 @@ report_txt (){
 
 <h3>Full report</h3>
   $REPORT_URL
+
 <h3>Summary</h3>
 
 <table><tr>  <td>Build started:</td><td align="right">$(right_align 38 "${date_start}")</td></tr>
   <tr><td>Build ended:</td>  <td align="right">$(right_align 38 "${date_end}")</td></tr>
 
   <tr><td>&nbsp;</td>                  <td align="right">&nbsp;</td></tr>
-
   <tr class="pkg-total"><td>Total packages</td>                  <td align="right">$(right_align 20 $packages_total)</td></tr>
   <tr><td>Packages built previously</td>       <td align="right">$(right_align 20 $packages_built_prev_cnt)</td></tr>
   <tr class="pkg-built"><td>Packages built</td>                  <td align="right">$(right_align 20 $packages_built_cnt)</td></tr>
