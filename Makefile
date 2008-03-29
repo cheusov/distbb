@@ -19,16 +19,16 @@ SRCROOT?=		${.PARSEDIR}
 
 .include "Makefile.version"
 
-SCRIPTS=			distbb distbb_slave distbb_upload_logs \
-				distbb_upload_pkgs distbb_report \
-				distbb_build distbb_gen_report \
-				distbb_lock distbb_slave distbb_slave_test \
-				distbb_init
+SCRIPTS=			distbb stage_init \
+				stage_build stage_gen_report
+				stage_upload_logs \
+				stage_upload_pkgs stage_report \
+				lock slave slave_test \
 
 SCRIPTSDIR=			${LIBEXECDIR}
 SCRIPTSDIR_distbb=		${BINDIR}
 
-FILES=				distbb.conf distbb_common
+FILES=				distbb.conf common
 FILESDIR=			${EGDIR}
 FILESDIR_distbb_common=		${LIBEXECDIR}
 
@@ -42,7 +42,7 @@ PROJECTNAME=		distbb
 
 .SUFFIXES:		.in
 
-all: distbb.conf distbb_common
+all: distbb.conf common
 
 .in:
 	sed -e 's,@@sysconfdir@@,${SYSCONFDIR},g' \
