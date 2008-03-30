@@ -59,9 +59,9 @@ printf '' > $packages_built_fn
 ######################################################################
 
 refreshed_summary_fn=$tmpdir/refreshed_summary.tmp
-verbose_print "  updating pkg_summary.txt..."
-pkg_update_summary $pkg_summary $PACKAGES/All
-pkg_refresh_summary $pkg_summary >$refreshed_summary_fn
+verbose_print "  updating pkg_summary..."
+pkg_update_summary $PKG_SUMMARY $PACKAGES/All
+pkg_refresh_summary $PKG_SUMMARY >$refreshed_summary_fn
 verbose_print "done\n"
 
 ######################################################################

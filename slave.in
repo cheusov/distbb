@@ -90,8 +90,8 @@ build_package (){
     header init
 
     #
-    printf '=> Removing %s\n' "$DEL_DIRS"
-    if ! rm -rf $DEL_DIRS; then
+    printf '=> Removing pkgsrc directories\n'
+    if ! eval $RMDIRS_CMD; then
 	return 1
     fi
 
@@ -101,8 +101,8 @@ build_package (){
 
     #
     if test "$BOOTSTRAP"; then
-	printf '===> Unpacking bootstrap\n'
-	if ! gzip -dc "$BOOTSTRAP" | tar -xf-; then
+	printf '===> Extracting bootstrap\n'
+	if ! eval $EXTRACT_BOOTSTRAP_CMD; then
 	    return 1
 	fi
     fi
@@ -114,12 +114,12 @@ build_package (){
     fi
 
     #
-    if ! $BMAKE $EXTRA_VARS PKG_VERBOSE=1 clean; then
+    if ! $BMAKE $EXTRA_OPTS clean; then
 	return 1
     fi
 
     # $TARGETS
-    bmake_opts="$EXTRA_VARS PKG_VERBOSE=1 DEPENDS_TARGET=do-bin-install"
+    bmake_opts="$EXTRA_OPTS DEPENDS_TARGET=$DEPENDS_TARGET"
     for t in $TARGETS; do
 	header $t
 	case "$t" in

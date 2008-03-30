@@ -334,8 +334,6 @@ eval runpipe0 \
 
 ######################################################################
 
-verbose_print "Updating pkg_summary.{txt,gz,bz2}..."
-pkg_update_summary $pkg_summary $PACKAGES/All
-gzip < $pkg_summary > ${pkg_summary%%.txt}.gz
-bzip2 < $pkg_summary > ${pkg_summary%%.txt}.bz2
+verbose_print "Updating pkg_summary..."
+pkg_update_summary $PKG_SUMMARY $PACKAGES/All
 verbose_print "done\n"

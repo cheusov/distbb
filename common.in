@@ -23,8 +23,6 @@ packages_built_fn=$meta_dir/packages_built.txt
 
 date_start_fn=$meta_dir/date_start.tmp
 
-pkg_summary=$PACKAGES/pkg_summary.txt
-
 queue_fn=$tmpdir/queue.tmp
 
 trans_clos_rebuild_fn=$tmpdir/trans_closure_rebuild.tmp
