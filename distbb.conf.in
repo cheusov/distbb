@@ -34,9 +34,10 @@ DEPENDS_TARGET='do-bin-install'
 #DEPENDS_TARGET='real-package-install'
 
 # the following targets will be run in order
-TARGETS='depends checksum build install package deinstall clean'
+TARGETS='depends fetch checksum configure build install package deinstall'
 # the following is for USE_DESTDIR=yes|full
-#TARGETS='depends checksum build package bin-install deinstall clean'
+#TARGETS='depends fetch checksum configure build package bin-install deinstall'
+#TARGETS='depends fetch checksum configure build package package-install package-deinstall'
 
 # extra variables passed to bmake
 EXTRA_OPTS='PKG_VERBOSE=1'
