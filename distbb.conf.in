@@ -1,8 +1,8 @@
 #-*-mode:  sh -*-
 
 # pkgsrc friendly make
-BMAKE=make
-#BMAKE=bmake
+BMAKE=/usr/bin/make
+#BMAKE=/usr/pkg/bin/bmake
 
 # pkgsrc prefix
 PKGSRCDIR=/usr/pkgsrc
@@ -56,8 +56,11 @@ SLAVES='root@host1 root@host2 root@host3'
 DISTBB_SLAVE=@@libexecdir@@/slave
 DISTBB_LOCK=@@libexecdir@@/lock
 
-# filename containing notes of bulk build
+# filename containing notes about bulk build (in html format)
 NOTES=''
+
+# a number of printed top offenders that
+OFFENDERS_CNT=20
 
 # set it to non-empty string if you want "distributed" bulk build
 # also see SLAVES variable
