@@ -54,7 +54,7 @@ all: distbb.conf common
 	    ${.ALLSRC} > ${.TARGET}
 
 distbb.1 : distbb.pod
-	$(POD2MAN) -s 1 -r 'AWK Wrapper' -n distbb \
+	$(POD2MAN) -s 1 -r 'DISTributed Bulk Builder' -n distbb \
 	   -c 'DISTBB manual page' ${.ALLSRC} > ${.TARGET}
 distbb.html : distbb.pod
 	$(POD2HTML) --infile=${.ALLSRC} --outfile=${.TARGET}
