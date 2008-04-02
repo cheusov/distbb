@@ -26,11 +26,7 @@
 set -e
 . @@bindir@@/pipestatus
 
-if test "$THIS_IS_ME"; then
-    . ./distbb.conf
-else
-    . @@SYSCONFDIR@@/distbb.conf
-fi
+. @@SYSCONFDIR@@/distbb.conf
 
 ######################################################################
 

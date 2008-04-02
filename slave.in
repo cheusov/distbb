@@ -26,12 +26,7 @@
 set -e
 . @@bindir@@/pipestatus
 
-if test "$THIS_IS_ME"; then
-    . /home/cheusov/pkg_distbb/etc/distbb.conf
-    DISTBB_SLAVE=/home/cheusov/pkg_distbb/libexec/distbb/slave
-else
-    . @@sysconfdir@@/distbb.conf
-fi
+. @@sysconfdir@@/distbb.conf
 
 unset PKG_PATH || true
 export BINPKG_SITES=$PACKAGES

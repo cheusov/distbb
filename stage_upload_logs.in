@@ -32,11 +32,7 @@ test $# -eq 1
 # init
 BUILD_START="$1"
 
-if test "$THIS_IS_ME"; then
-    . /home/cheusov/pkg_distbb/etc/distbb.conf
-else
-    . @@sysconfdir@@/distbb.conf
-fi
+. @@sysconfdir@@/distbb.conf
 
 REPORT1_DIR=$REPORTS_DIR/$BUILD_START
 . @@libexecdir@@/common
