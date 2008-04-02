@@ -90,6 +90,8 @@ echo "BUILD_START: $BUILD_START" 1>&2
 export PKG_SUFX PKGSRCDIR BMAKE
 unset PKG_PATH || true
 
+export PATH=@@bindir@@:@@sbindir@@:$PATH
+
 ######################################################################
 
 @@libexecdir@@/stage_init        "$BUILD_START" \

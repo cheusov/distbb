@@ -3,6 +3,7 @@
 PREFIX?=/usr/local
 SYSCONFDIR?=${PREFIX}/etc
 BINDIR?=${PREFIX}/bin
+SBINDIR?=${PREFIX}/sbin
 MANDIR?=${PREFIX}/man
 LIBEXECDIR?=${PREFIX}/libexec/distbb
 EGDIR?=${PREFIX}/share/distbb
@@ -49,6 +50,7 @@ all: distbb.conf common
 	    -e 's,@@libexecdir@@,${LIBEXECDIR},g' \
 	    -e 's,@@prefix@@,${PREFIX},g' \
 	    -e 's,@@bindir@@,${BINDIR},g' \
+	    -e 's,@@sbindir@@,${SBINDIR},g' \
 	    ${.ALLSRC} > ${.TARGET}
 
 distbb.1 : distbb.pod
