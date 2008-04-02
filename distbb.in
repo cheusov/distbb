@@ -23,29 +23,6 @@
 
 ######################################################################
 
-set -e
-. @@bindir@@/pipestatus
-
-export LC_ALL=C # for sort and uniq
-
-# date start for placint it to html/txt report
-date_start="$(date -u '+%Y-%m-%d %H:%M') UTC"
-# date start in YYYYMMDD-HHMM format
-BUILD_START="$(echo $date_start | awk '{gsub(/[:-]/, ""); print $1 "." $2}')"
-
-echo "BUILD_START: $BUILD_START" 1>&2
-
-if test "$THIS_IS_ME"; then
-    . /home/cheusov/pkg_distbb/etc/distbb.conf
-else
-    . @@sysconfdir@@/distbb.conf
-fi
-
-export PKG_SUFX PKGSRCDIR BMAKE
-unset PKG_PATH || true
-
-######################################################################
-
 usage (){
     cat <<EOF
 distbb - distributed bulk build
@@ -57,7 +34,7 @@ OPTIONS:
                          a specified file, - for stdin,
                          by default package names are obtained from
                          pkgsrc source tree.
-  -k                     skip pkg_src_update_summary stage
+  -k                     skip updating pkg_src_summary
 EOF
 }
 
@@ -93,6 +70,25 @@ if test $# -ne 0; then
     usage
     exit 1
 fi
+
+######################################################################
+
+set -e
+. @@bindir@@/pipestatus
+
+export LC_ALL=C # for sort and uniq
+
+# date start for placint it to html/txt report
+date_start="$(date -u '+%Y-%m-%d %H:%M') UTC"
+# date start in YYYYMMDD-HHMM format
+BUILD_START="$(echo $date_start | awk '{gsub(/[:-]/, ""); print $1 "." $2}')"
+
+echo "BUILD_START: $BUILD_START" 1>&2
+
+. @@sysconfdir@@/distbb.conf
+
+export PKG_SUFX PKGSRCDIR BMAKE
+unset PKG_PATH || true
 
 ######################################################################
 
