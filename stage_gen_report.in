@@ -141,20 +141,18 @@ report_txt (){
 <h1>pkgsrc bulk build results (distbb - distributed bulk build)</h1>
 
 <h2>$OS $OSVER</h2>
-
-<h3>Full report</h3>
   <a href="$REPORT_URL" title="Full report">$REPORT_URL</a>
 
 EOF
 
     if test "$NOTES"; then
-	echo '<h3>Notes</h3>'
+	echo '<a name="notes"></a><h3>Notes</h3>'
 	cat "$NOTES"
     fi
 
     cat <<EOF
 
-<h3>Summary</h3>
+<a name="summary"></a><h3>Summary</h3>
 
 <table><tr>  <td>Build started:</td><td align="right">$(right_align 38 "${date_start}")</td></tr>
   <tr><td>Build ended:</td>  <td align="right">$(right_align 38 "${date_end}")</td></tr>
@@ -170,12 +168,21 @@ EOF
 </table>
 <p>Packages not listed here resulted in a $url.<br>
 Results of failed packages are available below.</p>
+
+Jump to:
+<ul>
+    <li><a href="#summary">Summary</a></li>
+    <li><a href="#top offenders">Top Offenders</a></li>
+    <li><a href="#failed">Failed packages</a></li>
+    <li><a href="#failed depends">Failed due to dependencies</a></li>
+</ul>
+
 EOF
 
     # top offenders
     cat <<EOF
 
-<h3>Top offenders</h3>
+<a name="top offenders"></a><h3>Top offenders</h3>
 
 EOF
     printf '<table width=30%%>'
@@ -201,7 +208,7 @@ EOF
     # failed packages
     cat <<EOF
 
-<h3>Failed packages</h3>
+<a name="failed"></a><h3>Failed packages</h3>
 
 EOF
     printf "%s" "<table width=100%>"
@@ -226,7 +233,7 @@ EOF
     printf '%s\n' "</table>"
 
     # failed dependencies
-    echo "<h3>Failed due to dependencies</h3>"
+    echo '<a name="failed depends"></a><h3>Failed due to dependencies</h3>'
 
     printf "%s" "<table width=100%>"
 
