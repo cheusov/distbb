@@ -179,7 +179,8 @@ EOF
 
 EOF
     printf '<table width=30%%>'
-    printf '<tr><td>%-27s</td> <td align="right">%4s</td></tr>\n' '<b>Maintainer</<b>' '<b>Breaks</b>'
+    printf '<tr><td>%-36s</td> <td align="right">%4s</td></tr>\n' '<b>Maintainer</b>' '<b>Breaks</b>'
+    echo ''
 
     cat "$enriched_failed_fn" |
     while read pkgpath maintainer pkgname; do
@@ -208,7 +209,6 @@ EOF
     sed -e 's,<a[^<>]*>,,' \
 	-e 's,class="[^"]*",,g' \
 	-e 's,[A-Z][a-z ]*,<b>&</b>,g'
-    echo ''
 
     cat "$enriched_failed_fn" |
     while read pkgpath maintainer pkgname; do
