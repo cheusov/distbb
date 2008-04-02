@@ -1,27 +1,35 @@
 #-*-mode:  sh -*-
 
 # pkgsrc friendly make
-BMAKE=/usr/bin/make
-#BMAKE=/usr/pkg/bin/bmake
+BMAKE=/usr/bin/make       # for NetBSD
+#BMAKE=/usr/pkg/bin/bmake # for other OS
 
 # pkgsrc prefix
 PKGSRCDIR=/usr/pkgsrc
+
 # 
 PKGSRC_PREFIX="/usr/pkg"
+
 # directories to be deleted before installing bootstrap
 # and building a package
 RMDIRS_CMD="/bin/rm -rf $PKGSRC_PREFIX /var/db/pkg"
-# bootstrap, may be empty for NetBSD
+
+# bootstrap
 BOOTSTRAP="/path/to/bootstrap.tar.gz"
+
 #
-EXTRACT_BOOTSTRAP_CMD="pax -r -pe -z -f $BOOTSTRAP"
-# binary packages
+EXTRACT_BOOTSTRAP_CMD="@@bindir@@/pax -r -pe -z -f $BOOTSTRAP"
+
+# dorectory for binary packages
 PACKAGES=$PKGSRCDIR/packages
+
 # pkg_summary(5)
 PKG_SUMMARY=$PACKAGES/All/pkg_summary.txt
+
 # pkgsrc_src_summary (similar to pkg_summary(5) but for source packages)
 PKG_SRC_SUMMARY=$PKGSRCDIR/pkg_src_summary.txt
-# dierectory where reports are saved
+
+# directory where reports are saved
 REPORTS_DIR=$HOME/bulk-logs
 
 # 
@@ -39,47 +47,57 @@ TARGETS='depends fetch checksum configure build install package deinstall'
 #TARGETS='depends fetch checksum configure build package bin-install deinstall'
 #TARGETS='depends fetch checksum configure build package package-install package-deinstall'
 
-# extra variables passed to bmake
+# extra options passed to bmake
 EXTRA_OPTS='PKG_VERBOSE=1'
 # the following is for USE_DESTDIR=full bulk builds
 #EXTRA_OPTS='PKG_VERBOSE=1 USE_DESTDIR=full CHECK_SHLIBS=no'
 
-# transport to the slaves
-TRANSPORT='/usr/bin/ssh -x'
-#TRANSPORT="distbb_chroot @@prefix@@/bin/distbb"
+# set it to non-empty string if you want "distributed" bulk build
+# also see SLAVES variable
+MASTER_MODE='yes'
+#MASTER_MODE='' # for single-host building
+
 # hosts|chroots where actual builds are done
 SLAVES='root@host1 root@host2 root@host3'
 #SLAVES='pkgsrc@host1 pkgsrc@host2 pkgsrc@host3'
 #SLAVES='chroot1 chroot2 chroot3'
 
+# transport to the slaves
+TRANSPORT='/usr/bin/ssh -x'
+#TRANSPORT="distbb_chroot @@prefix@@/bin/distbb"
+
 # do not change the following unless you know what you are doing
 DISTBB_SLAVE=@@libexecdir@@/slave
 DISTBB_LOCK=@@libexecdir@@/lock
 
-# filename containing notes about bulk build (in html format)
+# filename containing notes about bulk build (in html format),
+# e.g. unusual build options, compiler etc.
 NOTES=''
 
-# a number of printed top offenders that
+# a number of "top offenders"
 OFFENDERS_CNT=20
 
-# set it to non-empty string if you want "distributed" bulk build
-# also see SLAVES variable
-MASTER_MODE=''
 #
 OS="$(uname -s)"
+
 #
 OSVER="$(uname -r)/$(uname -m)"
+
 #
-PKGSRCVER='2007Q4'
+PKGSRCVER='2008Q1'
+#PKGSRCVER='current'
 
 #
 PACKAGES_URL="http://mova.org/~cheusov/pub/pkgsrc-distbb/$OS/$PKGSRCVER/packages/"
+
 #
 REPORT_URL="http://www.mova.org/~cheusov/pub/pkgsrc-distbb/$OS/$PKGSRCVER/log/$BUILD_START/META/report.html"
 
 #
-REPORT_CMD="@@prefix@@/bin/mail -s \"pkgsrc-$PKGSRCVER $OS $OSVER bulk build results $BUILD_START\" cheusov@tut.by"
+REPORT_CMD="@@bindir@@/mail -s \"pkgsrc-$PKGSRCVER $OS $OSVER bulk build results $BUILD_START\" cheusov@tut.by"
+
 #
-UPLOAD_PKGS_CMD="@@prefix@@/bin/rsync -av --delete-excluded -e ssh $PACKAGES/ cheusov@mova.org:~/public_html/pub/pkgsrc-distbb/$OS/$PKGSRCVER/packages/"
+UPLOAD_PKGS_CMD="@@bindir@@/rsync -av --delete-excluded -e ssh $PACKAGES/ cheusov@mova.org:~/public_html/pub/pkgsrc-distbb/$OS/$PKGSRCVER/packages/"
+
 #
-UPLOAD_LOGS_CMD="@@prefix@@/bin/rsync -av --delete-excluded --exclude '*.tmp' -e ssh $REPORTS_DIR/$BUILD_START cheusov@mova.org:~/public_html/pub/pkgsrc-distbb/$OS/$PKGSRCVER/log/"
+UPLOAD_LOGS_CMD="@@bindir@@/rsync -av --delete-excluded --exclude '*.tmp' -e ssh $REPORTS_DIR/$BUILD_START cheusov@mova.org:~/public_html/pub/pkgsrc-distbb/$OS/$PKGSRCVER/log/"
