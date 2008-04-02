@@ -4,14 +4,19 @@ Requirements (in tutorial form):
 1) bootstrap your working pkgsrc (to /usr/pkg, for example)
    - edit /usr/pkg/etc/mk.conf
 
-     Sample:
+     Example:
+
        ...
        _ACCEPTABLE=                    yes
        PKG_DEVELOPER=                  yes
        ALLOW_VULNERABLE_PACKAGES=      yes
 
+       # it is recommended to use local directory for building
+       WRKOBJDIR=                      /tmp/pkgsrc_obj
+
        X11_TYPE=                       modular
        PKG_SUFX=                      .tbz
+
    - create bootstrap.tar.gz
 
 2) bootstrap pkgsrc for distbb (to /usr/pkg_distbb, for example)
