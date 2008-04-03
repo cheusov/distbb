@@ -25,9 +25,11 @@ PACKAGES=$PKGSRCDIR/packages
 
 # pkg_summary(5)
 PKG_SUMMARY=$PACKAGES/All/pkg_summary.txt
+PKG_UPDATE_SUMMARY_CMD=@@bindir@@/pkg_update_summary
 
 # pkgsrc_src_summary (similar to pkg_summary(5) but for source packages)
 PKG_SRC_SUMMARY=$PKGSRCDIR/pkg_src_summary.txt
+PKG_UPDATE_SRC_SUMMARY_CMD=@@bindir@@/pkg_update_src_summary
 
 # directory where reports are saved
 REPORTS_DIR=$HOME/bulk-logs
@@ -35,6 +37,12 @@ REPORTS_DIR=$HOME/bulk-logs
 # 
 PKG_SUFX=.tgz
 #PKG_SUFX=.tbz
+
+# install the following packages first.
+# Be VERY accurate in setting this.
+# Only "lowest-level packages are allowed here.
+EXTRA_DEPS='pkgtools/digest sysutils/checkperms'
+#EXTRA_DEPS="$(cd $PKGSRCDIR/devel/bmake && $BMAKE show-var VARNAME=BOOTSTRAP_DEPENDS | sed 's,[^ ]*[.][.]/[.][.]/,,g')"
 
 # for target 'depends'
 DEPENDS_TARGET='do-bin-install'

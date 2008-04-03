@@ -331,5 +331,5 @@ eval runpipe0 \
 ######################################################################
 
 verbose_print "Updating pkg_summary..."
-pkg_update_summary $PKG_SUMMARY $PACKAGES/All
+eval $PKG_UPDATE_SUMMARY_CMD $PKG_SUMMARY $PACKAGES/All
 verbose_print "done\n"

@@ -56,7 +56,7 @@ printf '' > $packages_built_fn
 
 refreshed_summary_fn=$tmpdir/refreshed_summary.tmp
 verbose_print "  updating pkg_summary..."
-pkg_update_summary $PKG_SUMMARY $PACKAGES/All
+eval $PKG_UPDATE_SUMMARY_CMD $PKG_SUMMARY $PACKAGES/All
 pkg_refresh_summary $PKG_SUMMARY >$refreshed_summary_fn
 verbose_print "done\n"
 
@@ -129,22 +129,22 @@ NF == 0 && curr_pkgpath == pkgpath {
 }
 ' "$PKG_SRC_SUMMARY"
 
-    bootstr_deps="$(cd $PKGSRCDIR/devel/bmake && $BMAKE show-var VARNAME=BOOTSTRAP_DEPENDS | sed 's,[^ ]*[.][.]/[.][.]/,,g')"
+    extra_deps="$EXTRA_DEPS"
 
-    printf '' > $bsdeps_fn
-    for d in $bootstr_deps; do
+    printf '' > $extradeps_fn
+    for d in $extra_deps; do
 	awk -v d=$d -F= '$1 == "PKGPATH" {print "dummy", d, $2}' \
-	    $PKG_SRC_SUMMARY > $bsdeps_fn
+	    $PKG_SRC_SUMMARY > $extradeps_fn
     done
 }
 
 deps_fn=$tmpdir/deps.tmp
 bdeps_fn=$tmpdir/bdeps.tmp
-bsdeps_fn=$tmpdir/bsdeps.tmp
+extradeps_fn=$tmpdir/extradeps.tmp
 
 if test -z "$pkg_src_update_summary"; then
     verbose_print "  Updating pkg_src_summary..."
-    pkg_src_update_summary "$PKG_SRC_SUMMARY"
+    eval $PKG_UPDATE_SRC_SUMMARY_CMD "$PKG_SRC_SUMMARY"
     verbose_print "done\n"
 fi
 
@@ -208,7 +208,7 @@ NF == 3 {
 verbose_print "  Transitive closure of the dependancy graph..."
 trans_clos_fn=$tmpdir/trans_closure.tmp
 runpipe0 \
-    extract_dep $deps_fn $bdeps_fn $bsdeps '|' \
+    extract_dep $deps_fn $bdeps_fn $extradeps_fn '|' \
     transitive_closure > $trans_clos_fn
 verbose_print "done\n"
 
