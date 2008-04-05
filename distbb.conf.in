@@ -56,9 +56,10 @@ TARGETS='depends fetch checksum configure build install package deinstall'
 #TARGETS='depends fetch checksum configure build package package-install package-deinstall'
 
 # extra options passed to bmake
-EXTRA_OPTS='PKG_VERBOSE=1'
+# BATCH is mandatory for bulk builds!
+EXTRA_OPTS='BATCH=yes PKG_VERBOSE=1'
 # the following is for USE_DESTDIR=full bulk builds
-#EXTRA_OPTS='PKG_VERBOSE=1 USE_DESTDIR=full CHECK_SHLIBS=no'
+#EXTRA_OPTS='BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=full CHECK_SHLIBS=no'
 
 # set it to non-empty string if you want "distributed" bulk build
 # also see SLAVES variable
