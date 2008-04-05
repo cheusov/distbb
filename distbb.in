@@ -93,6 +93,37 @@ unset PKG_PATH || true
 export PATH=@@bindir@@:@@sbindir@@:$PATH
 
 ######################################################################
+test_var (){
+    if eval "test -z \"\$$1\""; then
+	printf "Variable $1 is unset\n", "$1" 1>&2
+	exit 1
+    fi
+}
+
+test_var BMAKE
+test_var PKGSRCDIR
+test_var PKGSRC_PREFIX
+test_var RMDIRS_CMD
+test_var BOOTSTRAP
+test_var EXTRACT_BOOTSTRAP_CMD
+test_var PACKAGES
+test_var PKG_SUMMARY
+test_var PKG_UPDATE_SUMMARY_CMD
+test_var PKG_SRC_SUMMARY
+test_var PKG_UPDATE_SRC_SUMMARY_CMD
+test_var REPORTS_DIR
+test_var PKG_SUFX
+test_var EXTRA_DEPS
+test_var DEPENDS_TARGET
+test_var TARGETS
+test_var DISTBB_SLAVE
+test_var DISTBB_LOCK
+test_var OFFENDERS_CNT
+test_var REPORT_CMD
+test_var UPLOAD_PKGS_CMD
+test_var UPLOAD_LOGS_CMD
+
+######################################################################
 
 @@libexecdir@@/stage_init        "$BUILD_START" \
                                  "$pkg_src_update_summary" \
