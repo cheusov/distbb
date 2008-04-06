@@ -129,11 +129,9 @@ NF == 0 && curr_pkgpath == pkgpath {
 }
 ' "$PKG_SRC_SUMMARY"
 
-    extra_deps="$EXTRA_DEPS"
-
     printf '' > $extradeps_fn
-    for d in $extra_deps; do
-	awk -v d=$d -F= '$1 == "PKGPATH" {print "dummy", d, $2}' \
+    for d in $EXTRA_DEPS; do
+	awk -v d=$d -F= '$1 == "PKGPATH" && $2 != d {print "dummy", d, $2}' \
 	    $PKG_SRC_SUMMARY > $extradeps_fn
     done
 }
