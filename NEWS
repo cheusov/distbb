@@ -1,3 +1,22 @@
+Version 0.6.1, by Aleksey Cheusov, Sun,  6 Apr 2008 15:33:26 +0300
+
+  distbb.conf:
+    BATCH=yes by default in distbb.conf
+
+  FIXED: another BUG in handling EXTRA_DEPS
+
+Version 0.6.0, by Aleksey Cheusov
+
+  distbb.conf:
+    @@bindir@@/mail -> /usr/bin/mail
+    new variables: PKG_UPDATE_SUMMARY_CMD, PKG_UPDATE_SRC_SUMMARY_CMD
+      and EXTRA_DEPS
+
+  distbb:
+    added: tests for variables that must not be empty
+
+  pkg_src_update_summary  renamed to pkg_update_src_summary
+
 Version 0.5.0, by Aleksey Cheusov, Wed,  2 Apr 2008 23:31:24 +0300
 
   First publicly available release
