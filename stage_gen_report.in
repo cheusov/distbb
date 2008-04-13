@@ -169,7 +169,7 @@ EOF
     if test -s "$build_src_summary_log_fn"; then
 	cat <<EOF
 Also, building a summary failed for a list of packages,
-logs are <a href=\"$build_src_summary_log_fn\" title=\"building summary logs\">here</a>.
+logs are <a href="$(basename $build_src_summary_log_fn)" title=\"building summary logs\">available</a>.
 EOF
     fi
 
