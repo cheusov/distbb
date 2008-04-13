@@ -142,7 +142,8 @@ extradeps_fn=$tmpdir/extradeps.tmp
 
 if test -z "$pkg_src_update_summary"; then
     verbose_print "  Updating pkg_src_summary..."
-    eval $PKG_UPDATE_SRC_SUMMARY_CMD "$PKG_SRC_SUMMARY"
+    eval $PKG_UPDATE_SRC_SUMMARY_CMD "$PKG_SRC_SUMMARY" \
+	2> "$build_src_summary_log_fn"
     verbose_print "done\n"
 fi
 

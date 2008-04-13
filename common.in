@@ -20,6 +20,7 @@ packages_failed_deps_fn=$meta_dir/packages_failed_deps.txt
 packages_failed_fn=$meta_dir/packages_failed.txt
 packages_built_prev_fn=$meta_dir/packages_built_prev.txt
 packages_built_fn=$meta_dir/packages_built.txt
+build_src_summary_log_fn=$meta_dir/build_src_summary_log.txt
 
 date_start_fn=$meta_dir/date_start.tmp
 

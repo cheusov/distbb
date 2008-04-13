@@ -163,8 +163,18 @@ EOF
   <tr><td>Packages in pkg_summary</td>         <td align="right">$(right_align 20 $packages_in_summary)</td></tr>
 </table>
 <p>Packages not listed here resulted in a $url.<br>
-Results of failed packages are available below.</p>
+Results of failed packages are available below.
+EOF
 
+    if test -s "$build_src_summary_log_fn"; then
+	cat <<EOF
+Also, building a summary failed for a list of packages,
+logs are <a href=\"$build_src_summary_log_fn\" title=\"building summary logs\">here</a>.
+EOF
+    fi
+
+    cat <<EOF
+</p>
 Jump to:
 <ul>
     <li><a href="#summary">Summary</a></li>
