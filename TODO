@@ -1,0 +1,6 @@
+- META/progress.txt
+    package1.txt succeeded on host1
+    package2.txt failed on host2
+    package3.txt failed on host3
+    ...
+- distributed PKG_UPDATE_SRC_SUMMARY_CMD
