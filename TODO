@@ -4,3 +4,5 @@
     package3.txt failed on host3
     ...
 - distributed PKG_UPDATE_SRC_SUMMARY_CMD
+- progress message 'FAILED|succeeded on ***HOST***'
+  just like 'started on ***HOST***'
