@@ -35,7 +35,7 @@ For "distributed" builds:
     mount -t nfs -o ro master:/usr/pkg_distbb /usr/pkg_distbb
     mount -t nfs -o rw master:/usr/pkgsrc     /usr/pkgsrc
 
-    /usr/pkg and PKGDBDIR needs to be per slave (will be deleted)
+    /usr/pkg and PKGDBDIR need to be per slave (will be deleted)
 
 5d) /usr/pkg_distbb/bin/distbb -h
     /usr/pkg_distbb/bin/distbb                 # for full bulk build
