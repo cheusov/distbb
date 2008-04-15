@@ -274,6 +274,8 @@ rebuild_fn=$tmpdir/rebuild.tmp
 all_packages_to_be_build () {
 awk -v pkgs="$rebuild1_fn" -v res_trans_clos_fn="$trans_clos_rebuild_fn" '
 BEGIN {
+   printf "" > res_trans_clos_fn
+
    while (getline < pkgs){
       hash [$1] = 1
       print $1
