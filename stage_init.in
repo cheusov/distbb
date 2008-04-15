@@ -32,7 +32,7 @@ test $# -eq 4
 # init
 BUILD_START="$1"
 pkg_src_update_summary="$2"
-pkg_src_packages="$3"
+packages="$3"
 date_start="$4"
 
 . @@sysconfdir@@/distbb.conf
@@ -176,7 +176,7 @@ verbose_print "done\n"
 ### list of packages
 verbose_print "  clean-up/generate a list of packages..."
 
-# print packages found in "$pkg_src_packages"
+# print packages found in "$packages"
 # and packages they depend on
 with_dependancies (){
     awk -v pkgs="$1" '
@@ -200,29 +200,29 @@ cleanup_package_list (){
     }
     NF > 0 {
        print $1
-    }' "$pkg_src_packages"
+    }' "$packages"
 }
 
 # remove comments and empty lines
-if test "$pkg_src_packages"; then
+if test "$packages"; then
     cleanup_package_list > $tmpdir/packages.tmp
-    pkg_src_packages=$tmpdir/packages.tmp
+    packages=$tmpdir/packages.tmp
     runpipe0 \
-	with_dependancies "$pkg_src_packages" "$trans_clos_fn" '|' \
-	sort -u > $tmpdir/packages2.tmp
-    pkg_src_packages=$tmpdir/packages2.tmp
+	with_dependancies "$packages" "$trans_clos_fn" '|' \
+	sort -u > $tmpdir/packages_final.tmp
+    packages=$tmpdir/packages_final.tmp
 else
     pkg_list_all_pkgs > $tmpdir/packages.tmp
-    pkg_src_packages=$tmpdir/packages.tmp
-fi 
+    packages=$tmpdir/packages.tmp
+fi
 
 verbose_print "done\n"
 
 ######################################################################
 ### final transitive closure
-verbose_print "  transitive closure with only requested packages..."
+verbose_print "  building reduced transitive closure with requested packages only..."
 
-trans_closure_final2 (){
+trans_closure_final (){
     awk -v pkgs="$1" '
 BEGIN {
    while (getline < pkgs){
@@ -237,8 +237,8 @@ $2 in hash {
 }
 
 trans_clos_final_fn=$tmpdir/trans_closure_final.tmp
-trans_closure_final2 \
-    "$pkg_src_packages" \
+trans_closure_final \
+    "$packages" \
     "$trans_clos_fn" > "$trans_clos_final_fn"
 
 trans_clos_full_fn=$tmpdir/trans_closure_full.tmp
@@ -253,7 +253,7 @@ verbose_print "  direct packages to be built..."
 
 rebuild1_fn=$tmpdir/rebuild1.tmp
 
-awk -v pkgs="$pkg_src_packages" '
+awk -v pkgs="$packages" '
 BEGIN {
    while (getline < pkgs){
       hash [$1] = 1
@@ -294,7 +294,7 @@ runpipe0 \
 verbose_print "done\n"
 
 ######################################################################
-### counted list of packages / queue
+### packages with a number of their dependancies / queue
 gen_queue (){
     awk '
 NF == 2 { count [$2] += 1 }
@@ -324,7 +324,7 @@ END {
       if (cnt [pkg] == 1) print pkg
    }
 }
-'  "$pkg_src_packages" "$rebuild_fn" > "$packages_built_prev_fn"
+'  "$packages" "$rebuild_fn" > "$packages_built_prev_fn"
 
 verbose_print "done\n"
 
