@@ -22,7 +22,7 @@ Requirements (in tutorial form):
 2) bootstrap pkgsrc for distbb (to /usr/pkg_distbb, for example)
    - install wip/distbb in it
    - install other software you may need
-   - cp /usr/pkg/share/examples/distbb/XXX.conf /usr/pkg_distbb/etc/
+   - cp /usr/pkg/share/examples/distbb/XXX.conf /usr/pkg_distbb/etc/distbb.conf
    - edit /usr/pkg_distbb/etc/distbb.conf configuration file
 
 For "distributed" builds:
@@ -35,7 +35,7 @@ For "distributed" builds:
     mount -t nfs -o ro master:/usr/pkg_distbb /usr/pkg_distbb
     mount -t nfs -o rw master:/usr/pkgsrc     /usr/pkgsrc
 
-    /usr/pkg (and PKGDBDIR) needs to be per slave (will be deleted)
+    /usr/pkg and PKGDBDIR needs to be per slave (will be deleted)
 
 5d) /usr/pkg_distbb/bin/distbb -h
     /usr/pkg_distbb/bin/distbb                 # for full bulk build
@@ -43,10 +43,10 @@ For "distributed" builds:
 
   NOTE:
     - in "distributed" mode master's /usr/pkg is NOT changed.
-      Neither pkg_add not pkg_delete is called on master's host.
+      Neither pkg_add nor pkg_delete is called on master's host.
       /usr/pkgsrc/packages/pkg_summary.txt and
       /usr/pkgsrc/pkg_src_summary.txt are changed/created/updated.
-    - you should not be root on master host.
+    - distbb can be run under unprivileged user on master's host
 
 For single-node bulk build:
 
