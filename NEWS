@@ -1,3 +1,21 @@
+Version 0.7.0, by Aleksey Cheusov
+
+  stage_init.in: completely reimplemented. An algorithm become easier
+  and cleaner. FIXED: incorrect calculating "build_previously" count,
+  and therefore "total_packages" too. FIXED (I hope): inifinite loop
+  sometimes happens when '-f packages.txt' option applied.  The code
+  also become cleaner.
+
+  distbb.conf.in:
+    minor fix: pkg_src_update_summary -> pkg_update_src_summary
+
+  Exporting LC_ALL=C and other important initializations have been
+  moved from distbb.in to common.in. Now every significant
+  initialization is made in PREFIX/libexec/distbb/stage_*, i.e. these
+  scripts become more all-sufficient.
+
+  Minor changes and fixes in README
+
 Version 0.6.2, by Aleksey Cheusov, Sun, 13 Apr 2008 12:34:17 +0300
 
   Failures of PKG_SRC_SUMMARY_CMD for individual packages are logged
