@@ -30,7 +30,7 @@ PKG_UPDATE_SUMMARY_CMD=@@bindir@@/pkg_update_summary
 
 # pkgsrc_src_summary (similar to pkg_summary(5) but for source packages)
 PKG_SRC_SUMMARY=$PKGSRCDIR/pkg_src_summary.txt
-PKG_UPDATE_SRC_SUMMARY_CMD=@@bindir@@/pkg_src_update_summary
+PKG_UPDATE_SRC_SUMMARY_CMD=@@bindir@@/pkg_update_src_summary
 
 # directory where reports are saved
 REPORTS_DIR=$HOME/bulk-logs
