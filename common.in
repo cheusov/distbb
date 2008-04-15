@@ -6,6 +6,8 @@ verbose_print (){
     printf "$1" 1>&2
 }
 
+export LC_ALL=C # for sort and uniq
+
 ######################################################################
 if test -z "$REPORT1_DIR"; then
     echo "REPORT1_DIR MUST be set" 1>&2
@@ -29,3 +31,7 @@ queue_fn=$tmpdir/queue.tmp
 trans_clos_rebuild_fn=$tmpdir/trans_closure_rebuild.tmp
 
 ######################################################################
+export PKG_SUFX PKGSRCDIR BMAKE
+unset PKG_PATH || true
+
+export PATH=@@bindir@@:@@sbindir@@:$PATH

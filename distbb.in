@@ -76,8 +76,6 @@ fi
 set -e
 . @@bindir@@/pipestatus
 
-export LC_ALL=C # for sort and uniq
-
 # date start for placint it to html/txt report
 date_start="$(date -u '+%Y-%m-%d %H:%M') UTC"
 # date start in YYYYMMDD-HHMM format
@@ -86,11 +84,6 @@ BUILD_START="$(echo $date_start | awk '{gsub(/[:-]/, ""); print $1 "." $2}')"
 echo "BUILD_START: $BUILD_START" 1>&2
 
 . @@sysconfdir@@/distbb.conf
-
-export PKG_SUFX PKGSRCDIR BMAKE
-unset PKG_PATH || true
-
-export PATH=@@bindir@@:@@sbindir@@:$PATH
 
 ######################################################################
 test_var (){
