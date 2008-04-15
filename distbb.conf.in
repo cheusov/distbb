@@ -16,6 +16,7 @@ RMDIRS_CMD="/bin/rm -rf $PKGSRC_PREFIX /var/db/pkg"
 
 # bootstrap
 BOOTSTRAP="/path/to/bootstrap.tar.gz"
+#BOOTSTRAP=''
 
 #
 EXTRACT_BOOTSTRAP_CMD="@@bindir@@/pax -r -pe -z -f $BOOTSTRAP"
@@ -43,6 +44,7 @@ PKG_SUFX=.tgz
 # Only "lowest-level packages are allowed here.
 EXTRA_DEPS='pkgtools/digest sysutils/checkperms'
 #EXTRA_DEPS="$(cd $PKGSRCDIR/devel/bmake && $BMAKE show-var VARNAME=BOOTSTRAP_DEPENDS | sed 's,[^ ]*[.][.]/[.][.]/,,g')"
+#EXTRA_DEPS=''
 
 # for target 'depends'
 DEPENDS_TARGET='do-bin-install'

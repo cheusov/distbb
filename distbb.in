@@ -97,7 +97,6 @@ test_var BMAKE
 test_var PKGSRCDIR
 test_var PKGSRC_PREFIX
 test_var RMDIRS_CMD
-test_var BOOTSTRAP
 test_var EXTRACT_BOOTSTRAP_CMD
 test_var PACKAGES
 test_var PKG_SUMMARY
@@ -106,7 +105,6 @@ test_var PKG_SRC_SUMMARY
 test_var PKG_UPDATE_SRC_SUMMARY_CMD
 test_var REPORTS_DIR
 test_var PKG_SUFX
-test_var EXTRA_DEPS
 test_var DEPENDS_TARGET
 test_var TARGETS
 test_var DISTBB_SLAVE
