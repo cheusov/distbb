@@ -53,6 +53,7 @@ printf '' > $packages_built_prev_fn
 printf '' > $packages_built_fn
 
 ######################################################################
+### updating PKG_SUMMARY
 
 refreshed_summary_fn=$tmpdir/refreshed_summary.tmp
 verbose_print "  updating pkg_summary..."
@@ -61,85 +62,7 @@ pkg_refresh_summary $PKG_SUMMARY >$refreshed_summary_fn
 verbose_print "done\n"
 
 ######################################################################
-
-verbose_print "  clean-up package list..."
-
-if test $pkg_src_packages; then
-    awk '
-{
-   sub(/#.*$/, "")
-}
-NF > 0 {
-   print $1
-}' $pkg_src_packages > $tmpdir/packages.tmp
-
-    pkg_src_packages=$tmpdir/packages.tmp
-fi
-
-verbose_print "done\n"
-
-######################################################################
-### extracting DEPENDS and BUILDS_DEPENDS
-extract_depends (){
-    awk -v deps_fn="$deps_fn" -v bdeps_fn="$bdeps_fn" '
-/^PKGNAME=/ {
-   pkgname = substr($0, 9)
-   next
-}
-
-/^PKGPATH=/ {
-   pkgpath = substr($0, 9)
-   next
-}
-
-/^DEPENDS=/ {
-   $0 = substr($0, 9)
-   gsub(/[^ \t]+:[.][.]\/[.][.]\//, "")
-
-   for (i=1; i <= NF; ++i){
-      deps [$i] = 1
-   }
-   for (i in deps){
-      print pkgname, i, pkgpath > deps_fn
-   }
-   delete deps
-
-   next
-}
-
-/^BUILD_DEPENDS=/ {
-   $0 = substr($0, 15)
-   gsub(/[^ \t]+:[.][.]\/[.][.]\//, "")
-
-   for (i=1; i <= NF; ++i){
-      deps [$i] = 1
-   }
-   for (i in deps){
-      print pkgname, i, pkgpath > bdeps_fn
-   }
-   delete deps
-
-   next
-}
-
-NF == 0 && curr_pkgpath == pkgpath {
-   print pkgname
-   print deps
-   print bdeps
-}
-' "$PKG_SRC_SUMMARY"
-
-    printf '' > $extradeps_fn
-    for d in $EXTRA_DEPS; do
-	awk -v d=$d -F= '$1 == "PKGPATH" && $2 != d {print "dummy", d, $2}' \
-	    $PKG_SRC_SUMMARY > $extradeps_fn
-    done
-}
-
-deps_fn=$tmpdir/deps.tmp
-bdeps_fn=$tmpdir/bdeps.tmp
-extradeps_fn=$tmpdir/extradeps.tmp
-
+### updating PKG_SRC_SUMMARY
 if test -z "$pkg_src_update_summary"; then
     verbose_print "  Updating pkg_src_summary..."
     eval $PKG_UPDATE_SRC_SUMMARY_CMD "$PKG_SRC_SUMMARY" \
@@ -147,7 +70,54 @@ if test -z "$pkg_src_update_summary"; then
     verbose_print "done\n"
 fi
 
-verbose_print "  Dependencies from pkg_src_summary file..."
+######################################################################
+### comparison binaries against pkgsrc tree
+verbose_print "  pkg_summary vs. pkg_src_summary comparison..."
+cmp_fn=$tmpdir/cmp.tmp
+pkg_cmp_summary -p $refreshed_summary_fn $PKG_SRC_SUMMARY > $cmp_fn
+verbose_print "done\n"
+
+######################################################################
+### extracting DEPENDS and BUILDS_DEPENDS
+
+# store DEPENDS and BUILD_DEPENDS dependcies in
+#  "$deps_fn", "$bdeps_fn" and $extradeps_fn files
+# input: "$PKG_SRC_SUMMARY file and $EXTRA_DEPS packages.
+# output format: <PKGNAME> <DEPENDANCY_PKGPATH> <PKGPATH>
+
+deps_fn=$tmpdir/deps.tmp
+
+extract_depends (){
+    awk -v deps_fn="$deps_fn" '
+/^PKGPATH=/ {
+   pkgpath = substr($0, 9)
+   next
+}
+
+/^(BUILD_)?DEPENDS=/ {
+   sub(/^[^=]*=/, "")
+   gsub(/[^ \t]+:[.][.]\/[.][.]\//, "")
+
+   for (i=1; i <= NF; ++i){
+      deps [$i] = 1
+   }
+   for (i in deps){
+      print i, pkgpath > deps_fn
+   }
+   delete deps
+
+   next
+}
+' "$PKG_SRC_SUMMARY"
+
+    # extra dependancies from $EXTRA_DEPS
+    for d in dummy $EXTRA_DEPS; do
+	awk -v d=$d -F= '$1 == "PKGPATH" && $2 != d {print d, $2}' \
+	    $PKG_SRC_SUMMARY >> $deps_fn
+    done
+}
+
+verbose_print "  extracting dependencies from pkg_src_summary file..."
 extract_depends
 verbose_print "done\n"
 
@@ -197,43 +167,21 @@ END {
 ' "$@"
 }
 
-extract_dep (){
-    awk '
-NF == 3 {
-   print $2, $3
-}' "$@"
-}
-
-verbose_print "  Transitive closure of the dependancy graph..."
+verbose_print "  transitive closure of the dependancy graph..."
 trans_clos_fn=$tmpdir/trans_closure.tmp
-runpipe0 \
-    extract_dep $deps_fn $bdeps_fn $extradeps_fn '|' \
-    transitive_closure > $trans_clos_fn
+transitive_closure $deps_fn > $trans_clos_fn
 verbose_print "done\n"
 
 ######################################################################
-### comparison binaries against pkgsrc tree
-verbose_print "  pkg_summary vs. pkg_src_summary comparison..."
-cmp_fn=$tmpdir/cmp.tmp
-pkg_cmp_summary -p $refreshed_summary_fn $PKG_SRC_SUMMARY > $cmp_fn
-verbose_print "done\n"
+### full list of packages
+verbose_print "  clean-up/generate a list of packages..."
 
-awk '($1 == "=") {print $2}' $cmp_fn \
-    > $packages_built_prev_fn
-
-######################################################################
-### direct packages that need to be rebuilt
-verbose_print "  List of packages to be built..."
-rebuild1_fn=$tmpdir/rebuild1.tmp
-rebuild2_fn=$tmpdir/rebuild2.tmp
-rebuild3_fn=$tmpdir/rebuild3.tmp
-awk '($1 != "=") && ($1 != "-") {print $2}' $cmp_fn > $rebuild1_fn
-
-filter_rebuild2 (){
-    # also selects packages required by a given package
-    awk -v pkg_src_packages="$pkg_src_packages" '
+# print packages found in "$pkg_src_packages"
+# and packages they depend on
+with_dependancies (){
+    awk -v pkgs="$1" '
 BEGIN {
-   while (getline < pkg_src_packages){
+   while (getline < pkgs){
       hash [$1] = 1
       print $1
    }
@@ -242,60 +190,113 @@ BEGIN {
 $2 in hash {
    print $1
 }
-' "$@"
+' "$2"
 }
 
-grep_packages (){
-    awk -v pkgs=$1 '
-BEGIN {
-   while ((getline < pkgs) > 0){
-      hash [$1] = 1
-   }
+cleanup_package_list (){
+    awk '
+    {
+       sub(/#.*$/, "")
+    }
+    NF > 0 {
+       print $1
+    }' "$pkg_src_packages"
 }
 
-$1 in hash
-' $2
-}
+# remove comments and empty lines
+if test "$pkg_src_packages"; then
+    cleanup_package_list > $tmpdir/packages.tmp
+    pkg_src_packages=$tmpdir/packages.tmp
+    runpipe0 \
+	with_dependancies "$pkg_src_packages" "$trans_clos_fn" '|' \
+	sort -u > $tmpdir/packages2.tmp
+    pkg_src_packages=$tmpdir/packages2.tmp
+else
+    pkg_list_all_pkgs > $tmpdir/packages.tmp
+    pkg_src_packages=$tmpdir/packages.tmp
+fi 
 
-if test $pkg_src_packages; then
-    filter_rebuild2 $trans_clos_fn > $rebuild3_fn
-
-    grep_packages $rebuild3_fn $rebuild1_fn > $rebuild2_fn
-
-    rebuild1_fn=$rebuild2_fn
-fi
 verbose_print "done\n"
 
 ######################################################################
-### only those dependancies that depend on packages that need to be rebuilt
-filter_rebuild1 (){
-    # also selects packages that depends on a given package
-    awk \
-	-v rebuild1_fn="$rebuild1_fn" \
-	-v pkg_src_packages="$pkg_src_packages" '
+### final transitive closure
+verbose_print "  transitive closure with only requested packages..."
+
+trans_closure_final2 (){
+    awk -v pkgs="$1" '
 BEGIN {
-   while (getline < rebuild1_fn){
+   while (getline < pkgs){
       hash [$1] = 1
    }
 }
 
-($1 in hash) && (pkg_src_packages == "" || ($2 in hash)) {
+$2 in hash {
    print $0
 }
-' "$@"
+' "$2"
 }
 
-######################################################################
-verbose_print "  Packages to be built with their dependancies..."
+trans_clos_final_fn=$tmpdir/trans_closure_final.tmp
+trans_closure_final2 \
+    "$pkg_src_packages" \
+    "$trans_clos_fn" > "$trans_clos_final_fn"
 
-filter_rebuild1 $trans_clos_fn > $trans_clos_rebuild_fn
+trans_clos_full_fn=$tmpdir/trans_closure_full.tmp
+mv "$trans_clos_fn" "$trans_clos_full_fn"
+mv "$trans_clos_final_fn" "$trans_clos_fn"
+
+verbose_print "done\n"
+
+######################################################################
+### direct packages that need to be rebuilt
+verbose_print "  direct packages to be built..."
+
+rebuild1_fn=$tmpdir/rebuild1.tmp
+
+awk -v pkgs="$pkg_src_packages" '
+BEGIN {
+   while (getline < pkgs){
+      hash [$1] = 1
+   }
+}
+
+($1 != "=") && ($1 != "-") && ($2 in hash) {print $2}
+' "$cmp_fn" > $rebuild1_fn
+
+verbose_print "done\n"
+
+######################################################################
+### direct packages that need to be rebuilt
+verbose_print "  all packages to be built..."
+
+rebuild_fn=$tmpdir/rebuild.tmp
+
+all_packages_to_be_build () {
+awk -v pkgs="$rebuild1_fn" -v res_trans_clos_fn="$trans_clos_rebuild_fn" '
+BEGIN {
+   while (getline < pkgs){
+      hash [$1] = 1
+      print $1
+   }
+}
+
+($1 in hash) {
+   print $2
+   print $0 > res_trans_clos_fn
+}
+' "$trans_clos_fn"
+}
+
+runpipe0 \
+    all_packages_to_be_build '|' \
+    sort -u > $rebuild_fn
 
 verbose_print "done\n"
 
 ######################################################################
 ### counted list of packages / queue
-count_deps (){
-awk '
+gen_queue (){
+    awk '
 NF == 2 { count [$2] += 1 }
 NF == 1 { count [$1] += 0 }
 END {
@@ -305,10 +306,26 @@ END {
 ' "$@"
 }
 
-verbose_print "  Initial queue..."
-count_deps $rebuild1_fn $trans_clos_rebuild_fn > $queue_fn
+verbose_print "  initial queue..."
+
+gen_queue $rebuild1_fn $trans_clos_rebuild_fn > $queue_fn
+
 verbose_print "done\n"
 
-queue__ready_to_be_built (){
-    awk '$2 == 0 {print $1}' $queue_fn
+######################################################################
+### counted list of packages / queue
+
+verbose_print "  packages already built..."
+
+awk '
+{ cnt [$1] += 1 }
+END {
+   for (pkg in cnt) {
+      if (cnt [pkg] == 1) print pkg
+   }
 }
+'  "$pkg_src_packages" "$rebuild_fn" > "$packages_built_prev_fn"
+
+verbose_print "done\n"
+
+######################################################################
