@@ -101,12 +101,16 @@ extract_depends (){
    for (i=1; i <= NF; ++i){
       deps [$i] = 1
    }
+
+   next
+}
+
+NF == 0 {
    for (i in deps){
       print i, pkgpath > deps_fn
    }
    delete deps
-
-   next
+   pkgpath = ""
 }
 ' "$PKG_SRC_SUMMARY"
 
