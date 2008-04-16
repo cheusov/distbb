@@ -1,8 +1,13 @@
-- META/progress.txt
-    package1.txt succeeded on host1
-    package2.txt failed on host2
-    package3.txt failed on host3
+ideas/todo
+
+ - flushed META/progress.txt
+    package1.txt date/time succeeded on host1
+    package2.txt date/time failed on host2
+    package3.txt date/time failed on host3
     ...
-- distributed PKG_UPDATE_SRC_SUMMARY_CMD
-- progress message 'FAILED|succeeded on ***HOST***'
-  just like 'started on ***HOST***'
+ - distributed PKG_UPDATE_SRC_SUMMARY_CMD (part of pkg_summary-utils)
+ - progress message 'FAILED|succeeded on ***HOST***'
+   just like 'started on ***HOST***'
+ - [optional] add email of person who run bulk build to report.html
+ - add distbb version to report.html
+ - (?) put packages to paexec one-by-one and make stage_build rerunable
