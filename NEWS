@@ -2,9 +2,12 @@ Version 0.7.0, by Aleksey Cheusov
 
   stage_init.in: completely reimplemented. An algorithm become easier
   and cleaner. FIXED: incorrect calculating "build_previously" count,
-  and therefore "total_packages" too. FIXED (I hope): inifinite loop
-  sometimes happens when '-f packages.txt' option applied.  The code
-  also become cleaner.
+  and therefore "total_packages" too. The code also become cleaner.
+
+  FIX: build_init.in now doesn't depend on fields order in
+  pkg_src_summary (doesn't reply on that PKGPATH is before
+  [BUILD_]DEPENDS). This may cause an inifinite loop because of
+  oncorrect (cyclic) dependancies in META/tmp/trans_closure.tmp
 
   distbb.conf.in:
     minor fix: pkg_src_update_summary -> pkg_update_src_summary
