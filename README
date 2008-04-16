@@ -58,5 +58,9 @@ For single-node bulk build:
     /usr/pkg_distbb/bin/distbb                 # for full bulk build
     /usr/pkg_distbb/bin/distbb -f packages.txt # for partial bulk build
 
-  Note that /usr/pkg (and PKGDBDIR) will be removed and recreated
-  from bootstrap tarball.
+  NOTE:
+    - /usr/pkg (and PKGDBDIR) will be removed and recreated from
+      bootstrap tarball.
+    - in order to correctly build pkg_src_summary, master's
+      /usr/pkg/etc/mk.conf (at the time of distbb startup) must be
+      equal to that from bootstrap tarball.
