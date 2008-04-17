@@ -1,4 +1,4 @@
-Version 0.7.0, by Aleksey Cheusov
+Version 0.7.0, by Aleksey Cheusov, Thu, 17 Apr 2008 12:30:58 +0300
 
   stage_init.in: completely reimplemented. An algorithm become easier
   and cleaner. FIXED: incorrect calculating "build_previously" count,
