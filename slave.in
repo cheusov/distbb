@@ -109,7 +109,7 @@ build_package (){
     fi
 
     #
-    if ! $BMAKE $EXTRA_OPTS clean; then
+    if ! $BMAKE $EXTRA_OPTS clean < /dev/null; then
 	return 1
     fi
 
@@ -119,7 +119,9 @@ build_package (){
 	header $t
 	case "$t" in
 	    *)
-		if ! $BMAKE $bmake_opts $t; then
+		# < /dev/null - for building packages that require
+		# an interaction with user
+		if ! $BMAKE $bmake_opts $t < /dev/null; then
 		    return 1
 		fi;;
 	esac
@@ -131,7 +133,7 @@ build_package2 (){
     ex=$?
 
     # clean even if it failes
-    $BMAKE clean > /dev/null 2>&1
+    $BMAKE clean < /dev/null > /dev/null 2>&1
 
     #
     return $ex
