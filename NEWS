@@ -1,3 +1,34 @@
+Version 0.8.0, by Aleksey Cheusov, Sun,  4 May 2008 20:50:43 +0300
+
+  Sometimes building packages stops because some of them require an
+  interaction with user. BATCH=yes doesn't help.  In order to prevent
+  this, bmake is run with < /dev/null. As a result, such a bad
+  packages can not break/stop bulk builds anymore.
+
+  distbb version is included to the report.
+
+  An information about the person that runs a bulk build, is
+  optionally included to the report.
+
+  LIST_ALL_PKGS_CMD variable is introduced.  It defaults to
+  'pkg_list_all_pkgs'.  If set, the specified command is run to get
+  list of packages to be built.
+  You need to upgrade your distbb.conf
+     Examples:
+        LIST_ALL_PKGS_CMD='@@bindir@@/pkg_list_all_pkgs'
+        #LIST_ALL_PKGS_CMD='( @@bindir@@/pkg_list_all_pkgs
+                              cat my_extra_wip_packages.txt )'
+
+  added: distbb --version|-V options
+
+  "on <SLAVEHOST>" is appended to 'succeeded' and 'FAILED' log
+  messages. That is now it is seen on which host a particular package
+  succeeded or failed.
+
+  distbb.conf.in:
+  # The following is for pkg_summary-tools > 0.5.0
+  #PKG_UPDATE_SRC_SUMMARY_CMD='@@bindir@@/pkg_update_src_summary -f "PKGNAME PKGPATH DEPENDS BUILD_DEPENDS"'
+
 Version 0.7.0, by Aleksey Cheusov, Thu, 17 Apr 2008 12:30:58 +0300
 
   stage_init.in: completely reimplemented. An algorithm become easier
