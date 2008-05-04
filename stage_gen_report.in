@@ -134,8 +134,7 @@ report_txt (){
     fi
 
     cat <<EOF
-<h1>pkgsrc bulk build results (distbb - distributed bulk build)</h1>
-  distbb-$version
+<h1>pkgsrc bulk build results (distbb-$version - distributed bulk build)</h1>
 <h2>$OS $OSVER</h2>
   <a href="$REPORT_URL" title="Full report">$REPORT_URL</a>
 
