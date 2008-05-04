@@ -18,19 +18,24 @@ RMDIRS_CMD="/bin/rm -rf $PKGSRC_PREFIX /var/db/pkg"
 BOOTSTRAP="/path/to/bootstrap.tar.gz"
 #BOOTSTRAP=''
 
+# a programs that outputs ALL packages to be built,
+# by default all pkgsrc packages are output
+LIST_ALL_PKGS_CMD='@@bindir@@/pkg_list_all_pkgs'
+#LIST_ALL_PKGS_CMD='( @@bindir@@/pkg_list_all_pkgs; cat my_extra_wip_packages )'
+
 #
 EXTRACT_BOOTSTRAP_CMD="@@bindir@@/pax -r -pe -z -f $BOOTSTRAP"
 
 # dorectory for binary packages
-PACKAGES=$PKGSRCDIR/packages
+PACKAGES="$PKGSRCDIR/packages"
 
 # pkg_summary(5)
-PKG_SUMMARY=$PACKAGES/All/pkg_summary.txt
-PKG_UPDATE_SUMMARY_CMD=@@bindir@@/pkg_update_summary
+PKG_SUMMARY="$PACKAGES/All/pkg_summary.txt"
+PKG_UPDATE_SUMMARY_CMD='@@bindir@@/pkg_update_summary'
 
 # pkgsrc_src_summary (similar to pkg_summary(5) but for source packages)
-PKG_SRC_SUMMARY=$PKGSRCDIR/pkg_src_summary.txt
-PKG_UPDATE_SRC_SUMMARY_CMD=@@bindir@@/pkg_update_src_summary
+PKG_SRC_SUMMARY="$PKGSRCDIR/pkg_src_summary.txt"
+PKG_UPDATE_SRC_SUMMARY_CMD='@@bindir@@/pkg_update_src_summary'
 
 # directory where reports are saved
 REPORTS_DIR=$HOME/bulk-logs

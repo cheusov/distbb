@@ -216,7 +216,7 @@ if test "$packages"; then
 	sort -u > $tmpdir/packages_final.tmp
     packages=$tmpdir/packages_final.tmp
 else
-    pkg_list_all_pkgs > $tmpdir/packages.tmp
+    eval $LIST_ALL_PKGS_CMD > $tmpdir/packages.tmp
     packages=$tmpdir/packages.tmp
 fi
 

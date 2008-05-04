@@ -117,6 +117,7 @@ test_var OFFENDERS_CNT
 test_var REPORT_CMD
 test_var UPLOAD_PKGS_CMD
 test_var UPLOAD_LOGS_CMD
+test_var LIST_ALL_PKGS_CMD
 
 ######################################################################
 
