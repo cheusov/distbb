@@ -36,6 +36,8 @@ PKG_UPDATE_SUMMARY_CMD='@@bindir@@/pkg_update_summary'
 # pkgsrc_src_summary (similar to pkg_summary(5) but for source packages)
 PKG_SRC_SUMMARY="$PKGSRCDIR/pkg_src_summary.txt"
 PKG_UPDATE_SRC_SUMMARY_CMD='@@bindir@@/pkg_update_src_summary'
+# The following is for pkg_summary-tools > 0.5.0
+#PKG_UPDATE_SRC_SUMMARY_CMD='@@bindir@@/pkg_update_src_summary -f "PKGNAME PKGPATH DEPENDS BUILD_DEPENDS"'
 
 # directory where reports are saved
 REPORTS_DIR=$HOME/bulk-logs
