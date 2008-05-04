@@ -103,6 +103,10 @@ awk \
    -v packages_failed_fn=$packages_failed_fn \
    -v packages_built_fn=$packages_built_fn \
    -v distbb_lock_pid="$DISTBB_LOCK $$" '
+# input line format:
+#    $1 - <SLAVE_HOST>
+#    $2 - <TASK_NUMBER>
+
 BEGIN {
    while (xgetline0(trans_clos_fn)){
       deps [$1, $2] = 1
@@ -117,7 +121,9 @@ BEGIN {
 }
 
 !($2 in pkgpaths) {
+   # $3 - package name (PKGPATH)
    pkgpaths [$2] = $3
+   run_on   [$2] = $1
    print "  started:", $3, "on", $1
 
    next
@@ -171,7 +177,11 @@ status [$2] == 0 {
    # succeeded
    pkgpath = pkgpaths [$2]
 
-   print "    succeeded:", pkgpath
+   print "    succeeded:", pkgpath, "on", run_on [$2]
+
+   # free memory
+   delete pkgpaths [$2]
+   delete run_on   [$2]
 
    #
    print pkgpath >> packages_built_fn
@@ -210,6 +220,7 @@ status [$2] == 0 {
    # removing log directory
    xsystem("rm -rf " log_dir)
 
+   #
    next
 }
 
@@ -253,7 +264,11 @@ function decode_logs (uu,                  txt,fn,dir){
    # fialed
    pkgpath = pkgpaths [$2]
 
-   print "    FAILED:", pkgpath
+   print "    F-A-I-L-E-D:", pkgpath, "on", run_on [$2]
+
+   # free memory
+   delete pkgpaths [$2]
+   delete run_on   [$2]
 
    #
    print pkgpath >> packages_failed_fn
