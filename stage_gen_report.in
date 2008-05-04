@@ -135,11 +135,16 @@ report_txt (){
 
     cat <<EOF
 <h1>pkgsrc bulk build results (distbb - distributed bulk build)</h1>
-
+  distbb-$version
 <h2>$OS $OSVER</h2>
   <a href="$REPORT_URL" title="Full report">$REPORT_URL</a>
 
 EOF
+
+    if test "$RESPONSIBLE"; then
+	echo '<a name="notes"></a><h3>Responsible person</h3>'
+	echo "$RESPONSIBLE"
+    fi
 
     if test "$NOTES"; then
 	echo '<a name="notes"></a><h3>Notes</h3>'

@@ -82,6 +82,13 @@ DISTBB_LOCK=@@libexecdir@@/lock
 # e.g. unusual build options, compiler etc.
 NOTES=''
 
+# Person running bulk build (in html format)
+# Leave it unset if you don't want it
+RESPONSIBLE=''
+#RESPONSIBLE='Aleksey Cheusov'
+#RESPONSIBLE='Aleksey Cheusov &lt;cheusov@tut.by&gt;'
+#RESPONSIBLE='<a href="mailto:cheusov@tut.by">Aleksey Cheusov</a>'
+
 # a number of "top offenders"
 OFFENDERS_CNT=20
 
