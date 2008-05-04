@@ -6,10 +6,8 @@ ideas/todo
     package3.txt date/time failed on host3
     ...
  - distributed PKG_UPDATE_SRC_SUMMARY_CMD (part of pkg_summary-utils)
- - [optional] add email of person who run bulk build to report.html
- - add distbb version to report.html
  - (?) put packages to paexec one-by-one and make stage_build rerunable
    (distbb -k already works correctly)
  - distbb.1
 
- - Any ideas? Let me know. vle@gmx.net
+ANY IDEAS? LET ME KNOW. VLE@GMX.NET
