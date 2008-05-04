@@ -26,7 +26,7 @@
 set -e
 . @@bindir@@/pipestatus
 
-. @@SYSCONFDIR@@/distbb.conf
+. @@sysconfdir@@/distbb.conf
 
 ######################################################################
 
