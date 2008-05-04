@@ -30,6 +30,8 @@ queue_fn=$tmpdir/queue.tmp
 
 trans_clos_rebuild_fn=$tmpdir/trans_closure_rebuild.tmp
 
+version=@@version@@
+
 ######################################################################
 export PKG_SUFX PKGSRCDIR BMAKE
 unset PKG_PATH || true

@@ -51,6 +51,7 @@ all: distbb.conf common
 	    -e 's,@@prefix@@,${PREFIX},g' \
 	    -e 's,@@bindir@@,${BINDIR},g' \
 	    -e 's,@@sbindir@@,${SBINDIR},g' \
+	    -e 's,@@version@@,${VERSION},g' \
 	    ${.ALLSRC} > ${.TARGET}
 
 distbb.1 : distbb.pod

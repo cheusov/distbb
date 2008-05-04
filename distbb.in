@@ -30,6 +30,7 @@ distbb - distributed bulk build
 usage: distbb [OPTIONS]
 OPTIONS:
   -h|--help              display this help message
+  -V|--version           distbb version
   -f|--file <filename>   obtain package names from
                          a specified file, - for stdin,
                          by default package names are obtained from
@@ -44,6 +45,9 @@ while test $# -ne 0; do
     case "$1" in
 	-h|--help)
 	    usage
+	    exit 0;;
+	-V|--version)
+	    echo distbb-@@version@@
 	    exit 0;;
 	-f|--file)
 	    pkg_src_packages="$2"
