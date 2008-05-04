@@ -1,14 +1,14 @@
 #-*-mode:  sh -*-
 
+# 
+PKGSRC_PREFIX="/usr/pkg"
+
 # pkgsrc friendly make
 BMAKE=/usr/bin/make       # for NetBSD
-#BMAKE=/usr/pkg/bin/bmake # for other OS
+#BMAKE=$PKGSRC_PREFIX/bin/bmake # for other OS
 
 # pkgsrc prefix
 PKGSRCDIR=/usr/pkgsrc
-
-# 
-PKGSRC_PREFIX="/usr/pkg"
 
 # directories to be deleted before installing bootstrap
 # and building a package
