@@ -289,7 +289,7 @@ function decode_logs (uu,                  txt,fn,dir){
 
    # indirectly failed
    delete indirect_failures
-   log_fn  = log_dir "/broken_packages.txt"
+   log_fn  = log_dir "/failed_packages.txt"
    indirect_broken_found = 0
    printf "" >> log_fn
    for (pkgp in all_pkgpaths){
