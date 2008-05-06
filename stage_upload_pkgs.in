@@ -26,15 +26,15 @@
 set -e
 . @@bindir@@/pipestatus
 
-# usage: stage_upload_pkgs BUILD_START
+# usage: stage_upload_pkgs BUILD_ID
 test $# -eq 1
 
 # init
-BUILD_START="$1"
+BUILD_ID="$1"
 
 . @@sysconfdir@@/distbb.conf
 
-REPORT1_DIR=$REPORTS_DIR/$BUILD_START
+REPORT1_DIR=$REPORTS_DIR/$BUILD_ID
 . @@libexecdir@@/common
 
 # main

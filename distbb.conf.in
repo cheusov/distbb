@@ -113,13 +113,13 @@ PKGSRCVER='2008Q1'
 PACKAGES_URL="http://mova.org/~cheusov/pub/pkgsrc-distbb/$OS/$PKGSRCVER/packages/"
 
 #
-REPORT_URL="http://www.mova.org/~cheusov/pub/pkgsrc-distbb/$OS/$PKGSRCVER/log/$BUILD_START/META/report.html"
+REPORT_URL="http://www.mova.org/~cheusov/pub/pkgsrc-distbb/$OS/$PKGSRCVER/log/$BUILD_ID/META/report.html"
 
 #
-REPORT_CMD="/usr/bin/mail -s \"pkgsrc-$PKGSRCVER $OS $OSVER bulk build results $BUILD_START\" cheusov@tut.by"
+REPORT_CMD="/usr/bin/mail -s \"pkgsrc-$PKGSRCVER $OS $OSVER bulk build results $BUILD_ID\" cheusov@tut.by"
 
 #
 UPLOAD_PKGS_CMD="@@bindir@@/rsync -av --delete-excluded -e ssh $PACKAGES/ cheusov@mova.org:~/public_html/pub/pkgsrc-distbb/$OS/$PKGSRCVER/packages/"
 
 #
-UPLOAD_LOGS_CMD="@@bindir@@/rsync -av --delete-excluded --exclude '*.tmp' -e ssh $REPORTS_DIR/$BUILD_START cheusov@mova.org:~/public_html/pub/pkgsrc-distbb/$OS/$PKGSRCVER/log/"
+UPLOAD_LOGS_CMD="@@bindir@@/rsync -av --delete-excluded --exclude '*.tmp' -e ssh $REPORTS_DIR/$BUILD_ID cheusov@mova.org:~/public_html/pub/pkgsrc-distbb/$OS/$PKGSRCVER/log/"

@@ -26,18 +26,18 @@
 set -e
 . @@bindir@@/pipestatus
 
-# usage: stage_init BUILD_START UPDATE_SRC_SUMMARY PKG_SRC_PACKAGES
+# usage: stage_init BUILD_ID UPDATE_SRC_SUMMARY PKG_SRC_PACKAGES
 test $# -eq 4
 
 # init
-BUILD_START="$1"
+BUILD_ID="$1"
 pkg_src_update_summary="$2"
 packages="$3"
 date_start="$4"
 
 . @@sysconfdir@@/distbb.conf
 
-REPORT1_DIR=$REPORTS_DIR/$BUILD_START
+REPORT1_DIR=$REPORTS_DIR/$BUILD_ID
 test -n "$REPORT1_DIR" # who knows...
 rm -rf $REPORT1_DIR
 . @@libexecdir@@/common

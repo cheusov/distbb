@@ -83,9 +83,9 @@ set -e
 # date start for placint it to html/txt report
 date_start="$(date -u '+%Y-%m-%d %H:%M') UTC"
 # date start in YYYYMMDD-HHMM format
-BUILD_START="$(echo $date_start | awk '{gsub(/[:-]/, ""); print $1 "." $2}')"
+BUILD_ID="$(echo $date_start | awk '{gsub(/[:-]/, ""); print $1 "." $2}')"
 
-echo "BUILD_START: $BUILD_START" 1>&2
+echo "BUILD_ID: $BUILD_ID" 1>&2
 
 . @@sysconfdir@@/distbb.conf
 
@@ -119,15 +119,20 @@ test_var UPLOAD_PKGS_CMD
 test_var UPLOAD_LOGS_CMD
 test_var LIST_ALL_PKGS_CMD
 
+if grep BUILD_START @@sysconfdir@@/distbb.conf > /dev/null; then
+    echo 'Replace BUILD_START variable with BUILD_ID in your distbb.conf!' 1>&2
+    exit 1
+fi
+
 ######################################################################
 
-@@libexecdir@@/stage_init        "$BUILD_START" \
+@@libexecdir@@/stage_init        "$BUILD_ID" \
                                  "$pkg_src_update_summary" \
                                  "$pkg_src_packages" "$date_start"
-@@libexecdir@@/stage_build       "$BUILD_START"
-@@libexecdir@@/stage_gen_report  "$BUILD_START"
-@@libexecdir@@/stage_upload_logs "$BUILD_START"
-@@libexecdir@@/stage_upload_pkgs "$BUILD_START"
-@@libexecdir@@/stage_report      "$BUILD_START"
+@@libexecdir@@/stage_build       "$BUILD_ID"
+@@libexecdir@@/stage_gen_report  "$BUILD_ID"
+@@libexecdir@@/stage_upload_logs "$BUILD_ID"
+@@libexecdir@@/stage_upload_pkgs "$BUILD_ID"
+@@libexecdir@@/stage_report      "$BUILD_ID"
 
 ######################################################################
