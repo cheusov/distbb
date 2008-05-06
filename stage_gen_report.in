@@ -150,7 +150,7 @@ report_txt (){
 EOF
 
     if test "$RESPONSIBLE"; then
-	echo '<a name="notes"></a><h3>Responsible person</h3>'
+	echo '<p>'
 	echo "$RESPONSIBLE"
     fi
 
