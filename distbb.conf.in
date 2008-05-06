@@ -32,6 +32,7 @@ PACKAGES="$PKGSRCDIR/packages"
 # pkg_summary(5)
 PKG_SUMMARY="$PACKAGES/All/pkg_summary.txt"
 PKG_UPDATE_SUMMARY_CMD='@@bindir@@/pkg_update_summary'
+#PKG_UPDATE_SUMMARY_CMD='@@bindir@@/pkg_update_summary -r'
 
 # pkgsrc_src_summary (similar to pkg_summary(5) but for source packages)
 PKG_SRC_SUMMARY="$PKGSRCDIR/pkg_src_summary.txt"
