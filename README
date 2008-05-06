@@ -75,3 +75,30 @@ For single-node bulk build:
     - in order to correctly build pkg_src_summary, master's
       /usr/pkg/etc/mk.conf (at the time of distbb startup) must be
       equal to that from bootstrap tarball.
+
+==========================================================================
+
+Notes.
+
+A)
+
+There are the following stages of the bulk build:
+   init        - initialization, including running
+                 pkg_update_src_summary and pkg_update_summary
+   build       - actual package building
+   gen_report  - report generating 
+   upload_logs - uploading bulk build logs
+   upload_pkgs - uploading binary packages
+   report      - sending email or other type of notification
+
+They are run in that order.
+
+'upload_logs', 'upload_pkgs' and 'report' stages are rerunable like
+the following
+
+    /usr/pkg_distbb/libexec/distbb/stage_upload_logs <BUILD_ID>
+
+BUILD_ID is printed at a very beginning of bulk build process
+
+B)
+C)
