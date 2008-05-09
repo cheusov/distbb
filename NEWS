@@ -1,3 +1,16 @@
+Version 0.9.0, by Aleksey Cheusov
+
+  Instead of red counts the "Breaks" column now contains the link to
+  the actual list of indirectly failed packages.
+
+  stage_gen_report: hardcoded string "Responsible person" is not printed
+
+  distbb.conf: another variant for PKG_UPDATE_SUMMARY_CMD
+
+  Additions and more details in README
+
+  BUILD_START renamed to BUILD_ID
+
 Version 0.8.0, by Aleksey Cheusov, Sun,  4 May 2008 20:50:43 +0300
 
   Sometimes building packages stops because some of them require an
