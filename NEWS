@@ -1,4 +1,4 @@
-Version 0.9.0, by Aleksey Cheusov
+Version 0.9.0, by Aleksey Cheusov, Fri,  9 May 2008 13:02:30 +0300
 
   Instead of red counts the "Breaks" column now contains the link to
   the actual list of indirectly failed packages.
