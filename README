@@ -43,7 +43,13 @@ For "distributed" builds:
        subdirectories need to be writeable and therefore can be
        mounted separately.
 
-5d) /usr/pkg_distbb/bin/distbb -h
+5d) On all slave hosts:
+
+    Make sure PATH environment variable includes
+    /usr/pkg_distbb/bin and /usr/pkg/bin
+
+6d) On master host:
+    /usr/pkg_distbb/bin/distbb -h
     /usr/pkg_distbb/bin/distbb                 # for full bulk build
     /usr/pkg_distbb/bin/distbb -f packages.txt # for partial bulk build
 
@@ -65,7 +71,10 @@ For "distributed" builds:
 
 For single-node bulk build:
 
-3s) /usr/pkg_distbb/bin/distbb -h
+3s) Make sure PATH environment variable includes
+    /usr/pkg_distbb/bin and /usr/pkg/bin
+
+4s) /usr/pkg_distbb/bin/distbb -h
     /usr/pkg_distbb/bin/distbb                 # for full bulk build
     /usr/pkg_distbb/bin/distbb -f packages.txt # for partial bulk build
 
@@ -86,7 +95,7 @@ There are the following stages of the bulk build:
    init        - initialization, including running
                  pkg_update_src_summary and pkg_update_summary
    build       - actual package building
-   gen_report  - report generating 
+   gen_report  - report generation
    upload_logs - uploading bulk build logs
    upload_pkgs - uploading binary packages
    report      - sending email or other type of notification
@@ -100,5 +109,5 @@ the following
 
 BUILD_ID is printed at a very beginning of bulk build process
 
-B)
-C)
+B) ?
+C) ?
