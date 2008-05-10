@@ -1,3 +1,14 @@
+Version 0.10.0, by Aleksey Cheusov
+
+  At startup, PREFIX and PKGDBDIR directories are deleted and
+  bootstrap is unpacked (on all $SLAVES when MASTER_MODE=yes).
+  NOTE: if you are upgrading from previous versions of distbb,
+  recheck your EXTRACT_BOOTSTRAP_CMD (tar -C / is needed).
+
+  distbb.conf: more examples for alternative/distributed
+  PKG_UPDATE_SRC_SUMMARY_CMD. If you'll use distributed one,
+  make sure PATH variable contains /usr/pkg_distbb/bin directory.
+
 Version 0.9.0, by Aleksey Cheusov, Fri,  9 May 2008 13:02:30 +0300
 
   Instead of red counts the "Breaks" column now contains the link to
