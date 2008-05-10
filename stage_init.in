@@ -53,6 +53,19 @@ printf '' > $packages_built_prev_fn
 printf '' > $packages_built_fn
 
 ######################################################################
+### unpacking bootstrap
+verbose_print "  unpacking bootstrap to PREFIX..."
+if test "$MASTER_MODE"; then
+    for s in $SLAVES; do
+	eval $TRANSPORT $RMDIRS_CMD
+	eval $TRANSPORT $EXTRACT_BOOTSTRAP_CMD
+    done
+else
+    eval $RMDIRS_CMD
+    eval $EXTRACT_BOOTSTRAP_CMD
+fi
+
+######################################################################
 ### updating PKG_SUMMARY
 
 refreshed_summary_fn=$tmpdir/refreshed_summary.tmp
