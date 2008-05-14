@@ -5,9 +5,11 @@ ideas/todo
     package2.txt date/time failed on host2
     package3.txt date/time failed on host3
     ...
- - distributed PKG_UPDATE_SRC_SUMMARY_CMD (part of pkg_summary-utils)
  - (?) put packages to paexec one-by-one and make stage_build rerunable
    (distbb -k already works correctly)
  - distbb.1
+ - distbb.mk + distbb.local.mk
+ - MAX_FAILURES_CNT=6
+ - bad packages
 
 ANY IDEAS? LET ME KNOW. VLE@GMX.NET
