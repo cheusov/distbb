@@ -109,7 +109,7 @@ print_failed_pkg (){
     # $4 - maintainer
     # $5 - pkgname
     if test -n "$2" && test "$2" != "Breaks"; then
-	__href_beg="$(printf '<a href=\"../%s/failed_packages.txt\" title=\"packages failed due to %s\">' $1 $1)"
+	__href_beg="`printf '<a href=\"../%s/failed_packages.txt\" title=\"packages failed due to %s\">' $1 $1`"
 	__href_end='</a>'
     else
 	__href_beg=''
