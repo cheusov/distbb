@@ -266,7 +266,8 @@ EOF
 	fn="$REPORT1_DIR/$pkgpath/failed_because.txt"
 	cnt=$(count_lines "$fn")
 	dep=$(head -1 "$fn")
-	depX=$(awk -v cnt="$cnt" 'NR > cnt-6 && NR > 1' "$fn")
+	depX=$(awk -v cnt="$cnt" -v failed_deps_cnt="$MAX_FAILED_DEPS_CNT" \
+	    'NR > cnt-failed_deps_cnt+1 && NR > 1' "$fn")
 	maintainer=$(pkgpath2maintainer "$dep")
 	print_failed_deps_pkg "$pkgpath" "$pkgname" "$maintainer" "$dep"
 	for dep in $depX; do

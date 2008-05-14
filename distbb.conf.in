@@ -119,6 +119,9 @@ RESPONSIBLE=''
 # a number of "top offenders"
 OFFENDERS_CNT=20
 
+# a number of failed dependancies that are included to the report
+MAX_FAILED_DEPS_CNT=6
+
 #
 OS="$(uname -s)"
 
