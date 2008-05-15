@@ -125,6 +125,11 @@ if grep BUILD_START @@sysconfdir@@/distbb.conf > /dev/null; then
     exit 1
 fi
 
+if ! test -f @@sysconfdir@@/distbb.local.mk; then
+    echo '@@sysconfdir@@/distbb.local.mk MUST exist' 1>&2
+    exit 1
+fi
+
 ######################################################################
 
 @@libexecdir@@/stage_init        "$BUILD_ID" \

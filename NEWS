@@ -1,3 +1,28 @@
+Version 0.11.0, by Aleksey Cheusov, Thu, 15 May 2008 18:59:18 +0300
+
+  Both .html and .txt report include a number failed dependancies for
+  each indirectly failed package. This number was limited by hardcoded
+  constant, now it is regulated by variable MAX_FAILED_DEPS_CNT Add it
+  to your distbb.conf.
+
+  stage_gen_report: fix for Debian dash - its ` and $( work
+  differently :-(
+
+  distbb uses TARGETS variables that contains a list of targets to run
+  in order to build, install and create a binary package. TARGETS
+  variable can easily be changed by user and this makes distbb very
+  flexible - user may change build order or even define his own
+  build/packaging procedure. As of this version user can define
+  his/her own make rules without changing mk.conf and without
+  recreating bootstrap tarball - by changing
+  /usr/pkg_distbb/etc/distbb.local.mk file, second configuration file
+  of distbb. distbb also defines two its own special targets which you
+  can use: dbb_canbebuilt and dbb_excluded.  Read comments in
+  /usr/pkg_distbb/share/distbb/distbb.mk about them.  Note that
+  etc/distbb/local.mk MUST exist, copy it from
+  share/examples/distbb/distbb.local.mk to etc/distbb.local.mk
+  and edit for preferences.
+
 Version 0.10.0, by Aleksey Cheusov
 
   At startup, PREFIX and PKGDBDIR directories are deleted and

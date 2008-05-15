@@ -23,7 +23,10 @@ CONFIGURATION/TUTORIAL:
 2) bootstrap pkgsrc for distbb (to /usr/pkg_distbb, for example)
    - install wip/distbb in it
    - install other software you may need
-   - cp /usr/pkg/share/examples/distbb/XXX.conf /usr/pkg_distbb/etc/distbb.conf
+   - cp /usr/pkg/share/examples/distbb/distbb.conf \
+        /usr/pkg_distbb/etc/distbb.conf
+   - cp /usr/pkg/share/examples/distbb/distbb.local.mk \
+        /usr/pkg_distbb/etc/distbb.local.mk
    - edit /usr/pkg_distbb/etc/distbb.conf configuration file
 
 For "distributed" builds:
