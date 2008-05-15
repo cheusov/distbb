@@ -1,0 +1,13 @@
+# example - how to exclude some packages from the bulk build
+
+#.if "${PKGPATH}" == "devel/ldapsdk"
+#DBB_EXCL_REASON="Unfinite loop on Linux - eats CPU! pkg/38368"
+#.elif "${PKGPATH}" == "net/netsaint-plugin-snmp" || "${PKGPATH}" == "net/netsaint-plugins"
+#DBB_EXCL_REASON="Hangs up near 'ping' on Linux"
+#.elif "${PKGPATH}" == "emulators/xm7"
+#DBB_EXCL_REASON="Hangs up on Linux"
+#.elif "${PKGPATH}" == "math/lapack"
+#DBB_EXCL_REASON="Hangs up on Linux, pkg/38371"
+#.elif "${PKGPATH}" == "another/package"
+#DBB_EXCL_REASON="I just do not want this pig"
+#.endif

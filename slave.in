@@ -81,7 +81,7 @@ header (){
     printf ' --**--**-- %8s --**--**--\n' "$1"
 }
 
-build_package (){
+do_build_package (){
     header init
 
     #
@@ -108,31 +108,30 @@ build_package (){
 	return 1
     fi
 
-    #
-    if ! $BMAKE $EXTRA_OPTS clean < /dev/null; then
-	return 1
-    fi
-
     # $TARGETS
     bmake_opts="$EXTRA_OPTS DEPENDS_TARGET=$DEPENDS_TARGET"
-    for t in $TARGETS; do
+    for t in clean $TARGETS; do
 	header $t
 	case "$t" in
 	    *)
 		# < /dev/null - for building packages that require
 		# an interaction with user
-		if ! $BMAKE $bmake_opts $t < /dev/null; then
+		if ! $BMAKE -f Makefile \
+		            -f @@sysconfdir@@/distbb.local.mk \
+		            -f @@libexec@@/distbb/distbb.mk \
+		            $bmake_opts $t < /dev/null
+		then
 		    return 1
 		fi;;
 	esac
     done
 }
 
-build_package2 (){
-    build_package "$@" 2>&1
+build_package (){
+    do_build_package "$@" 2>&1
     ex=$?
 
-    # clean even if it failes
+    # clean even if it fails
     $BMAKE clean < /dev/null > /dev/null 2>&1
 
     #
@@ -140,7 +139,7 @@ build_package2 (){
 }
 
 while read pkgpath; do
-    if runpipe_re '. 0' build_package2 $pkgpath '|' $encode_cmd; then
+    if runpipe_re '. 0' build_package $pkgpath '|' $encode_cmd; then
 	echo "status: $pipestatus_1"
     else
 	echo "status: 1" # uuencode failed

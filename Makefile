@@ -29,8 +29,10 @@ SCRIPTS=			distbb stage_init \
 SCRIPTSDIR=			${LIBEXECDIR}
 SCRIPTSDIR_distbb=		${BINDIR}
 
-FILES=				distbb.conf common
+FILES=				distbb.conf distbb.local.mk
+FILES+=				distbb.mk common
 FILESDIR=			${EGDIR}
+FILESDIR_distbb.mk=		${LIBEXECDIR}
 FILESDIR_common=		${LIBEXECDIR}
 
 MKMAN=			no

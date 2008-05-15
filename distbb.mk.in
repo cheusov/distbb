@@ -1,0 +1,33 @@
+############################################################
+# dbb_available target:
+# failes if NOT_FOR_PLATFORM, ONLY_FOR_PLATFORM etc. fail
+.PHONY: dbb_canbebuilt
+
+.if "${_CBBH}" == "yes"
+dbb_canbebuilt:
+	@true
+.else
+dbb_canbebuilt:
+	@${_CBBH_MSGS:@m@${ECHO} ${m};@} \
+	false
+.endif
+
+############################################################
+# dbb_excluded target:
+# fails if the person that runs bulk build (you) manually excluded
+# this particular package. There are a number of reasons for this:
+# "bad" packages may hangs up eating CPU, stuck somewhere else (ping...)
+# or you may want to dbb_exclude something just because it is too heavy
+# for your machine
+
+.PHONY: dbb_excluded
+.if empty(DBB_EXCL_REASON)
+dbb_excluded:
+	@true
+.else
+dbb_excluded:
+	@echo "Manually excluded by person who runs the bulk build" 1>&2; \
+	${DBB_EXCL_REASON:@m@${ECHO} ${m};@} \
+	false
+.endif
+############################################################
