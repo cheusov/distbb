@@ -108,9 +108,13 @@ do_build_package (){
 	return 1
     fi
 
+    if ! $BMAKE $EXTRA_OPTS clean < /dev/null; then
+	return 1
+    fi
+
     # $TARGETS
     bmake_opts="$EXTRA_OPTS DEPENDS_TARGET=$DEPENDS_TARGET"
-    for t in clean $TARGETS; do
+    for t in $TARGETS; do
 	header $t
 	case "$t" in
 	    *)
