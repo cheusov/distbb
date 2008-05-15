@@ -6,6 +6,7 @@ BINDIR?=${PREFIX}/bin
 SBINDIR?=${PREFIX}/sbin
 MANDIR?=${PREFIX}/man
 LIBEXECDIR?=${PREFIX}/libexec/distbb
+DATADIR?=${PREFIX}/share/distbb
 EGDIR?=${PREFIX}/share/distbb
 
 POD2MAN?=		pod2man
@@ -32,7 +33,7 @@ SCRIPTSDIR_distbb=		${BINDIR}
 FILES=				distbb.conf distbb.local.mk
 FILES+=				distbb.mk common
 FILESDIR=			${EGDIR}
-FILESDIR_distbb.mk=		${LIBEXECDIR}
+FILESDIR_distbb.mk=		${DATADIR}
 FILESDIR_common=		${LIBEXECDIR}
 
 MKMAN=			no
@@ -45,7 +46,7 @@ PROJECTNAME=		distbb
 
 .SUFFIXES:		.in
 
-all: distbb.conf common
+all: distbb.conf common distbb.mk distbb.local.mk
 
 .in:
 	sed -e 's,@@sysconfdir@@,${SYSCONFDIR},g' \
