@@ -118,7 +118,7 @@ do_build_package (){
 		# an interaction with user
 		if ! $BMAKE -f Makefile \
 		            -f @@sysconfdir@@/distbb.local.mk \
-		            -f @@libexec@@/distbb/distbb.mk \
+		            -f @@datadir@@/distbb.mk \
 		            $bmake_opts $t < /dev/null
 		then
 		    return 1

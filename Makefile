@@ -54,6 +54,7 @@ all: distbb.conf common distbb.mk distbb.local.mk
 	    -e 's,@@prefix@@,${PREFIX},g' \
 	    -e 's,@@bindir@@,${BINDIR},g' \
 	    -e 's,@@sbindir@@,${SBINDIR},g' \
+	    -e 's,@@datadir@@,${DATADIR},g' \
 	    -e 's,@@version@@,${VERSION},g' \
 	    ${.ALLSRC} > ${.TARGET}
 
