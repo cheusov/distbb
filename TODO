@@ -9,7 +9,6 @@ ideas/todo
    (distbb -k already works correctly)
  - distbb.1
  - distbb.mk + distbb.local.mk
- - MAX_FAILURES_CNT=6
  - bad packages
 
 ANY IDEAS? LET ME KNOW. VLE@GMX.NET
