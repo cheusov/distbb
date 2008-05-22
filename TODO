@@ -1,4 +1,4 @@
-ideas/todo
+ideas/thoughts/todo
 
  - flushed META/progress.txt
     package1.txt date/time succeeded on host1
@@ -8,7 +8,8 @@ ideas/todo
  - (?) put packages to paexec one-by-one and make stage_build rerunable
    (distbb -k already works correctly)
  - distbb.1
- - distbb.mk + distbb.local.mk
  - bad packages
+ - my-show-vars -> share/distbb/distbb.mk
+ - I think distbb can be adapted for FreeBSD/OpenBSD Ports.
 
 ANY IDEAS? LET ME KNOW. VLE@GMX.NET
