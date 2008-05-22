@@ -1,4 +1,5 @@
-distbb - distributed bulk builds framework for pkgsrc (www.pkgsrc.org)
+distbb - distributed bulk builds framework for pkgsrc (www.pkgsrc.org).
+distb is not fork of pbulk, it was written from scratch.
 
 CONFIGURATION/TUTORIAL:
 
@@ -54,6 +55,7 @@ For "distributed" builds:
 6d) On master host:
     /usr/pkg_distbb/bin/distbb -h
     /usr/pkg_distbb/bin/distbb                 # for full bulk build
+      or
     /usr/pkg_distbb/bin/distbb -f packages.txt # for partial bulk build
 
   NOTE:
@@ -103,7 +105,7 @@ There are the following stages of the bulk build:
    upload_pkgs - uploading binary packages
    report      - sending email or other type of notification
 
-They are run in that order.
+They are run in order.
 
 'upload_logs', 'upload_pkgs' and 'report' stages are rerunable like
 the following
