@@ -242,7 +242,7 @@ function decode_logs (uu,                  txt,fn,dir){
             xclose(fn) # in order to not exceed system/awk limits...
          }
 
-         fn = dir "/stage_" $2 ".txt"
+         fn = dir "/stage_" $2 ".tmp"
          printf "  " > fn
          continue
       }

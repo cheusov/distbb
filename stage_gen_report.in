@@ -95,7 +95,7 @@ FILENAME != pkg_src_summary {
 get_failed_stage (){
     # $1 - pkgpath
     for t in init $TARGETS; do
-	if test -f "$REPORT1_DIR/$1/stage_$t.txt"; then
+	if test -f "$REPORT1_DIR/$1/stage_$t.tmp"; then
 	    failed_stage="$t"
 	fi
     done
@@ -386,7 +386,7 @@ stage2html (){
     for t in init $TARGETS; do
 	printf '&nbsp;'
 
-	if test -f "$pkgdir/stage_$t.txt"; then
+	if test -f "$pkgdir/stage_$t.tmp"; then
 	    if test "$t" = "$stage"; then
 		printf "$stage"
 	    else
@@ -405,9 +405,9 @@ stage2html (){
     html_footer
 }
 
-find "$REPORT1_DIR" -name 'stage_*.txt' |
+find "$REPORT1_DIR" -name 'stage_*.tmp' |
 while read stage_fn; do
-    html_fn=${stage_fn%%.txt}.html
+    html_fn=${stage_fn%%.tmp}.html
     stage2html "$stage_fn" >"$html_fn"
 done
 
