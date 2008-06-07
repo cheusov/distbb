@@ -114,7 +114,7 @@ do_build_package (){
 	return 1
     fi
 
-    if ! $BMAKE $EXTRA_OPTS clean $stdin_from_dev_null; then
+    if ! eval $BMAKE $EXTRA_OPTS clean $stdin_from_dev_null; then
 	return 1
     fi
 
@@ -126,7 +126,7 @@ do_build_package (){
 	    *)
 		# < /dev/null - for building packages that require
 		# an interaction with user
-		if ! $BMAKE -f Makefile \
+		if ! eval $BMAKE -f Makefile \
 		            -f @@sysconfdir@@/distbb.local.mk \
 		            -f @@datadir@@/distbb.mk \
 		            $bmake_opts $t $stdin_from_dev_null
@@ -142,7 +142,7 @@ build_package (){
     ex=$?
 
     # clean even if it fails
-    $BMAKE clean $stdin_from_dev_null > /dev/null 2>&1
+    eval $BMAKE clean $stdin_from_dev_null > /dev/null 2>&1
 
     #
     return $ex
@@ -154,16 +154,16 @@ check_max_log_size (){
 	print $0
 	curr += length($0)+1
 	if (limit && curr >= limit){
-	    print "Maximum log size is reached! Exiting..." > "/dev/stderr"
+	    print "Maximum log size is reached! Exiting..."
 	    exit 1
 	}
     }' "$@"
 }
 
 while read pkgpath; do
-    if runpipe_re '. 0 0' build_package $pkgpath '|' \
-       $encode_cmd '|' \
-       check_max_log_size
+    if runpipe_re '. [01] 0' build_package $pkgpath '|' \
+       check_max_log_size '|' \
+       $encode_cmd
     then
 	echo "status: $pipestatus_1"
     else
