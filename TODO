@@ -6,7 +6,6 @@ ideas/thoughts/todo
     package3.txt date/time failed on host3
     ...
  - (?) put packages to paexec one-by-one and make stage_build rerunable
-   (distbb -k already works correctly)
  - distbb.1
  - bad packages
  - my-show-vars -> share/distbb/distbb.mk
