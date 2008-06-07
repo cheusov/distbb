@@ -77,6 +77,12 @@ fi
 
 ######################################################################
 
+if test "$STDIN_FROM_DEV_NULL"; then
+    stdin_from_dev_null=' < /dev/null'
+else
+    stdin_from_dev_null=''
+fi
+
 header (){
     printf ' --**--**-- %8s --**--**--\n' "$1"
 }
@@ -108,7 +114,7 @@ do_build_package (){
 	return 1
     fi
 
-    if ! $BMAKE $EXTRA_OPTS clean < /dev/null; then
+    if ! $BMAKE $EXTRA_OPTS clean $stdin_from_dev_null; then
 	return 1
     fi
 
@@ -123,7 +129,7 @@ do_build_package (){
 		if ! $BMAKE -f Makefile \
 		            -f @@sysconfdir@@/distbb.local.mk \
 		            -f @@datadir@@/distbb.mk \
-		            $bmake_opts $t < /dev/null
+		            $bmake_opts $t $stdin_from_dev_null
 		then
 		    return 1
 		fi;;
@@ -136,14 +142,29 @@ build_package (){
     ex=$?
 
     # clean even if it fails
-    $BMAKE clean < /dev/null > /dev/null 2>&1
+    $BMAKE clean $stdin_from_dev_null > /dev/null 2>&1
 
     #
     return $ex
 }
 
+check_max_log_size (){
+    awk -v limit="$LOG_SIZE_LIMIT" '
+    {
+	print $0
+	curr += length($0)+1
+	if (limit && curr >= limit){
+	    print "Maximum log size is reached! Exiting..." > "/dev/stderr"
+	    exit 1
+	}
+    }' "$@"
+}
+
 while read pkgpath; do
-    if runpipe_re '. 0' build_package $pkgpath '|' $encode_cmd; then
+    if runpipe_re '. 0 0' build_package $pkgpath '|' \
+       $encode_cmd '|' \
+       check_max_log_size
+    then
 	echo "status: $pipestatus_1"
     else
 	echo "status: 1" # uuencode failed
