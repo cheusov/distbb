@@ -40,7 +40,8 @@ REPORT1_DIR=$REPORTS_DIR/$BUILD_ID
 # main
 ######################################################################
 verbose_print "  Directories for logging..."
-( cd $REPORT1_DIR && awk '{print $1}' $queue_fn | xargs mkdir -p )
+( cd $REPORT1_DIR && awk '{print $1}' $queue_fn |
+  while read d; do mkdir -p $d; done )
 verbose_print "done\n"
 
 ######################################################################
