@@ -1,3 +1,29 @@
+Version 0.12.0, by Aleksey Cheusov, Sun,  8 Jun 2008 02:49:08 +0300
+
+  Two new variables (for distbb.conf) are introduced:
+    - STDIN_FROM_DEV_NULL:
+      Some broken packages need an interaction with user even if BATCH
+      variable is set to YES. This may "hang" a bulk build. If you
+      don't want this, set the following variable to "1", otherwise
+      leave it unset.
+    - LOG_SIZE_LIMIT:
+      If STDIN_FROM_DEV_NULL=1, some packages may produce infinite
+      garbage to stdout and in turn may waste ALL your free disk
+      space. To prevent this, set the following limit. Leave it unset
+      for no limit.
+
+  fix:
+     If there is nothing to be built stage_build may fail under Linux,
+     Solaris, HP-UX, Interix and probably many others. This is because
+     Free/NetBSD xargs works differently - in case of no input it just
+     do NOT call program (xargs's argument) at all. Others do.
+
+   stage_*.txt files are not uploaded anymore.
+   Only html versions are uploaded.
+
+   README: distbb is NOT fork of pbulk in any way! ;-)
+   It was written from scratch.
+
 Version 0.11.0, by Aleksey Cheusov, Thu, 15 May 2008 18:59:18 +0300
 
   Both .html and .txt report include a number failed dependancies for
