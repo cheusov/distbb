@@ -1,5 +1,8 @@
 ideas/thoughts/todo
 
+ - distbb -C config-file.conf,
+   mandatory variable DISTBB_LOCAL_MK=@sysconfdir@/distbb.local.mk
+ - modification time of binary packages?
  - flushed META/progress.txt
     package1.txt date/time succeeded on host1
     package2.txt date/time failed on host2
@@ -7,7 +10,6 @@ ideas/thoughts/todo
     ...
  - (?) put packages to paexec one-by-one and make stage_build rerunable
  - distbb.1
- - bad packages
  - my-show-vars -> share/distbb/distbb.mk
  - I think distbb can be adapted for FreeBSD/OpenBSD Ports.
 
