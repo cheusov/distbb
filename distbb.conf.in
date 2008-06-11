@@ -76,10 +76,10 @@ DEPENDS_TARGET='do-bin-install'
 #DEPENDS_TARGET='real-package-install'
 
 # the following targets will be run in order
-TARGETS='depends fetch checksum configure build install package deinstall'
+TARGETS='depends fetch checksum extract patch configure build install package deinstall'
 # the following is for USE_DESTDIR=yes|full
 #TARGETS='depends fetch checksum configure build package bin-install deinstall'
-#TARGETS='depends fetch checksum configure build package package-install package-deinstall'
+#TARGETS='depends fetch checksum configure build package package-install deinstall'
 
 # extra options passed to bmake
 # BATCH is mandatory for bulk builds!
@@ -108,6 +108,51 @@ DISTBB_LOCK=@@libexecdir@@/lock
 # filename containing notes about bulk build (in html format),
 # e.g. unusual build options, compiler etc.
 NOTES=''
+
+# some packages fail to build because they are a part of pkgsrc
+# bootstrap.  if you want to build them try to uncomment lines in
+# SPECIAL_PACKAGES variables
+#
+# you may also want to use different building options
+# to build some packages, e.g. to use gcc-3.4 for building audio/festival,
+# (Under Linux Debian/etch and DragonFlyBSD gcc-3.4 is a part
+# of "base" system), see below.
+# NOTE: There are no quotes around string containing spaces
+#       (this is not shell ;-) )
+# NOTE: An empty after package EACH section is mandatory
+# NOTE: Do not forget that you can define your own Makefile targets
+#       in distbb.local.mk. this new target can run, for example,
+#       pkg_add -u
+
+SPECIAL_PACKAGES="\
+#PKGPATH=pkgtools/digest
+#TARGETS=depends fetch checksum configure build package
+#EXTRA_OPTS=BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=full CHECK_SHLIBS=no
+#
+#PKGPATH=pkgtools/bootstrap-mk-files
+#TARGETS=depends fetch checksum configure build package
+#EXTRA_OPTS=BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=full CHECK_SHLIBS=no
+#
+#PKGPATH=net/tnftp
+#TARGETS=depends fetch checksum configure build package
+#EXTRA_OPTS=BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=full CHECK_SHLIBS=no
+#
+#PKGPATH=sysutils/checkperms
+#TARGETS=depends fetch checksum configure build package
+#EXTRA_OPTS=BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=full CHECK_SHLIBS=no
+#
+#PKGPATH=devel/bmake
+#TARGETS=depends fetch checksum configure build package
+#EXTRA_OPTS=BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=full CHECK_SHLIBS=no
+#
+#PKGPATH=pkgtools/pkg_install
+#TARGETS=depends fetch checksum configure build package
+#EXTRA_OPTS=BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=full CHECK_SHLIBS=no
+#
+#PKGPATH=audio/festival # TARGETS is not changed!
+#EXTRA_OPTS=CC=/usr/bin/gcc-3.4 CXX=/usr/bin/g++-3.4
+#
+"
 
 # Person running bulk build (in html format).
 # If empty string, it is not included to the report.
