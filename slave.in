@@ -32,6 +32,13 @@ unset PKG_PATH || true
 export BINPKG_SITES=$PACKAGES
 
 ######################################################################
+# temp directory
+tmp_dir="/tmp/distbb_slave.$$"
+trap "rm -rf $tmp_dir" 0 1 2 15
+mkdir -m 700 "$tmp_dir"
+
+tmpfn=$tmp_dir/tmpfn.tmp
+######################################################################
 
 usage (){
     cat 1>&2 <<EOF
@@ -87,6 +94,22 @@ header (){
     printf ' --**--**-- %8s --**--**--\n' "$1"
 }
 
+# remove comments from "$SPECIAL_PACKAGES"
+remove_comments (){
+    awk 'NF == 0 {print; next}
+         {sub(/#.*$/, ""); if (NF > 0) print}' "$@"
+}
+
+save_TARGETS_and_EXTRA_OPTS (){
+    orig_TARGETS="$TARGETS"
+    orig_EXTRA_OPTS="$EXTRA_OPTS"
+}
+
+restore_TARGETS_and_EXTRA_OPTS (){
+    TARGETS="$orig_TARGETS"
+    EXTRA_OPTS="$orig_EXTRA_OPTS"
+}
+
 do_build_package (){
     header init
 
@@ -106,6 +129,22 @@ do_build_package (){
 	if ! eval $EXTRACT_BOOTSTRAP_CMD; then
 	    return 1
 	fi
+    fi
+
+    # new targets? new extra_opts?
+    echo "$SPECIAL_PACKAGES" |
+    remove_comments |
+    pkg_grep_summary 'PKGPATH' "\$2 == \"$1\"" > $tmpfn
+
+    new_TARGETS="`sed -n 's,^TARGETS=,,p' $tmpfn`"
+
+    if test "$new_TARGETS"; then
+	TARGETS="$new_TARGETS"
+    fi
+
+    new_EXTRA_OPTS="`sed -n 's,^EXTRA_OPTS=,,p' $tmpfn`"
+    if test "$new_EXTRA_OPTS"; then
+	EXTRA_OPTS="$new_EXTRA_OPTS"
     fi
 
     #
@@ -160,7 +199,11 @@ check_max_log_size (){
     }' "$@"
 }
 
+save_TARGETS_and_EXTRA_OPTS
+
 while read pkgpath; do
+    restore_TARGETS_and_EXTRA_OPTS
+
     if runpipe_re '. [01] 0' build_package $pkgpath '|' \
        check_max_log_size '|' \
        $encode_cmd
