@@ -1,3 +1,58 @@
+Version 0.13.0, by Aleksey Cheusov, Thu, 12 Jun 2008 23:40:46 +0300
+
+  ADDED: mega-feature/new variable SPECIAL_PACKAGES
+
+     Example and notes from distbb.conf:
+     ...
+     # some packages fail to build because they are a part of pkgsrc
+     # bootstrap.  if you want to build them try to uncomment lines in
+     # SPECIAL_PACKAGES variables
+     #
+     # you may also want to use different building options
+     # to build some packages, e.g. to use gcc-3.4 for building audio/festival,
+     # under Linux Debian/etch or DragonFlyBSD where it is a part
+     # of "base" system, see lines in SPECIAL_PACKAGES.
+     # NOTE: There are no quotes around string containing spaces
+     #       (this is not shell ;-) )
+     # NOTE: An empty string after EACH package section is mandatory
+     # NOTE: Do not forget that you can define your own Makefile targets
+     #       in distbb.local.mk. this new target can run, for example,
+     #       pkg_add -u
+
+     SPECIAL_PACKAGES="\
+     #PKGPATH=pkgtools/digest
+     #TARGETS=depends fetch checksum configure build package
+     #EXTRA_OPTS=BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=full CHECK_SHLIBS=no
+     #
+     #PKGPATH=pkgtools/bootstrap-mk-files
+     #TARGETS=depends fetch checksum configure build package
+     #EXTRA_OPTS=BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=full CHECK_SHLIBS=no
+     #
+     #PKGPATH=net/tnftp
+     #TARGETS=depends fetch checksum configure build package
+     #EXTRA_OPTS=BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=full CHECK_SHLIBS=no
+     #
+     #PKGPATH=sysutils/checkperms
+     #TARGETS=depends fetch checksum configure build package
+     #EXTRA_OPTS=BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=full CHECK_SHLIBS=no
+     #
+     #PKGPATH=devel/bmake
+     #TARGETS=depends fetch checksum configure build package
+     #EXTRA_OPTS=BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=full CHECK_SHLIBS=no
+     #
+     #PKGPATH=pkgtools/pkg_install
+     #TARGETS=depends fetch checksum configure build package
+     #EXTRA_OPTS=BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=full CHECK_SHLIBS=no
+     #
+     #PKGPATH=audio/festival # TARGETS is not changed!
+     #EXTRA_OPTS=CC=/usr/bin/gcc-3.4 CXX=/usr/bin/g++-3.4
+     #
+     "
+
+  distbb.conf: 'extract' and 'patch' targets are in TARGETS now.
+
+  distbb.conf: fix in comment: package-deinstall -> deinstall
+
 Version 0.12.0, by Aleksey Cheusov, Sun,  8 Jun 2008 02:49:08 +0300
 
   Two new variables (for distbb.conf) are introduced:

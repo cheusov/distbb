@@ -119,7 +119,7 @@ NOTES=''
 # of "base" system), see below.
 # NOTE: There are no quotes around string containing spaces
 #       (this is not shell ;-) )
-# NOTE: An empty after package EACH section is mandatory
+# NOTE: An empty string after EACH package section is mandatory
 # NOTE: Do not forget that you can define your own Makefile targets
 #       in distbb.local.mk. this new target can run, for example,
 #       pkg_add -u
