@@ -1,13 +1,21 @@
-ideas/thoughts/todo
-
+ideas/thoughts/todo/problems
+ - modification time of binary packages?
+ - problem:
+   package_A depends on package_B
+   bin_package_A.tgz is older than bin_package_B.tgz
+   ===> package_A is NOT rebuilt in this case, that is
+        a modification time of binary packages are currently not checked
  - distbb -C config-file.conf,
    mandatory variable DISTBB_LOCAL_MK=@sysconfdir@/distbb.local.mk
- - modification time of binary packages?
+ - todo:
+     - add CVS_FINGERPRINT to pkg_src_summary
+     - pkg_cmp_summary should use it and should produce "!="
+      if versions are the same and CVS_FINGERPRINTs are not.
  - flushed META/progress.txt
-    package1.txt date/time succeeded on host1
-    package2.txt date/time failed on host2
-    package3.txt date/time failed on host3
-    ...
+   package1.txt date/time succeeded on host1
+   package2.txt date/time failed on host2
+   package3.txt date/time failed on host3
+   ...
  - (?) put packages to paexec one-by-one and make stage_build rerunable
  - distbb.1
  - my-show-vars -> share/distbb/distbb.mk
