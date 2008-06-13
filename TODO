@@ -5,6 +5,8 @@ ideas/thoughts/todo/problems
    bin_package_A.tgz is older than bin_package_B.tgz
    ===> package_A is NOT rebuilt in this case, that is
         a modification time of binary packages are currently not checked
+ - PSS_SLAVES='+<NUM>' and PSS_SLAVES='' are dangerous settings.
+ - it is better to setup PSS_SLAVE based on $SLAVES.
  - distbb -C config-file.conf,
    mandatory variable DISTBB_LOCAL_MK=@sysconfdir@/distbb.local.mk
  - todo:
