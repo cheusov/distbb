@@ -13,6 +13,7 @@ PKGSRCDIR=/usr/pkgsrc
 # directories to be deleted before installing bootstrap
 # and building a package
 RMDIRS_CMD="/bin/rm -rf $PKGSRC_PREFIX /var/db/pkg"
+#RMDIRS_CMD="/bin/rm -rf $PKGSRC_PREFIX" # PKGDB is under PREFIX
 
 # bootstrap
 BOOTSTRAP="/path/to/bootstrap.tar.gz"
