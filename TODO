@@ -4,15 +4,12 @@ ideas/thoughts/todo/problems
    package_A depends on package_B
    bin_package_A.tgz is older than bin_package_B.tgz
    ===> package_A is NOT rebuilt in this case, that is
-        a modification time of binary packages are currently not checked
- - PSS_SLAVES='+<NUM>' and PSS_SLAVES='' are dangerous settings.
- - it is better to setup PSS_SLAVE based on $SLAVES.
+        modification time of binary packages are currently not checked
  - distbb -C config-file.conf,
    mandatory variable DISTBB_LOCAL_MK=@sysconfdir@/distbb.local.mk
- - todo:
-     - add CVS_FINGERPRINT to pkg_src_summary
-     - pkg_cmp_summary should use it and should produce "!="
-      if versions are the same and CVS_FINGERPRINTs are not.
+   store config files in META/ and include them to bulk build logs
+   stage_* scripts should use config files stored (or linked) in META/
+ - modification time of binary packages?
  - flushed META/progress.txt
    package1.txt date/time succeeded on host1
    package2.txt date/time failed on host2
