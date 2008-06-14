@@ -45,7 +45,7 @@ PKG_SRC_SUMMARY="$PKGSRCDIR/pkg_src_summary.txt"
 # updates pkg_src_summary efficiently, but ALL packages in pkgsrc tree
 # will be included to pkg_src_summary (actually it ignores its stdin).
 # It also uses some hacks/tricks.
-PKG_UPDATE_SRC_SUMMARY_CMD="@@bindir@@/pkg_update_src_summary '$PKG_SRC_SUMMARY'"
+#PKG_UPDATE_SRC_SUMMARY_CMD="@@bindir@@/pkg_update_src_summary '$PKG_SRC_SUMMARY'"
 
 # The same as above, but only necessary fields are included.
 #PKG_UPDATE_SRC_SUMMARY_CMD="@@bindir@@/pkg_update_src_summary -i 'PKGNAME PKGPATH DEPENDS BUILD_DEPENDS MAINTAINER' > '$PKG_SRC_SUMMARY'"
@@ -59,8 +59,13 @@ PKG_UPDATE_SRC_SUMMARY_CMD="@@bindir@@/pkg_update_src_summary '$PKG_SRC_SUMMARY'
 # If you build only a few packages using 'distbb -f' this variant is prefered.
 #PKG_UPDATE_SRC_SUMMARY_CMD="@@bindir@@/pkg_src_summary -A > '$PKG_SRC_SUMMARY'"
 
-# Partial src_summary built from scratch
-#PKG_UPDATE_SRC_SUMMARY_CMD="@@bindir@@/pkg_src_summary -A -f 'PKGNAME PKGPATH DEPENDS BUILD_DEPENDS MAINTAINER' > '$PKG_SRC_SUMMARY'"
+# The same as above but "expanded" PLIST is generated.
+# Useless for distbb but looks very nice ;-)
+#PKG_UPDATE_SRC_SUMMARY_CMD="@@bindir@@/pkg_src_summary -p -A > '$PKG_SRC_SUMMARY'"
+
+# The same as above but only required fields are included.
+# It works a little faster than previous two variants.
+PKG_UPDATE_SRC_SUMMARY_CMD="@@bindir@@/pkg_src_summary -A -f 'PKGNAME PKGPATH DEPENDS BUILD_DEPENDS MAINTAINER' > '$PKG_SRC_SUMMARY'"
 
 # if you want to build src_summary using several processes or several
 # machines in a network, set PSS_SLAVES to non-empty string.
