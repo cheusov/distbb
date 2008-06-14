@@ -372,8 +372,19 @@ report_html (){
 
 report_html > "$meta_dir/report.html"
 
+report_html2txt (){
+   awk '
+   /Jump to:/, NF == 0 { next }
+   {
+      gsub(/<[^<>]*>/, "")
+      gsub(/&[a-z]*;/, "")
+   }
+   { print }
+   ' "$@"
+}
+
 report_txt_fn="$meta_dir/report.txt"
-report_txt | sed -e 's,<[^<>]*>,,g' -e 's,&[a-z]*;,,g' > "$report_txt_fn"
+report_txt | report_html2txt > "$report_txt_fn"
 
 ### generate per file HTMLs
 stage2html (){
