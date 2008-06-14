@@ -97,6 +97,7 @@ PKG_UPDATE_SRC_SUMMARY_CMD="@@bindir@@/pkg_src_summary -A -f 'PKGNAME PKGPATH DE
 # and is therefore not recomented. It is recomended to always
 # generate pkg_src_summary on slave hosts.
 #export PSS_SLAVES=+6
+#export PSS_SLAVES='' # dangerous for the same reason
 
 # Gnerating pkg_src_summary on slave hosts (recomended)
 #export PSS_SLAVES="$SLAVES $SLAVES"
