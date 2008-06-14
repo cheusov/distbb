@@ -27,6 +27,21 @@ LIST_ALL_PKGS_CMD='@@bindir@@/pkg_list_all_pkgs'
 #
 EXTRACT_BOOTSTRAP_CMD="/bin/tar -xzf $BOOTSTRAP -C /"
 
+# set it to non-empty string if you want "distributed" bulk build
+# also see SLAVES variable
+MASTER_MODE='yes'
+#MASTER_MODE='' # for single-host building
+
+# hosts|chroots where actual builds are done
+SLAVES='root@host1 root@host2 root@host3'
+#SLAVES='pkgsrc@host1 pkgsrc@host2 pkgsrc@host3'
+#SLAVES='chroot1 chroot2 chroot3'
+
+# transport to the slaves
+TRANSPORT='/usr/bin/ssh -x'
+#TRANSPORT='/usr/bin/rsh'
+#TRANSPORT="@@libexecdir@@/transport_chroot" # not implemented yet
+
 # dorectory for binary packages
 PACKAGES="$PKGSRCDIR/packages"
 
@@ -75,8 +90,10 @@ PKG_UPDATE_SRC_SUMMARY_CMD="@@bindir@@/pkg_src_summary -A -f 'PKGNAME PKGPATH DE
 # All variables in this section MUST be exported.
 #export PSS_SLAVES=+6 # 6 parallel local processes (for 4-CPU SMP machine)
 #export PSS_SLAVES='root@host1 root@host1 root@host2 root@host2 root@host3 root@host3'
+export PSS_SLAVES="$SLAVES" # reasonable default
 #export PSS_TRANSPORT='' # (for SMP machine)
 #export PSS_TRANSPORT='/usr/bin/ssh'
+export PSS_TRANSPORT="$TRANSPORT" # reasonable default
 #export PSS_PPERS=20 # to process N packages per slave at once
 # (max_package_name_length+1) * PSS_PPERS + 1 must be less than PAEXEC_BUFSIZE
 #export PAEXEC_BUFSIZE=20480, see paexec(1)
@@ -84,7 +101,7 @@ PKG_UPDATE_SRC_SUMMARY_CMD="@@bindir@@/pkg_src_summary -A -f 'PKGNAME PKGPATH DE
 # directory where reports are saved
 REPORTS_DIR=$HOME/bulk-logs
 
-# 
+# binary package extension
 PKG_SUFX=.tgz
 #PKG_SUFX=.tbz
 
@@ -108,20 +125,6 @@ TARGETS='depends fetch checksum extract patch configure build install package de
 EXTRA_OPTS='BATCH=yes PKG_VERBOSE=1'
 # the following is for USE_DESTDIR=full bulk builds
 #EXTRA_OPTS='BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=full CHECK_SHLIBS=no'
-
-# set it to non-empty string if you want "distributed" bulk build
-# also see SLAVES variable
-MASTER_MODE='yes'
-#MASTER_MODE='' # for single-host building
-
-# hosts|chroots where actual builds are done
-SLAVES='root@host1 root@host2 root@host3'
-#SLAVES='pkgsrc@host1 pkgsrc@host2 pkgsrc@host3'
-#SLAVES='chroot1 chroot2 chroot3'
-
-# transport to the slaves
-TRANSPORT='/usr/bin/ssh -x'
-#TRANSPORT="distbb_chroot @@prefix@@/bin/distbb"
 
 # do not change the following unless you know what you are doing
 DISTBB_SLAVE=@@libexecdir@@/slave
