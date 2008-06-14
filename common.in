@@ -28,6 +28,8 @@ date_start_fn=$meta_dir/date_start.tmp
 
 queue_fn=$tmpdir/queue.tmp
 
+packages_fn=$tmpdir/packages.tmp
+
 trans_clos_rebuild_fn=$tmpdir/trans_closure_rebuild.tmp
 
 version=@@version@@

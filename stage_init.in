@@ -82,9 +82,9 @@ cleanup_package_list (){
 
 if test "$packages"; then
     # remove comments and empty lines
-    cleanup_package_list > $tmpdir/packages.tmp
+    cleanup_package_list > $packages_fn
 else
-    eval $LIST_ALL_PKGS_CMD > $tmpdir/packages.tmp
+    eval $LIST_ALL_PKGS_CMD > $packages_fn
 fi
 
 verbose_print "done\n"
@@ -102,7 +102,8 @@ verbose_print "done\n"
 ### updating PKG_SRC_SUMMARY
 if test -z "$pkg_src_update_summary"; then
     verbose_print "  Updating pkg_src_summary..."
-    eval "$PKG_UPDATE_SRC_SUMMARY_CMD < $tmpdir/packages.tmp 2> $build_src_summary_log_fn"
+    eval "$PKG_UPDATE_SRC_SUMMARY_CMD \
+	< $packages_fn 2> $build_src_summary_log_fn"
     verbose_print "done\n"
 fi
 
@@ -236,15 +237,14 @@ BEGIN {
 if test "$packages"; then
     verbose_print "  initial packages with dependancies..."
 
-    packages=$tmpdir/packages.tmp
     runpipe0 \
-	with_dependancies "$packages" "$trans_clos_fn" '|' \
+	with_dependancies "$packages_fn" "$trans_clos_fn" '|' \
 	sort -u > $tmpdir/packages_final.tmp
     packages=$tmpdir/packages_final.tmp
 
     verbose_print "done\n"
 else
-    packages=$tmpdir/packages.tmp
+    packages=$packages_fn
 fi
 
 ######################################################################
