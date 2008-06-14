@@ -64,6 +64,14 @@ while read f; do
     mv $REPORT1_DIR/$f/failed_because.tmp $REPORT1_DIR/$f/failed_because.txt
 done < "$packages_failed_deps_fn"
 
+# resort failed_packages.txt
+while read f; do
+    LC_ALL=C sort \
+	    < $REPORT1_DIR/$f/failed_packages.txt \
+	    > $REPORT1_DIR/$f/failed_packages.tmp
+    mv $REPORT1_DIR/$f/failed_packages.tmp $REPORT1_DIR/$f/failed_packages.txt
+done < "$packages_failed_fn"
+
 # main continuing...
 count_lines (){
     awk 'END {print NR}' "$@"
