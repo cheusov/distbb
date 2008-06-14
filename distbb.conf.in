@@ -37,14 +37,30 @@ PKG_UPDATE_SUMMARY_CMD='@@bindir@@/pkg_update_summary'
 
 # pkg_src_summary (similar to pkg_summary(5) but for source packages)
 PKG_SRC_SUMMARY="$PKGSRCDIR/pkg_src_summary.txt"
+
+# PKG_UPDATE_SRC_SUMMARY_CMD - receives a list of requested packages
+#                              from stdin
+#
+# the following variant for PKG_UPDATE_SRC_SUMMARY_CMD
+# updates pkg_src_summary efficiently, but ALL packages in pkgsrc tree
+# will be included to pkg_src_summary (actually it ignores its stdin).
+# It also uses some hacks/tricks.
 PKG_UPDATE_SRC_SUMMARY_CMD="@@bindir@@/pkg_update_src_summary '$PKG_SRC_SUMMARY'"
-# if your machine is very fast, you can use pkg_src_summary to build
-# src_summary from scratch. See below for PSS_* variables
-#PKG_UPDATE_SRC_SUMMARY_CMD="@@bindir@@/pkg_src_summary > '$PKG_SRC_SUMMARY'"
-# Build partial src_summary, only necessary fields are included.
+
+# The same as above, but only necessary fields are included.
 #PKG_UPDATE_SRC_SUMMARY_CMD="@@bindir@@/pkg_update_src_summary -i 'PKGNAME PKGPATH DEPENDS BUILD_DEPENDS MAINTAINER' > '$PKG_SRC_SUMMARY'"
+
+# If your machine is very fast, you can use program 'pkg_src_summary'
+# to build src_summary. See below for PSS_* variables
+# to make summary using several processes or remote machines.
+# Also there are no hacks/tricks here.
+# Unlike previous variant with pkg_update_src_summary, summary
+# for only requested packages will be included to pkg_src_summary.
+# If you build only a few packages using 'distbb -f' this variant is prefered.
+#PKG_UPDATE_SRC_SUMMARY_CMD="@@bindir@@/pkg_src_summary -A > '$PKG_SRC_SUMMARY'"
+
 # Partial src_summary built from scratch
-#PKG_UPDATE_SRC_SUMMARY_CMD="@@bindir@@/pkg_src_summary -f 'PKGNAME PKGPATH DEPENDS BUILD_DEPENDS MAINTAINER' > '$PKG_SRC_SUMMARY'"
+#PKG_UPDATE_SRC_SUMMARY_CMD="@@bindir@@/pkg_src_summary -A -f 'PKGNAME PKGPATH DEPENDS BUILD_DEPENDS MAINTAINER' > '$PKG_SRC_SUMMARY'"
 
 # if you want to build src_summary using several processes or several
 # machines in a network, set PSS_SLAVES to non-empty string.
