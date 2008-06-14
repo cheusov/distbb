@@ -37,14 +37,14 @@ PKG_UPDATE_SUMMARY_CMD='@@bindir@@/pkg_update_summary'
 
 # pkg_src_summary (similar to pkg_summary(5) but for source packages)
 PKG_SRC_SUMMARY="$PKGSRCDIR/pkg_src_summary.txt"
-PKG_UPDATE_SRC_SUMMARY_CMD='@@bindir@@/pkg_update_src_summary'
+PKG_UPDATE_SRC_SUMMARY_CMD="@@bindir@@/pkg_update_src_summary '$PKG_SRC_SUMMARY'"
 # if your machine is very fast, you can use pkg_src_summary to build
 # src_summary from scratch. See below for PSS_* variables
-#PKG_UPDATE_SRC_SUMMARY_CMD='@@bindir@@/pkg_src_summary'
+#PKG_UPDATE_SRC_SUMMARY_CMD="@@bindir@@/pkg_src_summary > '$PKG_SRC_SUMMARY'"
 # Build partial src_summary, only necessary fields are included.
-#PKG_UPDATE_SRC_SUMMARY_CMD='@@bindir@@/pkg_update_src_summary -i "PKGNAME PKGPATH DEPENDS BUILD_DEPENDS MAINTAINER"'
+#PKG_UPDATE_SRC_SUMMARY_CMD="@@bindir@@/pkg_update_src_summary -i 'PKGNAME PKGPATH DEPENDS BUILD_DEPENDS MAINTAINER' > '$PKG_SRC_SUMMARY'"
 # Partial src_summary built from scratch
-#PKG_UPDATE_SRC_SUMMARY_CMD='@@bindir@@/pkg_src_summary -f "PKGNAME PKGPATH DEPENDS BUILD_DEPENDS MAINTAINER"'
+#PKG_UPDATE_SRC_SUMMARY_CMD="@@bindir@@/pkg_src_summary -f 'PKGNAME PKGPATH DEPENDS BUILD_DEPENDS MAINTAINER' > '$PKG_SRC_SUMMARY'"
 
 # if you want to build src_summary using several processes or several
 # machines in a network, set PSS_SLAVES to non-empty string.
@@ -204,3 +204,7 @@ UPLOAD_PKGS_CMD="@@bindir@@/rsync -av --delete-excluded -e ssh $PACKAGES/ cheuso
 
 #
 UPLOAD_LOGS_CMD="@@bindir@@/rsync -av --delete-excluded --exclude '*.tmp' -e ssh $REPORTS_DIR/$BUILD_ID cheusov@mova.org:~/public_html/pub/pkgsrc-distbb/$OS/$PKGSRCVER/log/"
+
+############################################################
+# You MUST copy the following to your distbb.conf
+I_AM_READY=1
