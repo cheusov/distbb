@@ -102,8 +102,7 @@ verbose_print "done\n"
 ### updating PKG_SRC_SUMMARY
 if test -z "$pkg_src_update_summary"; then
     verbose_print "  Updating pkg_src_summary..."
-    eval $PKG_UPDATE_SRC_SUMMARY_CMD \
-	< $tmpdir/packages.tmp 2> "$build_src_summary_log_fn"
+    eval "$PKG_UPDATE_SRC_SUMMARY_CMD < $tmpdir/packages.tmp 2> $build_src_summary_log_fn"
     verbose_print "done\n"
 fi
 
@@ -349,14 +348,20 @@ verbose_print "done\n"
 
 verbose_print "  packages already built..."
 
-awk '
+generate_built_prev (){
+    awk '
 { cnt [$1] += 1 }
 END {
    for (pkg in cnt) {
       if (cnt [pkg] == 1) print pkg
    }
 }
-'  "$packages" "$rebuild_fn" > "$packages_built_prev_fn"
+'  "$packages" "$rebuild_fn"
+}
+
+runpipe0 \
+    generate_built_prev '|' \
+    env LC_ALL=C sort > "$packages_built_prev_fn"
 
 verbose_print "done\n"
 
