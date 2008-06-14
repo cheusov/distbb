@@ -135,7 +135,7 @@ pkgpath2maintainer (){
     awk -v pkgpath="$1" '$1 == pkgpath {print $2; exit}' "$enriched_failed_fn"
 }
 
-report_txt (){
+report_html (){
     if test "$PACKAGES_URL"; then
 	url="<a href=\"$PACKAGES_URL\" title=\"binary packages\">binary packages</a>"
     else
@@ -362,15 +362,15 @@ html_footer (){
 EOF
 }
 
-report_html (){
+report_full_html (){
     html_header report
 
-    report_txt
+    report_html
 
     html_footer
 }
 
-report_html > "$meta_dir/report.html"
+report_full_html > "$meta_dir/report.html"
 
 report_html2txt (){
    awk '
@@ -384,7 +384,7 @@ report_html2txt (){
 }
 
 report_txt_fn="$meta_dir/report.txt"
-report_txt | report_html2txt > "$report_txt_fn"
+report_html | report_html2txt > "$report_txt_fn"
 
 ### generate per file HTMLs
 stage2html (){
