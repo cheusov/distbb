@@ -56,6 +56,15 @@ find_failed_deps_packages (){
 
 find_failed_deps_packages > "$packages_failed_deps_fn"
 
+# resort failed_because.txt
+while read f; do
+    LC_ALL=C sort \
+	    < $REPORT1_DIR/$f/failed_because.txt \
+	    > $REPORT1_DIR/$f/failed_because.tmp
+    mv $REPORT1_DIR/$f/failed_because.tmp $REPORT1_DIR/$f/failed_because.txt
+done < "$packages_failed_deps_fn"
+
+# main continuing...
 count_lines (){
     awk 'END {print NR}' "$@"
 }
