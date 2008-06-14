@@ -48,7 +48,10 @@ path2pkgpath (){
     sed -e 's,^.*/\([^/]*/[^/]*\)/failed_because.txt$,\1,'
 }
 find_failed_deps_packages (){
-    runpipe0 find "$REPORT1_DIR" -name failed_because.txt '|' path2pkgpath
+    runpipe0 \
+	find "$REPORT1_DIR" -name failed_because.txt '|' \
+	path2pkgpath '|' \
+	env LC_ALL=C sort
 }
 
 find_failed_deps_packages > "$packages_failed_deps_fn"
