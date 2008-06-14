@@ -87,13 +87,28 @@ PKG_UPDATE_SRC_SUMMARY_CMD="@@bindir@@/pkg_src_summary -A -f 'PKGNAME PKGPATH DE
 # See pkg_src_summary(1) for details
 #    (hint: pkg_src_summary is called by pkg_update_src_summary
 #           and pkg_micro_src_summary).
-# All variables in this section MUST be exported.
-#export PSS_SLAVES=+6 # 6 parallel local processes (for 4-CPU SMP machine)
-#export PSS_SLAVES='root@host1 root@host1 root@host2 root@host2 root@host3 root@host3'
+# NOTE: PSS_* variables MUST be exported.
+#
+
+# 6 parallel local processes (for 4-CPU SMP machine)
+# Note that if you set PSS_SLAVES=+NUM pkg_src_summary will be generated
+# on master host. This may dangerous
+# (master host != slave host ===> different pkg_src_summaries)
+# and is therefore not recomented. It is recomended to always
+# generate pkg_src_summary on slave hosts.
+#export PSS_SLAVES=+6
+
+# Gnerating pkg_src_summary on slave hosts (recomended)
+#export PSS_SLAVES="$SLAVES $SLAVES"
+
 export PSS_SLAVES="$SLAVES" # reasonable default
+
 #export PSS_TRANSPORT='' # (for SMP machine)
-#export PSS_TRANSPORT='/usr/bin/ssh'
+#export PSS_TRANSPORT='/usr/bin/ssh -x'
+#export PSS_TRANSPORT='/usr/bin/rsh'
+#export PSS_TRANSPORT="@@libexecdir@@/transport_chroot" # not implemented yet
 export PSS_TRANSPORT="$TRANSPORT" # reasonable default
+
 #export PSS_PPERS=20 # to process N packages per slave at once
 # (max_package_name_length+1) * PSS_PPERS + 1 must be less than PAEXEC_BUFSIZE
 #export PAEXEC_BUFSIZE=20480, see paexec(1)
