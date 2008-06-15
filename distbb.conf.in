@@ -122,8 +122,14 @@ PKG_SUFX=.tgz
 #PKG_SUFX=.tbz
 
 # install the following packages first.
-# !!!DIRTY HACK!!!
+# These packages are listed as a result of
+# 'bmake show-var VARNAME=BOOTSTRAP_DEPENDS'
 EXTRA_DEPS='pkgtools/digest sysutils/checkperms'
+# The following command will be called for each package in EXTRA_DEPS
+# to generate their dependancies, for example,
+# sysutils/checkperms depends on pkgtools/digest
+EXTRA_DEPS_CMD="$BMAKE show-var VARNAME=BOOTSTRAP_DEPENDS"
+#EXTRA_DEPS_CMD=: # who knows
 
 # for target 'depends'
 DEPENDS_TARGET='do-bin-install'

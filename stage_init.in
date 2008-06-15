@@ -160,19 +160,26 @@ NF == 0 {
 
     # extra dependancies from $EXTRA_DEPS
     for d in dummy $EXTRA_DEPS; do
+	# EXTRA_DEPS
 	awk -v d=$d -F= -v extra_deps="$EXTRA_DEPS" '
 	BEGIN {
-	    print "yyy=" extra_deps > "/dev/stderr"
-	    print "count=" split(extra_deps, _deps, / /) > "/dev/stderr"
+	    split(extra_deps, _deps, / /)
 	    for (i in _deps){
 		deps [_deps [i]] = 1
-		print "zzz=" _deps [i] > "/dev/stderr"
 	    }
 	}
 	$1 == "PKGPATH" && !($2 in deps) {
 	    print d, $2
 	}
 	' $PKG_SRC_SUMMARY >> $deps_fn
+
+	test dummy = $d && continue
+
+	# EXTRA_DEPS_CMD
+	deps="`cd $PKGSRCDIR/$d && eval $EXTRA_DEPS_CMD | sed 's,[^ ]*:[.][.]/[.][.]/,,g'`"
+	for dep in $deps; do
+	    echo $dep $d >> $deps_fn
+	done
     done
 }
 
