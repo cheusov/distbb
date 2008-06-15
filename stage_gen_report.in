@@ -42,7 +42,7 @@ verbose_print "Logs generation and clean-ups..."
 rmdir $REPORT1_DIR/* 2>/dev/null || true
 
 date_start=$(cat "$date_start_fn")
-date_end="$(date -u '+%Y-%m-%d %H:%M') UTC"
+date_end=$(cat "$date_end_fn")
 
 path2pkgpath (){
     sed -e 's,^.*/\([^/]*/[^/]*\)/failed_because.txt$,\1,'

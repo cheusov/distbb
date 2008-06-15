@@ -25,6 +25,7 @@ packages_built_fn=$meta_dir/packages_built.txt
 build_src_summary_log_fn=$meta_dir/build_src_summary_log.txt
 
 date_start_fn=$meta_dir/date_start.tmp
+date_end_fn=$meta_dir/date_end.tmp
 
 queue_fn=$tmpdir/queue.tmp
 

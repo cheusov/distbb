@@ -332,3 +332,7 @@ eval runpipe0 \
 verbose_print "Updating pkg_summary..."
 eval $PKG_UPDATE_SUMMARY_CMD $PKG_SUMMARY $PACKAGES/All
 verbose_print "done\n"
+
+######################################################################
+
+echo "$(date -u '+%Y-%m-%d %H:%M') UTC" > $date_end_fn
