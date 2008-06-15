@@ -97,7 +97,7 @@ postfilter (){
     # redirects build logs to bulk_log/pkgpath directory,
     # recalculates counters in a queue file
     # removes unneeded bulk_log/pkgpath directories etc.
-awk \
+runawk \
    -v trans_clos_fn=$trans_clos_rebuild_fn \
    -v queue_fn=$queue_fn \
    -v lckfile=$lckfile \
@@ -105,10 +105,14 @@ awk \
    -v meta_dir=$meta_dir \
    -v packages_failed_fn=$packages_failed_fn \
    -v packages_built_fn=$packages_built_fn \
-   -v distbb_lock_pid="$DISTBB_LOCK $$" '
+   -v distbb_lock_pid="$DISTBB_LOCK $$" -e '
 # input line format:
 #    $1 - <SLAVE_HOST>
 #    $2 - <TASK_NUMBER>
+
+#use "xclose.awk"
+#use "xgetline.awk"
+#use "xsystem.awk"
 
 BEGIN {
    while (xgetline0(trans_clos_fn)){
@@ -151,29 +155,6 @@ NF > 2 {
 # end of task
 {
    xclose(log_fn)
-}
-
-function xsystem (prog){
-   if (system(prog)){
-      print "system() failed" > "/dev/stderr"
-      exit 1
-   }
-}
-
-function xclose (fn){
-   if (close(fn)){
-      print "close(\"" fn "\") failed" > "/dev/stderr"
-      exit 1
-   }
-}
-
-function xgetline0 (fn,                 ret){
-   ret = (getline < fn)
-   if (ret < 0){
-      print "The function getline failed" > "/dev/stderr"
-      exit 1
-   }
-   return (ret > 0)
 }
 
 status [$2] == 0 {
