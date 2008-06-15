@@ -47,7 +47,6 @@ slave - program run on slave hosts
 usage: slave [OPTIONS]
 OPTIONS:
   -h|--help              display this help message
-  -e|--encode <cmd>      encode command, defaults to uuencode
 EOF
 }
 
@@ -58,13 +57,6 @@ while test $# -ne 0; do
 	-h|--help)
 	    usage
 	    exit 0;;
-	-e|--encode)
-	    encode_cmd="$2"
-	    shift;;
-	--encode=*|-e=*)
-	    encode_cmd="$(printf '%s\n' \"$1\" | sed 's,^[^=]*=,,')";;
-	-e*)
-	    encode_cmd="$(printf '%s\n' \"$1\" | cut -b3-)";;
 	--)
 	    shift
 	    break;;
@@ -190,7 +182,9 @@ build_package (){
 check_max_log_size (){
     awk -v limit="$LOG_SIZE_LIMIT" '
     {
+#	print " " $0 # space is for paexec! empty line is not allowed!
 	print $0
+
 	curr += length($0)+1
 	if (limit && curr >= limit){
 	    print "Maximum log size is reached! Exiting..."
@@ -205,8 +199,8 @@ while read pkgpath; do
     restore_TARGETS_and_EXTRA_OPTS
 
     if runpipe_re '. [01] 0' build_package $pkgpath '|' \
-       check_max_log_size '|' \
-       $encode_cmd
+	check_max_log_size '|' \
+	$encode_cmd
     then
 	echo "status: $pipestatus_1"
     else

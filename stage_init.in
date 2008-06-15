@@ -239,12 +239,11 @@ if test "$packages"; then
 
     runpipe0 \
 	with_dependancies "$packages_fn" "$trans_clos_fn" '|' \
-	sort -u > $tmpdir/packages_final.tmp
-    packages=$tmpdir/packages_final.tmp
+	sort -u > $packages_with_deps_fn
 
     verbose_print "done\n"
 else
-    packages=$packages_fn
+    cp $packages_fn $packages_with_deps_fn
 fi
 
 ######################################################################
@@ -267,7 +266,7 @@ $2 in hash {
 
 trans_clos_final_fn=$tmpdir/trans_closure_final.tmp
 trans_closure_final \
-    "$packages" \
+    "$packages_with_deps_fn" \
     "$trans_clos_fn" > "$trans_clos_final_fn"
 
 trans_clos_full_fn=$tmpdir/trans_closure_full.tmp
@@ -282,7 +281,7 @@ verbose_print "  direct packages to be built..."
 
 rebuild1_fn=$tmpdir/rebuild1.tmp
 
-awk -v pkgs="$packages" '
+awk -v pkgs="$packages_with_deps_fn" '
 BEGIN {
    while (getline < pkgs){
       hash [$1] = 1
@@ -356,7 +355,7 @@ END {
       if (cnt [pkg] == 1) print pkg
    }
 }
-'  "$packages" "$rebuild_fn"
+'  "$packages_with_deps_fn" "$rebuild_fn"
 }
 
 runpipe0 \
