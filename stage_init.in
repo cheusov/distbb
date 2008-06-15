@@ -33,7 +33,7 @@ test $# -eq 4
 BUILD_ID="$1"
 pkg_src_update_summary="$2"
 packages="$3"
-date_start="$4"
+build_start="$4"
 
 . @@sysconfdir@@/distbb.conf
 
@@ -42,7 +42,7 @@ test -n "$REPORT1_DIR" # who knows...
 rm -rf $REPORT1_DIR
 . @@libexecdir@@/common
 
-echo "$date_start" > $date_start_fn
+echo "$build_start" > $build_start_fn
 
 # main
 verbose_print "Preparations\n"

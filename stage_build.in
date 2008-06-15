@@ -335,4 +335,4 @@ verbose_print "done\n"
 
 ######################################################################
 
-echo "$(date -u '+%Y-%m-%d %H:%M') UTC" > $date_end_fn
+echo "$(date -u '+%Y-%m-%d %H:%M') UTC" > $build_end_fn
