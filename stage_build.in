@@ -39,9 +39,9 @@ REPORT1_DIR=$REPORTS_DIR/$BUILD_ID
 
 # main
 ######################################################################
-verbose_print "  Directories for logging..."
+verbose_print "Creating directories for logging..."
 cd $REPORT1_DIR
-if test -s "$packages_fn"; then
+if test -s "$packages_with_deps_fn"; then
     xargs mkdir -p < "$packages_with_deps_fn"
 fi
 verbose_print "done\n"
@@ -322,10 +322,13 @@ else
 fi
 
 verbose_print "Building\n"
+
 eval runpipe0 \
     print_tasks '|' \
     paexec -EI -lr $TRANSPORT $SLAVES -c "$DISTBB_SLAVE" '|' \
     postfilter
+
+verbose_print '  building done\n'
 
 ######################################################################
 
