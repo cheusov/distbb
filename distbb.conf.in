@@ -121,9 +121,9 @@ REPORTS_DIR=$HOME/bulk-logs
 PKG_SUFX=.tgz
 #PKG_SUFX=.tbz
 
-# install the following package first.
+# install the following packages first.
 # !!!DIRTY HACK!!!
-EXTRA_DEPS='pkgtools/digest'
+EXTRA_DEPS='pkgtools/digest sysutils/checkperms'
 
 # for target 'depends'
 DEPENDS_TARGET='do-bin-install'

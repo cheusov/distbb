@@ -82,10 +82,17 @@ cleanup_package_list (){
 
 if test "$packages"; then
     # remove comments and empty lines
-    cleanup_package_list > $packages_fn
+    cleanup_package_list > $packages_fn.tmp
 else
-    eval $LIST_ALL_PKGS_CMD > $packages_fn
+    eval $LIST_ALL_PKGS_CMD > $packages_fn.tmp
 fi
+
+# add extra packages to the list of packages requested by user
+for p in $EXTRA_DEPS; do
+    echo $p >> $packages_fn.tmp
+done
+env LC_ALL=C sort -u $packages_fn.tmp > $packages_fn
+rm $packages_fn.tmp
 
 verbose_print "done\n"
 
@@ -153,8 +160,19 @@ NF == 0 {
 
     # extra dependancies from $EXTRA_DEPS
     for d in dummy $EXTRA_DEPS; do
-	awk -v d=$d -F= '$1 == "PKGPATH" && $2 != d {print d, $2}' \
-	    $PKG_SRC_SUMMARY >> $deps_fn
+	awk -v d=$d -F= -v extra_deps="$EXTRA_DEPS" '
+	BEGIN {
+	    print "yyy=" extra_deps > "/dev/stderr"
+	    print "count=" split(extra_deps, _deps, / /) > "/dev/stderr"
+	    for (i in _deps){
+		deps [_deps [i]] = 1
+		print "zzz=" _deps [i] > "/dev/stderr"
+	    }
+	}
+	$1 == "PKGPATH" && !($2 in deps) {
+	    print d, $2
+	}
+	' $PKG_SRC_SUMMARY >> $deps_fn
     done
 }
 
