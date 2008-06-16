@@ -129,6 +129,8 @@ verbose_print "done\n"
 # input: "$PKG_SRC_SUMMARY file and $EXTRA_DEPS packages.
 # output format: <PKGNAME> <DEPENDANCY_PKGPATH> <PKGPATH>
 
+verbose_print "  dependencies from pkg_src_summary file..."
+
 deps_fn=$tmpdir/deps.tmp
 
 extract_depends (){
@@ -157,34 +159,45 @@ NF == 0 {
    pkgpath = ""
 }
 ' "$PKG_SRC_SUMMARY"
-
-    # extra dependancies from $EXTRA_DEPS
-    for d in dummy $EXTRA_DEPS; do
-	# EXTRA_DEPS
-	awk -v d=$d -F= -v extra_deps="$EXTRA_DEPS" '
-	BEGIN {
-	    split(extra_deps, _deps, / /)
-	    for (i in _deps){
-		deps [_deps [i]] = 1
-	    }
-	}
-	$1 == "PKGPATH" && !($2 in deps) {
-	    print d, $2
-	}
-	' $PKG_SRC_SUMMARY >> $deps_fn
-
-	test dummy = $d && continue
-
-	# EXTRA_DEPS_CMD
-	deps="`cd $PKGSRCDIR/$d && eval $EXTRA_DEPS_CMD | sed 's,[^ ]*:[.][.]/[.][.]/,,g'`"
-	for dep in $deps; do
-	    echo $dep $d >> $deps_fn
-	done
-    done
 }
 
-verbose_print "  extracting dependencies from pkg_src_summary file..."
 extract_depends
+
+verbose_print "done\n"
+
+verbose_print "  extra dependencies..."
+
+# extra dependancies from $EXTRA_DEPS
+for d in dummy $EXTRA_DEPS; do
+    # EXTRA_DEPS
+    awk -v d=$d -F= -v extra_deps="$EXTRA_DEPS" '
+    BEGIN {
+	split(extra_deps, _deps, / /)
+	for (i in _deps){
+	    deps [_deps [i]] = 1
+	}
+    }
+    $1 == "PKGPATH" && !($2 in deps) {
+	print d, $2
+    }
+    ' $PKG_SRC_SUMMARY >> $deps_fn.tmp
+
+    test dummy = $d && continue
+
+    # EXTRA_DEPS_CMD
+    deps="`cd $PKGSRCDIR/$d && eval $EXTRA_DEPS_CMD | sed 's,[^ ]*:[.][.]/[.][.]/,,g'`"
+    for dep in $deps; do
+	echo $dep $d >> $deps_fn.tmp
+    done
+done
+
+runpipe0 \
+    env LC_ALL=C sort $deps_fn $deps_fn.tmp '|' \
+    env LC_ALL=C uniq > $deps_fn.tmp2
+
+mv $deps_fn.tmp2 $deps_fn
+rm $deps_fn.tmp
+
 verbose_print "done\n"
 
 ######################################################################
@@ -325,10 +338,8 @@ verbose_print "  all packages to be built..."
 rebuild_fn=$tmpdir/rebuild.tmp
 
 all_packages_to_be_build () {
-awk -v pkgs="$rebuild1_fn" -v res_trans_clos_fn="$trans_clos_rebuild_fn" '
+awk -v pkgs="$rebuild1_fn" '
 BEGIN {
-   printf "" > res_trans_clos_fn
-
    while (getline < pkgs){
       hash [$1] = 1
       print $1
@@ -337,7 +348,20 @@ BEGIN {
 
 ($1 in hash) {
    print $2
-   print $0 > res_trans_clos_fn
+}
+' "$trans_clos_fn"
+}
+
+all_packages_to_be_build2 () {
+awk -v pkgs="$rebuild_fn" '
+BEGIN {
+   while (getline < pkgs){
+      hash [$1] = 1
+   }
+}
+
+($1 in hash) {
+   print $1, $2
 }
 ' "$trans_clos_fn"
 }
@@ -345,6 +369,9 @@ BEGIN {
 runpipe0 \
     all_packages_to_be_build '|' \
     sort -u > $rebuild_fn
+runpipe0 \
+    all_packages_to_be_build2 '|' \
+    sort -u > $trans_clos_rebuild_fn
 
 verbose_print "done\n"
 
