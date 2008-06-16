@@ -1,4 +1,7 @@
 ideas/thoughts/todo/problems
+ - META/packages_total.txt
+ - links from report.html to packages_total.txt, packages_built_prev.txt,
+   packages_built.txt, packages_failed.txt and packages_failed_deps.txt
  - modification time of binary packages?
  - problem:
    package_A depends on package_B
