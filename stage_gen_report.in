@@ -224,7 +224,7 @@ EOF
 <a name="top offenders"></a><h3>Top offenders</h3>
 
 EOF
-    printf '<table width=30%%>'
+    printf '<table width="30%%">'
     printf '<tr><td>%-36s</td> <td align="right">%4s</td></tr>\n' '<b>Maintainer</b>' '<b>Breaks</b>'
     echo ''
 
@@ -239,7 +239,7 @@ EOF
     sort -k2,2rn |
     head -n "$OFFENDERS_CNT" |
     awk '{
-	printf "<tr><td>%-27s</td> <td align="right">%4d</td></tr>\n", $1, $2
+	printf "<tr><td>%-27s</td> <td align=\"right\">%4d</td></tr>\n", $1, $2
     }'
 
     printf '</table>\n'
@@ -250,9 +250,10 @@ EOF
 <a name="failed"></a><h3>Failed packages</h3>
 
 EOF
-    printf "%s" "<table width=100%>"
+    printf '%s' '<table width="100%">'
     print_failed_pkg "Package" "Breaks" "Stage" "Maintainer" "" |
     sed -e 's,<a[^<>]*>,,' \
+	-e 's,</a[^<>]*>,,' \
 	-e 's,class="[^"]*",,g' \
 	-e 's,[A-Z][a-z ]*,<b>&</b>,g'
 
@@ -274,7 +275,7 @@ EOF
     # failed dependencies
     echo '<a name="failed depends"></a><h3>Failed due to dependencies</h3>'
 
-    printf "%s" "<table width=100%>"
+    printf '%s' '<table width="100%">'
 
     echo ''
     print_failed_deps_pkg 'Package' '' 'Maintainer' 'Failed dependencies' |
@@ -315,6 +316,9 @@ enrich_pkgpath "MAINTAINER PKGNAME" \
 
 html_header (){
     cat <<EOF
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+
 <html> <head> <title>$os</title>
 <style type="text/css">
 <!--
