@@ -165,7 +165,7 @@ report_html (){
     cat <<EOF
 <h1>pkgsrc bulk build results (distbb-$version)</h1>
 <h2>$OS $OSVER</h2>
-  <a href="$REPORT_URL" title="Full report">$REPORT_URL</a>
+  <p><a href="$REPORT_URL" title="Full report">$REPORT_URL</a>
 
 EOF
 
@@ -175,13 +175,13 @@ EOF
     fi
 
     if test "$NOTES"; then
-	echo '<a name="notes"></a><h3>Notes</h3>'
+	echo '<h3><a name="notes"></a>Notes</h3>'
 	cat "$NOTES"
     fi
 
     cat <<EOF
 
-<a name="summary"></a><h3>Summary</h3>
+<h3><a name="summary"></a>Summary</h3>
 
 <table><tr>  <td>Build started:</td><td align="right">$(right_align 38 "${build_start}")</td></tr>
   <tr><td>Build ended:</td>  <td align="right">$(right_align 38 "${build_end}")</td></tr>
@@ -208,7 +208,7 @@ EOF
 
     cat <<EOF
 </p>
-Jump to:
+<p>Jump to:
 <ul>
     <li><a href="#summary">Summary</a></li>
     <li><a href="#top offenders">Top Offenders</a></li>
@@ -221,7 +221,7 @@ EOF
     # top offenders
     cat <<EOF
 
-<a name="top offenders"></a><h3>Top offenders</h3>
+<h3><a name="top offenders"></a>Top offenders</h3>
 
 EOF
     printf '<table width="30%%">'
@@ -247,7 +247,7 @@ EOF
     # failed packages
     cat <<EOF
 
-<a name="failed"></a><h3>Failed packages</h3>
+<h3><a name="failed"></a>Failed packages</h3>
 
 EOF
     printf '%s' '<table width="100%">'
@@ -273,7 +273,7 @@ EOF
     printf '%s\n' "</table>"
 
     # failed dependencies
-    echo '<a name="failed depends"></a><h3>Failed due to dependencies</h3>'
+    echo '<h3><a name="failed depends"></a>Failed due to dependencies</h3>'
 
     printf '%s' '<table width="100%">'
 
@@ -374,9 +374,7 @@ h3 {
 </style>
 </head>
 
-<body vlink="#3535c5">
-
-<a name="$1"></a>
+<body>
 
 EOF
 }
@@ -389,7 +387,7 @@ EOF
 }
 
 report_full_html (){
-    html_header report
+    html_header
 
     report_html
 
