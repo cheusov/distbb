@@ -152,8 +152,8 @@ EXTRA_OPTS='BATCH=yes PKG_VERBOSE=1'
 DISTBB_SLAVE=@@libexecdir@@/slave
 DISTBB_LOCK=@@libexecdir@@/lock
 
-# filename containing notes about bulk build (in html format),
-# e.g. unusual build options, compiler etc.
+# filename containing notes about bulk build (in html format, of
+# course in utf-8 charset), e.g. unusual build options, compiler etc.
 NOTES=''
 
 # some packages fail to build because they are a part of pkgsrc
@@ -201,7 +201,7 @@ SPECIAL_PACKAGES="\
 #
 "
 
-# Person running bulk build (in html format).
+# Person running bulk build (in html format, of course in utf-8 charset).
 # If empty string, it is not included to the report.
 RESPONSIBLE=''
 #RESPONSIBLE='Aleksey Cheusov'
