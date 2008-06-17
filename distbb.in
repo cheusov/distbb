@@ -131,7 +131,7 @@ if ! test -f @@sysconfdir@@/distbb.local.mk; then
     exit 1
 fi
 
-if test "$I_AM_READY" -eq 1; then
+if test "$I_AM_READY" -eq 1 2>/dev/null; then
     :
 else
     echo 'Read NEWS file! Your distbb.conf needs to be updated ;-)' 1>&2
