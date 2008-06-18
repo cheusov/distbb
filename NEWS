@@ -1,3 +1,42 @@
+Version 0.14.0, by Aleksey Cheusov, Wed, 18 Jun 2008 22:14:56 +0300
+
+  FIXED: sometimes packages are built in a wrong order.
+
+  FIXED: there were two examples for PKG_UPDATE_SRC_SUMMARY_CMD
+  in the sample distbb.conf:
+  'pkg_update_src_summary' and 'pkg_src_summary'. But the latter
+  just didn't work because these two commands have imcomppatible usage.
+  Now this is fixed but changes are incompatible with old distbb.conf.
+  Update it according to the new sample for distbb.conf.
+  Also set I_AM_READY variable to 1.
+  Side effect: 'pkg_src_summary -A' can now be used for generating summary.
+  This will build pkg_src_summary only for requested packages (distbb -f)
+  and their dependancies, not for entire pkgsrc
+  tree (pkg_update_src_summary).
+  Both Hubert's bulk build and pbulk work this way. Now distbb too.
+
+  FIX: EXTRA_DEPS now can contain more than one package and is handled
+  correctly. Copy EXTRA_DEPS_CMD from the sample to your distbb.conf
+
+  The following files are sorted alphabetically:
+     CATEGORY/PACKAGE/failed_packages.txt
+     CATEGORY/PACKAGE/failed_because.txt
+     META/packages_built_prev.txt
+     META/packages_failed_deps.txt
+  In case of LOTS of failures this make searching in these files much easier.
+
+  Latest paexec, runawk and pkg_summary-utils are needed.
+
+  report.html and all others conforms to HTML 4.01 Strict specification.
+  Thanks to validator.w3.org
+  UTF-8 charset is also used (See NOTES and RESPONSIBLE variables)
+
+  "build_end" date/time are moved from stage_gen_report to stage_build.
+
+  Lots of comments and suggestions in the sample for distbb.conf
+
+  Other minor fixes, improvements and code clean-ups.
+
 Version 0.13.0, by Aleksey Cheusov, Thu, 12 Jun 2008 23:40:46 +0300
 
   ADDED: mega-feature/new variable SPECIAL_PACKAGES
