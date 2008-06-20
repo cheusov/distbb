@@ -330,10 +330,19 @@ eval runpipe0 \
 
 ##
 
-verbose_print "  META/packages_total.txt..."
+verbose_print "  creating META/packages_total.txt..."
 
 env LC_ALL=C sort -u "$packages_built_fn" "$packages_built_prev_fn" \
     > "$packages_total_fn"
+
+verbose_print "done\n"
+
+##
+
+verbose_print "  sorting META/packages_built.txt..."
+
+mv $packages_built_fn $packages_built_nosort_fn
+env LC_ALL=C sort -u $packages_built_nosort_fn > $packages_built_fn
 
 verbose_print "done\n"
 
