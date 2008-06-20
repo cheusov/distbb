@@ -36,6 +36,7 @@ OPTIONS:
                          by default package names are obtained from
                          pkgsrc source tree.
   -k                     skip updating pkg_src_summary
+  -B <build_id>          set BUILD_ID (for debugging purposes)
 EOF
 }
 
@@ -49,15 +50,22 @@ while test $# -ne 0; do
 	-V|--version)
 	    echo distbb-@@version@@
 	    exit 0;;
+
 	-f|--file)
 	    pkg_src_packages="$2"
 	    shift;;
-	--file=*|-f=*)
-	    pkg_src_packages="$(printf '%s\n' \"$1\" | sed 's,^[^=]*=,,')";;
 	-f*)
-	    pkg_src_packages="$(printf '%s\n' \"$1\" | cut -b3-)";;
+	    pkg_src_packages="$(printf '%s\n' '$1' | cut -b3-)";;
+
+	-B)
+	    BUILD_ID="$2"
+	    shift;;
+	-B*)
+	    BUILD_ID="$(printf '%s\n' $1 | cut -b3-)";;
+
 	-k)
 	    pkg_src_update_summary=1;;
+
 	--)
 	    shift
 	    break;;
@@ -83,7 +91,9 @@ set -e
 # date start for placint it to html/txt report
 date_start="$(date -u '+%Y-%m-%d %H:%M') UTC"
 # date start in YYYYMMDD-HHMM format
-BUILD_ID="$(echo $date_start | awk '{gsub(/[:-]/, ""); print $1 "." $2}')"
+if test -z "$BUILD_ID"; then
+    BUILD_ID="$(echo $date_start | awk '{gsub(/[:-]/, ""); print $1 "." $2}')"
+fi
 
 echo "BUILD_ID: $BUILD_ID" 1>&2
 
