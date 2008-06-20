@@ -186,11 +186,11 @@ EOF
   <tr><td>Build ended:</td>  <td align="right">$(right_align 38 "${build_end}")</td><td>&nbsp;</td></tr>
 
   <tr><td>&nbsp;</td>                  <td>&nbsp;</td><td>&nbsp;</td></tr>
-  <tr class="pkg-total"><td>Total packages</td>                  <td align="right">$(right_align 20 $packages_total)</td><td>&nbsp;&nbsp;&nbsp;<a href="$packages_total_fn" title="list of packages">list</a></td></tr>
-  <tr><td>Packages built previously</td>       <td align="right">$(right_align 20 $packages_built_prev_cnt)</td><td>&nbsp;&nbsp;&nbsp;<a href="$packages_built_prev_fn" title="list of packages">list</a></td></tr>
-  <tr class="pkg-built"><td>Packages built</td>                  <td align="right">$(right_align 20 $packages_built_cnt)</td><td>&nbsp;&nbsp;&nbsp;<a href="$packages_built_fn" title="list of packages">list</a></td></tr>
-  <tr class="pkg-failed"><td>Packages failed</td>                 <td align="right">$(right_align 20 $packages_failed_cnt)</td><td>&nbsp;&nbsp;&nbsp;<a href="$packages_failed_fn" title="list of packages">list</a></td></tr>
-  <tr class="pkg-faileddeps"><td>Packages failed due to them</td>     <td align="right">$(right_align 20 $packages_failed_deps_cnt)</td><td>&nbsp;&nbsp;&nbsp;<a href="$packages_failed_deps_fn" title="list of packages">list</a></td></tr>
+  <tr class="pkg-total"><td>Total packages</td>                  <td align="right">$(right_align 20 $packages_total)</td><td>&nbsp;&nbsp;&nbsp;<a href="$packages_total_fn" title="List of total packages">list</a></td></tr>
+  <tr><td>Packages built previously</td>       <td align="right">$(right_align 20 $packages_built_prev_cnt)</td><td>&nbsp;&nbsp;&nbsp;<a href="$packages_built_prev_fn" title="List of packages built previously">list</a></td></tr>
+  <tr class="pkg-built"><td>Packages built</td>                  <td align="right">$(right_align 20 $packages_built_cnt)</td><td>&nbsp;&nbsp;&nbsp;<a href="$packages_built_fn" title="Sorted list of successfully built packages">sorted</a></td><td>&nbsp;<a href="$packages_built_nosort_fn" title="Unsorted list of successfully built packages (build order)">unsorted</a></td></tr>
+  <tr class="pkg-failed"><td>Packages failed</td>                 <td align="right">$(right_align 20 $packages_failed_cnt)</td><td>&nbsp;&nbsp;&nbsp;<a href="$packages_failed_fn" title="List of failed packages">list</a></td></tr>
+  <tr class="pkg-faileddeps"><td>Packages failed due to them</td>     <td align="right">$(right_align 20 $packages_failed_deps_cnt)</td><td>&nbsp;&nbsp;&nbsp;<a href="$packages_failed_deps_fn" title="List of packages failed due to their dependancies">list</a></td></tr>
 
   <tr><td>Packages in pkg_summary</td>         <td align="right">$(right_align 20 $packages_in_summary)</td></tr>
 </table>
