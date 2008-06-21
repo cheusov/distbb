@@ -13,7 +13,6 @@ ideas/thoughts/todo/problems
    bin_package_A.tgz is older than bin_package_B.tgz
    ===> package_A is NOT rebuilt in this case, that is
         modification time of binary packages are currently not checked
- - modification time of binary packages?
  - flushed META/progress.txt
    package1.txt date/time succeeded on host1
    package2.txt date/time failed on host2
