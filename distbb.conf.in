@@ -22,7 +22,7 @@ BOOTSTRAP="/path/to/bootstrap.tar.gz"
 # a programs that outputs ALL packages to be built,
 # by default all pkgsrc packages are output
 LIST_ALL_PKGS_CMD='@@bindir@@/pkg_list_all_pkgs'
-#LIST_ALL_PKGS_CMD='( @@bindir@@/pkg_list_all_pkgs; cat my_extra_wip_packages )'
+#LIST_ALL_PKGS_CMD='/path/to/list_all_pkgsrc_packages_and_my_extra_wip_packages'
 
 #
 EXTRACT_BOOTSTRAP_CMD="/bin/tar -xzf $BOOTSTRAP -C /"
