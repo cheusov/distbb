@@ -84,7 +84,13 @@ if test "$packages"; then
     # remove comments and empty lines
     cleanup_package_list > $packages_fn.tmp
 else
-    eval $LIST_ALL_PKGS_CMD > $packages_fn.tmp
+    if test -n "$TRANSPORT" -a -n "$SLAVES"; then
+	slave1="$(echo $SLAVES | sed 's, .*$,,')"
+	environ="BMAKE=$BMAKE PKGSRCDIR=$PKGSRCDIR CKSUM=$CKSUM"
+	eval $TRANSPORT $slave1 "env $environ $LIST_ALL_PKGS_CMD" > $packages_fn.tmp
+    else
+	eval $LIST_ALL_PKGS_CMD > $packages_fn.tmp
+    fi
 fi
 
 # add extra packages to the list of packages requested by user
