@@ -59,7 +59,11 @@ PKG_SRC_SUMMARY="$PKGSRCDIR/pkg_src_summary.txt"
 # the following variant for PKG_UPDATE_SRC_SUMMARY_CMD
 # updates pkg_src_summary efficiently, but ALL packages in pkgsrc tree
 # will be included to pkg_src_summary (actually it ignores its stdin).
-# It also uses some hacks/tricks.
+# In order to update efficiently pkg_update_src_summary
+# uses some hacks/tricks.
+# Also note that if use pkg_update_src_summary and set both PSS_SLAVES and
+# PSS_TRANSPORT make sure that master host's /usr/pkgsrc is the same
+# as slave hosts' one.
 #PKG_UPDATE_SRC_SUMMARY_CMD="@@bindir@@/pkg_update_src_summary '$PKG_SRC_SUMMARY'"
 
 # The same as above, but only necessary fields are included.
