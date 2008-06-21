@@ -402,6 +402,9 @@ report_html2txt (){
       gsub(/<[^<>]*>/, "")
       gsub(/&[a-z]*;/, "")
    }
+   /Summary/, /pkg_summary/ {
+      gsub(/list|sorted|unsorted/, "")
+   }
    { print }
    ' "$@"
 }
