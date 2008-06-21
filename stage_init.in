@@ -397,7 +397,7 @@ verbose_print "done\n"
 ######################################################################
 ### counted list of packages / queue
 
-verbose_print "  packages already built..."
+verbose_print "  packages built previously (no need to rebuild)..."
 
 generate_built_prev (){
     awk '
