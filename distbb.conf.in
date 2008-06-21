@@ -133,8 +133,6 @@ EXTRA_DEPS_CMD="$BMAKE show-var VARNAME=BOOTSTRAP_DEPENDS"
 
 # for target 'depends'
 DEPENDS_TARGET='do-bin-install'
-# the following is for USE_DESTDIR=full bulk builds
-#DEPENDS_TARGET='real-package-install'
 
 # the following targets will be run in order
 TARGETS='depends fetch checksum extract patch configure build install package deinstall'
