@@ -64,7 +64,7 @@ while test $# -ne 0; do
 	    BUILD_ID="$(printf '%s\n' $1 | cut -b3-)";;
 
 	-k)
-	    pkg_src_update_summary=1;;
+	    skip_updating_src_summary=1;;
 
 	--)
 	    shift
@@ -151,7 +151,7 @@ fi
 ######################################################################
 
 @@libexecdir@@/stage_init        "$BUILD_ID" \
-                                 "$pkg_src_update_summary" \
+                                 "$skip_updating_src_summary" \
                                  "$pkg_src_packages" "$date_start"
 @@libexecdir@@/stage_build       "$BUILD_ID"
 @@libexecdir@@/stage_gen_report  "$BUILD_ID"
