@@ -11,7 +11,7 @@ Version 0.14.0, by Aleksey Cheusov, Sat, 21 Jun 2008 19:59:21 +0300
   added: option -B to 'distbb' executable. This is usefuil for
   debugging. It sets an unchangable BUILD_ID.
 
-  LIST_ALL_PKGS_CMD command is run of the first slave host from
+  LIST_ALL_PKGS_CMD command is run on the first slave host from
   $SLAVES list in case both SLAVES and TRANSPORT are set.  The problem
   with master host is that master's and slave's /usr/pkgsrc may be not
   the same.
