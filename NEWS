@@ -1,6 +1,6 @@
-Version 0.14.0, by Aleksey Cheusov, Sat, 21 Jun 2008 19:59:21 +0300
+Version 0.15.0, by Aleksey Cheusov, Sat, 21 Jun 2008 19:59:21 +0300
 
-  META/packages_total.txt file is build that contains a list built
+  META/packages_total.txt file is built that contains a list of built
   packages plus those that are not rebuilt (no need for this). This
   file is uploaded by stage_upload_logs.
 
