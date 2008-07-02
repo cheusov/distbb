@@ -193,7 +193,9 @@ for d in dummy $EXTRA_DEPS; do
     # EXTRA_DEPS_CMD
     deps="`cd $PKGSRCDIR/$d && eval $EXTRA_DEPS_CMD | sed 's,[^ ]*:[.][.]/[.][.]/,,g'`"
     for dep in $deps; do
-	echo $dep $d >> $deps_fn.tmp
+	if echo $EXTRA_DEPS | grep $dep > /dev/null; then
+	    echo $dep $d >> $deps_fn.tmp
+	fi
     done
 done
 
