@@ -225,7 +225,7 @@ STDIN_FROM_DEV_NULL=1
 # if STDIN_FROM_DEV_NULL=1, some packages may produce infinite garbage to
 # stdout and in turn may waste ALL your free disk space. To prevent this,
 # set the following limit. 
-LOG_SIZE_LIMIT=50000000 # ~50Gb seems good enough
+LOG_SIZE_LIMIT=50000000 # ~50Mb seems good enough
 #LOG_SIZE_LIMIT=0 # no limit! Are you sure?
 
 #
