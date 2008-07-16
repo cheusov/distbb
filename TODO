@@ -1,7 +1,5 @@
 ideas/thoughts/todo/problems
 
- - dbb_init building stage instead of hardcode in script "slave"
- - distbb -p 'pkg1 pkg2...'
  - distbb -C config-file.conf,
    mandatory variable DISTBB_LOCAL_MK=@sysconfdir@/distbb.local.mk,
    stage_* scripts should use config files stored (or linked) in META/
