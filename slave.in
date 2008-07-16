@@ -75,6 +75,11 @@ if test $# -ne 0; then
 fi
 
 ######################################################################
+# exporting for dbb_init special target
+export EXTRACT_BOOTSTRAP_CMD
+export RMDIRS_CMD
+
+######################################################################
 
 if test "$STDIN_FROM_DEV_NULL"; then
     stdin_from_dev_null=' < /dev/null'
@@ -103,26 +108,6 @@ restore_TARGETS_and_EXTRA_OPTS (){
 }
 
 do_build_package (){
-    header init
-
-    #
-    printf '=> Removing pkgsrc directories\n'
-    if ! eval $RMDIRS_CMD; then
-	return 1
-    fi
-
-    #
-    printf '=> cd /\n'
-    cd /
-
-    #
-    if test "$BOOTSTRAP"; then
-	printf '===> Extracting bootstrap\n'
-	if ! eval $EXTRACT_BOOTSTRAP_CMD; then
-	    return 1
-	fi
-    fi
-
     # new targets? new extra_opts?
     echo "$SPECIAL_PACKAGES" |
     remove_comments |
@@ -142,10 +127,6 @@ do_build_package (){
     #
     echo "=> cd $PKGSRCDIR/$1"
     if ! cd $PKGSRCDIR/$1; then
-	return 1
-    fi
-
-    if ! eval $BMAKE $EXTRA_OPTS clean $stdin_from_dev_null; then
 	return 1
     fi
 
