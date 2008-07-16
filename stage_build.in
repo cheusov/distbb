@@ -341,8 +341,9 @@ verbose_print "done\n"
 
 verbose_print "  sorting META/packages_built.txt..."
 
-mv $packages_built_fn $packages_built_nosort_fn
-env LC_ALL=C sort -u $packages_built_nosort_fn > $packages_built_fn
+packages_built_sort_fn=$meta_dir/tmp/packages_built_sort.tmp
+env LC_ALL=C sort -u $packages_built_sort_fn > $packages_built_fn
+mv $packages_built_sort_fn $packages_built_fn
 
 verbose_print "done\n"
 
