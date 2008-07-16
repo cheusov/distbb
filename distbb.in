@@ -23,24 +23,25 @@
 
 ######################################################################
 
+set -e
+
 usage (){
     cat <<EOF
-distbb - distributed bulk build
+distbb - DISTributed Bulk Builds for pkgsrc
 
 usage: distbb [OPTIONS]
 OPTIONS:
   -h|--help              display this help message
   -V|--version           distbb version
-  -f|--file <filename>   obtain package names from
-                         a specified file, - for stdin,
-                         by default package names are obtained from
-                         pkgsrc source tree.
+  -p|--pkgs <packages>   build the specified packages
+  -f|--file <filename>   build the packages listed in
+                         the specified filename ( - for stdin),
+                         by default all packages from pkgsrc source tree
+                         are built
   -k                     skip updating pkg_src_summary
   -B <build_id>          set BUILD_ID (for debugging purposes)
 EOF
 }
-
-pkg_src_packages=''
 
 while test $# -ne 0; do
     case "$1" in
@@ -52,10 +53,16 @@ while test $# -ne 0; do
 	    exit 0;;
 
 	-f|--file)
-	    pkg_src_packages="$2"
+	    export pkgs_fn="$2"
 	    shift;;
 	-f*)
-	    pkg_src_packages="$(printf '%s\n' '$1' | cut -b3-)";;
+	    export pkgs_fn="$(printf '%s\n' '$1' | cut -b3-)";;
+
+	-p|--pkgs)
+	    pkgs="$2"
+	    shift;;
+	-p*)
+	    pkgs="$(printf '%s\n' '$1' | cut -b3-)";;
 
 	-B)
 	    BUILD_ID="$2"
@@ -83,9 +90,18 @@ if test $# -ne 0; then
     exit 1
 fi
 
+if test -n "$pkgs"; then
+    export pkgs_fn=`mktemp /tmp/distbb.XXXXXX`
+    test -n "$pkgs_fn"
+    trap "rm -f $pkgs_fn" 0 1 2 15
+
+    for p in $pkgs; do
+	printf "%s\n" $p >> $pkgs_fn
+    done
+fi
+
 ######################################################################
 
-set -e
 . @@bindir@@/pipestatus
 
 # date start for placint it to html/txt report
@@ -152,7 +168,7 @@ fi
 
 @@libexecdir@@/stage_init        "$BUILD_ID" \
                                  "$skip_updating_src_summary" \
-                                 "$pkg_src_packages" "$date_start"
+                                 "$date_start"
 @@libexecdir@@/stage_build       "$BUILD_ID"
 @@libexecdir@@/stage_gen_report  "$BUILD_ID"
 @@libexecdir@@/stage_upload_logs "$BUILD_ID"

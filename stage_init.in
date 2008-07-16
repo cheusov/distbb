@@ -26,14 +26,15 @@
 set -e
 . @@bindir@@/pipestatus
 
-# usage: stage_init BUILD_ID UPDATE_SRC_SUMMARY PKG_SRC_PACKAGES
-test $# -eq 4
+# usage: stage_init BUILD_ID UPDATE_SRC_SUMMARY BUILD_START
+test $# -eq 3
 
 # init
 BUILD_ID="$1"
 skip_updating_src_summary="$2"
-packages="$3"
-build_start="$4"
+build_start="$3"
+
+packages="$pkgs_fn" # pkgs_fn - from distbb
 
 . @@sysconfdir@@/distbb.conf
 
