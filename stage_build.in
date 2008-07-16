@@ -105,6 +105,7 @@ runawk \
    -v meta_dir=$meta_dir \
    -v packages_failed_fn=$packages_failed_fn \
    -v packages_built_fn=$packages_built_fn \
+   -v progress_fn=$progress_fn \
    -v distbb_lock_pid="$DISTBB_LOCK $$" -e '
 # input line format:
 #    $1 - <SLAVE_HOST>
@@ -162,6 +163,8 @@ status [$2] == 0 {
    pkgpath = pkgpaths [$2]
 
    print "    succeeded:", pkgpath, "on", run_on [$2]
+   print "succeeded", pkgpath >> progress_fn
+   xclose(progress_fn) # to make stage "build" rerunable
 
    # free memory
    delete pkgpaths [$2]
@@ -249,6 +252,8 @@ function decode_logs (uu,                  txt,fn,dir){
    pkgpath = pkgpaths [$2]
 
    print "    F-A-I-L-E-D:", pkgpath, "on", run_on [$2]
+   print "failed", pkgpath >> progress_fn
+   xclose(progress_fn) # to make stage "build" rerunable
 
    # free memory
    delete pkgpaths [$2]
