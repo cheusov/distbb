@@ -138,11 +138,14 @@ EXTRA_DEPS_CMD="$BMAKE show-var VARNAME=BOOTSTRAP_DEPENDS"
 # for target 'depends'
 DEPENDS_TARGET='do-bin-install'
 
-# the following targets will be run in order
-TARGETS='depends fetch checksum extract patch configure build install package deinstall'
+# the following targets will be run in order.
+# The target "init" is special. It makes the following:
+#    remove /usr/pkg directory (see RMDIRS_CMD)
+#    unpack bootstrap (see EXTRACT_BOOTSTRAP_CMD)
+TARGETS='dbb_init clean depends fetch checksum extract patch configure build install package deinstall'
 # the following is for USE_DESTDIR=yes|full
-#TARGETS='depends fetch checksum configure build package bin-install deinstall'
-#TARGETS='depends fetch checksum configure build package package-install deinstall'
+#TARGETS='dbb_init clean depends fetch checksum configure build package bin-install deinstall'
+#TARGETS='dbb_init clean depends fetch checksum configure build package package-install deinstall'
 
 # extra options passed to bmake
 # BATCH is mandatory for bulk builds!
@@ -255,4 +258,4 @@ UPLOAD_LOGS_CMD="@@bindir@@/rsync -av --delete-excluded --exclude '*.tmp' -e ssh
 
 ############################################################
 # You MUST copy the following to your distbb.conf
-I_AM_READY=1
+I_AM_READY=2
