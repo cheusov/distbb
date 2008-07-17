@@ -1,8 +1,14 @@
 ideas/thoughts/todo/problems
 
+ - CLEAN_TARGET=clean | CLEAN_TARGET=''
+ - META/pkg_summary.txt and META/pkg_src_summary.txt
+ - add package version to packages_{build_prev,built,failed,failed_deps}.txt
  - distbb -C config-file.conf,
    mandatory variable DISTBB_LOCAL_MK=@sysconfdir@/distbb.local.mk,
    stage_* scripts should use config files stored (or linked) in META/
+
+ - pbulk builds pyNN-xxx and apNN-xxx packages, distbb doesn't.
+   This is the only regression I see in comparison to pbulk.
 
  - move tricky shlock/sh/awk code for processing packages with their
    dependancies (partially ordered set) to 'paexec' and implement it in C.
@@ -10,7 +16,8 @@ ideas/thoughts/todo/problems
  - modification time of binary packages?
  - problem:
    package_A depends on package_B
-   bin_package_A.tgz is older than bin_package_B.tgz
+   bin_package_A.tgz file is older (modification time)
+   than bin_package_B.tgz file
    ===> package_A is NOT rebuilt in this case, that is
         modification time of binary packages are currently not checked
  - flushed META/progress.txt
