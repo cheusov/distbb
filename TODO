@@ -1,5 +1,6 @@
 ideas/thoughts/todo/problems
 
+ - HTML 4.01 strict for category/packages/state_any.html files
  - remove URL from report.html
  - log directories only for packages that will be rebuilt
  - CLEAN_TARGET=clean | CLEAN_TARGET=''
