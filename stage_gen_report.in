@@ -164,8 +164,10 @@ report_html (){
 
     cat <<EOF
 <h1>pkgsrc bulk build results (distbb-$version)</h1>
+
 <h2>$OS $OSVER</h2>
-  <p><a href="$REPORT_URL" title="Full report">$REPORT_URL</a></p>
+
+<!--  <p><a href="$REPORT_URL" title="Full report">$REPORT_URL</a></p> -->
 
 EOF
 
@@ -400,8 +402,11 @@ report_full_html > "$meta_dir/report.html"
 
 report_html2txt (){
    awk '
-   /Jump to:/, NF == 0 { next }
+   /Jump to:/, NF == 0 {
+      next
+   }
    {
+      gsub(/<!--|-->/, "")
       gsub(/<[^<>]*>/, "")
       gsub(/&[a-z]*;/, "")
    }
