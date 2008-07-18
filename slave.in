@@ -154,7 +154,9 @@ build_package (){
     ex=$?
 
     # clean even if it fails
-    eval $BMAKE clean $stdin_from_dev_null > /dev/null 2>&1
+    if test "_$CLEAN_TARGET" != "_dbb_none"; then
+	eval $BMAKE "$CLEAN_TARGET" $stdin_from_dev_null > /dev/null 2>&1
+    fi
 
     #
     return $ex

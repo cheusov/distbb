@@ -138,6 +138,11 @@ EXTRA_DEPS_CMD="$BMAKE show-var VARNAME=BOOTSTRAP_DEPENDS"
 # for target 'depends'
 DEPENDS_TARGET='do-bin-install'
 
+# Target for clean-ups after package building.
+# If you want to keep working directories, set this variable to dbb_none
+CLEAN_TARGET='clean'
+#CLEAN_TARGET='dbb_none'
+
 # the following targets will be run in order.
 # The target "init" is special. It makes the following:
 #    remove /usr/pkg directory (see RMDIRS_CMD)
