@@ -345,8 +345,6 @@ verbose_print "done\n"
 ### direct packages that need to be rebuilt
 verbose_print "  all packages to be built..."
 
-rebuild_fn=$tmpdir/rebuild.tmp
-
 all_packages_to_be_build () {
 awk -v pkgs="$rebuild1_fn" '
 BEGIN {

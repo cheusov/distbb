@@ -41,8 +41,8 @@ REPORT1_DIR=$REPORTS_DIR/$BUILD_ID
 ######################################################################
 verbose_print "Creating directories for logging..."
 cd $REPORT1_DIR
-if test -s "$packages_with_deps_fn"; then
-    xargs mkdir -p < "$packages_with_deps_fn"
+if test -s "$rebuild_fn"; then
+    xargs mkdir -p < "$rebuild_fn"
 fi
 verbose_print "done\n"
 
