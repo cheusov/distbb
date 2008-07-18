@@ -1,5 +1,6 @@
 ideas/thoughts/todo/problems
 
+ - remove URL from report.html
  - log directories only for packages that will be rebuilt
  - CLEAN_TARGET=clean | CLEAN_TARGET=''
  - META/pkg_summary.txt and META/pkg_src_summary.txt
