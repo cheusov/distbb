@@ -50,6 +50,11 @@ verbose_print "done\n"
 ### main loop - building
 lckfile=$tmpdir/.lock
 
+###########################
+# try to rerun stage_build?
+rm -f "$lckfile"
+
+###########################
 get_pkgpath (){
     awk -v tmp_queue_fn="$queue_fn.tmp" '
 $2 == 0 {
@@ -77,7 +82,7 @@ print_tasks (){
 
 	if get_pkgpath > $tasks_fn; then
 #	    echo get_pkgpath succeeded 1>&2
-	    cp ${queue_fn} $queue_fn.$i.tmp
+	    cp ${queue_fn} $queue_fn.$i
 	    mv ${queue_fn}.tmp $queue_fn
 	    i=$(($i+1))
 
@@ -92,8 +97,8 @@ print_tasks (){
 }
 
 postfilter (){
-    # postprocessor for paexec's outout.
-    # It show progress, suceess and failure messages,
+    # postprocessor for paexec's output.
+    # It shows progress, success and failure messages,
     # redirects build logs to bulk_log/pkgpath directory,
     # recalculates counters in a queue file
     # removes unneeded bulk_log/pkgpath directories etc.
