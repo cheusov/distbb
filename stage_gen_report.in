@@ -168,8 +168,10 @@ EOF
   <tr><td>Packages in pkg_summary</td>         <td align="right">$(right_align 20 $packages_in_summary)</td></tr>
 </table>
 <p>Packages not listed here resulted in a $url.<br>
-Results of failed packages are available below.
-Progress messages are <a href="$(basename $progress_fn)" title="Progress messages">available</a>.
+Results of failed packages are available below.<br>
+Progress messages are <a href="$(basename $progress_fn)" title="Progress messages">here</a>.<br> <!-- REMOVE ME -->
+pkg_src_summary is <a href="$(basename $pkg_src_summary_fn)" title="pkgsrc source packages summary">here</a>.<br> <!-- REMOVE ME -->
+pkg_summary vs. pkg_src_summary is <a href="$(basename $summary_cmp_fn)" title="binary packages agains pkgsrc tree">here</a>.<br> <!-- REMOVE ME -->
 EOF
 
     if test -s "$build_src_summary_log_fn"; then
@@ -398,6 +400,9 @@ report_full_html > "$meta_dir/report.html"
 report_html2txt (){
    awk '
    /Jump to:/, NF == 0 {
+      next
+   }
+   /REMOVE ME/ {
       next
    }
    {

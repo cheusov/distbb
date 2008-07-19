@@ -128,8 +128,7 @@ cp "$PKG_SUMMARY" "$pkg_src_summary_fn"
 ######################################################################
 ### comparison binaries against pkgsrc tree
 verbose_print "  pkg_summary vs. pkg_src_summary comparison..."
-cmp_fn=$tmpdir/cmp.tmp
-pkg_cmp_summary -p $refreshed_summary_fn $PKG_SRC_SUMMARY > $cmp_fn
+pkg_cmp_summary -p $refreshed_summary_fn $PKG_SRC_SUMMARY > $summary_cmp_fn
 verbose_print "done\n"
 
 ######################################################################
@@ -340,7 +339,7 @@ BEGIN {
 }
 
 ($1 != "=") && ($1 != "-") && ($2 in hash) {print $2}
-' "$cmp_fn" > $rebuild1_fn
+' "$summary_cmp_fn" > $rebuild1_fn
 
 verbose_print "done\n"
 
