@@ -38,7 +38,7 @@ REPORT1_DIR=$REPORTS_DIR/$BUILD_ID
 . @@libexecdir@@/common
 
 # main
-verbose_print "Logs generation and clean-ups..."
+verbose_print "Logs generation and clean-ups...\n"
 rmdir $REPORT1_DIR/* 2>/dev/null || true
 
 build_start=$(cat "$build_start_fn")
@@ -54,7 +54,7 @@ find_failed_deps_packages (){
 	env LC_ALL=C sort
 }
 
-find_failed_deps_packages > "$packages_failed_deps_fn"
+find_failed_deps_packages > "$packages_failed_deps_fn.raw"
 
 # resort failed_because.txt
 while read f; do
@@ -62,7 +62,7 @@ while read f; do
 	    < $REPORT1_DIR/$f/failed_because.txt \
 	    > $REPORT1_DIR/$f/failed_because.tmp
     mv $REPORT1_DIR/$f/failed_because.tmp $REPORT1_DIR/$f/failed_because.txt
-done < "$packages_failed_deps_fn"
+done < "$packages_failed_deps_fn.raw"
 
 # resort failed_packages.txt
 while read f; do
@@ -70,7 +70,7 @@ while read f; do
 	    < $REPORT1_DIR/$f/failed_packages.txt \
 	    > $REPORT1_DIR/$f/failed_packages.tmp
     mv $REPORT1_DIR/$f/failed_packages.tmp $REPORT1_DIR/$f/failed_packages.txt
-done < "$packages_failed_fn"
+done < "$packages_failed_fn.raw"
 
 # main continuing...
 count_lines (){
@@ -79,37 +79,6 @@ count_lines (){
 
 right_align (){
    printf "%$1s" "$2"
-}
-
-enrich_pkgpath (){
-    fields="$1"
-    shift
-
-    awk -v pkg_src_summary="$PKG_SRC_SUMMARY" -v fields="$fields" -F= '
-BEGIN {
-   fields = ("PKGPATH " fields)
-   cnt=split(fields, n2f, / /)
-   for (i=1; i <= cnt; ++i){
-      f2n [n2f [i]] = i
-   }
-}
-FILENAME == pkg_src_summary && ($1 in f2n) {
-   v [$1] = $2
-   next
-}
-FILENAME == pkg_src_summary && NF == 0 {
-   for (f in v){
-      value [v["PKGPATH"], f] = v[f]
-   }
-   delete v
-}
-FILENAME != pkg_src_summary {
-   for (i=1; i <= cnt; ++i){
-      printf " %s", value[$1, n2f[i]]
-   }
-   printf "\n"
-}
-' "$PKG_SRC_SUMMARY" "$@"
 }
 
 get_failed_stage (){
@@ -304,21 +273,47 @@ EOF
     printf "%s\n" "</table>"
 }
 
-packages_failed_deps_cnt=$(count_lines "$packages_failed_deps_fn")
-packages_failed_cnt=$(count_lines "$packages_failed_fn")
-packages_built_cnt=$(count_lines "$packages_built_fn")
-packages_built_prev_cnt=$(count_lines "$packages_built_prev_fn")
+packages_failed_deps_cnt=$(count_lines "$packages_failed_deps_fn.raw")
+packages_failed_cnt=$(count_lines "$packages_failed_fn.raw")
+packages_built_cnt=$(count_lines "$packages_built_fn.raw")
+packages_built_prev_cnt=$(count_lines "$packages_built_prev_fn.raw")
 packages_total=$(($packages_built_cnt+$packages_built_prev_cnt))
 packages_in_summary=$(awk '{cnt += ($0 ~ /^PKGNAME=/)} END {print cnt}' "$PKG_SUMMARY")
 
 enriched_failed_fn="$tmpdir/enriched_failed.tmp"
 enrich_pkgpath "MAINTAINER PKGNAME" \
-    "$packages_failed_fn" > "$enriched_failed_fn"
+    "$packages_failed_fn.raw" > "$enriched_failed_fn"
 
 enriched_failed_deps_fn="$tmpdir/enriched_failed_deps.tmp"
 enrich_pkgpath "MAINTAINER PKGNAME" \
-    "$packages_failed_deps_fn" > "$enriched_failed_deps_fn"
+    "$packages_failed_deps_fn.raw" > "$enriched_failed_deps_fn"
 
+##
+
+verbose_print "  enriching META/packages_*.txt..."
+
+runpipe0 \
+    enrich_pkgpath PKGNAME $packages_built_fn.raw '|' \
+    sort > $packages_built_fn
+runpipe0 \
+    enrich_pkgpath PKGNAME $packages_failed_fn.raw '|' \
+    sort > $packages_failed_fn
+runpipe0 \
+    enrich_pkgpath PKGNAME $packages_failed_deps_fn.raw '|' \
+    sort > $packages_failed_deps_fn
+
+verbose_print "done\n"
+
+##
+
+verbose_print "  creating META/packages_total.txt..."
+
+env LC_ALL=C sort -u "$packages_built_fn" "$packages_built_prev_fn" \
+    > "$packages_total_fn"
+
+verbose_print "done\n"
+
+##
 html_header (){
     cat <<EOF
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"

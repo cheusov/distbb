@@ -49,9 +49,10 @@ echo "$build_start" > $build_start_fn
 verbose_print "Preparations\n"
 
 printf '' > $packages_failed_deps_fn
-printf '' > $packages_failed_fn
+printf '' > $packages_failed_fn.raw
 printf '' > $packages_built_prev_fn
-printf '' > $packages_built_fn
+printf '' > $packages_built_fn.raw
+
 printf '' > $progress_fn
 
 ######################################################################
@@ -420,6 +421,8 @@ END {
 
 runpipe0 \
     generate_built_prev '|' \
+    tee "$packages_built_prev_fn.raw" '|' \
+    enrich_pkgpath PKGNAME - '|' \
     env LC_ALL=C sort > "$packages_built_prev_fn"
 
 verbose_print "done\n"

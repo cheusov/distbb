@@ -108,6 +108,8 @@ restore_TARGETS_and_EXTRA_OPTS (){
 }
 
 do_build_package (){
+    header preinit
+
     # new targets? new extra_opts?
     echo "$SPECIAL_PACKAGES" |
     remove_comments |

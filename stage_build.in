@@ -108,8 +108,8 @@ runawk \
    -v lckfile=$lckfile \
    -v report1_dir=$REPORT1_DIR \
    -v meta_dir=$meta_dir \
-   -v packages_failed_fn=$packages_failed_fn \
-   -v packages_built_fn=$packages_built_fn \
+   -v packages_failed_fn=$packages_failed_fn.raw \
+   -v packages_built_fn=$packages_built_fn.raw \
    -v progress_fn=$progress_fn \
    -v distbb_lock_pid="$DISTBB_LOCK $$" -e '
 # input line format:
@@ -337,27 +337,6 @@ eval runpipe0 \
     print_tasks '|' \
     paexec -EI -lr $TRANSPORT $SLAVES -c "$DISTBB_SLAVE" '|' \
     postfilter
-
-##
-
-verbose_print "  creating META/packages_total.txt..."
-
-env LC_ALL=C sort -u "$packages_built_fn" "$packages_built_prev_fn" \
-    > "$packages_total_fn"
-
-verbose_print "done\n"
-
-##
-
-verbose_print "  sorting META/packages_built.txt..."
-
-packages_built_sort_fn=$meta_dir/tmp/packages_built_sort.tmp
-env LC_ALL=C sort -u $packages_built_fn > $packages_built_sort_fn
-mv $packages_built_sort_fn $packages_built_fn
-
-verbose_print "done\n"
-
-verbose_print '<BUILDING DONE>\n'
 
 ######################################################################
 

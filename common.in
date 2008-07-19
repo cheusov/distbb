@@ -40,6 +40,41 @@ trans_clos_rebuild_fn=$tmpdir/trans_closure_rebuild.tmp
 version=@@version@@
 
 ######################################################################
+enrich_pkgpath (){
+    fields="$1"
+    shift
+
+    awk -v pkg_src_summary="$PKG_SRC_SUMMARY" -v fields="$fields" -F= '
+BEGIN {
+   fields = ("PKGPATH " fields)
+   cnt=split(fields, n2f, / /)
+   for (i=1; i <= cnt; ++i){
+      f2n [n2f [i]] = i
+   }
+}
+FILENAME == pkg_src_summary && ($1 in f2n) {
+   v [$1] = $2
+   next
+}
+FILENAME == pkg_src_summary && NF == 0 {
+   for (f in v){
+      value [v["PKGPATH"], f] = v[f]
+   }
+   delete v
+}
+FILENAME != pkg_src_summary {
+   for (i=1; i <= cnt; ++i){
+      if (i > 1)
+         printf " "
+
+      printf "%s", value[$1, n2f[i]]
+   }
+   printf "\n"
+}
+' "$PKG_SRC_SUMMARY" "$@"
+}
+
+######################################################################
 export PKG_SUFX PKGSRCDIR BMAKE
 unset PKG_PATH || true
 
