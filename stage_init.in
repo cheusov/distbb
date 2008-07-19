@@ -123,6 +123,8 @@ if test -z "$skip_updating_src_summary"; then
     verbose_print "done\n"
 fi
 
+cp "$PKG_SUMMARY" "$pkg_src_summary_fn"
+
 ######################################################################
 ### comparison binaries against pkgsrc tree
 verbose_print "  pkg_summary vs. pkg_src_summary comparison..."
