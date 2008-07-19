@@ -8,7 +8,8 @@ ideas/thoughts/todo/problems
    This is the only regression I see in comparison to pbulk.
 
  - move tricky shlock/sh/awk code for processing packages with their
-   dependancies (partially ordered set) to 'paexec' and implement it in C.
+   dependancies (partially ordered set of tasks) to 'paexec' and
+   implement it in C.
 
  - modification time of binary packages?
  - problem:
