@@ -1,3 +1,45 @@
+Version 0.16.0, by Aleksey Cheusov, Sat, 19 Jul 2008 14:13:26 +0300
+
+  fixed: after bulk build finished, not all empty CATEGORY/PACKAGE
+  directories were removed.
+
+  packages_built_prev.txt, packages_built.txt, packages_failed.txt,
+  packages_failed_deps.txt and packages_total.txt files now contain
+  both PKGPATH and PKGNAME
+
+  META/summary_cmp.txt is generated (pkg_summary vs. pkg_src_summary
+  comparison) and is included to report.html
+
+  META/pkg_src_summary.txt is generated and is included to report.html
+
+  Progress messages are generated in META/progress.txt.
+  This file is included to report.html
+
+  Cleaning the working directories is now optional.
+    distbb.conf:
+       CLEAN_TARGET=clean    # clean them! (default in example distbb.conf)
+       CLEAN_TARGET=dbb_none # keep them!
+    Update your distbb.conf!
+
+  html link to itself is removed from report.html
+
+  CATEGORY/PKG/stage_*.html log files also conform to "HTML 4.01 Strict".
+  Tested via http://validator.w3.org
+
+  An internal "init" target and initial (before building start)
+  "clean" targets are not hardcoded in libexec/distbb/slave script
+  anymore.  The special target "dbb_init" is implemented in
+  share/distbb/distbb.mk for initialization (removing PREFIX/PKGDBDIR
+  and unpacking bootstrap).  Both "dbb_init" and "clean"
+  targets should be a part of TARGETS variables.  Update your local
+  distbb.conf and set I_AM_READY to 2
+
+  META/packages_built.txt is sorted alphabetically and is included to
+  report.html as "list", That is, no "sorted" and unsorted" lists
+  anymore.
+
+  Minor fixes and additions in example distbb.conf
+
 Version 0.15.1, by Aleksey Cheusov, Mon,  7 Jul 2008 18:06:24 +0300
 
  FIXED: another bug in handling EXTRA_DEPS
