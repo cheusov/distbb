@@ -1,7 +1,6 @@
 ideas/thoughts/todo/problems
 
  - META/pkg_summary.txt and META/pkg_src_summary.txt
- - add package version to packages_{build_prev,built,failed,failed_deps}.txt
  - distbb -C config-file.conf,
    mandatory variable DISTBB_LOCAL_MK=@sysconfdir@/distbb.local.mk,
    stage_* scripts should use config files stored (or linked) in META/
@@ -19,12 +18,7 @@ ideas/thoughts/todo/problems
    than bin_package_B.tgz file
    ===> package_A is NOT rebuilt in this case, that is
         modification time of binary packages are currently not checked
- - flushed META/progress.txt
-   package1.txt date/time succeeded on host1
-   package2.txt date/time failed on host2
-   package3.txt date/time failed on host3
-   ...
- - (?) put packages to paexec one-by-one and make stage_build rerunable
+ - rerunable stage_build
  - distbb.1
  - my-show-vars -> share/distbb/distbb.mk
  - I think distbb can be adapted for FreeBSD/OpenBSD Ports.
