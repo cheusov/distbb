@@ -127,7 +127,6 @@ do_build_package (){
     fi
 
     #
-    echo "=> cd $PKGSRCDIR/$1"
     if ! cd $PKGSRCDIR/$1; then
 	return 1
     fi
