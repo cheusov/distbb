@@ -38,6 +38,7 @@ trap "rm -rf $tmp_dir" 0 1 2 15
 mkdir -m 700 "$tmp_dir"
 
 tmpfn=$tmp_dir/tmpfn.tmp
+logfn=$tmp_dir/log.tmp
 ######################################################################
 
 usage (){
@@ -184,8 +185,9 @@ while read pkgpath; do
 
     if runpipe_re '. [01] 0' build_package $pkgpath '|' \
 	check_max_log_size '|' \
-	$encode_cmd
+	$encode_cmd > "$logfn"
     then
+	cat "$logfn"
 	echo "status: $pipestatus_1"
     else
 	echo "status: 1" # uuencode failed
