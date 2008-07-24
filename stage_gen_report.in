@@ -83,12 +83,19 @@ right_align (){
 
 get_failed_stage (){
     # $1 - pkgpath
-    for t in init $TARGETS; do
+    failed_stage_fn="$REPORT1_DIR/$1/failed_stage.tmp"
+
+    if test -f "$failed_stage_fn"; then
+	cat "$failed_stage_fn"
+	return
+    fi
+
+    for t in $TARGETS; do
 	if test -f "$REPORT1_DIR/$1/stage_$t.tmp"; then
 	    failed_stage="$t"
 	fi
     done
-    echo "$failed_stage"
+    echo "$failed_stage" | tee "$failed_stage_fn"
 }
 
 print_failed_pkg (){
@@ -186,17 +193,17 @@ EOF
 <p>Jump to:
 <ul>
     <li><a href="#summary">Summary</a></li>
-    <li><a href="#top offenders">Top Offenders</a></li>
+    <li><a href="#failures per maintainer">Failures per maintainer</a></li>
     <li><a href="#failed">Failed packages</a></li>
     <li><a href="#failed depends">Failed due to dependencies</a></li>
 </ul>
 
 EOF
 
-    # top offenders
+    # failures per maintainer
     cat <<EOF
 
-<h3><a name="top offenders"></a>Top offenders</h3>
+<h3><a name="failures per maintainer"></a>Failures per maintainer</h3>
 
 EOF
     printf '<table width="30%%">'
@@ -205,6 +212,10 @@ EOF
 
     cat "$enriched_failed_fn" |
     while read pkgpath maintainer pkgname; do
+	if test "$(get_failed_stage $pkgpath)" = 'dbb_canbebuilt'; then
+	    continue
+	fi
+
 	echo "$maintainer $pkgpath"
 	awk -v m=$maintainer '
 	   { print m, $1}' "$REPORT1_DIR/$pkgpath/failed_packages.txt"
