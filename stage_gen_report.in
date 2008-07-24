@@ -430,9 +430,9 @@ report_html2txt (){
       gsub(/<[^<>]*>/, "")
       gsub(/&[a-z]*;/, "")
    }
-   /Summary/, /Top offenders/ {
-      if (NF > 0 && $(NF-1) ~ /^[0-9]+$/ && $NF == "list")
-         sub(/list/, "")
+   /Summary/, /Failures per/ {
+      if (NF > 0 && $NF ~ /^(list|logs)$/)
+         gsub(/list|logs/, "")
       if (/Progress messages/)
          next
    }
