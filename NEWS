@@ -13,7 +13,7 @@ Version 0.17.0, by Aleksey Cheusov
       appear in META/packages_built_prev.txt.
 
       Now such packages are collected in META/package_failed_scan.txt
-      If such failures appear, report.html includes an additional line
+      If such failures happen, report.html includes an additional line
 
          Packages failed (pkg_src_summary/scanning)   <COUNT> <LOGS>
 
