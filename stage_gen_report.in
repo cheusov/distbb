@@ -175,7 +175,15 @@ EOF
   <tr class="pkg-built"><td>Packages built</td>                  <td align="right">$(right_align 20 $packages_built_cnt)</td><td>&nbsp;&nbsp;&nbsp;<a href="$(basename $packages_built_fn)" title="List of successfully built packages"> list</a></td></tr>
   <tr class="pkg-failed"><td>Packages failed</td>                 <td align="right">$(right_align 20 $packages_failed_cnt)</td><td>&nbsp;&nbsp;&nbsp;<a href="$(basename $packages_failed_fn)" title="List of failed packages"> list</a></td></tr>
   <tr class="pkg-faileddeps"><td>Packages failed due to them</td>     <td align="right">$(right_align 20 $packages_failed_deps_cnt)</td><td>&nbsp;&nbsp;&nbsp;<a href="$(basename $packages_failed_deps_fn)" title="List of packages failed due to their dependancies"> list</a></td></tr>
+EOF
 
+    if test "$packages_failed_scan_cnt" -gt 0; then
+	cat <<EOF
+  <tr class="pkg-failed"><td>Packages failed (pkg_src_summary/scanning) </td>   <td align="right">$(right_align 6 $packages_failed_scan_cnt)</td><td>&nbsp;&nbsp;&nbsp;<a href="$(basename $packages_failed_scan_fn)" title="List of packages failed while building pkg_src_summary"> list</a></td></tr>
+EOF
+    fi
+
+    cat <<EOF
   <tr><td>Packages in pkg_summary</td>         <td align="right">$(right_align 20 $packages_in_summary)</td></tr>
 </table>
 <p>Packages not listed here resulted in a $url.<br>
@@ -187,8 +195,8 @@ EOF
 
     if test -s "$build_src_summary_log_fn"; then
 	cat <<EOF
-Also, building a summary failed for a list of packages,
-logs are <a href="$(basename $build_src_summary_log_fn)" title="building summary logs">available</a>.
+pkg_src_summary failed for a list of packages,
+logs are <a href="$(basename $build_src_summary_log_fn)" title="building summary logs">here</a>.
 EOF
     fi
 
@@ -291,6 +299,7 @@ EOF
     printf "%s\n" "</table>"
 }
 
+packages_failed_scan_cnt=$(count_lines "$packages_failed_scan_fn")
 packages_failed_deps_cnt=$(count_lines "$packages_failed_deps_fn.raw")
 packages_failed_cnt=$(count_lines "$packages_failed_fn.raw")
 packages_built_cnt=$(count_lines "$packages_built_fn.raw")

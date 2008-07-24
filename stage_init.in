@@ -48,6 +48,7 @@ echo "$build_start" > $build_start_fn
 # main
 verbose_print "Preparations\n"
 
+printf '' > $packages_failed_scan_fn
 printf '' > $packages_failed_deps_fn
 printf '' > $packages_failed_fn.raw
 printf '' > $packages_built_prev_fn
@@ -100,8 +101,9 @@ fi
 for p in $EXTRA_DEPS; do
     echo $p >> $packages_fn.tmp
 done
-env LC_ALL=C sort -u $packages_fn.tmp > $packages_fn
-rm $packages_fn.tmp
+
+env LC_ALL=C sort -u $packages_fn.tmp > $packages_fn.tmp2
+mv $packages_fn.tmp2 $packages_fn.tmp
 
 verbose_print "done\n"
 
@@ -119,11 +121,38 @@ verbose_print "done\n"
 if test -z "$skip_updating_src_summary"; then
     verbose_print "  Updating pkg_src_summary..."
     eval "$PKG_UPDATE_SRC_SUMMARY_CMD \
-	< $packages_fn 2> $build_src_summary_log_fn"
+	< $packages_fn.tmp 2> $build_src_summary_log_fn"
     verbose_print "done\n"
 fi
 
 cp "$PKG_SRC_SUMMARY" "$pkg_src_summary_fn"
+
+######################################################################
+### comparison binaries against pkgsrc tree
+verbose_print "  is there packages for which pkg_src_summary failed?..."
+
+awk -v packages_fn=$packages_fn \
+    -v packages_failed_scan_fn=$packages_failed_scan_fn '
+FILENAME == (packages_fn ".tmp") {
+   if (NF == 1) pkgs [$0] = 1
+   next
+}
+/^PKGPATH=/ {
+   gsub(/ +$/, "")
+   pkgpath = substr($0, 9)
+   if (pkgpath in pkgs){
+      print pkgpath > packages_fn
+      delete pkgs [pkgpath]
+   }
+}
+END {
+   for (pkgpath in pkgs){
+      print pkgpath > packages_failed_scan_fn
+   }
+}' $packages_fn.tmp $PKG_SRC_SUMMARY
+#rm $packages_fn.tmp
+touch $packages_fn
+verbose_print "done\n"
 
 ######################################################################
 ### comparison binaries against pkgsrc tree
