@@ -54,7 +54,7 @@ Version 0.15.0, by Aleksey Cheusov, Sat, 21 Jun 2008 19:59:21 +0300
   META/packages_built_prev.txt, META/packages_built.txt,
   META/packages_failed.txt and META/packages_failed_deps.txt.
 
-  added: option -B to 'distbb' executable. This is usefuil for
+  added: option -B to 'distbb' executable. This is useful for
   debugging. It sets an unchangable BUILD_ID.
 
   LIST_ALL_PKGS_CMD command is run on the first slave host from
