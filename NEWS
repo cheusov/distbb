@@ -1,3 +1,40 @@
+Version 0.17.0, by Aleksey Cheusov
+
+  ADDED: -p option. If you want to build a few packages, you
+  can specify them in command line:
+
+      distbb -p 'wip/dict-server wip/pkg_online wip/distbb'
+
+      Actually this option was added in version 0.16.0.
+      I just forgot to mention it in appropriate NEWS section.
+
+  FIXED: packages for which pkg_src_summary (pkgsrc tree scanning) failed
+      (bad PKGPATH, errors in Makefile etc.)
+      appear in META/packages_built_prev.txt.
+
+      Now such packages are collected in META/package_failed_scan.txt
+      If such failures appear, report.html includes an additional line
+
+         Packages failed (pkg_src_summary/scanning)   <COUNT> <LOGS>
+
+  Slave hosts/chroots save building logs locally and send them to the
+  master host only when building is completed. This can speed-up
+  building.
+
+  "Top offenders" -> "Failures per maintainer"
+     Some developers treat the word "offender" offensive.
+
+  Packages failed at dbb_canbebuilt (that is packages failed because
+  of ONLY_FOR_PLATFORM, ONLY_FOR_PLATFORM etc.) and dbb_excluded
+  (packages are excluded from bulk build by person who runs a bulk
+  build) stages do not increase "failures per maintainer" counter.
+
+     It is recommended to always include dbb_canbebuilt to TARGETS,
+     otherwise counters in "Failures per maintainer" will be not fully
+     correct.
+
+  Speeds-ups for stage_gen_report
+
 Version 0.16.0, by Aleksey Cheusov, Sat, 19 Jul 2008 14:13:26 +0300
 
   fixed: after bulk build finished, not all empty CATEGORY/PACKAGE
@@ -27,7 +64,7 @@ Version 0.16.0, by Aleksey Cheusov, Sat, 19 Jul 2008 14:13:26 +0300
   Tested via http://validator.w3.org
 
   An internal "init" target and initial (before building start)
-  "clean" targets are not hardcoded in libexec/distbb/slave script
+  "clean" targets are not hard-coded in libexec/distbb/slave script
   anymore.  The special target "dbb_init" is implemented in
   share/distbb/distbb.mk for initialization (removing PREFIX/PKGDBDIR
   and unpacking bootstrap).  Both "dbb_init" and "clean"
@@ -55,7 +92,7 @@ Version 0.15.0, by Aleksey Cheusov, Sat, 21 Jun 2008 19:59:21 +0300
   META/packages_failed.txt and META/packages_failed_deps.txt.
 
   added: option -B to 'distbb' executable. This is useful for
-  debugging. It sets an unchangable BUILD_ID.
+  debugging. It sets an unchangeable BUILD_ID.
 
   LIST_ALL_PKGS_CMD command is run on the first slave host from
   $SLAVES list in case both SLAVES and TRANSPORT are set.  The problem
@@ -69,13 +106,13 @@ Version 0.14.0, by Aleksey Cheusov, Wed, 18 Jun 2008 22:14:56 +0300
   FIXED: there were two examples for PKG_UPDATE_SRC_SUMMARY_CMD
   in the sample distbb.conf:
   'pkg_update_src_summary' and 'pkg_src_summary'. But the latter
-  just didn't work because these two commands have imcomppatible usage.
+  just didn't work because these two commands have incompatible usage.
   Now this is fixed but changes are incompatible with old distbb.conf.
   Update it according to the new sample for distbb.conf.
   Also set I_AM_READY variable to 1.
   Side effect: 'pkg_src_summary -A' can now be used for generating summary.
   This will build pkg_src_summary only for requested packages (distbb -f)
-  and their dependancies, not for entire pkgsrc
+  and their dependencies, not for entire pkgsrc
   tree (pkg_update_src_summary).
   Both Hubert's bulk build and pbulk work this way. Now distbb too.
 
@@ -184,8 +221,8 @@ Version 0.12.0, by Aleksey Cheusov, Sun,  8 Jun 2008 02:49:08 +0300
 
 Version 0.11.0, by Aleksey Cheusov, Thu, 15 May 2008 18:59:18 +0300
 
-  Both .html and .txt report include a number failed dependancies for
-  each indirectly failed package. This number was limited by hardcoded
+  Both .html and .txt report include a number failed dependencies for
+  each indirectly failed package. This number was limited by hard-coded
   constant, now it is regulated by variable MAX_FAILED_DEPS_CNT Add it
   to your distbb.conf.
 
@@ -223,7 +260,7 @@ Version 0.9.0, by Aleksey Cheusov, Fri,  9 May 2008 13:02:30 +0300
   Instead of red counts the "Breaks" column now contains the link to
   the actual list of indirectly failed packages.
 
-  stage_gen_report: hardcoded string "Responsible person" is not printed
+  stage_gen_report: hard-coded string "Responsible person" is not printed
 
   distbb.conf: another variant for PKG_UPDATE_SUMMARY_CMD
 
@@ -270,8 +307,8 @@ Version 0.7.0, by Aleksey Cheusov, Thu, 17 Apr 2008 12:30:58 +0300
 
   FIX: build_init.in now doesn't depend on fields order in
   pkg_src_summary (doesn't reply on that PKGPATH is before
-  [BUILD_]DEPENDS). This may cause an inifinite loop because of
-  oncorrect (cyclic) dependancies in META/tmp/trans_closure.tmp
+  [BUILD_]DEPENDS). This may cause an infinite loop because of
+  incorrect (cyclic) dependencies in META/tmp/trans_closure.tmp
 
   distbb.conf.in:
     minor fix: pkg_src_update_summary -> pkg_update_src_summary
