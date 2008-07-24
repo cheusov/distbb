@@ -144,10 +144,14 @@ CLEAN_TARGET='clean'
 #CLEAN_TARGET='dbb_none'
 
 # the following targets will be run in order.
-# The target "init" is special. It makes the following:
+# The target "dbb_init" is special. It makes the following:
 #    remove /usr/pkg directory (see RMDIRS_CMD)
 #    unpack bootstrap (see EXTRACT_BOOTSTRAP_CMD)
-TARGETS='dbb_init clean depends fetch checksum extract patch configure build install package deinstall'
+# dbb_canbebuilt target checks PKG_FAIL_REASON...
+#    It is recommended to include it to TARGETS,
+#    otherwise counters in "Failures per maintainer" will
+#    be not fully correct
+TARGETS='dbb_init clean dbb_canbebuilt depends fetch checksum extract patch configure build install package deinstall'
 # the following is for USE_DESTDIR=yes|full
 #TARGETS='dbb_init clean depends fetch checksum configure build package bin-install deinstall'
 #TARGETS='dbb_init clean depends fetch checksum configure build package package-install deinstall'
