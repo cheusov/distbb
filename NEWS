@@ -18,7 +18,7 @@ Version 0.17.0, by Aleksey Cheusov
          Packages failed (pkg_src_summary/scanning)   <COUNT> <LOGS>
 
   Slave hosts/chroots save building logs locally and send them to the
-  master host only when building is completed. This can speed-up
+  master host only after building is completed. This can speed-up
   building.
 
   "Top offenders" -> "Failures per maintainer"
