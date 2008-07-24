@@ -84,6 +84,10 @@ right_align (){
 get_failed_stage (){
     # $1 - pkgpath
     failed_stage_fn="$REPORT1_DIR/$1/failed_stage.tmp"
+    if ! test -d "$REPORT1_DIR/$1"; then
+	echo ''
+	return
+    fi
 
     if test -f "$failed_stage_fn"; then
 	cat "$failed_stage_fn"
@@ -212,9 +216,10 @@ EOF
 
     cat "$enriched_failed_fn" |
     while read pkgpath maintainer pkgname; do
-	if test "$(get_failed_stage $pkgpath)" = 'dbb_canbebuilt'; then
-	    continue
-	fi
+	case "$(get_failed_stage $pkgpath)" in
+	    dbb_canbebuilt|dbb_excluded)
+		continue;;
+	esac
 
 	echo "$maintainer $pkgpath"
 	awk -v m=$maintainer '
