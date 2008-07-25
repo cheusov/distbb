@@ -1,15 +1,4 @@
 ############################################################
-# dbb_init target:
-# remove /usr/pkg and unpack bootstrap
-.PHONY: dbb_init
-dbb_init:
-	set -e; \
-	printf '=> Removing pkgsrc PREFIX/PKGDBDIR directories\n'; \
-	eval $$RMDIRS_CMD; \
-	printf '=> Extracting bootstrap\n'; \
-	eval $$EXTRACT_BOOTSTRAP_CMD
-
-############################################################
 # dbb_available target:
 # failes if NOT_FOR_PLATFORM, ONLY_FOR_PLATFORM etc. fail
 .PHONY: dbb_canbebuilt

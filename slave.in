@@ -137,6 +137,12 @@ do_build_package (){
     for t in $TARGETS; do
 	header $t
 	case "$t" in
+	    dbb_init)
+		# remove /usr/pkg and unpack bootstrap
+		printf '=> Removing pkgsrc PREFIX/PKGDBDIR directories\n'
+		eval $RMDIRS_CMD
+		printf '=> Extracting bootstrap\n'
+		eval $EXTRACT_BOOTSTRAP_CMD;;
 	    *)
 		# < /dev/null - for building packages that require
 		# an interaction with user
