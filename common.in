@@ -70,7 +70,7 @@ FILENAME != pkg_src_summary {
       if (i > 1)
          printf " "
 
-      printf "%-30s", value[$1, n2f[i]]
+      printf "%-25s", value[$1, n2f[i]]
    }
    printf "\n"
 }

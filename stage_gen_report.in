@@ -315,13 +315,16 @@ enrich_pkgpath "MAINTAINER PKGNAME" \
 verbose_print "  enriching META/packages_*.txt..."
 
 runpipe0 \
-    enrich_pkgpath PKGNAME $packages_built_fn.raw '|' \
+    enrich_pkgpath 'PKGNAME MAINTAINER' $packages_built_prev_fn.raw '|' \
+    sort > $packages_built_prev_fn
+runpipe0 \
+    enrich_pkgpath 'PKGNAME MAINTAINER' $packages_built_fn.raw '|' \
     sort > $packages_built_fn
 runpipe0 \
-    enrich_pkgpath PKGNAME $packages_failed_fn.raw '|' \
+    enrich_pkgpath 'PKGNAME MAINTAINER' $packages_failed_fn.raw '|' \
     sort > $packages_failed_fn
 runpipe0 \
-    enrich_pkgpath PKGNAME $packages_failed_deps_fn.raw '|' \
+    enrich_pkgpath 'PKGNAME MAINTAINER' $packages_failed_deps_fn.raw '|' \
     sort > $packages_failed_deps_fn
 
 verbose_print "done\n"

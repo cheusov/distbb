@@ -451,9 +451,7 @@ END {
 
 runpipe0 \
     generate_built_prev '|' \
-    tee "$packages_built_prev_fn.raw" '|' \
-    enrich_pkgpath PKGNAME - '|' \
-    env LC_ALL=C sort > "$packages_built_prev_fn"
+    env LC_ALL=C sort > "$packages_built_prev_fn.raw"
 
 verbose_print "done\n"
 
