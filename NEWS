@@ -1,4 +1,4 @@
-Version 0.17.0, by Aleksey Cheusov
+Version 0.17.0, by Aleksey Cheusov, Fri, 25 Jul 2008 15:57:14 +0300
 
   ADDED: -p option. If you want to build a few packages, you
   can specify them in command line:
@@ -15,11 +15,14 @@ Version 0.17.0, by Aleksey Cheusov
       Now such packages are collected in META/package_failed_scan.txt
       If such failures happen, report.html includes an additional line
 
-         Packages failed (pkg_src_summary/scanning)   <COUNT> <LOGS>
+         Packages failed (pkg_src_summary/scanning)  <COUNT>  <LOGS>
 
-  Slave hosts/chroots save building logs locally and send them to the
-  master host only after building is completed. This can speed-up
-  building.
+  META/packages_*.txt files now look nicer. MAINTAINER field is
+  added. All fields are formatted.
+
+  Slave hosts/chroots save the building logs locally and send them to
+  the master host only after building is completed/failed. This can
+  speed-up building.
 
   "Top offenders" -> "Failures per maintainer"
      Some developers treat the word "offender" offensive.
@@ -34,6 +37,8 @@ Version 0.17.0, by Aleksey Cheusov
      correct.
 
   Speeds-ups for stage_gen_report
+
+  dbb_init moved back from distbb.mk to the script "slave"
 
 Version 0.16.0, by Aleksey Cheusov, Sat, 19 Jul 2008 14:13:26 +0300
 
