@@ -51,8 +51,6 @@ OPTIONS:
 EOF
 }
 
-encode_cmd='@@bindir@@/uuencode -'
-
 while test $# -ne 0; do
     case "$1" in
 	-h|--help)
@@ -94,8 +92,18 @@ header (){
 
 # remove comments from "$SPECIAL_PACKAGES"
 remove_comments (){
-    awk 'NF == 0 {print; next}
-         {sub(/#.*$/, ""); if (NF > 0) print}' "$@"
+    awk '
+    NF == 0 {
+	print
+	next
+    }
+    {
+	sub(/#.*$/, "")
+	if (NF > 0) {
+	    $1 = $1
+	    print
+	}
+    }' "$@"
 }
 
 save_TARGETS_and_EXTRA_OPTS (){
@@ -173,8 +181,8 @@ build_package (){
 check_max_log_size (){
     awk -v limit="$LOG_SIZE_LIMIT" '
     {
-#	print " " $0 # space is for paexec! empty line is not allowed!
-	print $0
+	print " " $0 # space is for paexec! empty line is not allowed!
+#	print $0
 
 	curr += length($0)+1
 	if (limit && curr >= limit){
@@ -189,15 +197,14 @@ save_TARGETS_and_EXTRA_OPTS
 while read pkgpath; do
     restore_TARGETS_and_EXTRA_OPTS
 
-    if runpipe_re '. [01] 0' build_package $pkgpath '|' \
-	check_max_log_size '|' \
-	$encode_cmd > "$logfn"
-    then
-	cat "$logfn"
-	echo "status: $pipestatus_1"
-    else
-	echo "status: 1" # uuencode failed
-    fi
+    runpipe_base build_package $pkgpath | check_max_log_size > "$logfn"
+    case "$pipestatus_1" in
+	0)
+	    echo success;;
+	*)
+	    cat "$logfn"
+	    echo failure;;
+    esac
 
     #
     echo '' # end of task marker

@@ -415,26 +415,34 @@ runpipe0 \
 verbose_print "done\n"
 
 ######################################################################
-### packages with a number of their dependancies / queue
+### graph of packages for paexec
 gen_queue (){
     awk '
-NF == 2 { count [$2] += 1 }
-NF == 1 { count [$1] += 0 }
-END {
-   for (i in count)
-      print i, count [i]
+NF == 2 {
+   if ($1 == "dummy")
+      print $2
+   else
+      print $1, $2
+
+   hash [$1] = 0
+   hash [$2] = 0
+   next
+}
+NF == 1 && !($1 in hash) {
+   print $1
+   next
 }
 ' "$@"
 }
 
 verbose_print "  initial queue..."
 
-gen_queue $rebuild1_fn $trans_clos_rebuild_fn > $queue_fn
+gen_queue $trans_clos_rebuild_fn $rebuild1_fn > $queue_fn
 
 verbose_print "done\n"
 
 ######################################################################
-### counted list of packages / queue
+### list of already built packages
 
 verbose_print "  packages built previously (no need to rebuild)..."
 

@@ -48,53 +48,6 @@ verbose_print "done\n"
 
 ######################################################################
 ### main loop - building
-lckfile=$tmpdir/.lock
-
-###########################
-# try to rerun stage_build?
-rm -f "$lckfile"
-
-###########################
-get_pkgpath (){
-    awk -v tmp_queue_fn="$queue_fn.tmp" '
-$2 == 0 {
-   printf "" > tmp_queue_fn
-   print $1
-   ok = 1
-   next
-}
-
-{
-   print > tmp_queue_fn
-}
-
-END {
-   exit (ok != 1)
-}
-' $queue_fn
-}
-
-tasks_fn=$tmpdir/tasks.tmp
-print_tasks (){
-    i=0
-    while test -s $queue_fn; do
-	$DISTBB_LOCK $$ ${lckfile}
-
-	if get_pkgpath > $tasks_fn; then
-#	    echo get_pkgpath succeeded 1>&2
-	    cp ${queue_fn} $queue_fn.$i
-	    mv ${queue_fn}.tmp $queue_fn
-	    i=$(($i+1))
-
-	    rm ${lckfile}
-	    cat $tasks_fn
-	else
-#	    echo get_pkgpath failed 1>&2
-	    rm ${lckfile}
-	    sleep 5
-	fi
-    done
-}
 
 postfilter (){
     # postprocessor for paexec's output.
@@ -103,35 +56,17 @@ postfilter (){
     # recalculates counters in a queue file
     # removes unneeded bulk_log/pkgpath directories etc.
 runawk \
-   -v trans_clos_fn=$trans_clos_rebuild_fn \
-   -v queue_fn=$queue_fn \
-   -v lckfile=$lckfile \
    -v report1_dir=$REPORT1_DIR \
-   -v meta_dir=$meta_dir \
    -v packages_failed_fn=$packages_failed_fn.raw \
    -v packages_built_fn=$packages_built_fn.raw \
    -v progress_fn=$progress_fn \
-   -v distbb_lock_pid="$DISTBB_LOCK $$" -e '
+   -e '
 # input line format:
 #    $1 - <SLAVE_HOST>
 #    $2 - <TASK_NUMBER>
 
 #use "xclose.awk"
-#use "xgetline.awk"
 #use "xsystem.awk"
-
-BEGIN {
-   while (xgetline0(trans_clos_fn)){
-      deps [$1, $2] = 1
-      all_pkgpaths [$1] = 1
-      all_pkgpaths [$2] = 1
-   }
-   xclose(trans_clos_fn)
-
-   tmp_fn = (queue_fn ".tmp2")
-   wait_for_lock=(distbb_lock_pid " " lckfile)
-   rm_lock=("rm " lckfile)
-}
 
 !($2 in pkgpaths) {
    # $3 - package name (PKGPATH)
@@ -142,183 +77,114 @@ BEGIN {
    next
 }
 
-$3 == "status:" {
-   status [$2] = $4
+$0 ~ /^[^ ]+ [0-9]+ success$/ {
+   status [$2] = "success"
+   next
+}
+
+$0 ~ /^[^ ]+ [0-9]+ failure$/ {
+   status [$2] = "failure"
+   next
+}
+
+status [$2] == "failure" && !($2 in failed_packages) {
+   task_number = $2
+   $1 = $2 = ""
+   failed_packages [task_number] = $0
    next
 }
 
 {
-   log_dir = report1_dir "/" pkgpaths [$2]
-   log_fn  = log_dir "/uu.tmp"
+   pkgpath = pkgpaths [$2]
+   log_dir = report1_dir "/" pkgpath
+   log_fn  = log_dir "/stage_" stage [$2] ".tmp"
 }
 
-NF > 2 {
-   sub(/^[^ ]+ [^ ]+ /, "")
+$3 == "--**--**--" && $5 == "--**--**--" {
+   if (stage [$2] != ""){
+      xclose(log_fn)
+   }
+   stage [$2] = $4
+   printf "" > (log_dir "/stage_" $4 ".tmp")
+
+   next
+}
+
+$0 ~ /^[^ ]+ [0-9]+  / {
+   # normal log line
+   sub(/^[^ ]+ [^ ]+  /, "")
    print > log_fn
    next
 }
 
 # end of task
 {
-   xclose(log_fn)
+   assert(NF == 2, "this should not happen")
+   if (stage [$2] != "")
+      xclose(log_fn)
 }
 
-status [$2] == 0 {
-   # succeeded
-   pkgpath = pkgpaths [$2]
+function free_arrs (task){
+   delete pkgpaths [task]
+   delete run_on   [task]
+   delete status [task]
+   delete stage [task]
+   delete failed_packages [task]
+}
 
+status [$2] == "success" {
+   # succeeded
    print "    succeeded:", pkgpath, "on", run_on [$2]
    print "succeeded", pkgpath >> progress_fn
-   xclose(progress_fn) # to make stage "build" rerunable
-
-   # free memory
-   delete pkgpaths [$2]
-   delete run_on   [$2]
+   xclose(progress_fn)
 
    #
    print pkgpath >> packages_built_fn
    xclose(packages_built_fn)
 
-   # getting lock
-   xsystem(wait_for_lock)
-
-   # reading counts
-   delete counts
-   while (xgetline0(queue_fn)){
-      counts [$1] = $2
-   }
-   xclose(queue_fn)
-
-   # updating counts
-   for (i in counts){
-      if ((pkgpath SUBSEP i) in deps){
-         --counts [i]
-      }
-   }
-
-   # writing counts
-   printf "" > tmp_fn
-   for (i in counts){
-      print i, counts [i] > tmp_fn
-   }
-   xclose(tmp_fn)
-
-   # renaming
-   xsystem("mv " tmp_fn " " queue_fn)
-
-   # removing lock
-   xsystem(rm_lock)
-
    # removing log directory
    xsystem("rm -rf " log_dir)
+
+   # free memory
+   free_arrs($2)
 
    #
    next
 }
 
-function decode_logs (uu,                  txt,fn,dir){
-   txt = uu
-   sub(/[.][^.\/]*$/, ".txt", txt)
-
-   dir = uu
-   sub(/\/[^\/]*$/, "", dir)
-
-   xsystem("uudecode -p < " uu " > " txt)
-
-   #
-   fn = ""
-   while (xgetline0(txt)){
-      if ($1 == "--**--**--" && $3 == "--**--**--"){
-         if (fn){
-            xclose(fn) # in order to not exceed system/awk limits...
-         }
-
-         fn = dir "/stage_" $2 ".tmp"
-         printf "  " > fn
-         continue
-      }
-
-      if (fn){
-         print > fn
-      }else{
-         print "this should not happen!" > "/dev/stderr"
-      }
-   }
-
-   if (fn){
-      close(fn) # in order to not exceed system/awk limits...
-   }
-
-   xsystem("rm " uu " " txt)
-}
-
-{
-   # fialed
-   pkgpath = pkgpaths [$2]
-
+status [$2] == "failure" {
+   # failed
    print "    F-A-I-L-E-D:", pkgpath, "on", run_on [$2]
    print "failed", pkgpath >> progress_fn
    xclose(progress_fn) # to make stage "build" rerunable
-
-   # free memory
-   delete pkgpaths [$2]
-   delete run_on   [$2]
 
    #
    print pkgpath >> packages_failed_fn
    xclose(packages_failed_fn)
 
-   # getting lock
-   xsystem(wait_for_lock)
-
-   # decoding logs
-   decode_logs(log_fn)
-
-   # reading counts
-   delete counts
-   while (xgetline0(queue_fn)){
-      counts [$1] = $2
-   }
-   xclose(queue_fn)
-
    # indirectly failed
-   delete indirect_failures
+   cnt = split(failed_packages [$2], failed_pkgs)
    log_fn  = log_dir "/failed_packages.txt"
-   indirect_broken_found = 0
-   printf "" >> log_fn
-   for (pkgp in all_pkgpaths){
-      if ((pkgpath SUBSEP pkgp) in deps){
-         indirect_broken_found = 1
+   printf "" > log_fn
+   for (i=2; i <= cnt; ++i){
+      fpkg = failed_pkgs [i]
+      print fpkg > log_fn
 
-         indirect_failures [pkgp] = 1
-
-         pkgp_log_dir = report1_dir "/" pkgp
-         pkgp_log_fn  = pkgp_log_dir "/failed_because.txt"
-         print pkgpath >> pkgp_log_fn
-         xclose(pkgp_log_fn) # in order to not exceed system/awk limits...
-
-         print pkgp > log_fn
-      }
+      pkgp_log_fn = report1_dir "/" fpkg "/failed_because.txt"
+      print pkgpath >> pkgp_log_fn
+      xclose(pkgp_log_fn) # in order to not exceed system/awk limits...
    }
-   if (indirect_broken_found)
-      xclose(log_fn) # in order to not exceed system/awk limits...
+   xclose(log_fn)
 
-   # writing new queue
-   printf "" > tmp_fn
-   for (i in counts){
-      if (! (i in indirect_failures)){
-         print i, counts [i] > tmp_fn
-      }
-   }
-   xclose(tmp_fn)
+   # free memory
+   free_arrs($2)
 
-   # renaming
-   xsystem("mv " tmp_fn " " queue_fn)
-
-   # removing lock
-   xsystem(rm_lock)
-
+   #
    next
+}
+
+{
+   abort("this should not happen 2")
 }
 '
 }
@@ -334,8 +200,7 @@ fi
 verbose_print "Building\n"
 
 eval runpipe0 \
-    print_tasks '|' \
-    paexec -EI -lr $TRANSPORT $SLAVES -c "$DISTBB_SLAVE" '|' \
+    paexec -s -EI -lr $TRANSPORT $SLAVES -c "$DISTBB_SLAVE" < "$queue_fn" '|' \
     postfilter
 
 ######################################################################
