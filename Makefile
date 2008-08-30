@@ -25,7 +25,7 @@ SCRIPTS=			distbb stage_init \
 				stage_build stage_gen_report \
 				stage_upload_logs \
 				stage_upload_pkgs stage_report \
-				lock slave slave_test
+				slave
 
 SCRIPTSDIR=			${LIBEXECDIR}
 SCRIPTSDIR_distbb=		${BINDIR}
