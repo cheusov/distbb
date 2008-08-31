@@ -135,8 +135,6 @@ function free_arrs (task){
 status [$2] == "success" {
    # succeeded
    print "    succeeded:", pkgpath, "on", run_on [$2]
-   print "succeeded", pkgpath >> progress_fn
-   xclose(progress_fn)
 
    #
    print pkgpath >> packages_built_fn
@@ -149,14 +147,16 @@ status [$2] == "success" {
    free_arrs($2)
 
    #
+   print "succeeded", pkgpath >> progress_fn
+   xclose(progress_fn)
+
+   #
    next
 }
 
 status [$2] == "failure" {
    # failed
    print "    F-A-I-L-E-D:", pkgpath, "on", run_on [$2]
-   print "failed", pkgpath >> progress_fn
-   xclose(progress_fn) # to make stage "build" rerunable
 
    #
    print pkgpath >> packages_failed_fn
@@ -178,6 +178,10 @@ status [$2] == "failure" {
 
    # free memory
    free_arrs($2)
+
+   #
+   print "failed", pkgpath >> progress_fn
+   xclose(progress_fn) # to make stage "build" rerunable
 
    #
    next
