@@ -14,10 +14,6 @@ ideas/thoughts/todo/problems
  - pbulk builds pyNN-xxx and apNN-xxx packages, distbb doesn't.
    This is the only regression I see in comparison to pbulk.
 
- - move tricky shlock/sh/awk code for processing packages with their
-   dependancies (partially ordered set of tasks) to 'paexec' and
-   implement it in C.
-
  - modification time of binary packages?
  - problem:
    package_A depends on package_B
@@ -28,6 +24,7 @@ ideas/thoughts/todo/problems
  - rerunable stage_build
  - distbb.1
  - my-show-vars -> share/distbb/distbb.mk
- - I think distbb can be adapted for FreeBSD/OpenBSD Ports.
+ - I think distbb can be adapted for FreeBSD/OpenBSD Ports
+   and other packaging systems
 
 ANY IDEAS? LET ME KNOW. VLE@GMX.NET
