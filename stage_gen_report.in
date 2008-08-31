@@ -95,9 +95,11 @@ get_failed_stage (){
     fi
 
     for t in $TARGETS; do
-	if test -f "$REPORT1_DIR/$1/stage_$t.tmp"; then
-	    failed_stage="$t"
+	if ! test -f "$REPORT1_DIR/$1/stage_$t.tmp"; then
+	    continue
 	fi
+
+	failed_stage="$t"
     done
     echo "$failed_stage" | tee "$failed_stage_fn"
 }
