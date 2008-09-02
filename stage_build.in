@@ -47,6 +47,55 @@ fi
 verbose_print "done\n"
 
 ######################################################################
+### graph of packages for paexec
+gen_queue (){
+    runawk -v deps_fn="$deps_fn" -v progress_fn="$progress_fn" -e '
+#use "xgetline.awk"
+#use "xclose.awk"
+
+BEGIN {
+   while (xgetline0(progress_fn)){
+      if ($1 == "success") success [$2] = 0
+      if ($1 == "failure") failure [$2] = 0
+   }
+   xclose(progress_fn)
+
+   while (xgetline0(deps_fn)){
+      deps [$1, $2] = 0
+   }
+   xclose(deps_fn)
+}
+
+NF == 2 {
+   if ($1 in success) next
+   if ($2 in failure) next
+   if ($1 in failure) {
+      failure [$2] = 0 # failed due to broken dependency
+      next
+   }
+
+   if (($1 SUBSEP $2) in deps){
+      printed [$1] = printed [$2] = 0
+      print $1, $2
+   }
+
+   next
+}
+
+NF == 1 && !($1 in printed) && !($1 in success) && !($1 in failure) {
+   print $1
+   next
+}
+' "$@"
+}
+
+verbose_print "Initial queue..."
+
+gen_queue "$trans_clos_rebuild_fn" "$rebuild_fn" > $queue_fn
+
+verbose_print "done\n"
+
+######################################################################
 ### main loop - building
 
 postfilter (){
@@ -147,7 +196,7 @@ status [$2] == "success" {
    free_arrs($2)
 
    #
-   print "succeeded", pkgpath >> progress_fn
+   print "success", pkgpath >> progress_fn
    xclose(progress_fn)
 
    #
@@ -180,7 +229,7 @@ status [$2] == "failure" {
    free_arrs($2)
 
    #
-   print "failed", pkgpath >> progress_fn
+   print "failure", pkgpath >> progress_fn
    xclose(progress_fn) # to make stage "build" rerunable
 
    #

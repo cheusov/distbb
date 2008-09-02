@@ -170,8 +170,6 @@ verbose_print "done\n"
 
 verbose_print "  dependencies from pkg_src_summary file..."
 
-deps_fn=$tmpdir/deps.tmp
-
 extract_depends (){
     awk -v deps_fn="$deps_fn" '
 /^PKGPATH=/ {
@@ -373,11 +371,11 @@ BEGIN {
 verbose_print "done\n"
 
 ######################################################################
-### direct packages that need to be rebuilt
+### all packages that need to be rebuilt
 verbose_print "  all packages to be built..."
 
 all_packages_to_be_build () {
-awk -v pkgs="$rebuild1_fn" '
+    awk -v pkgs="$rebuild1_fn" '
 BEGIN {
    while (getline < pkgs){
       hash [$1] = 1
@@ -392,7 +390,7 @@ BEGIN {
 }
 
 all_packages_to_be_build2 () {
-awk -v pkgs="$rebuild_fn" '
+    awk -v pkgs="$rebuild_fn" '
 BEGIN {
    while (getline < pkgs){
       hash [$1] = 1
@@ -411,41 +409,6 @@ runpipe0 \
 runpipe0 \
     all_packages_to_be_build2 '|' \
     sort -u > $trans_clos_rebuild_fn
-
-verbose_print "done\n"
-
-######################################################################
-### graph of packages for paexec
-gen_queue (){
-    runawk -v deps_fn="$deps_fn" -e '
-#use "xgetline.awk"
-
-BEGIN {
-   while (xgetline0(deps_fn)){
-      deps [$1, $2] = 0
-   }
-}
-
-NF == 2 {
-   if ($1 == "dummy")
-      print $2
-   else if (($1 SUBSEP $2) in deps)
-      print $1, $2
-
-   hash [$1] = 0
-   hash [$2] = 0
-   next
-}
-NF == 1 && !($1 in hash) {
-   print $1
-   next
-}
-' "$@"
-}
-
-verbose_print "  initial queue..."
-
-gen_queue $trans_clos_rebuild_fn $rebuild1_fn > $queue_fn
 
 verbose_print "done\n"
 

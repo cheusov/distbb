@@ -34,6 +34,7 @@ build_end_fn=$meta_dir/build_end.tmp
 
 queue_fn=$tmpdir/queue.tmp
 rebuild_fn=$tmpdir/rebuild.tmp
+deps_fn=$tmpdir/deps.tmp
 
 packages_fn=$tmpdir/packages.tmp
 packages_with_deps_fn=$tmpdir/packages_with_deps.tmp

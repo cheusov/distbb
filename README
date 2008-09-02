@@ -107,12 +107,12 @@ There are the following stages of the bulk build:
 
 They are run in order.
 
-'upload_logs', 'upload_pkgs' and 'report' stages are rerunable like
-the following
+'build', 'upload_logs', 'upload_pkgs' and 'report' stages are rerunable.
+They can be rerun like this
 
     /usr/pkg_distbb/libexec/distbb/stage_upload_logs <BUILD_ID>
 
-BUILD_ID is printed at a very beginning of bulk build process
+BUILD_ID is printed at the very beginning of bulk build process
 
 B) ?
 C) ?

@@ -197,7 +197,7 @@ save_TARGETS_and_EXTRA_OPTS
 while read pkgpath; do
     restore_TARGETS_and_EXTRA_OPTS
 
-    runpipe_base build_package $pkgpath | check_max_log_size > "$logfn"
+    runpipe_base build_package $pkgpath '|' check_max_log_size > "$logfn"
     case "$pipestatus_1" in
 	0)
 	    echo success;;
