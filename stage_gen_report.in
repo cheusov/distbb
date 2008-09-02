@@ -58,7 +58,7 @@ find_failed_deps_packages > "$packages_failed_deps_fn.raw"
 
 # resort failed_because.txt
 while read f; do
-    LC_ALL=C sort \
+    LC_ALL=C sort -u \
 	    < $REPORT1_DIR/$f/failed_because.txt \
 	    > $REPORT1_DIR/$f/failed_because.tmp
     mv $REPORT1_DIR/$f/failed_because.tmp $REPORT1_DIR/$f/failed_because.txt
@@ -66,7 +66,7 @@ done < "$packages_failed_deps_fn.raw"
 
 # resort failed_packages.txt
 while read f; do
-    LC_ALL=C sort \
+    LC_ALL=C sort -u \
 	    < $REPORT1_DIR/$f/failed_packages.txt \
 	    > $REPORT1_DIR/$f/failed_packages.tmp
     mv $REPORT1_DIR/$f/failed_packages.tmp $REPORT1_DIR/$f/failed_packages.txt

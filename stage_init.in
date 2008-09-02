@@ -417,11 +417,19 @@ verbose_print "done\n"
 ######################################################################
 ### graph of packages for paexec
 gen_queue (){
-    awk '
+    runawk -v deps_fn="$deps_fn" -e '
+#use "xgetline.awk"
+
+BEGIN {
+   while (xgetline0(deps_fn)){
+      deps [$1, $2] = 0
+   }
+}
+
 NF == 2 {
    if ($1 == "dummy")
       print $2
-   else
+   else if (($1 SUBSEP $2) in deps)
       print $1, $2
 
    hash [$1] = 0
