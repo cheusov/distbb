@@ -1,3 +1,21 @@
+Version 0.18.0, by Aleksey Cheusov,Wed,  3 Sep 2008 00:25:49 +0300
+
+  stage_build becomes rerunable. If, for example, your SLAVE hosts
+  hanged up, turned off due to power lost or something similar
+  happened while BUILDING stage, you can continue running bulk build
+  by running PREFIX/libexec/distbb/stage_build <BUILD_ID>.
+  NOTE: In case MASTER host hanged up or turned off, rerunning
+  stage_build may be not fully correct because of possible data loss.
+
+  stage_build script is fully reworked. As it was planned, tricky and
+  dirty shlock/sh/awk code that processes packages graph is now
+  removed from distbb. All necessary functionality is generalized and
+  becomes a part of external utility "paexec" (see paexec -s option).
+  As a result pkgtools/shlock is not used anymore.
+
+  wip/netbsd-uuencode is not used anymore. PAEXEC sends unencoded data
+  to distbb.
+
 Version 0.17.0, by Aleksey Cheusov, Fri, 25 Jul 2008 15:57:14 +0300
 
   ADDED: -p option. If you want to build a few packages, you
