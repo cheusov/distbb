@@ -164,7 +164,6 @@ EXTRA_OPTS='BATCH=yes PKG_VERBOSE=1'
 
 # do not change the following unless you know what you are doing
 DISTBB_SLAVE=@@libexecdir@@/slave
-DISTBB_LOCK=@@libexecdir@@/lock
 
 # filename containing notes about bulk build (in html format, of
 # course in utf-8 charset), e.g. unusual build options, compiler etc.
