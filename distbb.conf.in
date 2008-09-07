@@ -84,7 +84,11 @@ PKG_SRC_SUMMARY="$PKGSRCDIR/pkg_src_summary.txt"
 
 # The same as above but only required fields are included.
 # It works a little faster than previous two variants.
-PKG_UPDATE_SRC_SUMMARY_CMD="@@bindir@@/pkg_src_summary -A -f 'PKGNAME PKGPATH DEPENDS BUILD_DEPENDS MAINTAINER' > '$PKG_SRC_SUMMARY'"
+# PKG_UPDATE_SRC_SUMMARY_CMD="@@bindir@@/pkg_src_summary -A -f 'PKGNAME PKGPATH DEPENDS BUILD_DEPENDS MAINTAINER' > '$PKG_SRC_SUMMARY'"
+
+# If you want to build all allowed variations of packages
+# that depend on e.g. python, php and apache, add -M option
+PKG_UPDATE_SRC_SUMMARY_CMD="@@bindir@@/pkg_src_summary -M -A -f 'PKGNAME PKGPATH DEPENDS BUILD_DEPENDS MAINTAINER' > '$PKG_SRC_SUMMARY'"
 
 # if you want to build src_summary using several processes or several
 # machines in a network, set PSS_SLAVES to non-empty string.
