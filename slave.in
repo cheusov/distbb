@@ -174,13 +174,13 @@ do_build_package (){
 build_package (){
     # $1 - long pkgpath, e.g. www/php-apc:PHP_VERSION_REQD=5
     multivar_opts=''
-    real_pkgname="`echo $1 | cut -d: -f1`"
+    real_pkgpath="`echo $1 | cut -d: -f1`"
     if test "$real_pkgname" != "$1"; then
-	multivar_opts="`echo $1 | cut -d: -f1` WRKDIR_BASENAME=work.${WORK_DIR_COUNT}"
+	multivar_opts="`echo $1 | sed -e 's|^[^:]*:||' -e 's|,| |g'` WRKDIR_BASENAME=work.${WORK_DIR_COUNT}"
 	WORK_DIR_COUNT=$(($WORK_DIR_COUNT+1))
     fi
 
-    do_build_package "$1" "$real_pkgname" 2>&1
+    do_build_package "$1" "$real_pkgpath" 2>&1
     ex=$?
 
     # clean even if it fails
