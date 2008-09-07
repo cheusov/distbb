@@ -120,8 +120,12 @@ verbose_print "done\n"
 ### updating PKG_SRC_SUMMARY
 if test -z "$skip_updating_src_summary"; then
     verbose_print "  Updating pkg_src_summary..."
-    eval "$PKG_UPDATE_SRC_SUMMARY_CMD \
+    if ! eval "$PKG_UPDATE_SRC_SUMMARY_CMD \
 	< $packages_fn.tmp 2> $build_src_summary_log_fn"
+    then
+	cat $build_src_summary_log_fn 1>&2
+	exit 1
+    fi
     verbose_print "done\n"
 fi
 
