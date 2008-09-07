@@ -134,20 +134,23 @@ verbose_print "  is there packages for which pkg_src_summary failed?..."
 awk -v packages_fn=$packages_fn \
     -v packages_failed_scan_fn=$packages_failed_scan_fn '
 FILENAME == (packages_fn ".tmp") {
-   if (NF == 1) pkgs [$0] = 1
+   if (NF == 1) pkgs [$1] = 1
    next
 }
 /^PKGPATH=/ {
    gsub(/ +$/, "")
    pkgpath = substr($0, 9)
-   if (pkgpath in pkgs){
+   short_pkgpath = pkgpath
+   sub(/:.*$/, "", short_pkgpath)
+   if ((pkgpath in pkgs) || (short_pkgpath in pkgs)){
       print pkgpath > packages_fn
-      delete pkgs [pkgpath]
+      printed [pkgpath] = printed [short_pkgpath] = 1
    }
 }
 END {
    for (pkgpath in pkgs){
-      print pkgpath > packages_failed_scan_fn
+      if (! (pkgpath in printed))
+         print pkgpath > packages_failed_scan_fn
    }
 }' $packages_fn.tmp $PKG_SRC_SUMMARY
 #rm $packages_fn.tmp
@@ -157,7 +160,7 @@ verbose_print "done\n"
 ######################################################################
 ### comparison binaries against pkgsrc tree
 verbose_print "  pkg_summary vs. pkg_src_summary comparison..."
-pkg_cmp_summary -p $refreshed_summary_fn $PKG_SRC_SUMMARY > $summary_cmp_fn
+pkg_cmp_summary -m -p $refreshed_summary_fn $PKG_SRC_SUMMARY > $summary_cmp_fn
 verbose_print "done\n"
 
 ######################################################################
@@ -209,15 +212,17 @@ verbose_print "  extra dependencies..."
 # extra dependancies from $EXTRA_DEPS
 for d in dummy $EXTRA_DEPS; do
     # EXTRA_DEPS
-    awk -v d=$d -F= -v extra_deps="$EXTRA_DEPS" '
+    awk -v d=$d -v extra_deps="$EXTRA_DEPS" '
     BEGIN {
 	split(extra_deps, _deps, / /)
 	for (i in _deps){
 	    deps [_deps [i]] = 1
 	}
     }
-    $1 == "PKGPATH" && !($2 in deps) {
-	print d, $2
+    $1 ~ /^PKGPATH=/ {
+	$1 = substr($1, 9)
+	if (!($1 in deps))
+	    print d, $1
     }
     ' $PKG_SRC_SUMMARY >> $deps_fn.tmp
 
