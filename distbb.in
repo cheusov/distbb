@@ -139,7 +139,6 @@ test_var DEPENDS_TARGET
 test_var CLEAN_TARGET
 test_var TARGETS
 test_var DISTBB_SLAVE
-test_var DISTBB_LOCK
 test_var OFFENDERS_CNT
 test_var MAX_FAILED_DEPS_CNT
 test_var REPORT_CMD
