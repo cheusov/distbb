@@ -147,7 +147,6 @@ do_build_package (){
 
     # $TARGETS
     bmake_opts="$EXTRA_OPTS DEPENDS_TARGET=$DEPENDS_TARGET $multivar_opts"
-    echo bmake_opts=$bmake_opts > ~/prjs/distbb/log
 
     for t in $TARGETS; do
 	header $t
@@ -179,7 +178,6 @@ build_package (){
     if test "$real_pkgname" != "$1"; then
 	multivar_opts="`echo $1 | cut -d: -f1` WRKDIR_BASENAME=work.${WORK_DIR_COUNT}"
 	WORK_DIR_COUNT=$(($WORK_DIR_COUNT+1))
-	echo multivar_opts=$multivar_opts 1>&2
     fi
 
     do_build_package "$1" "$real_pkgname" 2>&1
