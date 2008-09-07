@@ -176,7 +176,7 @@ build_package (){
     # $1 - long pkgpath, e.g. www/php-apc:PHP_VERSION_REQD=5
     multivar_opts=''
     real_pkgname="`echo $1 | cut -d: -f1`"
-    if "$real_pkgname" != "$1"; then
+    if test "$real_pkgname" != "$1"; then
 	multivar_opts="`echo $1 | cut -d: -f1` WRKDIR_BASENAME=work.${WORK_DIR_COUNT}"
 	WORK_DIR_COUNT=$(($WORK_DIR_COUNT+1))
 	echo multivar_opts=$multivar_opts 1>&2
