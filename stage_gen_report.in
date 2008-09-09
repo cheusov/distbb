@@ -38,8 +38,7 @@ REPORT1_DIR=$REPORTS_DIR/$BUILD_ID
 . @@libexecdir@@/common
 
 # main
-verbose_print "Logs generation and clean-ups...\n"
-rmdir $REPORT1_DIR/* 2>/dev/null || true
+verbose_print "Logs generation...\n"
 
 build_start=$(cat "$build_start_fn")
 build_end=$(cat "$build_end_fn")

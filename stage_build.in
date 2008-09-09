@@ -39,12 +39,7 @@ REPORT1_DIR=$REPORTS_DIR/$BUILD_ID
 
 # main
 ######################################################################
-verbose_print "Creating directories for logging..."
 cd $REPORT1_DIR
-if test -s "$rebuild_fn"; then
-    xargs mkdir -p < "$rebuild_fn"
-fi
-verbose_print "done\n"
 
 ######################################################################
 ### graph of packages for paexec
@@ -122,6 +117,7 @@ runawk \
    pkgpaths [$2] = $3
    run_on   [$2] = $1
    print "  started:", $3, "on", $1
+   xsystem("mkdir -p " report1_dir "/" $3)
 
    next
 }
@@ -263,5 +259,6 @@ eval $PKG_UPDATE_SUMMARY_CMD $PKG_SUMMARY $PACKAGES/All
 verbose_print "done\n"
 
 ######################################################################
+rmdir $REPORT1_DIR/* 2>/dev/null || true
 
 echo "$(date -u '+%Y-%m-%d %H:%M') UTC" > $build_end_fn
