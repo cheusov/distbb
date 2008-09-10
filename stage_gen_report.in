@@ -117,7 +117,11 @@ print_failed_deps_pkg (){
     # $3 - maintainer
     # $4 - deppath
     # $5 - depname
-    failed_stage=$(get_failed_stage "$4" "$5")
+    if test "$1" = Package; then
+	failed_stage=''
+    else
+	failed_stage=$(get_failed_stage "$4" "$5")
+    fi
 #    short_pkgpath=$(echo $1 | cut -f1 -d:)
 #    printf "  <tr><td>%-27s</td> <td align=\"left\"><a href=\"../%s/stage_%s.html\" title=\"build log for %s\">%s</a></td><td> %7s</td><td>\n  %-27s</td></tr>\n" "$1" "$4" "$failed_stage" "$4" "$4" "$3" "$2"
     printf "  <tr><td>%-26s</td> <td align=\"left\"><a href=\"../%s/stage_%s.html\" title=\"build log for %s\">%-26s</a></td><td> %s</td></tr>\n" "$1" "$2" "$failed_stage" "$4" "$4" "$3"
