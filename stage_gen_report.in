@@ -43,33 +43,21 @@ verbose_print "Logs generation...\n"
 build_start=$(cat "$build_start_fn")
 build_end=$(cat "$build_end_fn")
 
-path2pkgpath (){
-    sed -e 's,^.*/\([^/]*/[^/]*\)/failed_because.txt$,\1,'
-}
 find_failed_deps_packages (){
     runpipe0 \
-	find "$REPORT1_DIR" -name failed_because.txt '|' \
-	path2pkgpath '|' \
-	env LC_ALL=C sort
+	find "$REPORT1_DIR" -name failed_packages.txt '|' \
+	xargs cat '|' env LC_ALL=C sort -u
 }
 
 find_failed_deps_packages > "$packages_failed_deps_fn.raw"
 
-# resort failed_because.txt
+# resort failed_because.txt and failed_packages.txt
+find $REPORT1_DIR -type f \
+    '(' -name failed_because.txt -o -name failed_packages.txt ')' |
 while read f; do
-    LC_ALL=C sort -u \
-	    < $REPORT1_DIR/$f/failed_because.txt \
-	    > $REPORT1_DIR/$f/failed_because.tmp
-    mv $REPORT1_DIR/$f/failed_because.tmp $REPORT1_DIR/$f/failed_because.txt
-done < "$packages_failed_deps_fn.raw"
-
-# resort failed_packages.txt
-while read f; do
-    LC_ALL=C sort -u \
-	    < $REPORT1_DIR/$f/failed_packages.txt \
-	    > $REPORT1_DIR/$f/failed_packages.tmp
-    mv $REPORT1_DIR/$f/failed_packages.tmp $REPORT1_DIR/$f/failed_packages.txt
-done < "$packages_failed_fn.raw"
+    env LC_ALL=C sort -u $f > $f.tmp
+    mv $f.tmp $f
+done
 
 # main continuing...
 count_lines (){
@@ -82,8 +70,9 @@ right_align (){
 
 get_failed_stage (){
     # $1 - pkgpath
-    failed_stage_fn="$REPORT1_DIR/$1/failed_stage.tmp"
-    if ! test -d "$REPORT1_DIR/$1"; then
+    # $2 - pkgname
+    failed_stage_fn="$REPORT1_DIR/$2/failed_stage.tmp"
+    if ! test -d "$REPORT1_DIR/$2"; then
 	echo ''
 	return
     fi
@@ -94,7 +83,7 @@ get_failed_stage (){
     fi
 
     for t in $TARGETS; do
-	if ! test -f "$REPORT1_DIR/$1/stage_$t.tmp"; then
+	if ! test -f "$REPORT1_DIR/$2/stage_$t.tmp"; then
 	    continue
 	fi
 
@@ -118,7 +107,7 @@ print_failed_pkg (){
     fi
 
     short_pkgpath=$(echo $1 | cut -f1 -d:)
-    printf "  <tr><td><a href=\"../%s/stage_%s.html\" title=\"build log for %s\">%-27s</a></td> <td class=\"breaks\">${__href_beg}%7s${__href_end}</td> <td>%11s</td> <td align=\"right\">%27s</td>\n    <td align=\"right\">%-25s</td></tr>\n" "$1" "$3" "$short_pkgpath" "$short_pkgpath" "$2" "$3" "$4" "$5"
+    printf "  <tr><td><a href=\"../%s/stage_%s.html\" title=\"build log for %s\">%-27s</a></td> <td class=\"breaks\">${__href_beg}%7s${__href_end}</td> <td>%11s</td> <td align=\"right\">%27s</td>\n    <td align=\"right\">%-25s</td></tr>\n" "$5" "$3" "$short_pkgpath" "$short_pkgpath" "$2" "$3" "$4" "$5"
 #    printf "  <tr><td><a href=\"../%s/stage_%s.html\" title=\"build log for %s\">%-27s</a></td> <td class=\"breaks\">%7s</td> <td>%11s</td> <td align=\"right\">%27s</td>\n    <td align=\"right\">%-25s</td></tr>\n" "$1" "$3" "$1" "$1" "$2" "$3" "$4" "$5"
 }
 
@@ -126,16 +115,22 @@ print_failed_deps_pkg (){
     # $1 - pkgpath
     # $2 - pkgname
     # $3 - maintainer
-    # $4 - dep
-    failed_stage=$(get_failed_stage $4)
-    short_pkgpath=$(echo $1 | cut -f1 -d:)
+    # $4 - deppath
+    # $5 - depname
+    failed_stage=$(get_failed_stage "$4" "$5")
+#    short_pkgpath=$(echo $1 | cut -f1 -d:)
 #    printf "  <tr><td>%-27s</td> <td align=\"left\"><a href=\"../%s/stage_%s.html\" title=\"build log for %s\">%s</a></td><td> %7s</td><td>\n  %-27s</td></tr>\n" "$1" "$4" "$failed_stage" "$4" "$4" "$3" "$2"
-    printf "  <tr><td>%-26s</td> <td align=\"left\"><a href=\"../%s/stage_%s.html\" title=\"build log for %s\">%-26s</a></td><td> %s</td></tr>\n" "$short_pkgpath" "$4" "$failed_stage" "$4" "$4" "$3"
+    printf "  <tr><td>%-26s</td> <td align=\"left\"><a href=\"../%s/stage_%s.html\" title=\"build log for %s\">%-26s</a></td><td> %s</td></tr>\n" "$1" "$2" "$failed_stage" "$4" "$4" "$3"
 }
 
 pkgpath2maintainer (){
     # $1 - pkgpath
     awk -v pkgpath="$1" '$1 == pkgpath {print $2; exit}' "$enriched_failed_fn"
+}
+
+pkgpath2pkgname (){
+    # $1 - pkgpath
+    awk -v pkgpath="$1" '$1 == pkgpath {print $3; exit}' "$enriched_failed_fn"
 }
 
 report_html (){
@@ -222,14 +217,14 @@ EOF
 
     cat "$enriched_failed_fn" |
     while read pkgpath maintainer pkgname; do
-	case "$(get_failed_stage $pkgpath)" in
+	case "$(get_failed_stage $pkgpath $pkgname)" in
 	    dbb_canbebuilt|dbb_excluded)
 		continue;;
 	esac
 
 	echo "$maintainer $pkgpath"
 	awk -v m=$maintainer '
-	   { print m, $1}' "$REPORT1_DIR/$pkgpath/failed_packages.txt"
+	   { print m, $1}' "$REPORT1_DIR/$pkgname/failed_packages.txt"
     done | env LC_ALL=C sort -u |
     awk '{++count [$1]}
     END {for (m in count) print m, count [m] }' |
@@ -256,8 +251,8 @@ EOF
 
     cat "$enriched_failed_fn" |
     while read pkgpath maintainer pkgname; do
-	breaks=$(count_lines "$REPORT1_DIR/$pkgpath/failed_packages.txt")
-	failed_stage=$(get_failed_stage "$pkgpath")
+	breaks=$(count_lines "$REPORT1_DIR/$pkgname/failed_packages.txt")
+	failed_stage=$(get_failed_stage "$pkgpath" "$pkgname")
 	echo "$pkgpath $breaks $failed_stage $maintainer $pkgname"
     done |
     sort -k2,2nr -k1,1 |
@@ -281,17 +276,19 @@ EOF
 	-e 's,[A-Z][a-z ]*,<b>&</b>,g'
     echo ''
 
-    while read pkgpath dummy pkgname; do
-	fn="$REPORT1_DIR/$pkgpath/failed_because.txt"
+    while read pkgpath maintainer pkgname; do
+	fn="$REPORT1_DIR/$pkgname/failed_because.txt"
 	cnt=$(count_lines "$fn")
-	dep=$(head -1 "$fn")
+	deppath=$(head -1 "$fn")
+	depname=$(pkgpath2pkgname "$deppath")
 	depX=$(awk -v cnt="$cnt" -v failed_deps_cnt="$MAX_FAILED_DEPS_CNT" \
 	    'NR > cnt-failed_deps_cnt+1 && NR > 1' "$fn")
-	maintainer=$(pkgpath2maintainer "$dep")
-	print_failed_deps_pkg "$pkgpath" "$pkgname" "$maintainer" "$dep"
-	for dep in $depX; do
-	    maintainer=$(pkgpath2maintainer "$dep")
-	    print_failed_deps_pkg '' '' "$maintainer" "$dep"
+	print_failed_deps_pkg \
+	    "$pkgpath" "$pkgname" "$maintainer" "$deppath" "$depname"
+	for deppath in $depX; do
+	    maintainer=$(pkgpath2maintainer "$deppath")
+	    depname=$(pkgpath2pkgname "$deppath")
+	    print_failed_deps_pkg '' '' "$maintainer" "$deppath" "$depname"
 	done
     done < "$enriched_failed_deps_fn"
     printf "%s\n" "</table>"

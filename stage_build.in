@@ -104,6 +104,7 @@ runawk \
    -v packages_failed_fn=$packages_failed_fn.raw \
    -v packages_built_fn=$packages_built_fn.raw \
    -v progress_fn=$progress_fn \
+   -v pkg_src_summary=$PKG_SRC_SUMMARY \
    -e '
 # input line format:
 #    $1 - <SLAVE_HOST>
@@ -111,13 +112,30 @@ runawk \
 
 #use "xclose.awk"
 #use "xsystem.awk"
+#use "xgetline.awk"
+
+BEGIN {
+   print "before loading"
+   while (xgetline0(pkg_src_summary)){
+      if ($0 ~ /^PKGPATH=/) pkgpath = substr($0, 9)
+      else if ($0 ~ /^PKGNAME=/) pkgname = substr($0, 9)
+      else if (NF == 0) pkgnames [pkgpath] = pkgname
+   }
+   print "loading pkg_src_summary done"
+}
+
+function get_log_dir (pkgpath,            pkgname){
+   pkgname = pkgnames [pkgpath]
+   assert(pkgname != "", "bad pkgname! this should not happen!")
+   return report1_dir "/" pkgname
+}
 
 !($2 in pkgpaths) {
    # $3 - package name (PKGPATH)
    pkgpaths [$2] = $3
    run_on   [$2] = $1
    print "  started:", $3, "on", $1
-   xsystem("mkdir -p " report1_dir "/" $3)
+   xsystem("mkdir -p " get_log_dir($3))
 
    next
 }
@@ -141,7 +159,7 @@ status [$2] == "failure" && !($2 in failed_packages) {
 
 {
    pkgpath = pkgpaths [$2]
-   log_dir = report1_dir "/" pkgpath
+   log_dir = get_log_dir(pkgpath)
    log_fn  = log_dir "/stage_" stage [$2] ".tmp"
 }
 
@@ -215,7 +233,9 @@ status [$2] == "failure" {
       fpkg = failed_pkgs [i]
       print fpkg > log_fn
 
-      pkgp_log_fn = report1_dir "/" fpkg "/failed_because.txt"
+      fpkg_logdir = get_log_dir(fpkg)
+      xsystem("mkdir -p " fpkg_logdir)
+      pkgp_log_fn = fpkg_logdir "/failed_because.txt"
       print pkgpath >> pkgp_log_fn
       xclose(pkgp_log_fn) # in order to not exceed system/awk limits...
    }
