@@ -52,7 +52,7 @@ enrich_pkgpath (){
     fields="$1"
     shift
 
-    awk -v pkg_src_summary="$PKG_SRC_SUMMARY" -v fields="$fields" '
+    awk -v pkg_src_summary="$pkg_src_summary_fn" -v fields="$fields" '
 BEGIN {
    fields = ("PKGPATH " fields)
    cnt=split(fields, n2f, / /)
@@ -88,7 +88,7 @@ fname in f2n {
    v [fname] = fvalue
    next
 }
-' "$PKG_SRC_SUMMARY" "$@"
+' "$pkg_src_summary_fn" "$@"
 }
 
 ######################################################################
