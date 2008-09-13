@@ -1,4 +1,53 @@
-Version 0.18.0, by Aleksey Cheusov,Wed,  3 Sep 2008 00:25:49 +0300
+Version 0.19.0, by Aleksey Cheusov, Sat, 13 Sep 2008 12:00:06 +0300
+
+  Multivariant packages, that is packages/modules for different
+  versions of Apache, Python and PHP can be built by "distbb". To
+  enable this set PKG_UPDATE_SRC_SUMMARY variable to
+    'pkg_src_summary -m ...'
+  in your distbb.conf.  Because of this new feature per-package
+  logging directories are changed from PKGPATH to PKGNAME. I don't
+  like this (sometimes this makes untrivial the searching for logs of
+  a particular packages) but I don't see any reasonable
+  alternatives. AFAIK Joerg's pbulk does the same.
+
+  "support for multivariant packages" feature has one interesting
+  side-effect. PKGPATHs passed to distbb (by -f, -p options or
+  LIST_ALL_PKGS_CMD variable in config file) can now be "enriched"
+  with building options.
+  Format for this "enriched" PKGPATH:
+     category/package[:var1=value1[,var2=value2[,...]]]
+  For example:
+     textproc/dictem:EMACS_TYPE=xemacs214
+     www/ap2-wsgi:PKG_APACHE=apache22,PYTHON_VERSION_REQD=25
+  Spaces are also allowed inside "valueN", they should be encoded as
+  symbol ~ (tilde).
+  As a result you can build several variants of a given package
+  with different options (see OPTIONS framework) by passing to distbb
+  "enriched" PKGPATHs like the following
+     sysutils/mc:PKG_OPTIONS.mc=-subshell~-slang~-charset,PKGNAME=mc-light-4.6.1nb4
+     sysutils/mc:PKG_OPTIONS.mc=samba,PKGNAME=mc-full-4.6.1nb4
+     sysutils/mc:PKG_OPTIONS.mc=-x11,PKGNAME=mc-nox11-4.6.1nb4
+
+  Local copy of pkg_src_summary (i.e. META/pkg_src_summary.txt) is
+  used for building packages and generating report. This means that
+  after stage_init finished, you may change PKG_SRC_SUMMARY file (by
+  another distbb bulk build, pkg_update_src_summary or whatever).
+
+  distbb.conf.in: no need for DISTBB_LOCK variable
+
+  stage_init.in: minor fixes (awk getline vs. end of file)
+
+  stage_init.in: if PKG_UPDATE_SRC_SUMMARY_CMD fails, its stderr is
+  output to stderr too, not only to META/build_src_summary_log.txt
+  (normally PKG_UPDATE_SRC_SUMMARY_CMD should always exit with exit
+  status 0, failure means fatal error).
+
+  Directories for logging (REPORT1_DIR/PKGNAME) are created as soon as
+  they become necessary, not all at once at the beginning...
+  Code for removing the empty logging directories is moved from
+  stage_gen_report to stage_build
+
+Version 0.18.0, by Aleksey Cheusov, Wed,  3 Sep 2008 00:25:49 +0300
 
   stage_build becomes rerunable. If, for example, your SLAVE hosts
   hanged up, turned off due to power lost or something similar
