@@ -104,7 +104,7 @@ runawk \
    -v packages_failed_fn=$packages_failed_fn.raw \
    -v packages_built_fn=$packages_built_fn.raw \
    -v progress_fn=$progress_fn \
-   -v pkg_src_summary=$PKG_SRC_SUMMARY \
+   -v pkg_src_summary=$pkg_src_summary_fn \
    -e '
 # input line format:
 #    $1 - <SLAVE_HOST>

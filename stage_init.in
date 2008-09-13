@@ -129,7 +129,7 @@ if test -z "$skip_updating_src_summary"; then
     verbose_print "done\n"
 fi
 
-cp "$PKG_SRC_SUMMARY" "$pkg_src_summary_fn"
+pkg_assignments2pkgpath "$PKG_SRC_SUMMARY" > "$pkg_src_summary_fn"
 
 ######################################################################
 ### packages for which pkg_src_summary failed.
@@ -156,7 +156,7 @@ END {
       if (! (pkgpath in printed))
          print pkgpath > packages_failed_scan_fn
    }
-}' $packages_fn.tmp $PKG_SRC_SUMMARY
+}' $packages_fn.tmp $pkg_src_summary_fn
 #rm $packages_fn.tmp
 touch $packages_fn
 verbose_print "done\n"
@@ -164,7 +164,7 @@ verbose_print "done\n"
 ######################################################################
 ### comparison binaries against pkgsrc tree
 verbose_print "  pkg_summary vs. pkg_src_summary comparison..."
-pkg_cmp_summary -m -p $refreshed_summary_fn $PKG_SRC_SUMMARY > $summary_cmp_fn
+pkg_cmp_summary -m -p $refreshed_summary_fn $pkg_src_summary_fn > $summary_cmp_fn
 verbose_print "done\n"
 
 ######################################################################
@@ -202,7 +202,7 @@ NF == 0 {
    delete deps
    pkgpath = ""
 }
-' "$PKG_SRC_SUMMARY"
+' "$pkg_src_summary_fn"
 }
 
 extract_depends
@@ -228,7 +228,7 @@ for d in dummy $EXTRA_DEPS; do
 	if (!($1 in deps))
 	    print d, $1
     }
-    ' $PKG_SRC_SUMMARY >> $deps_fn.tmp
+    ' $pkg_src_summary_fn >> $deps_fn.tmp
 
     test dummy = $d && continue
 
