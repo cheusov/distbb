@@ -98,7 +98,7 @@ print_failed_pkg (){
     # $3 - stage
     # $4 - maintainer
     # $5 - pkgname
-    short_pkgpath=$(echo $1 | cut -f1 -d:)
+    short_pkgpath="$(echo $1 | cut -f1 -d:)"
     if test -n "$2" && test "$2" != "Breaks"; then
 	__href_beg="`printf '<a href=\"../%s/failed_packages.txt\" title=\"packages failed due to %s\">' $5 $short_pkgpath`"
 	__href_end='</a>'
@@ -108,7 +108,6 @@ print_failed_pkg (){
     fi
 
     printf "  <tr><td><a href=\"../%s/stage_%s.html\" title=\"build log for %s\">%-27s</a></td> <td class=\"breaks\">${__href_beg}%7s${__href_end}</td> <td>%11s</td> <td align=\"right\">%27s</td>\n    <td align=\"right\">%-25s</td></tr>\n" "$5" "$3" "$short_pkgpath" "$short_pkgpath" "$2" "$3" "$4" "$5"
-#    printf "  <tr><td><a href=\"../%s/stage_%s.html\" title=\"build log for %s\">%-27s</a></td> <td class=\"breaks\">%7s</td> <td>%11s</td> <td align=\"right\">%27s</td>\n    <td align=\"right\">%-25s</td></tr>\n" "$1" "$3" "$1" "$1" "$2" "$3" "$4" "$5"
 }
 
 print_failed_deps_pkg (){
@@ -122,9 +121,11 @@ print_failed_deps_pkg (){
     else
 	failed_stage=$(get_failed_stage "$4" "$5")
     fi
-#    short_pkgpath=$(echo $1 | cut -f1 -d:)
-#    printf "  <tr><td>%-27s</td> <td align=\"left\"><a href=\"../%s/stage_%s.html\" title=\"build log for %s\">%s</a></td><td> %7s</td><td>\n  %-27s</td></tr>\n" "$1" "$4" "$failed_stage" "$4" "$4" "$3" "$2"
-    printf "  <tr><td>%-26s</td> <td align=\"left\"><a href=\"../%s/stage_%s.html\" title=\"build log for %s\">%-26s</a></td><td> %s</td></tr>\n" "$1" "$2" "$failed_stage" "$4" "$4" "$3"
+    short_pkgpath="$(echo $1 | cut -f1 -d:)"
+    if "$short_pkgpath" != "$1"; then
+	short_pkgpath="$short_pkgpath($2)"
+    fi
+    printf "  <tr><td>%-26s</td> <td align=\"left\"><a href=\"../%s/stage_%s.html\" title=\"build log for %s\">%-26s</a></td><td> %s</td></tr>\n" "$short_pkgpath" "$2" "$failed_stage" "$4" "$4" "$3"
 }
 
 pkgpath2maintainer (){

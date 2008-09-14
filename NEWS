@@ -1,3 +1,8 @@
+Version 0.19.1, by Aleksey Cheusov, Sun, 14 Sep 2008 11:11:33 +0300
+
+  minor addition in stage_gen_report: failed package in "Failed due to
+  dependencies" section are now printed in their "short" form.
+
 Version 0.19.0, by Aleksey Cheusov, Sat, 13 Sep 2008 12:00:06 +0300
 
   Multivariant packages, that is packages/modules for different
