@@ -125,7 +125,7 @@ print_failed_deps_pkg (){
     if test "$short_pkgpath" != "$1"; then
 	short_pkgpath="$short_pkgpath($2)"
     fi
-    printf "  <tr><td>%-26s</td> <td align=\"left\"><a href=\"../%s/stage_%s.html\" title=\"build log for %s\">%-26s</a></td><td> %s</td></tr>\n" "$short_pkgpath" "$2" "$failed_stage" "$4" "$4" "$3"
+    printf "  <tr><td>%-26s</td> <td align=\"left\"><a href=\"../%s/stage_%s.html\" title=\"build log for %s\">%-26s</a></td><td> %s</td></tr>\n" "$short_pkgpath" "$5" "$failed_stage" "$4" "$4" "$3"
 }
 
 pkgpath2maintainer (){
