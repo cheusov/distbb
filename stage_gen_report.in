@@ -116,16 +116,21 @@ print_failed_deps_pkg (){
     # $3 - maintainer
     # $4 - deppath
     # $5 - depname
-    if test "$1" = Package; then
-	failed_stage=''
-    else
+    failed_stage=''
+    if test "$1" != Package -a -n "$4"; then
 	failed_stage=$(get_failed_stage "$4" "$5")
     fi
     short_pkgpath="$(echo $1 | cut -f1 -d:)"
     if test "$short_pkgpath" != "$1"; then
 	short_pkgpath="$short_pkgpath($2)"
     fi
-    printf "  <tr><td>%-26s</td> <td align=\"left\"><a href=\"../%s/stage_%s.html\" title=\"build log for %s\">%-26s</a></td><td> %s</td></tr>\n" "$short_pkgpath" "$5" "$failed_stage" "$4" "$4" "$3"
+
+    if test -n "$1"; then
+	printf "  <tr><td>%-42s</td> <td> %s</td></tr>\n" "$short_pkgpath" "$3"
+    else
+	printf "  <tr><td align=\"left\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"../%s/stage_%s.html\" title=\"build log for %s\">     %-37s</a></td><td>       %s</td></tr>\n" "$5" "$failed_stage" "$4" "$4" "$3"
+    fi
+#    printf "  <tr><td>%-26s</td> <td align=\"left\"><a href=\"../%s/stage_%s.html\" title=\"build log for %s\">%-26s</a></td><td> %s</td></tr>\n" "$short_pkgpath" "$5" "$failed_stage" "$4" "$4" "$3"
 }
 
 pkgpath2maintainer (){
@@ -275,7 +280,7 @@ EOF
     printf '%s' '<table width="100%">'
 
     echo ''
-    print_failed_deps_pkg 'Package' '' 'Maintainer' 'Failed dependencies' |
+    print_failed_deps_pkg 'Package/Dependancy' '' 'Maintainer' |
     sed -e 's,<a[^<>]*>,,' \
 	-e 's,</a[^<>]*>,,' \
 	-e 's,[A-Z][a-z ]*,<b>&</b>,g'
@@ -283,13 +288,9 @@ EOF
 
     while read pkgpath maintainer pkgname; do
 	fn="$REPORT1_DIR/$pkgname/failed_because.txt"
-	cnt=$(count_lines "$fn")
-	deppath=$(head -1 "$fn")
-	depname=$(pkgpath2pkgname "$deppath")
-	depX=$(awk -v cnt="$cnt" -v failed_deps_cnt="$MAX_FAILED_DEPS_CNT" \
-	    'NR > cnt-failed_deps_cnt+1 && NR > 1' "$fn")
+	depX=$(head -n "$MAX_FAILED_DEPS_CNT" "$fn")
 	print_failed_deps_pkg \
-	    "$pkgpath" "$pkgname" "$maintainer" "$deppath" "$depname"
+	    "$pkgpath" "$pkgname" "$maintainer" '' ''
 	for deppath in $depX; do
 	    maintainer=$(pkgpath2maintainer "$deppath")
 	    depname=$(pkgpath2pkgname "$deppath")
