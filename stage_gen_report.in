@@ -160,7 +160,7 @@ report_html (){
 EOF
 
     if test "$RESPONSIBLE"; then
-	echo "<p>$RESPONSIBLE</p>"
+	echo "<p>$RESPONSIBLE</p> <!-- REMOVE ME -->"
     fi
 
     if test "$NOTES"; then
@@ -182,7 +182,7 @@ EOF
   <tr><td>Packages built previously</td>       <td align="right">$(right_align 20 $packages_built_prev_cnt)</td><td>&nbsp;&nbsp;&nbsp;<a href="$(basename $packages_built_prev_fn)" title="List of packages built previously"> list</a></td></tr>
   <tr class="pkg-built"><td>Packages built</td>                  <td align="right">$(right_align 20 $packages_built_cnt)</td><td>&nbsp;&nbsp;&nbsp;<a href="$(basename $packages_built_fn)" title="List of successfully built packages"> list</a></td></tr>
   <tr class="pkg-failed"><td>Packages failed</td>                 <td align="right">$(right_align 20 $packages_failed_cnt)</td><td>&nbsp;&nbsp;&nbsp;<a href="$(basename $packages_failed_fn)" title="List of failed packages"> list</a></td></tr>
-  <tr class="pkg-faileddeps"><td>Packages failed due to them</td>     <td align="right">$(right_align 20 $packages_failed_deps_cnt)</td><td>&nbsp;&nbsp;&nbsp;<a href="$(basename $packages_failed_deps_fn)" title="List of packages failed due to their dependancies"> list</a></td></tr>
+  <tr class="pkg-faileddeps"><td>Packages failed due to them</td>     <td align="right">$(right_align 20 $packages_failed_deps_cnt)</td><td>&nbsp;&nbsp;&nbsp;<a href="$(basename $packages_failed_deps_fn)" title="List of packages failed due to their dependencies"> list</a></td></tr>
 EOF
 
     if  test "$packages_failed_scan_cnt" -gt 0 ||
@@ -283,7 +283,7 @@ EOF
     printf '%s' '<table width="100%">'
 
     echo ''
-    print_failed_deps_pkg 'Package/Dependancy' '' 'Maintainer' |
+    print_failed_deps_pkg 'Package/Dependency' '' 'Maintainer' |
     sed -e 's,<a[^<>]*>,,' \
 	-e 's,</a[^<>]*>,,' \
 	-e 's,[A-Z][a-z ]*,<b>&</b>,g'
@@ -443,10 +443,16 @@ report_html2txt (){
       next
    }
    {
-      gsub(/<hr>/, "--------------------------------------------------------------------------------")
+      gsub(/<hr>/, "---------------------------------------------------------------------------")
       gsub(/<!--|-->/, "")
       gsub(/<[^<>]*>/, "")
       gsub(/&[a-z]*;/, "")
+   }
+   /Failed packages/, /------------/ {
+      if (NF == 4) printf "  %-35s %6s %-34s\n", $1, $2, $4
+      else if (NF == 3) printf "  %-35s %6s %-34s\n", $1, "", $3
+      else print $0
+      next
    }
    /Summary/, /Failures per/ {
       if (NF > 0 && $NF ~ /^(list|logs)$/)
@@ -459,7 +465,7 @@ report_html2txt (){
 }
 
 report_txt_fn="$meta_dir/report.txt"
-report_html | report_html2txt > "$report_txt_fn"
+report_html | report_html2txt | sed 's| *$||' > "$report_txt_fn"
 
 ### generate per file HTMLs
 stage2html (){
