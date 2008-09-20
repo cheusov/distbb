@@ -101,8 +101,8 @@ postfilter (){
     # removes unneeded bulk_log/pkgpath directories etc.
 runawk \
    -v report1_dir=$REPORT1_DIR \
-   -v packages_failed_fn=$packages_failed_fn.raw \
-   -v packages_built_fn=$packages_built_fn.raw \
+   -v packages_failed_fn=$packages_failed_fn.tmp \
+   -v packages_built_fn=$packages_built_fn.tmp \
    -v progress_fn=$progress_fn \
    -v pkg_src_summary=$pkg_src_summary_fn \
    -e '

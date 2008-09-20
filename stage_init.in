@@ -50,9 +50,9 @@ verbose_print "Preparations\n"
 
 printf '' > $packages_failed_scan_fn
 printf '' > $packages_failed_deps_fn
-printf '' > $packages_failed_fn.raw
+printf '' > $packages_failed_fn.tmp
 printf '' > $packages_built_prev_fn
-printf '' > $packages_built_fn.raw
+printf '' > $packages_built_fn.tmp
 
 printf '' > $progress_fn
 
@@ -441,7 +441,7 @@ END {
 
 runpipe0 \
     generate_built_prev '|' \
-    env LC_ALL=C sort > "$packages_built_prev_fn.raw"
+    env LC_ALL=C sort > "$packages_built_prev_fn.tmp"
 
 verbose_print "done\n"
 

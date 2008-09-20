@@ -49,7 +49,7 @@ find_failed_deps_packages (){
 	xargs cat '|' env LC_ALL=C sort -u
 }
 
-find_failed_deps_packages > "$packages_failed_deps_fn.raw"
+find_failed_deps_packages > "$packages_failed_deps_fn.tmp"
 
 # resort failed_because.txt and failed_packages.txt
 find $REPORT1_DIR -type f \
@@ -301,36 +301,36 @@ EOF
 }
 
 packages_failed_scan_cnt=$(count_lines "$packages_failed_scan_fn")
-packages_failed_deps_cnt=$(count_lines "$packages_failed_deps_fn.raw")
-packages_failed_cnt=$(count_lines "$packages_failed_fn.raw")
-packages_built_cnt=$(count_lines "$packages_built_fn.raw")
-packages_built_prev_cnt=$(count_lines "$packages_built_prev_fn.raw")
+packages_failed_deps_cnt=$(count_lines "$packages_failed_deps_fn.tmp")
+packages_failed_cnt=$(count_lines "$packages_failed_fn.tmp")
+packages_built_cnt=$(count_lines "$packages_built_fn.tmp")
+packages_built_prev_cnt=$(count_lines "$packages_built_prev_fn.tmp")
 packages_total=$(($packages_built_cnt+$packages_built_prev_cnt))
 packages_in_summary=$(awk '{cnt += ($0 ~ /^PKGNAME=/)} END {print cnt}' "$PKG_SUMMARY")
 
 enriched_failed_fn="$tmpdir/enriched_failed.tmp"
 enrich_pkgpath "MAINTAINER PKGNAME" \
-    "$packages_failed_fn.raw" > "$enriched_failed_fn"
+    "$packages_failed_fn.tmp" > "$enriched_failed_fn"
 
 enriched_failed_deps_fn="$tmpdir/enriched_failed_deps.tmp"
 enrich_pkgpath "MAINTAINER PKGNAME" \
-    "$packages_failed_deps_fn.raw" > "$enriched_failed_deps_fn"
+    "$packages_failed_deps_fn.tmp" > "$enriched_failed_deps_fn"
 
 ##
 
 verbose_print "  enriching META/packages_*.txt..."
 
 runpipe0 \
-    enrich_pkgpath 'PKGNAME MAINTAINER' $packages_built_prev_fn.raw '|' \
+    enrich_pkgpath 'PKGNAME MAINTAINER' $packages_built_prev_fn.tmp '|' \
     sort > $packages_built_prev_fn
 runpipe0 \
-    enrich_pkgpath 'PKGNAME MAINTAINER' $packages_built_fn.raw '|' \
+    enrich_pkgpath 'PKGNAME MAINTAINER' $packages_built_fn.tmp '|' \
     sort > $packages_built_fn
 runpipe0 \
-    enrich_pkgpath 'PKGNAME MAINTAINER' $packages_failed_fn.raw '|' \
+    enrich_pkgpath 'PKGNAME MAINTAINER' $packages_failed_fn.tmp '|' \
     sort > $packages_failed_fn
 runpipe0 \
-    enrich_pkgpath 'PKGNAME MAINTAINER' $packages_failed_deps_fn.raw '|' \
+    enrich_pkgpath 'PKGNAME MAINTAINER' $packages_failed_deps_fn.tmp '|' \
     sort > $packages_failed_deps_fn
 
 verbose_print "done\n"
