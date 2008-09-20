@@ -217,7 +217,7 @@ EOF
 
     # failures per maintainer
     cat <<EOF
-
+<hr>
 <h3><a name="failures per maintainer"></a>Failures per maintainer</h3>
 
 EOF
@@ -248,7 +248,7 @@ EOF
 
     # failed packages
     cat <<EOF
-
+<hr>
 <h3><a name="failed"></a>Failed packages</h3>
 
 EOF
@@ -275,7 +275,10 @@ EOF
     printf '%s\n' "</table>"
 
     # failed dependencies
-    echo '<h3><a name="failed depends"></a>Failed due to dependencies</h3>'
+    cat <<EOF
+<hr>
+<h3><a name="failed depends"></a>Failed due to dependencies</h3>
+EOF
 
     printf '%s' '<table width="100%">'
 
