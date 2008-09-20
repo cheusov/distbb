@@ -300,7 +300,12 @@ EOF
 	    print_failed_deps_pkg '' '' "$maintainer" "$deppath" "$depname"
 	done
     done < "$enriched_failed_deps_fn"
-    printf "%s\n" "</table>"
+
+    # the end
+    cat <<EOF
+</table>
+<hr>
+EOF
 }
 
 packages_failed_scan_cnt=$(count_lines "$packages_failed_scan_fn")
@@ -438,6 +443,7 @@ report_html2txt (){
       next
    }
    {
+      gsub(/<hr>/, "--------------------------------------------------------------------------------")
       gsub(/<!--|-->/, "")
       gsub(/<[^<>]*>/, "")
       gsub(/&[a-z]*;/, "")
