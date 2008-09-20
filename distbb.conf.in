@@ -56,60 +56,55 @@ PKG_SRC_SUMMARY="$PKGSRCDIR/pkg_src_summary.txt"
 # PKG_UPDATE_SRC_SUMMARY_CMD - receives a list of requested packages
 #                              from stdin
 #
-# the following variant for PKG_UPDATE_SRC_SUMMARY_CMD
+# If you want to build short version of src_summary, uncomment the following
+# (see pkg_src_summary(1))
+#export PSS_FIELDS='PKGNAME PKGPATH DEPENDS BUILD_DEPENDS MAINTAINER NO_BIN_ON_FTP NO_BIN_ON_CDROM'
+#
+# If you want to build multi-variant packages, uncomment the following
+#export PSS_OPTIONS='-m' # for building multi-variant packages
+# (see pkg_src_summary(1))
+#
+# For generating an "expanded" PLIST.
+# Useless for distbb but looks very nice ;-)
+#export PSS_OPTIONS='-p'
+# (see pkg_src_summary(1))
+#
+# The following variant for PKG_UPDATE_SRC_SUMMARY_CMD
 # updates pkg_src_summary efficiently, but ALL packages in pkgsrc tree
-# will be included to pkg_src_summary (actually it ignores its stdin).
-# In order to update efficiently pkg_update_src_summary
-# uses some hacks/tricks.
-# Also note that if pkg_update_src_summary is used and both PSS_SLAVES and
-# PSS_TRANSPORT are set make sure that master host's /usr/pkgsrc is the same
-# as slave hosts' one.
-#export PSS_OPTIONS='-m' # see pkg_src_summary(1)
+# will be included to pkg_src_summary
+# (pkg_update_src_summary ignores its stdin).
+# If pkg_update_src_summary is used and both PSS_SLAVES and
+# PSS_TRANSPORT are set, make sure that master host's /usr/pkgsrc is the same
+# as slave hosts' ones.
 #PKG_UPDATE_SRC_SUMMARY_CMD="@@bindir@@/pkg_update_src_summary '$PKG_SRC_SUMMARY'"
-
-# The same as above, but only necessary fields are included.
-#PKG_UPDATE_SRC_SUMMARY_CMD="@@bindir@@/pkg_update_src_summary -i 'PKGNAME PKGPATH DEPENDS BUILD_DEPENDS MAINTAINER' > '$PKG_SRC_SUMMARY'"
 
 # If your machine is very fast, you can use program 'pkg_src_summary'
 # to build src_summary. See below for PSS_* variables
 # to make summary using several processes or remote machines.
-# Also there are no hacks/tricks here.
 # Unlike previous variant with pkg_update_src_summary, summary
 # for only requested packages will be included to pkg_src_summary.
 # If you build only a few packages using 'distbb -f' this variant is prefered.
-#PKG_UPDATE_SRC_SUMMARY_CMD="@@bindir@@/pkg_src_summary -A > '$PKG_SRC_SUMMARY'"
-
-# The same as above but "expanded" PLIST is generated.
-# Useless for distbb but looks very nice ;-)
-#PKG_UPDATE_SRC_SUMMARY_CMD="@@bindir@@/pkg_src_summary -p -A > '$PKG_SRC_SUMMARY'"
-
-# The same as above but only required fields are included.
-# It works a little faster than previous two variants.
-# PKG_UPDATE_SRC_SUMMARY_CMD="@@bindir@@/pkg_src_summary -A -f 'PKGNAME PKGPATH DEPENDS BUILD_DEPENDS MAINTAINER' > '$PKG_SRC_SUMMARY'"
-
-# If you want to build all allowed variations of packages
-# that depend on e.g. python, php and apache, add -m option
-PKG_UPDATE_SRC_SUMMARY_CMD="@@bindir@@/pkg_src_summary -m -A -f 'PKGNAME PKGPATH DEPENDS BUILD_DEPENDS MAINTAINER' > '$PKG_SRC_SUMMARY'"
+PKG_UPDATE_SRC_SUMMARY_CMD="@@bindir@@/pkg_src_summary -A > '$PKG_SRC_SUMMARY'"
 
 # if you want to build src_summary using several processes or several
-# machines in a network, set PSS_SLAVES to non-empty string.
-# See pkg_src_summary(1) for details
-#    (hint: pkg_src_summary is called by pkg_update_src_summary
-#           and pkg_micro_src_summary).
+# machines in a network, set PSS_SLAVES.
+# (see pkg_src_summary(1))
+# NOTE: pkg_src_summary is called
+#    by both pkg_src_summary and pkg_update_src_summary
 # NOTE: PSS_* variables MUST be exported.
 #
 
 # 6 parallel local processes (for 4-CPU SMP machine)
-# Note that if you set PSS_SLAVES=+NUM pkg_src_summary will be generated
-# on master host. This may dangerous
+# Note that if you set PSS_SLAVES=+NUM, pkg_src_summary will be generated
+# on master host. This may be dangerous
 # (master host != slave host ===> different pkg_src_summaries)
-# and is therefore not recomented. It is recomended to always
+# and is therefore is not recomented. It is recomended to always
 # generate pkg_src_summary on slave hosts.
 #export PSS_SLAVES=+6
 #export PSS_SLAVES='' # dangerous for the same reason
 
 # Gnerating pkg_src_summary on slave hosts (recomended)
-#export PSS_SLAVES="$SLAVES $SLAVES"
+#export PSS_SLAVES="$SLAVES $SLAVES" # 2 processes per slave machine
 
 export PSS_SLAVES="$SLAVES" # reasonable default
 
@@ -158,8 +153,7 @@ CLEAN_TARGET='clean'
 #    be not fully correct
 TARGETS='dbb_init clean dbb_canbebuilt depends fetch checksum extract patch configure build install package deinstall'
 # the following is for USE_DESTDIR=yes|full
-#TARGETS='dbb_init clean depends fetch checksum configure build package bin-install deinstall'
-#TARGETS='dbb_init clean depends fetch checksum configure build package package-install deinstall'
+#TARGETS='dbb_init clean dbb_canbebuilt depends fetch checksum extract patch configure build package bin-install deinstall'
 
 # extra options passed to bmake
 # BATCH is mandatory for bulk builds!
@@ -191,31 +185,34 @@ NOTES=''
 
 SPECIAL_PACKAGES="\
 #PKGPATH=pkgtools/digest
-#TARGETS=depends fetch checksum configure build package
+#TARGETS=dbb_init clean dbb_canbebuilt depends fetch checksum extract patch configure build package replace
 #EXTRA_OPTS=BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=full CHECK_SHLIBS=no
 #
 #PKGPATH=pkgtools/bootstrap-mk-files
-#TARGETS=depends fetch checksum configure build package
+#TARGETS=dbb_init clean dbb_canbebuilt depends fetch checksum extract patch configure build package replace
 #EXTRA_OPTS=BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=full CHECK_SHLIBS=no
 #
 #PKGPATH=net/tnftp
-#TARGETS=depends fetch checksum configure build package
+#TARGETS=dbb_init clean dbb_canbebuilt depends fetch checksum extract patch configure build package replace
 #EXTRA_OPTS=BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=full CHECK_SHLIBS=no
 #
 #PKGPATH=sysutils/checkperms
-#TARGETS=depends fetch checksum configure build package
+#TARGETS=dbb_init clean dbb_canbebuilt depends fetch checksum extract patch configure build package replace
 #EXTRA_OPTS=BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=full CHECK_SHLIBS=no
 #
 #PKGPATH=devel/bmake
-#TARGETS=depends fetch checksum configure build package
+#TARGETS=dbb_init clean dbb_canbebuilt depends fetch checksum extract patch configure build package replace
 #EXTRA_OPTS=BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=full CHECK_SHLIBS=no
 #
 #PKGPATH=pkgtools/pkg_install
-#TARGETS=depends fetch checksum configure build package
+#TARGETS=dbb_init clean dbb_canbebuilt depends fetch checksum extract patch configure build package replace
 #EXTRA_OPTS=BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=full CHECK_SHLIBS=no
 #
 #PKGPATH=audio/festival # TARGETS is not changed!
-#EXTRA_OPTS=CC=/usr/bin/gcc-3.4 CXX=/usr/bin/g++-3.4
+#EXTRA_OPTS=CC=/usr/bin/gcc-3.4 CXX=/usr/bin/g++-3.4 BATCH=yes PKG_VERBOSE=1
+#
+#PKGPATH=emulators/qemu # TARGETS is not changed!
+#EXTRA_OPTS=CC=/usr/bin/gcc-3.4 CXX=/usr/bin/g++-3.4 BATCH=yes PKG_VERBOSE=1
 #
 "
 
