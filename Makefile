@@ -25,10 +25,11 @@ SCRIPTS=			distbb stage_init \
 				stage_build stage_gen_report \
 				stage_upload_logs \
 				stage_upload_pkgs stage_report \
-				slave bb_diff
+				slave distbb_diff
 
 SCRIPTSDIR=			${LIBEXECDIR}
 SCRIPTSDIR_distbb=		${BINDIR}
+SCRIPTSDIR_distbb_diff=		${BINDIR}
 
 FILES=				distbb.conf distbb.local.mk
 FILES+=				distbb.mk common
