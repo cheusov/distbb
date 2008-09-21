@@ -148,10 +148,10 @@ $0 ~ /^[^ ]+ [0-9]+ failure$/ {
    next
 }
 
-status [$2] == "failure" && !($2 in failed_packages) {
+status [$2] == "failure" && !($2 in failed_deps) {
    task_number = $2
    $1 = $2 = ""
-   failed_packages [task_number] = $0
+   failed_deps [task_number] = $0
    next
 }
 
@@ -190,7 +190,7 @@ function free_arrs (task){
    delete run_on   [task]
    delete status [task]
    delete stage [task]
-   delete failed_packages [task]
+   delete failed_deps [task]
 }
 
 status [$2] == "success" {
@@ -224,8 +224,8 @@ status [$2] == "failure" {
    xclose(packages_failed_fn)
 
    # indirectly failed
-   cnt = split(failed_packages [$2], failed_pkgs)
-   log_fn  = log_dir "/failed_packages.txt"
+   cnt = split(failed_deps [$2], failed_pkgs)
+   log_fn  = log_dir "/failed_deps.txt"
    printf "" > log_fn
    for (i=2; i <= cnt; ++i){
       fpkg = failed_pkgs [i]

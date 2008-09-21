@@ -43,15 +43,15 @@ build_end=$(cat "$build_end_fn")
 
 find_failed_deps_packages (){
     runpipe0 \
-	find "$REPORT1_DIR" -name failed_packages.txt '|' \
+	find "$REPORT1_DIR" -name failed_deps.txt '|' \
 	xargs cat '|' env LC_ALL=C sort -u
 }
 
 find_failed_deps_packages > "$packages_failed_deps_fn.tmp"
 
-# resort failed_because.txt and failed_packages.txt
+# resort failed_because.txt and failed_deps.txt
 find $REPORT1_DIR -type f \
-    '(' -name failed_because.txt -o -name failed_packages.txt ')' |
+    '(' -name failed_because.txt -o -name failed_deps.txt ')' |
 while read f; do
     env LC_ALL=C sort -u $f > $f.tmp
     mv $f.tmp $f
@@ -98,7 +98,7 @@ print_failed_pkg (){
     # $5 - pkgname
     short_pkgpath="$(echo $1 | cut -f1 -d:)"
     if test -n "$2" && test "$2" != "Breaks"; then
-	__href_beg="`printf '<a href=\"../%s/failed_packages.txt\" title=\"packages failed due to %s\">' $5 $short_pkgpath`"
+	__href_beg="`printf '<a href=\"../%s/failed_deps.txt\" title=\"packages failed due to %s\">' $5 $short_pkgpath`"
 	__href_end='</a>'
     else
 	__href_beg=''
@@ -232,7 +232,7 @@ EOF
 
 	echo "$maintainer $pkgpath"
 	awk -v m=$maintainer '
-	   { print m, $1}' "$REPORT1_DIR/$pkgname/failed_packages.txt"
+	   { print m, $1}' "$REPORT1_DIR/$pkgname/failed_deps.txt"
     done | env LC_ALL=C sort -u |
     awk '{++count [$1]}
     END {for (m in count) print m, count [m] }' |
@@ -259,7 +259,7 @@ EOF
 
     cat "$enriched_failed_fn" |
     while read pkgpath maintainer pkgname; do
-	breaks=$(count_lines "$REPORT1_DIR/$pkgname/failed_packages.txt")
+	breaks=$(count_lines "$REPORT1_DIR/$pkgname/failed_deps.txt")
 	failed_stage=$(get_failed_stage "$pkgpath" "$pkgname")
 	echo "$pkgpath $breaks $failed_stage $maintainer $pkgname"
     done |
