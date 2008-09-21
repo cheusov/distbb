@@ -110,13 +110,17 @@ runawk \
 
 function print_failed (pkg, prefix){
    if (pkg in failed_new)
-      print prefix, pkg
+      print prefix, pkg, pkg_ver [pkg]
    else if (pkg in failed_dep_new)
-      print prefix "D", pkg
+      print prefix "D", pkg, pkg_ver [pkg]
    else if (pkg in failed_scan_new)
       print prefix "S", pkg
    else
       abort("this should not happen")
+}
+
+function print_succeeded (pkg, prefix){
+   print prefix, pkg, pkg_ver [pkg]
 }
 
 BEGIN {
@@ -124,8 +128,16 @@ BEGIN {
 
    while (xgetline0(cmp_fn)) {
       sub(/:.*$/, "", $2)    # multivar pkg -> normal PKGPATH
-      if ($1 == "+") pkg_new [$2, $3] = 1
-      else if ($1 == "-") pkg_del [$2, $3] = 1
+      if ($1 == "+")
+         pkg_ver [$2, $3] = pkg_new [$2, $3] = $4
+      else if ($1 == "-")
+         pkg_del [$2, $3] = 1
+      else if ($1 ~ /^[=<>]$/){
+         if ($4 != $5)
+            pkg_ver [$2, $3] = ($4 " -> " $5)
+         else
+            pkg_ver [$2, $3] = $4
+      }
    }
    while (xgetline0(total1_fn)) {
       sub(/:.*$/, "", $1)
@@ -166,9 +178,9 @@ BEGIN {
    }
    for (i in total_new){
       if (i in pkg_new)
-         print "N+", i
+         print_succeeded(i, "N+")
       else if (! (i in total_old))
-         print "+", i
+         print_succeeded(i, "+")
    }
 }
 ' $ignore_fn $total1_fn $total2_fn
