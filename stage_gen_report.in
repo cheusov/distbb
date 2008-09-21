@@ -123,6 +123,32 @@ pkgpath2pkgname (){
     awk -v pkgpath="$1" '$1 == pkgpath {print $3; exit}' "$enriched_failed_fn"
 }
 
+distbb_diff2html (){
+    awk -v report1_dir=$REPORT1_DIR -F'\t' '
+function p (progress, pkgpath, pkgbase, version) {
+   printf "<tr><td>%s</td> <td>%s</td><td>%s</td><td>%s</td></tr>\n",
+	progress, pkgpath, pkgbase, version
+}
+BEGIN {
+   p("", "<b>Package</b>", "<b>PKGBASE</b>", "<b>Version[s]</b>")
+}
+{
+   if ($1 ~ /^N?-$/){
+      ver = $4
+      sub(/.* /, "", ver)
+
+      stage_fn = report1_dir "/" $3 "-" ver "/curr_stage.tmp"
+      getline failed_stage < stage_fn
+      close(stage_fn)
+
+      $2 = sprintf("<a href=\"../%s/stage_%s.html\" title=\"build log for %s\">%-27s</a>", $3 "-" ver, failed_stage, $2, $2)
+      $1 = "<b>" $1 "</b>"
+   }
+   p($1, $2, $3, $4)
+}
+' "$@"
+}
+
 report_html (){
     if test "$PACKAGES_URL"; then
 	url="<a href=\"$PACKAGES_URL\" title=\"binary packages\">binary packages</a>"
@@ -280,12 +306,30 @@ EOF
 	    print_failed_deps_pkg '' '' "$maintainer" "$deppath" "$depname"
 	done
     done < "$enriched_failed_deps_fn"
+    printf '%s\n' "</table>"
+
+    # previous bulk build vs. this one
+    if test -n "$DISTBB_DIFF"; then
+	bbid_prev=$(tail -2 $bb_history_fn | head -1)
+	bbdir_prev="$REPORTS_DIR/$bbid_prev"
+	if test "$bbid_prev" != "$BUILD_ID" && test -d $bbdir_prev; then
+	    cat <<EOF
+<hr>
+<h3><a name="failed depends"></a>$bbid_prev vs. $BUILD_ID progress</h3>
+<p>'-' package was built successfully but now fails<br>
+'+' package failed previously but now is built successfully<br>
+'d' fails because of failed dependancy<br>
+'N' package is new<br>
+'R' package is removed<br>
+</p><table width="100%%">
+EOF
+	    distbb_diff $bbdir_prev $REPORT1_DIR | distbb_diff2html
+	    printf '</table>'
+	fi
+    fi
 
     # the end
-    cat <<EOF
-</table>
-<hr>
-EOF
+    printf '<hr>\n'
 }
 
 packages_failed_scan_cnt=$(count_lines "$packages_failed_scan_fn")

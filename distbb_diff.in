@@ -124,7 +124,7 @@ function print_failed (pkg, prefix){
    if (pkg in failed_new)
       print prefix, pkg, pkg_ver [pkg]       > res_failed_fn
    else if (pkg in failed_dep_new)
-      print prefix "D", pkg, pkg_ver [pkg]   > res_failed_fn
+      print prefix "d", pkg, pkg_ver [pkg]   > res_failed_fn
    else if (pkg in failed_scan_new)
       print prefix "S", pkg                  > res_failed_fn
    else
