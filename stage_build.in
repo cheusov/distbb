@@ -168,6 +168,11 @@ $3 == "--**--**--" && $5 == "--**--**--" {
    stage [$2] = $4
    printf "" > (log_dir "/stage_" $4 ".tmp")
 
+   # for detecting failed stage
+   curr_stage_fn = (log_dir "/curr_stage.tmp")
+   print $4 > curr_stage_fn
+   xclose(curr_stage_fn)
+
    next
 }
 

@@ -69,25 +69,7 @@ right_align (){
 get_failed_stage (){
     # $1 - pkgpath
     # $2 - pkgname
-    failed_stage_fn="$REPORT1_DIR/$2/failed_stage.tmp"
-    if ! test -d "$REPORT1_DIR/$2"; then
-	echo ''
-	return
-    fi
-
-    if test -f "$failed_stage_fn"; then
-	cat "$failed_stage_fn"
-	return
-    fi
-
-    for t in $TARGETS; do
-	if ! test -f "$REPORT1_DIR/$2/stage_$t.tmp"; then
-	    continue
-	fi
-
-	failed_stage="$t"
-    done
-    echo "$failed_stage" | tee "$failed_stage_fn"
+    cat "$REPORT1_DIR/$2/curr_stage.tmp"
 }
 
 print_failed_pkg (){
