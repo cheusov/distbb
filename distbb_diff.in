@@ -94,11 +94,30 @@ pkg_cmp_summary -p \
 total1_fn=$bbdir1/META/packages_total.txt
 total2_fn=$bbdir2/META/packages_total.txt
 
+failed_fn=$bbdir2/META/packages_failed.txt
+failed_dep_fn=$bbdir2/META/packages_failed_deps.txt
+failed_scan_fn=$bbdir2/META/packages_failed_scan.txt
+
 runawk \
    -v cmp_fn="$cmp_fn" \
    -v total1_fn=$total1_fn \
-   -v total2_fn=$total2_fn -e '
+   -v total2_fn=$total2_fn \
+   -v failed_fn=$failed_fn \
+   -v failed_dep_fn=$failed_dep_fn \
+   -v failed_scan_fn=$failed_scan_fn \
+   -e '
 #use "xgetline.awk"
+
+function print_failed (pkg, prefix){
+   if (pkg in failed_new)
+      print prefix, pkg
+   else if (pkg in failed_dep_new)
+      print prefix "D", pkg
+   else if (pkg in failed_scan_new)
+      print prefix "S", pkg
+   else
+      abort("this should not happen")
+}
 
 BEGIN {
    SUBSEP = " "
@@ -118,33 +137,38 @@ BEGIN {
       sub(/-[^-]*$/, "", $2)
       total_new [$1, $2] = $3
    }
-   while (xgetline0(failed1_fn)) {
-      sub(/:.*$/, "", $1)
-      sub(/-[^-]*$/, "", $2)
-      failed_old [$1, $2] = $3
-   }
-   while (xgetline0(failed2_fn)) {
+   while (xgetline0(failed_fn)) {
       sub(/:.*$/, "", $1)
       sub(/-[^-]*$/, "", $2)
       failed_new [$1, $2] = $3
+   }
+   while (xgetline0(failed_dep_fn)) {
+      sub(/:.*$/, "", $1)
+      sub(/-[^-]*$/, "", $2)
+      failed_dep_new [$1, $2] = $3
+   }
+   while (xgetline0(failed_scan_fn)) {
+      sub(/:.*$/, "", $1)
+      sub(/-[^-]*$/, "", $2)
+      failed_scan_new [$1, $2] = $3
    }
 
    # print results
    for (i in total_old){
       if (i in pkg_del)
-         print "R-", i
+         print "R", i
       else if (! (i in total_new))
-         print "-", i
+         print_failed(i, "-")
+   }
+   for (i in pkg_new){
+      if (! (i in total_new))
+         print_failed(i, "N-")
    }
    for (i in total_new){
       if (i in pkg_new)
          print "N+", i
       else if (! (i in total_old))
          print "+", i
-   }
-   for (i in pkg_new){
-      if (! (i in total_new))
-         print "N-", i
    }
 }
 ' $ignore_fn $total1_fn $total2_fn
