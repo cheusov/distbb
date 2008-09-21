@@ -5,7 +5,6 @@ PKGSRC_PREFIX="/usr/pkg"
 
 # pkgsrc friendly make
 BMAKE=/usr/bin/make       # for NetBSD
-#BMAKE=/usr/bin/make -K /usr/pkg/var/db/pkg
 #BMAKE=$PKGSRC_PREFIX/bin/bmake # for other OS
 
 # pkgsrc prefix
