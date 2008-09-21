@@ -25,23 +25,50 @@
 
 set -e
 
-# usage: stage_upload_logs OLD_BUILD_ID NEW_BUILD_ID
-test $# -eq 2
+# usage: distbb_diff dir1 dir2
+usage (){
+    cat <<EOF
+distbb_diff - compare results of two bulk builds
+
+usage: distbb_diff [OPTIONS] bbdir1 bbdir2
+OPTIONS:
+  -h|--help              display this help message
+  -V|--version           distbb version
+EOF
+}
+
+while test $# -ne 0; do
+    case "$1" in
+	-h|--help)
+	    usage
+	    exit 0;;
+	-V|--version)
+	    echo distbb-@@version@@
+	    exit 0;;
+	--)
+	    shift
+	    break;;
+	-*)
+	    echo "Bad option $1" 1>&2
+	    exit 1;;
+	*)
+	    break
+    esac
+    shift
+done
+
+if test $# -ne 2; then
+    usage
+    exit 1
+fi
+
+######################################################################
 
 # init
-bbid1="$1"
-bbid2="$2"
+bbdir1="$1"
+bbdir2="$2"
 shift
 shift
-
-. @@sysconfdir@@/distbb.conf
-
-BUILD_ID=fake/fake
-
-. @@libexecdir@@/common
-
-bbdir1=$REPORTS_DIR/$bbid1
-bbdir2=$REPORTS_DIR/$bbid2
 
 ######################################################################
 # temp directory
