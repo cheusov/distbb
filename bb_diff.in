@@ -24,7 +24,6 @@
 ######################################################################
 
 set -e
-. @@bindir@@/pipestatus
 
 # usage: stage_upload_logs OLD_BUILD_ID NEW_BUILD_ID
 test $# -eq 2
