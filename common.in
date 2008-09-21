@@ -9,14 +9,18 @@ verbose_print (){
 export LC_ALL=C # for sort and uniq
 
 ######################################################################
-if test -z "$REPORT1_DIR"; then
-    echo "REPORT1_DIR MUST be set" 1>&2
+if test -z "$BUILD_ID"; then
+    echo "BUILD_ID MUST be set" 1>&2
+    exit 2
+fi
+if test -z "$REPORTS_DIR"; then
+    echo "REPORTS_DIR MUST be set" 1>&2
     exit 2
 fi
 
+REPORT1_DIR=$REPORTS_DIR/$BUILD_ID
 meta_dir=$REPORT1_DIR/META
 tmpdir=$meta_dir/tmp
-mkdir -p -m 700 $tmpdir
 
 packages_failed_scan_fn=$meta_dir/packages_failed_scan.txt
 packages_failed_deps_fn=$meta_dir/packages_failed_deps.txt
@@ -44,6 +48,8 @@ packages_fn=$tmpdir/packages.tmp
 packages_with_deps_fn=$tmpdir/packages_with_deps.tmp
 
 trans_clos_rebuild_fn=$tmpdir/trans_closure_rebuild.tmp
+
+bb_history_fn=$REPORTS_DIR/bulk_builds_history.txt
 
 version=@@version@@
 

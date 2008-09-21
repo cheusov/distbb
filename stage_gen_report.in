@@ -33,8 +33,6 @@ test $# -eq 1
 BUILD_ID="$1"
 
 . @@sysconfdir@@/distbb.conf
-
-REPORT1_DIR=$REPORTS_DIR/$BUILD_ID
 . @@libexecdir@@/common
 
 # main

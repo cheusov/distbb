@@ -39,6 +39,7 @@ OPTIONS:
                          by default all packages from pkgsrc source tree
                          are built
   -k                     skip updating pkg_src_summary
+  -D|--diff              show difference with previous bulk build
   -B <build_id>          set BUILD_ID (for debugging purposes)
 EOF
 }
@@ -63,6 +64,9 @@ while test $# -ne 0; do
 	    shift;;
 	-p*)
 	    pkgs="$(printf '%s\n' '$1' | cut -b3-)";;
+
+	-D|--diff)
+	    export DISTBB_DIFF=1;;
 
 	-B)
 	    BUILD_ID="$2"
@@ -157,9 +161,7 @@ if ! test -f @@sysconfdir@@/distbb.local.mk; then
     exit 1
 fi
 
-if test "$I_AM_READY" -eq 2 2>/dev/null; then
-    :
-else
+if test "$I_AM_READY" -ne 2 2>/dev/null; then
     echo 'Read NEWS file! Your distbb.conf needs to be updated ;-)' 1>&2
     exit 1
 fi
