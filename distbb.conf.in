@@ -42,7 +42,7 @@ TRANSPORT='/usr/bin/ssh -x'
 #TRANSPORT='/usr/bin/rsh'
 #TRANSPORT="@@libexecdir@@/transport_chroot" # not implemented yet
 
-# dorectory for binary packages
+# directory for binary packages
 PACKAGES="$PKGSRCDIR/packages"
 
 # pkg_summary(5)
