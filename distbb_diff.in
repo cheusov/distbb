@@ -136,7 +136,7 @@ function print_succeeded (pkg, prefix){
 }
 
 BEGIN {
-   SUBSEP = " "
+   SUBSEP = "\t"
    OFS    = "\t"
 
    while (xgetline0(cmp_fn)) {
