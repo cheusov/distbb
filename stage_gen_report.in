@@ -165,6 +165,19 @@ BEGIN {
 ' "$@"
 }
 
+print_distbb_diff_help_msg (){
+    cat <<EOF
+<hr>
+<h3><a name="old vs new"></a>$bbid_prev vs. $BUILD_ID progress</h3>
+<p><i>'-' package was built successfully but now fails<br>
+'+' package failed previously but now is built successfully<br>
+'d' fails because of failed dependancy<br>
+'N' package is new<br>
+'R' package is removed<br>
+</i></p><table width="100%%">
+EOF
+}
+
 report_html (){
     if test "$PACKAGES_URL"; then
 	url="<a href=\"$PACKAGES_URL\" title=\"binary packages\">binary packages</a>"
@@ -330,16 +343,7 @@ EOF
 	bbid_prev=$(tail -2 $bb_history_fn | head -1)
 	bbdir_prev="$REPORTS_DIR/$bbid_prev"
 	if test "$bbid_prev" != "$BUILD_ID" && test -d $bbdir_prev; then
-	    cat <<EOF
-<hr>
-<h3><a name="old vs new"></a>$bbid_prev vs. $BUILD_ID progress</h3>
-<p><i>'-' package was built successfully but now fails<br>
-'+' package failed previously but now is built successfully<br>
-'d' fails because of failed dependancy<br>
-'N' package is new<br>
-'R' package is removed<br>
-</i></p><table width="100%%">
-EOF
+	    print_distbb_diff_help_msg
 	    distbb_diff $bbdir_prev $REPORT1_DIR | distbb_diff2html
 	    printf '</table>'
 	fi
@@ -489,8 +493,12 @@ report_html2txt (){
       gsub(/<[^<>]*>/, "")
       gsub(/&[a-z]*;/, "")
    }
-   $1 ~ /^N?[-+]d?$/ && NF == 4 || $1 == "R" && NF == 3 {
-      printf "%-5s %-30s %-20s %15s\n", $1, $2, $3, $4
+   $2 == "PKGBASE" {
+      printf "%-4s %-24s %-20s %24s\n\n", "", $1, $2, $3
+      next
+   }
+   $1 ~ /^N?[-+]d?$/ && NF == 4 || $1 == "R" && NF == 3 || $2 == "PKGBASE" {
+      printf "%-4s %-24s %-20s %24s\n", $1, $2, $3, $4
       next
    }
    /Failed packages/, /------------/ {
