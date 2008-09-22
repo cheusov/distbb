@@ -316,12 +316,12 @@ EOF
 	    cat <<EOF
 <hr>
 <h3><a name="failed depends"></a>$bbid_prev vs. $BUILD_ID progress</h3>
-<p>'-' package was built successfully but now fails<br>
+<p><i>'-' package was built successfully but now fails<br>
 '+' package failed previously but now is built successfully<br>
 'd' fails because of failed dependancy<br>
 'N' package is new<br>
 'R' package is removed<br>
-</p><table width="100%%">
+</i></p><table width="100%%">
 EOF
 	    distbb_diff $bbdir_prev $REPORT1_DIR | distbb_diff2html
 	    printf '</table>'
