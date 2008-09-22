@@ -489,6 +489,10 @@ report_html2txt (){
       gsub(/<[^<>]*>/, "")
       gsub(/&[a-z]*;/, "")
    }
+   $1 ~ /^N?[-+]d?$/ && NF == 4 || $1 == "R" && NF == 3 {
+      printf "%-5s %-30s %-20s %15s\n", $1, $2, $3, $4
+      next
+   }
    /Failed packages/, /------------/ {
       if (NF == 4) printf "  %-35s %6s %-34s\n", $1, $2, $4
       else if (NF == 3) printf "  %-35s %6s %-34s\n", $1, "", $3
