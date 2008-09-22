@@ -106,7 +106,7 @@ print_failed_deps_pkg (){
     fi
 
     if test -n "$1"; then
-	printf "  <tr><td>%-42s</td> <td> %s</td></tr>\n" "$short_pkgpath" "$3"
+	printf "  <tr><td><a href=\"../%s/failed_because.txt\" title=\"failed due to...\">%-42s</a></td> <td> %s</td></tr>\n" "$2" "$short_pkgpath" "$3"
     else
 	printf "  <tr><td align=\"left\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"../%s/stage_%s.html\" title=\"build log for %s\">     %-37s</a></td><td>       %s</td></tr>\n" "$5" "$failed_stage" "$4" "$4" "$3"
     fi
@@ -126,23 +126,39 @@ pkgpath2pkgname (){
 distbb_diff2html (){
     awk -v report1_dir=$REPORT1_DIR -F'\t' '
 function p (progress, pkgpath, pkgbase, version) {
-   printf "<tr><td>%s</td> <td>%s</td><td>%s</td><td>%s</td></tr>\n",
+   printf "<tr>%s <td> %s</td><td> %s</td><td> %s</td></tr>\n",
 	progress, pkgpath, pkgbase, version
 }
 BEGIN {
-   p("", "<b>Package</b>", "<b>PKGBASE</b>", "<b>Version[s]</b>")
+   p("<td></td>", "<b>Package</b>", "<b>PKGBASE</b>", "<b>Version(s)</b>")
 }
 {
-   if ($1 ~ /^N?-$/){
-      ver = $4
-      sub(/.* /, "", ver)
+   # $1 - result
+   # $2 - PKGPATH
+   # $3 - PKGBASE
+   # $4 - version(s)
 
+   sub(/:.*$/, "", $1) # strip building options
+
+   ver = $4
+   sub(/.* /, "", ver)
+
+   if ($1 ~ /^N?-$/){
       stage_fn = report1_dir "/" $3 "-" ver "/curr_stage.tmp"
       getline failed_stage < stage_fn
       close(stage_fn)
 
       $2 = sprintf("<a href=\"../%s/stage_%s.html\" title=\"build log for %s\">%-27s</a>", $3 "-" ver, failed_stage, $2, $2)
-      $1 = "<b>" $1 "</b>"
+
+      $1 = "<td class=\"pkg-failed\">" $1 "</td>"
+   }else if ($1 ~ /-d$/){
+      $2 = sprintf("<a href=\"../%s/failed_because.txt\" title=\"failed due to...\">%-27s</a>", $3 "-" ver, $2)
+
+      $1 = "<td class=\"pkg-faileddeps\">" $1 "</td>"
+   }else if ($1 ~ /[+]/){
+      $1 = "<td class=\"pkg-built\">" $1 "</td>"
+   }else{
+      $1 = "<td>" $1 "</td>"
    }
    p($1, $2, $3, $4)
 }
@@ -217,6 +233,7 @@ EOF
     <li><a href="#failures per maintainer">Failures per maintainer</a></li>
     <li><a href="#failed">Failed packages</a></li>
     <li><a href="#failed depends">Failed due to dependencies</a></li>
+    <li><a href="#old vs new">Progress since previous bulk build</a></li>
 </ul>
 
 EOF
@@ -315,7 +332,7 @@ EOF
 	if test "$bbid_prev" != "$BUILD_ID" && test -d $bbdir_prev; then
 	    cat <<EOF
 <hr>
-<h3><a name="failed depends"></a>$bbid_prev vs. $BUILD_ID progress</h3>
+<h3><a name="old vs new"></a>$bbid_prev vs. $BUILD_ID progress</h3>
 <p><i>'-' package was built successfully but now fails<br>
 '+' package failed previously but now is built successfully<br>
 'd' fails because of failed dependancy<br>
