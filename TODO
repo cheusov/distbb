@@ -1,5 +1,9 @@
 ideas/thoughts/todo/problems
 
+ - sort_uniq META/packages_{built,failed}.txt
+   When libexec/distbb/stage_build is run manually
+   duplicates may appear.
+
  - simplify distbb.conf. distbb is very customizable, but
    distbb.conf becomes very large.
 
