@@ -19,11 +19,11 @@ ideas/thoughts/todo/problems
    This is the only regression I see in comparison to pbulk.
 
  - modification time of binary packages?
- - problem:
-   package_A depends on package_B
-   bin_package_A.tgz file is older (modification time)
-   than bin_package_B.tgz file
-   ===> package_A is NOT rebuilt in this case, that is
+   problem:
+     package_A depends on package_B
+     bin_package_A.tgz file is older (modification time)
+     than bin_package_B.tgz file
+     ===> package_A is NOT rebuilt in this case, that is
         modification time of binary packages are currently not checked
  - distbb.1
  - my-show-vars -> share/distbb/distbb.mk
