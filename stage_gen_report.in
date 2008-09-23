@@ -151,7 +151,7 @@ BEGIN {
    ver = $4
    sub(/.* /, "", ver)
 
-   if ($1 ~ /^N?-$/){
+   if ($1 ~ /^n?-$/){
       stage_fn = report1_dir "/" $3 "-" ver "/curr_stage.tmp"
       getline failed_stage < stage_fn
       close(stage_fn)
@@ -578,8 +578,17 @@ report_html2txt (){
       printf "%-4s %-24s %-20s %24s\n\n", "", $1, $2, $3
       next
    }
-   $1 ~ /^N?[-+]d?$/ && NF == 4 || $1 == "R" && NF == 3 || $2 == "PKGBASE" {
-      printf "%-4s %-24s %-20s %24s\n", $1, $2, $3, $4
+   $1 ~ /^n?[-+]d?$/ && NF >= 4 || $1 == "R" && NF == 3 {
+      sub(/[+]/, "+", $1)
+      sub(/[-]/, "-", $1)
+
+      diff    = $1
+      pkgpath = $2
+      pkgbase = $3
+      $1 = $2 = $3 = ""
+      vers = substr($0, 4)
+
+      printf "%-4s %-24s %-20s %24s\n", diff, pkgpath, pkgbase, vers
       next
    }
    /Failed packages/, /------------/ {

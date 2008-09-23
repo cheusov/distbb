@@ -100,10 +100,14 @@ failed_dep_fn=$bbdir2/META/packages_failed_deps.txt
 failed_scan_fn=$bbdir2/META/packages_failed_scan.txt
 
 res_failed_fn=$tmp_dir/failed
+res_failed_deps_fn=$tmp_dir/failed_deps
+res_failed_scan_fn=$tmp_dir/failed_scan
 res_succeeded_fn=$tmp_dir/succeeded
 res_removed_fn=$tmp_dir/removed
 
 touch $res_failed_fn
+touch $res_failed_deps_fn
+touch $res_failed_scan_fn
 touch $res_succeeded_fn
 touch $res_removed_fn
 
@@ -115,6 +119,8 @@ runawk \
    -v failed_dep_fn=$failed_dep_fn \
    -v failed_scan_fn=$failed_scan_fn \
    -v res_failed_fn=$res_failed_fn \
+   -v res_failed_deps_fn=$res_failed_deps_fn \
+   -v res_failed_scan_fn=$res_failed_scan_fn \
    -v res_succeeded_fn=$res_succeeded_fn \
    -v res_removed_fn=$res_removed_fn \
    -e '
@@ -124,9 +130,9 @@ function print_failed (pkg, prefix){
    if (pkg in failed_new)
       print prefix, pkg, pkg_ver [pkg]       > res_failed_fn
    else if (pkg in failed_dep_new)
-      print prefix "d", pkg, pkg_ver [pkg]   > res_failed_fn
+      print prefix "d", pkg, pkg_ver [pkg]   > res_failed_deps_fn
    else if (pkg in failed_scan_new)
-      print prefix "S", pkg                  > res_failed_fn
+      print prefix "c", pkg                  > res_failed_scan_fn
    else
       abort("this should not happen")
 }
@@ -187,11 +193,11 @@ BEGIN {
    }
    for (i in pkg_new){
       if (! (i in total_new))
-         print_failed(i, "N-")
+         print_failed(i, "n-")
    }
    for (i in total_new){
       if (i in pkg_new)
-         print_succeeded(i, "N+")
+         print_succeeded(i, "n+")
       else if (! (i in total_old))
          print_succeeded(i, "+")
    }
@@ -199,7 +205,9 @@ BEGIN {
 ' $ignore_fn $total1_fn $total2_fn
 
 sort -t'	' -k2   $res_removed_fn
+sort -t'	' -k2,3 $res_failed_scan_fn
 sort -t'	' -k2,3 $res_failed_fn
+sort -t'	' -k2,3 $res_failed_deps_fn
 sort -t'	' -k2,3 $res_succeeded_fn
 
 if test -s $res_removed_fn -o -s $res_failed_fn -o -s $res_succeeded_fn; then
