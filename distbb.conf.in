@@ -157,7 +157,7 @@ TARGETS='dbb_init clean dbb_canbebuilt depends fetch checksum extract patch conf
 
 # extra options passed to bmake
 # BATCH is mandatory for bulk builds!
-EXTRA_OPTS='BATCH=yes PKG_VERBOSE=1'
+EXTRA_OPTS='BATCH=yes PKG_VERBOSE=1 CREATE_WRKDIR_SYMLINK=no'
 # the following is for USE_DESTDIR=full bulk builds
 #EXTRA_OPTS='BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=full CHECK_SHLIBS=no'
 
