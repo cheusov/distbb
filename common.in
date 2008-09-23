@@ -89,7 +89,12 @@ NF == 0 {
    sub(/=.*$/, "", fname)
 }
 fname in f2n {
-   fvalue = $0
+   if (fname == "MAINTAINER"){
+      fvalue = $1
+      sub(/,.*$/, "", fvalue)
+   }else{
+      fvalue = $0
+   }
    sub(/^[^=]*=/, "", fvalue)
    v [fname] = fvalue
    next
