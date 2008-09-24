@@ -184,8 +184,8 @@ print_distbb_diff_help_msg (){
 <p><i>'-' package was built successfully but now fails<br>
 '+' package failed previously but now is built successfully<br>
 'd' fails because of failed dependancy<br>
-'N' package is new<br>
-'R' package is removed<br>
+'n' package is new<br>
+'R' package is removed or pkg_src_summary failed<br>
 </i></p>
 EOF
 }
@@ -372,8 +372,13 @@ EOF
 
     # previous bulk build vs. this one
     if test -n "$DISTBB_DIFF"; then
-	bbid_prev=$(tail -2 $bb_history_fn | head -1)
-	bbdir_prev="$REPORTS_DIR/$bbid_prev"
+	if test -f $bb_history_fn; then
+	    bbid_prev=$(tail -2 $bb_history_fn | head -1)
+	    bbdir_prev="$REPORTS_DIR/$bbid_prev"
+	else
+	    bbid_prev=''
+	    bbdir_prev='/does/not/exist'
+	fi
 
 	if test "$bbid_prev" != "$BUILD_ID" && test -d $bbdir_prev; then
 	    cat <<EOF
