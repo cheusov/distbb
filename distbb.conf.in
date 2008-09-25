@@ -60,12 +60,8 @@ PKG_SRC_SUMMARY="$PKGSRCDIR/pkg_src_summary.txt"
 # (see pkg_src_summary(1))
 #export PSS_FIELDS='PKGNAME PKGPATH DEPENDS BUILD_DEPENDS MAINTAINER NO_BIN_ON_FTP NO_BIN_ON_CDROM'
 #
-# If you want to build multi-variant packages, uncomment the following
-#export PSS_OPTIONS='-m' # for building multi-variant packages
-# (see pkg_src_summary(1))
-#
 # For generating an "expanded" PLIST.
-# Useless for distbb but looks very nice ;-)
+# It is useless for distbb but looks very nice ;-)
 #export PSS_OPTIONS='-p'
 # (see pkg_src_summary(1))
 #
@@ -84,7 +80,8 @@ PKG_SRC_SUMMARY="$PKGSRCDIR/pkg_src_summary.txt"
 # Unlike previous variant with pkg_update_src_summary, summary
 # for only requested packages will be included to pkg_src_summary.
 # If you build only a few packages using 'distbb -f' this variant is prefered.
-PKG_UPDATE_SRC_SUMMARY_CMD="@@bindir@@/pkg_src_summary -A > '$PKG_SRC_SUMMARY'"
+# -m option is for building multi-variant packages, see pkg_src_summary(1)
+PKG_UPDATE_SRC_SUMMARY_CMD="@@bindir@@/pkg_src_summary -A -m > '$PKG_SRC_SUMMARY'"
 
 # if you want to build src_summary using several processes or several
 # machines in a network, set PSS_SLAVES.
@@ -115,8 +112,6 @@ export PSS_SLAVES="$SLAVES" # reasonable default
 export PSS_TRANSPORT="$TRANSPORT" # reasonable default
 
 #export PSS_PPERS=20 # to process N packages per slave at once
-# (max_package_name_length+1) * PSS_PPERS + 1 must be less than PAEXEC_BUFSIZE
-#export PAEXEC_BUFSIZE=20480, see paexec(1)
 
 # directory where reports are saved
 REPORTS_DIR=$HOME/bulk-logs
