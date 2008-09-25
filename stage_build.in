@@ -57,6 +57,8 @@ BEGIN {
       deps [$1, $2] = 0
    }
    xclose(deps_fn)
+
+   pcount = 0
 }
 
 NF == 2 {
@@ -68,16 +70,35 @@ NF == 2 {
    }
 
    if (($1 SUBSEP $2) in deps){
-      printed [$1] = printed [$2] = 0
-      print $1, $2
+      p1 [pcount] = $1
+      p2 [pcount] = $2
+      ++pcount
    }
 
    next
 }
 
-NF == 1 && !($1 in printed) && !($1 in success) && !($1 in failure) {
-   print $1
+NF == 1 && !($1 in success) && !($1 in failure) {
+   s [$1] = 1
    next
+}
+
+END {
+   for (i in p1){
+      e1 = p1 [i]
+      e2 = p2 [i]
+      if (!(e1 in success) && !(e1 in failure) &&
+          !(e2 in success) && !(e2 in failure)) 
+      {
+         print e1, e2
+         printed [e1] = printed [e2] = 1
+      }
+   }
+   for (i in s){
+      if (! (i in printed)){
+         print i
+      }
+   }
 }
 ' "$@"
 }
