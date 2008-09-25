@@ -14,8 +14,11 @@ ideas/thoughts/todo/problems
      than bin_package_B.tgz file
      ===> package_A is NOT rebuilt in this case, that is
         modification time of binary packages are currently not checked
+
  - distbb.1
+
  - my-show-vars -> share/distbb/distbb.mk
+
  - I think distbb can be adapted for FreeBSD/OpenBSD Ports
    and other packaging systems
 
