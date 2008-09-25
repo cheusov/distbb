@@ -1,5 +1,12 @@
 ideas/thoughts/todo/problems
 
+ - links to package's src_summary from PKGNAME/stage_*.html
+
+ - links to package's configure.log(s) from PKGNAME/stage_*.html
+
+ - links to package's variables (CFLAGS, MAKE_FLAGS etc.) from
+   PKGNAME/stage_*.html
+
  - simplify distbb.conf. distbb is very customizable, but
    distbb.conf becomes very large.
 
