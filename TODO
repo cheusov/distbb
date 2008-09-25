@@ -7,9 +7,6 @@ ideas/thoughts/todo/problems
    mandatory variable DISTBB_LOCAL_MK=@sysconfdir@/distbb.local.mk,
    stage_* scripts should use config files stored (or linked) in META/
 
- - pbulk builds pyNN-xxx and apNN-xxx packages, distbb doesn't.
-   This is the only regression I see in comparison to pbulk.
-
  - modification time of binary packages?
    problem:
      package_A depends on package_B
