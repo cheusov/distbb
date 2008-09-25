@@ -1,3 +1,72 @@
+Version 0.20.0, by Aleksey Cheusov, Sun, 14 Sep 2008 11:11:33 +0300
+
+  FIX: serious bug in "stage_build is rerunable" feature.
+  Generating a queue of tasks was not fully correct.
+
+  FIX: stage_gen_report may fail because of spaces inside MAINTAINER
+  field in package's summary (lang/gauche/Makefile revision 1.50).
+  Now everything after comma is removed, that is only first maintainer
+  in the list is printed.
+
+  fix: META/packages_{built,failed}.txt may have duplicates when
+  PREFIX/libexec/distbb/stage_build is run more than once
+  (rerun manually after unexpected failure)
+
+  New section in report.{html,txt} - "old bulk build vs. new bulk build".
+  It contains a list of packages that was built previosuly but failed
+  and more. See information about distbb_diff executable below.
+  To activate it, run 'distbb -B'. By default this feature is disabled.
+
+  New section in report.{html,txt} - "BEST bulk build vs. new bulk
+  build".  The same as "old bulk build vs. new bulk build" but instead
+  of "old bulk build", "virtual best" bulk build is used.  It is not a
+  real bulk build but a collection of packages that where built
+  sucessfully in the past. In this section you'll see ALL regressions,
+  not only regressions in comparison with ONE PREVIOUS bulk build.
+
+  report.txt is reorganized. Now it is aligned to 75-columns.
+  No "Failed Stage" column, ---- separator between sections,
+  "responsible person" is not included anymore
+  and other minor changes.
+
+  "failed due to deps" section is reorganized in both report.html and
+  report.txt. Both maintainers are output, i.e. maintainer of the
+  indirectly failed package and maintainer of failed dependancies.
+
+  New executable - 'distbb_diff' intended for comparing two
+  bulk builds.
+
+     usage: distbb_diff [OPTIONS] bbdir1 bbdir2
+     OPTIONS:
+     -h|--help              display this help message
+     -V|--version           distbb version
+
+     bbdir1 - path to bulk build directory, e.g. ~/bulk-logs/20080915.1010
+     bbdir2 - path to bulk build directory
+
+     Output format:
+     <CMP> <PKGPATH> <PKGBASE> <Version(s)>
+     where CMP is a combination of the following characters
+     +   - package failed in bbdir1 but succeeded in bbdir2
+     -   - package was built sucessfully in bbdir1 but failed in bbdir2
+     R   - package was removed or pkg_src_summary failed for it
+     d   - package failed due to broken dependency
+
+  fix in stage_gen_report: detecting a "failed stage" is more correct
+  now (it takes into acount SPECIAL_PACKAGES field) and becomes clearer.
+
+  Log files PKGNAME/failed_packages.txt have been renamed
+         to PKGNAME/failed_deps.txt
+
+  META/*.raw files are not uploaded
+
+  report_html is run once, a whole stage_gen_report is now much faster
+
+  example distbb.conf:
+     CREATE_WRKDIR_SYMLINK=no added to EXTRA_OPTS,
+     obsolete PAEXEC_BUFSIZE removed,
+     -m option added to pkg_src_summary (PKG_UPDATE_SRC_SUMMARY)
+
 Version 0.19.1, by Aleksey Cheusov, Sun, 14 Sep 2008 11:11:33 +0300
 
   minor addition in stage_gen_report: failed package in "Failed due to
