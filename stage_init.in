@@ -88,7 +88,7 @@ if test "$packages"; then
     # remove comments and empty lines
     cleanup_package_list > $packages_fn.tmp
 else
-    if test -n "$TRANSPORT" -a -n "$SLAVES"; then
+    if test -n "$MASTER_MODE" -a -n "$TRANSPORT" -a -n "$SLAVES"; then
 	slave1="$(echo $SLAVES | sed 's, .*$,,')"
 	environ="BMAKE=$BMAKE PKGSRCDIR=$PKGSRCDIR CKSUM=$CKSUM"
 	eval $TRANSPORT $slave1 "env $environ $LIST_ALL_PKGS_CMD" > $packages_fn.tmp
