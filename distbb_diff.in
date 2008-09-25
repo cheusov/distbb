@@ -35,6 +35,17 @@ usage: distbb_diff [OPTIONS] bbdir1 bbdir2
 OPTIONS:
   -h|--help              display this help message
   -V|--version           distbb version
+
+bbdir1 - path to bulk build directory, e.g. ~/bulk-logs/20080915.1010
+bbdir2 - path to bulk build directory
+
+Output format:
+<CMP> <PKGPATH> <PKGBASE> <Version(s)>
+where CMP is a combination of the following characters
++   - package failed in bbdir1 but succeeded in bbdir2
+-   - package was built sucessfully in bbdir1 but failed in bbdir2
+R   - package was removed or pkg_src_summary failed for it
+d   - package failed due to broken dependency
 EOF
 }
 
