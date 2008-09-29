@@ -144,8 +144,10 @@ function print_failed (pkg, prefix){
       print prefix "d", pkg, pkg_ver [pkg]   > res_failed_deps_fn
    else if (pkg in failed_scan_new)
       print prefix "c", pkg                  > res_failed_scan_fn
-   else
-      abort("this should not happen")
+   else{
+      print prefix "?", pkg                  > res_failed_scan_fn
+#      abort("pkg=`" pkg "` prefix=`" prefix "`")
+   }
 }
 
 function print_succeeded (pkg, prefix){
