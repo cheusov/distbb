@@ -1,3 +1,7 @@
+Version 0.20.1, by Aleksey Cheusov, Tue, 30 Sep 2008 00:58:46 +0300
+
+  hot fix for distbb_diff (stage_gen_report might fail)
+
 Version 0.20.0, by Aleksey Cheusov, Sun, 14 Sep 2008 11:11:33 +0300
 
   FIX: serious bug in "stage_build is rerunable" feature.
