@@ -80,8 +80,11 @@ PKG_SRC_SUMMARY="$PKGSRCDIR/pkg_src_summary.txt"
 # Unlike previous variant with pkg_update_src_summary, summary
 # for only requested packages will be included to pkg_src_summary.
 # If you build only a few packages using 'distbb -f' this variant is prefered.
-# -m option is for building multi-variant packages, see pkg_src_summary(1)
-PKG_UPDATE_SRC_SUMMARY_CMD="@@bindir@@/pkg_src_summary -A -m > '$PKG_SRC_SUMMARY'"
+# (-m option is for building multi-variant packages, see pkg_src_summary(1),
+# NOTE: -m currently doesn't work when entire pkgsrc tree is built,
+# because lots of packages multi-variant packages have constant PKGBASE )
+
+PKG_UPDATE_SRC_SUMMARY_CMD="@@bindir@@/pkg_src_summary -A > '$PKG_SRC_SUMMARY'"
 
 # if you want to build src_summary using several processes or several
 # machines in a network, set PSS_SLAVES.
