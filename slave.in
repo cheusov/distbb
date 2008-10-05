@@ -159,7 +159,7 @@ do_build_package (){
 		# < /dev/null - for building packages that require
 		# an interaction with user
 		if ! eval $BMAKE -f Makefile \
-		            -f @@sysconfdir@@/distbb.local.mk \
+		            -f "$DISTBB_LOCAL_MK" \
 		            -f @@datadir@@/distbb.mk \
 		            $bmake_opts $t $stdin_from_dev_null
 		then

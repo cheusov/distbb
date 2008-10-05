@@ -150,14 +150,10 @@ test_var UPLOAD_PKGS_CMD
 test_var UPLOAD_LOGS_CMD
 test_var LIST_ALL_PKGS_CMD
 test_var EXTRA_DEPS_CMD
+test_var DISTBB_LOCAL_MK
 
 if grep BUILD_START @@sysconfdir@@/distbb.conf > /dev/null; then
     echo 'Replace BUILD_START variable with BUILD_ID in your distbb.conf!' 1>&2
-    exit 1
-fi
-
-if ! test -f @@sysconfdir@@/distbb.local.mk; then
-    echo '@@sysconfdir@@/distbb.local.mk MUST exist' 1>&2
     exit 1
 fi
 
