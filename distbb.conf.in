@@ -19,6 +19,11 @@ RMDIRS_CMD="/bin/rm -rf $PKGSRC_PREFIX /var/db/pkg"
 BOOTSTRAP="/path/to/bootstrap.tar.gz"
 #BOOTSTRAP=''
 
+# Like distbb.conf but for bmake, it is loaded after package's Makefile
+# and before distbb's own distbb.mk
+DISTBB_LOCAL_MK=@@sysconfdir@@/distbb.local.mk
+#DISTBB_LOCAL_MK=/dev/null
+
 # a programs that outputs ALL packages to be built,
 # by default all pkgsrc packages are output
 LIST_ALL_PKGS_CMD='@@bindir@@/pkg_list_all_pkgs'
@@ -149,9 +154,11 @@ CLEAN_TARGET='clean'
 #    It is recommended to include it to TARGETS,
 #    otherwise counters in "Failures per maintainer" will
 #    be not fully correct
-TARGETS='dbb_init clean dbb_canbebuilt depends fetch checksum extract patch configure build install package deinstall'
+TARGETS="dbb_init clean dbb_canbebuilt dbb_excluded depends fetch checksum"
+TARGETS="$TARGETS extract patch configure build install package deinstall"
 # the following is for USE_DESTDIR=yes|full
-#TARGETS='dbb_init clean dbb_canbebuilt depends fetch checksum extract patch configure build package bin-install deinstall'
+#TARGETS="dbb_init clean dbb_canbebuilt dbb_excluded depends fetch checksum"
+#TARGETS="$TARGETS extract patch configure build package bin-install deinstall"
 
 # extra options passed to bmake
 # BATCH is mandatory for bulk builds!
@@ -166,20 +173,20 @@ DISTBB_SLAVE=@@libexecdir@@/slave
 # course in utf-8 charset), e.g. unusual build options, compiler etc.
 NOTES=''
 
-# some packages fail to build because they are a part of pkgsrc
-# bootstrap.  if you want to build them try to uncomment lines in
+# Some packages fail to build because they are a part of pkgsrc
+# bootstrap.  If you want to build them try to uncomment lines in
 # SPECIAL_PACKAGES variables
 #
-# you may also want to use different building options
-# to build some packages, e.g. to use gcc-3.4 for building audio/festival,
-# (Under Linux Debian/etch and DragonFlyBSD gcc-3.4 is a part
-# of "base" system), see below.
+# You may also want to use different building options
+# to build some packages, e.g. to use gcc-3.4 for building audio/festival
+# or emulators/qemu packages
+# (Under Linux Debian/Etch and DragonFlyBSD v1.X gcc-3.4 is a part
+# of "base" system).
 # NOTE: There are no quotes around string containing spaces
-#       (this is not shell ;-) )
+#       (this is not shell! ;-) )
 # NOTE: An empty string after EACH package section is mandatory
 # NOTE: Do not forget that you can define your own Makefile targets
-#       in distbb.local.mk. this new target can run, for example,
-#       pkg_add -u
+#       in distbb.local.mk. This new target can run, for example, pkg_add -u
 
 SPECIAL_PACKAGES="\
 #PKGPATH=pkgtools/digest
