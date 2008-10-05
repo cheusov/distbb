@@ -616,14 +616,8 @@ report_txt_fn="$meta_dir/report.txt"
 cat $REPORT1_DIR/META/tmp/report_body.html |
 report_html2txt | sed 's| *$||' > "$report_txt_fn"
 
-### generate per file HTMLs
-stage2html (){
-    html_header
-
-    pkgdir="$(echo $1 | sed 's,/[^/]*$,,')"
-    pkgpath="$(echo $1 | sed 's,^.*/\([^/]*/[^/]*\)/[^/]*$,\1,')"
-    stage="$(echo $1 | sed 's,^.*stage_\(.*\)[.].*$,\1,')"
-
+### generate stage_xxx HTMLs
+other_stages_bar (){
     printf '<p>'
     for t in $TARGETS; do
 	printf '&nbsp;'
@@ -639,11 +633,24 @@ stage2html (){
 	printf '&nbsp;'
     done
     printf '<br></p>\n'
+}
+
+stage2html (){
+    html_header
+
+    pkgdir="$(echo $1 | sed 's,/[^/]*$,,')"
+    pkgpath="$(echo $1 | sed 's,^.*/\([^/]*/[^/]*\)/[^/]*$,\1,')"
+    stage="$(echo $1 | sed 's,^.*stage_\(.*\)[.].*$,\1,')"
+
+    other_stages_bar
 
     # log itself
     printf "<pre>"
     cat "$1"
     printf "</pre>"
+
+    other_stages_bar
+
     html_footer
 }
 
