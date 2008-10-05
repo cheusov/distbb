@@ -616,23 +616,49 @@ report_txt_fn="$meta_dir/report.txt"
 cat $REPORT1_DIR/META/tmp/report_body.html |
 report_html2txt | sed 's| *$||' > "$report_txt_fn"
 
+### generate per package summary.tmp
+runawk -v report1="$REPORT1_DIR" -e '
+#use "xclose.awk"
+
+NF == 0 {
+   summary_dir = report1 "/" pkgname
+   if (0 == system("test -d \"" summary_dir "\"")){
+      summary_fn = summary_dir "/summary.txt"
+      cvrt = ("pkg_summary4view > " summary_fn)
+      print substr(summary, 2) | cvrt
+      xclose(cvrt)
+   }
+
+   summary = pkgname = ""
+   next
+}
+{
+   summary = summary "\n" $0
+   if ($0 ~ /PKGNAME=/){
+      pkgname = substr($0, 9)
+   }
+}
+' "$pkg_src_summary_fn"
+
 ### generate stage_xxx HTMLs
 other_stages_bar (){
-    printf '<p>'
+    printf '<p>Stages:&nbsp;'
     for t in $TARGETS; do
-	printf '&nbsp;'
-
 	if test -s "$pkgdir/stage_$t.tmp"; then
 	    if test "$t" = "$stage"; then
 		printf "$stage"
 	    else
-		printf "<a href=\"stage_%s.html\" title=\"build log for %s\">%s</a>\n" "$t" "$pkgpath" "$t"
+		printf "<a href=\"stage_%s.html\" title=\"build log for %s\">%s</a>\n" \
+		    "$t" "$pkgpath" "$t"
 	    fi
 
 	    printf '&nbsp;'
 	fi
     done
-    printf '<br></p>\n'
+    short_pkgpath="$(echo $pkgpath | cut -f1 -d:)"
+    printf '<br>Summary:<a href=\"summary.txt\" title=\"summary for package %s\">summary</a>' \
+	"$short_pkgpath"
+    printf '</p>\n'
 }
 
 stage2html (){
@@ -649,7 +675,9 @@ stage2html (){
     cat "$1"
     printf "</pre>"
 
-    other_stages_bar
+    if test "$(count_lines $1)" -gt 20; then
+	other_stages_bar
+    fi
 
     html_footer
 }
