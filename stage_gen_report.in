@@ -622,15 +622,15 @@ other_stages_bar (){
     for t in $TARGETS; do
 	printf '&nbsp;'
 
-	if test -f "$pkgdir/stage_$t.tmp"; then
+	if test -s "$pkgdir/stage_$t.tmp"; then
 	    if test "$t" = "$stage"; then
 		printf "$stage"
 	    else
 		printf "<a href=\"stage_%s.html\" title=\"build log for %s\">%s</a>\n" "$t" "$pkgpath" "$t"
 	    fi
-	fi
 
-	printf '&nbsp;'
+	    printf '&nbsp;'
+	fi
     done
     printf '<br></p>\n'
 }
@@ -656,8 +656,10 @@ stage2html (){
 
 find "$REPORT1_DIR" -name 'stage_*.tmp' |
 while read stage_fn; do
-    html_fn=${stage_fn%%.tmp}.html
-    stage2html "$stage_fn" >"$html_fn"
+    if test -s $stage_fn; then
+	html_fn=${stage_fn%%.tmp}.html
+	stage2html "$stage_fn" >"$html_fn"
+    fi
 done
 
 verbose_print "done\n"
