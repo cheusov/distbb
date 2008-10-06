@@ -40,6 +40,7 @@ verbose_print "Logs generation...\n"
 
 sort_uniq_inplace $REPORT1_DIR/META/packages_built.txt.tmp
 sort_uniq_inplace $REPORT1_DIR/META/packages_failed.txt.tmp
+sort_uniq_inplace $REPORT1_DIR/META/packages_failed_notavail.txt.tmp
 
 build_start=$(cat "$build_start_fn")
 build_end=$(cat "$build_end_fn")
@@ -249,6 +250,7 @@ EOF
   <tr class="pkg-built"><td>&nbsp;&nbsp;  $(left_align 38 "really built")</td><td align="right">$packages_built_cnt</td><td>&nbsp;&nbsp;&nbsp;<a href="$(basename $packages_built_fn)" title="Successfully built packages"> list</a></td></tr>
   <tr><td>$(left_align 40 "Packages failed (total)")</td><td align="right">$packages_failed_total</td><td>&nbsp;&nbsp;&nbsp;<a href="$(basename $packages_failed_total_fn)" title="All failed packages"> list</a></td></tr>
   <tr class="pkg-failed"><td>&nbsp;&nbsp;  $(left_align 38 "really failed")</td><td align="right">$packages_failed_cnt</td><td>&nbsp;&nbsp;&nbsp;<a href="$(basename $packages_failed_fn)" title="Really failed packages"> list</a></td></tr>
+  <tr><td>&nbsp;&nbsp;  $(left_align 38 "marked as not available")</td><td align="right">$packages_failed_notavail_cnt</td><td>&nbsp;&nbsp;&nbsp;<a href="$(basename $packages_failed_notavail_fn)" title="Packages marked as not available"> list</a></td></tr>
   <tr class="pkg-faileddeps"><td>&nbsp;&nbsp;  $(left_align 38 "failed due to them")</td><td align="right">$packages_failed_deps_cnt</td><td>&nbsp;&nbsp;&nbsp;<a href="$(basename $packages_failed_deps_fn)" title="Packages failed due to dependencies"> list</a></td></tr>
 EOF
 
@@ -438,10 +440,11 @@ EOF
     printf '<hr>\n'
 }
 
+packages_failed_notavail_cnt=$(count_lines "$packages_failed_notavail_fn.tmp")
 packages_failed_scan_cnt=$(count_lines "$packages_failed_scan_fn")
 packages_failed_deps_cnt=$(count_lines "$packages_failed_deps_fn.tmp")
 packages_failed_cnt=$(count_lines "$packages_failed_fn.tmp")
-packages_failed_total=$(($packages_failed_cnt+$packages_failed_prev_cnt+$packages_failed_scan_cnt))
+packages_failed_total=$(($packages_failed_cnt+$packages_failed_prev_cnt+$packages_failed_scan_cnt+$packages_failed_notavail_cnt))
 
 packages_built_cnt=$(count_lines "$packages_built_fn.tmp")
 packages_built_prev_cnt=$(count_lines "$packages_built_prev_fn.tmp")
@@ -456,6 +459,10 @@ enrich_pkgpath "MAINTAINER PKGNAME" \
 enriched_failed_deps_fn="$tmpdir/enriched_failed_deps.tmp"
 enrich_pkgpath "MAINTAINER PKGNAME" \
     "$packages_failed_deps_fn.tmp" > "$enriched_failed_deps_fn"
+
+enriched_failed_notavail_fn="$tmpdir/enriched_failed_notavail.tmp"
+enrich_pkgpath "MAINTAINER PKGNAME" \
+    "$packages_failed_notavail_fn.tmp" > "$enriched_failed_notavail_fn"
 
 ##
 
@@ -473,6 +480,9 @@ runpipe0 \
 runpipe0 \
     enrich_pkgpath 'PKGNAME MAINTAINER' $packages_failed_deps_fn.tmp '|' \
     sort_uniq > $packages_failed_deps_fn
+runpipe0 \
+    enrich_pkgpath 'PKGNAME MAINTAINER' $packages_failed_notavail_fn.tmp '|' \
+    sort_uniq > $packages_failed_notavail_fn
 
 verbose_print "done\n"
 

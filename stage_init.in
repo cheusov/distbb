@@ -48,6 +48,7 @@ echo "$build_start" > $build_start_fn
 # main
 verbose_print "Preparations\n"
 
+printf '' > $packages_failed_notavail_fn.tmp
 printf '' > $packages_failed_scan_fn
 printf '' > $packages_failed_deps_fn
 printf '' > $packages_failed_fn.tmp

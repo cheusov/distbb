@@ -121,6 +121,7 @@ postfilter (){
 runawk \
    -v report1_dir=$REPORT1_DIR \
    -v packages_failed_fn=$packages_failed_fn.tmp \
+   -v packages_failed_notavail_fn=$packages_failed_notavail_fn.tmp \
    -v packages_built_fn=$packages_built_fn.tmp \
    -v progress_fn=$progress_fn \
    -v pkg_src_summary=$pkg_src_summary_fn \
@@ -243,11 +244,15 @@ status [$2] == "success" {
 
 status [$2] == "failure" {
    # failed
-   print "    F-A-I-L-E-D:", pkgpath, "on", run_on [$2]
-
-   #
-   print pkgpath >> packages_failed_fn
-   xclose(packages_failed_fn)
+   if (stage [$2] ~ /^(dbb_canbebuilt|dbb_available|dbb_excluded)$/){
+      print "    Not Available:", pkgpath, "on", run_on [$2]
+      print pkgpath >> packages_failed_notavail_fn
+      xclose(packages_failed_notavail_fn)
+   }else{
+      print "    F-A-I-L-E-D:", pkgpath, "on", run_on [$2]
+      print pkgpath >> packages_failed_fn
+      xclose(packages_failed_fn)
+   }
 
    # indirectly failed
    cnt = split(failed_deps [$2], failed_pkgs)

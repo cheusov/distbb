@@ -31,6 +31,7 @@ REPORT1_DIR=$REPORTS_DIR/$BUILD_ID
 meta_dir=$REPORT1_DIR/META
 tmpdir=$meta_dir/tmp
 
+packages_failed_notavail_fn=$meta_dir/packages_failed_notavail.txt
 packages_failed_scan_fn=$meta_dir/packages_failed_scan.txt
 packages_failed_deps_fn=$meta_dir/packages_failed_deps.txt
 packages_failed_fn=$meta_dir/packages_failed.txt
