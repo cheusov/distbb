@@ -245,10 +245,11 @@ EOF
   <tr><td>Build ended:</td>  <td align="right">$(right_align 38 "${build_end}")</td><td>&nbsp;</td></tr>
 
   <tr><td>&nbsp;</td>                  <td>&nbsp;</td><td>&nbsp;</td></tr>
-  <tr class="pkg-total"><td>$(left_align 40 "Packages built (total)")</td><td align="right">$packages_built_total</td><td>&nbsp;&nbsp;&nbsp;<a href="$(basename $packages_built_total_fn)" title="All built packages"> list</a></td></tr>
+  <tr class="pkg-total"><td>$(left_align 40 "Inspected packages")</td><td align="right">$packages_inspected_cnt</td><td></td></tr>
+  <tr class="pkg-total"><td>$(left_align 40 "Built packages (total)")</td><td align="right">$packages_built_total</td><td>&nbsp;&nbsp;&nbsp;<a href="$(basename $packages_built_total_fn)" title="All built packages"> list</a></td></tr>
   <tr><td>&nbsp;&nbsp;  $(left_align 38 "built previously")</td><td align="right">$packages_built_prev_cnt</td><td>&nbsp;&nbsp;&nbsp;<a href="$(basename $packages_built_prev_fn)" title="Packages built previously"> list</a></td></tr>
   <tr class="pkg-built"><td>&nbsp;&nbsp;  $(left_align 38 "really built")</td><td align="right">$packages_built_cnt</td><td>&nbsp;&nbsp;&nbsp;<a href="$(basename $packages_built_fn)" title="Successfully built packages"> list</a></td></tr>
-  <tr><td>$(left_align 40 "Packages failed (total)")</td><td align="right">$packages_failed_total</td><td>&nbsp;&nbsp;&nbsp;<a href="$(basename $packages_failed_total_fn)" title="All failed packages"> list</a></td></tr>
+  <tr><td>$(left_align 40 "Failed packages (total)")</td><td align="right">$packages_failed_total</td><td>&nbsp;&nbsp;&nbsp;<a href="$(basename $packages_failed_total_fn)" title="All failed packages"> list</a></td></tr>
   <tr class="pkg-failed"><td>&nbsp;&nbsp;  $(left_align 38 "really failed")</td><td align="right">$packages_failed_cnt</td><td>&nbsp;&nbsp;&nbsp;<a href="$(basename $packages_failed_fn)" title="Really failed packages"> list</a></td></tr>
   <tr><td>&nbsp;&nbsp;  $(left_align 38 "marked as not available")</td><td align="right">$packages_failed_notavail_cnt</td><td>&nbsp;&nbsp;&nbsp;<a href="$(basename $packages_failed_notavail_fn)" title="Packages marked as not available"> list</a></td></tr>
   <tr class="pkg-faileddeps"><td>&nbsp;&nbsp;  $(left_align 38 "failed due to them")</td><td align="right">$packages_failed_deps_cnt</td><td>&nbsp;&nbsp;&nbsp;<a href="$(basename $packages_failed_deps_fn)" title="Packages failed due to dependencies"> list</a></td></tr>
@@ -435,6 +436,8 @@ EOF
     printf '<hr>\n'
 }
 
+packages_inspected_cnt=$(count_lines "$packages_with_deps_fn")
+
 packages_failed_notavail_cnt=$(count_lines "$packages_failed_notavail_fn.tmp")
 packages_failed_scan_cnt=$(count_lines "$packages_failed_scan_fn")
 packages_failed_deps_cnt=$(count_lines "$packages_failed_deps_fn.tmp")
@@ -596,7 +599,7 @@ report_html2txt (){
       printf "%-4s %-24s %-20s %24s\n", diff, pkgpath, pkgbase, vers
       next
    }
-   /Failed packages/, /------------/ {
+   /^Failed packages/, /------------/ {
       if (NF == 4) printf "  %-35s %6s %-34s\n", $1, $2, $4
       else if (NF == 3) printf "  %-35s %6s %-34s\n", $1, "", $3
       else print $0
