@@ -69,6 +69,10 @@ count_lines (){
     awk 'END {print NR}' "$@"
 }
 
+left_align (){
+   printf "%-$1s" "$2"
+}
+
 right_align (){
    printf "%$1s" "$2"
 }
@@ -245,24 +249,24 @@ EOF
   <tr><td>Build ended:</td>  <td align="right">$(right_align 38 "${build_end}")</td><td>&nbsp;</td></tr>
 
   <tr><td>&nbsp;</td>                  <td>&nbsp;</td><td>&nbsp;</td></tr>
-  <tr class="pkg-total"><td>Packages built (total)</td>                  <td align="right">$(right_align 20 $packages_built_total)</td><td>&nbsp;&nbsp;&nbsp;<a href="$(basename $packages_built_total_fn)" title="List of total packages"> list</a></td></tr>
-  <tr><td>Packages built previously</td>       <td align="right">$(right_align 20 $packages_built_prev_cnt)</td><td>&nbsp;&nbsp;&nbsp;<a href="$(basename $packages_built_prev_fn)" title="Packages built previously"> list</a></td></tr>
-  <tr class="pkg-built"><td>Packages built</td>                  <td align="right">$(right_align 20 $packages_built_cnt)</td><td>&nbsp;&nbsp;&nbsp;<a href="$(basename $packages_built_fn)" title="Successfully built packages"> list</a></td></tr>
-  <tr><td>Packages failed (total)</td>                  <td align="right">$(right_align 20 $packages_failed_total)</td><td>&nbsp;&nbsp;&nbsp;<a href="$(basename $packages_failed_total_fn)" title="All failed packages"> list</a></td></tr>
-  <tr class="pkg-failed"><td>Packages failed</td>                 <td align="right">$(right_align 20 $packages_failed_cnt)</td><td>&nbsp;&nbsp;&nbsp;<a href="$(basename $packages_failed_fn)" title="Really failed packages"> list</a></td></tr>
-  <tr class="pkg-faileddeps"><td>Packages failed due to them</td>     <td align="right">$(right_align 20 $packages_failed_deps_cnt)</td><td>&nbsp;&nbsp;&nbsp;<a href="$(basename $packages_failed_deps_fn)" title="Packages failed due to dependencies"> list</a></td></tr>
+  <tr class="pkg-total"><td>$(left_align 40 "Packages built (total)")</td><td align="right">$packages_built_total</td><td>&nbsp;&nbsp;&nbsp;<a href="$(basename $packages_built_total_fn)" title="All built packages"> list</a></td></tr>
+  <tr><td>&nbsp;&nbsp;  $(left_align 38 "built previously")</td><td align="right">$packages_built_prev_cnt</td><td>&nbsp;&nbsp;&nbsp;<a href="$(basename $packages_built_prev_fn)" title="Packages built previously"> list</a></td></tr>
+  <tr class="pkg-built"><td>&nbsp;&nbsp;  $(left_align 38 "really built")</td><td align="right">$packages_built_cnt</td><td>&nbsp;&nbsp;&nbsp;<a href="$(basename $packages_built_fn)" title="Successfully built packages"> list</a></td></tr>
+  <tr><td>$(left_align 40 "Packages failed (total)")</td><td align="right">$packages_failed_total</td><td>&nbsp;&nbsp;&nbsp;<a href="$(basename $packages_failed_total_fn)" title="All failed packages"> list</a></td></tr>
+  <tr class="pkg-failed"><td>&nbsp;&nbsp;  $(left_align 38 "really failed")</td><td align="right">$packages_failed_cnt</td><td>&nbsp;&nbsp;&nbsp;<a href="$(basename $packages_failed_fn)" title="Really failed packages"> list</a></td></tr>
+  <tr class="pkg-faileddeps"><td>&nbsp;&nbsp;  $(left_align 38 "failed due to them")</td><td align="right">$packages_failed_deps_cnt</td><td>&nbsp;&nbsp;&nbsp;<a href="$(basename $packages_failed_deps_fn)" title="Packages failed due to dependencies"> list</a></td></tr>
 EOF
 
-    if  test "$packages_failed_scan_cnt" -gt 0 ||
-	test -s "$build_src_summary_log_fn"
-    then
+#    if  test "$packages_failed_scan_cnt" -gt 0 ||
+#	test -s "$build_src_summary_log_fn"
+#    then
 	cat <<EOF
-  <tr class="pkg-failed"><td>Packages failed (pkg_src_summary/scanning) </td>   <td align="right">$(right_align 6 $packages_failed_scan_cnt)</td><td>&nbsp;&nbsp;&nbsp;<a href="$(basename $packages_failed_scan_fn)" title="List of packages failed while building pkg_src_summary"> list</a></td> <td>&nbsp;&nbsp;<a href="$(basename $build_src_summary_log_fn)" title="pkg_src_summary logs">logs</a></td></tr>
+  <tr class="pkg-failed"><td>&nbsp;&nbsp;  $(left_align 38 "pkg_src_summary failed")</td><td align="right">$packages_failed_scan_cnt</td><td>&nbsp;&nbsp;&nbsp;<a href="$(basename $packages_failed_scan_fn)" title="Packages failed while building pkg_src_summary"> list</a></td> <td>&nbsp;&nbsp;<a href="$(basename $build_src_summary_log_fn)" title="pkg_src_summary logs">logs</a></td></tr>
 EOF
-    fi
+#    fi
 
     cat <<EOF
-  <tr><td>Packages in pkg_summary</td>         <td align="right">$(right_align 20 $packages_in_summary)</td></tr>
+  <tr><td>$(left_align 40 "Packages in pkg_summary")</td><td align="right">$packages_in_summary</td></tr>
 </table>
 <p>Packages not listed here resulted in a $url.<br>
 Results of failed packages are available below.<br>
