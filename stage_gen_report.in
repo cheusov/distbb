@@ -122,12 +122,12 @@ print_failed_deps_pkg (){
 
 pkgpath2maintainer (){
     # $1 - pkgpath
-    awk -v pkgpath="$1" '$1 == pkgpath {print $2; exit}' "$enriched_failed_fn"
+    awk -v pkgpath="$1" '$1 == pkgpath {print $3; exit}' "$packages_failed_total_fn"
 }
 
 pkgpath2pkgname (){
     # $1 - pkgpath
-    awk -v pkgpath="$1" '$1 == pkgpath {print $3; exit}' "$enriched_failed_fn"
+    awk -v pkgpath="$1" '$1 == pkgpath {print $2; exit}' "$packages_failed_total_fn"
 }
 
 distbb_diff2html (){
@@ -295,13 +295,8 @@ EOF
     printf '<tr><td>%-36s</td> <td align="right">%4s</td></tr>\n' '<b>Maintainer</b>' '<b>Breaks</b>'
     echo ''
 
-    cat "$enriched_failed_fn" |
-    while read pkgpath maintainer pkgname; do
-	case "$(get_failed_stage $pkgpath $pkgname)" in
-	    dbb_canbebuilt|dbb_excluded)
-		continue;;
-	esac
-
+    cat "$packages_failed_fn" |
+    while read pkgpath pkgname maintainer; do
 	echo "$maintainer $pkgpath"
 	awk -v m=$maintainer '
 	   { print m, $1}' "$REPORT1_DIR/$pkgname/failed_deps.txt"
@@ -329,8 +324,8 @@ EOF
 	-e 's,class="[^"]*",,g' \
 	-e 's,[A-Z][a-z ]*,<b>&</b>,g'
 
-    cat "$enriched_failed_fn" |
-    while read pkgpath maintainer pkgname; do
+    cat "$packages_failed_fn" "$packages_failed_notavail_fn" |
+    while read pkgpath pkgname maintainer; do
 	breaks=$(count_lines "$REPORT1_DIR/$pkgname/failed_deps.txt")
 	failed_stage=$(get_failed_stage "$pkgpath" "$pkgname")
 	echo "$pkgpath $breaks $failed_stage $maintainer $pkgname"
@@ -359,7 +354,7 @@ EOF
 	-e 's,[A-Z][a-z ]*,<b>&</b>,g'
     echo ''
 
-    while read pkgpath maintainer pkgname; do
+    while read pkgpath pkgname maintainer; do
 	fn="$REPORT1_DIR/$pkgname/failed_because.txt"
 	depX=$(head -n "$MAX_FAILED_DEPS_CNT" "$fn")
 	print_failed_deps_pkg \
@@ -369,7 +364,7 @@ EOF
 	    depname=$(pkgpath2pkgname "$deppath")
 	    print_failed_deps_pkg '' '' "$maintainer" "$deppath" "$depname"
 	done
-    done < "$enriched_failed_deps_fn"
+    done < "$packages_failed_deps_fn"
     printf '%s\n' "</table>"
 
     # previous bulk build vs. this one
@@ -452,18 +447,6 @@ packages_built_total=$(($packages_built_cnt+$packages_built_prev_cnt))
 
 packages_in_summary=$(awk '{cnt += ($0 ~ /^PKGNAME=/)} END {print cnt}' "$PKG_SUMMARY")
 
-enriched_failed_fn="$tmpdir/enriched_failed.tmp"
-enrich_pkgpath "MAINTAINER PKGNAME" \
-    "$packages_failed_fn.tmp" > "$enriched_failed_fn"
-
-enriched_failed_deps_fn="$tmpdir/enriched_failed_deps.tmp"
-enrich_pkgpath "MAINTAINER PKGNAME" \
-    "$packages_failed_deps_fn.tmp" > "$enriched_failed_deps_fn"
-
-enriched_failed_notavail_fn="$tmpdir/enriched_failed_notavail.tmp"
-enrich_pkgpath "MAINTAINER PKGNAME" \
-    "$packages_failed_notavail_fn.tmp" > "$enriched_failed_notavail_fn"
-
 ##
 
 verbose_print "  enriching META/packages_*.txt..."
@@ -494,7 +477,7 @@ sort_uniq "$packages_built_fn" "$packages_built_prev_fn" \
     > "$packages_built_total_fn"
 
 sort_uniq "$packages_failed_fn" "$packages_failed_deps_fn" \
-    "$packages_failed_scan_fn" \
+    "$packages_failed_scan_fn" "$packages_failed_notavail_fn" \
     > "$packages_failed_total_fn"
 
 verbose_print "done\n"
