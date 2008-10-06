@@ -102,8 +102,7 @@ for p in $EXTRA_DEPS; do
     echo $p >> $packages_fn.tmp
 done
 
-env LC_ALL=C sort -u $packages_fn.tmp > $packages_fn.tmp2
-mv $packages_fn.tmp2 $packages_fn.tmp
+sort_uniq_inplace $packages_fn.tmp
 
 verbose_print "done\n"
 
@@ -241,9 +240,7 @@ for d in dummy $EXTRA_DEPS; do
     done
 done
 
-runpipe0 \
-    env LC_ALL=C sort $deps_fn $deps_fn.tmp '|' \
-    env LC_ALL=C uniq > $deps_fn.tmp2
+sort_uniq $deps_fn $deps_fn.tmp > $deps_fn.tmp2
 
 mv $deps_fn.tmp2 $deps_fn
 rm $deps_fn.tmp
@@ -327,7 +324,7 @@ if test "$packages"; then
 
     runpipe0 \
 	with_dependancies "$packages_fn" "$trans_clos_fn" '|' \
-	sort -u > $packages_with_deps_fn
+	sort_uniq > $packages_with_deps_fn
 
     verbose_print "done\n"
 else
@@ -416,10 +413,10 @@ BEGIN {
 
 runpipe0 \
     all_packages_to_be_build '|' \
-    sort -u > $rebuild_fn
+    sort_uniq > $rebuild_fn
 runpipe0 \
     all_packages_to_be_build2 '|' \
-    sort -u > $trans_clos_rebuild_fn
+    sort_uniq > $trans_clos_rebuild_fn
 
 verbose_print "done\n"
 
@@ -441,7 +438,7 @@ END {
 
 runpipe0 \
     generate_built_prev '|' \
-    env LC_ALL=C sort > "$packages_built_prev_fn.tmp"
+    sort_uniq > "$packages_built_prev_fn.tmp"
 
 verbose_print "done\n"
 

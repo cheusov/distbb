@@ -38,11 +38,6 @@ BUILD_ID="$1"
 # main
 verbose_print "Logs generation...\n"
 
-sort_uniq_inplace (){
-    env LC_ALL=C sort -u $1 > $1.tmp
-    mv $1.tmp $1
-}
-
 sort_uniq_inplace $REPORT1_DIR/META/packages_built.txt.tmp
 sort_uniq_inplace $REPORT1_DIR/META/packages_failed.txt.tmp
 
@@ -52,7 +47,7 @@ build_end=$(cat "$build_end_fn")
 find_failed_deps_packages (){
     runpipe0 \
 	find "$REPORT1_DIR" -name failed_deps.txt '|' \
-	xargs cat '|' env LC_ALL=C sort -u
+	xargs cat '|' sort_uniq
 }
 
 find_failed_deps_packages > "$packages_failed_deps_fn.tmp"
@@ -308,7 +303,7 @@ EOF
 	echo "$maintainer $pkgpath"
 	awk -v m=$maintainer '
 	   { print m, $1}' "$REPORT1_DIR/$pkgname/failed_deps.txt"
-    done | env LC_ALL=C sort -u |
+    done | sort_uniq |
     awk '{++count [$1]}
     END {for (m in count) print m, count [m] }' |
     sort -k2,2rn |
@@ -468,16 +463,16 @@ verbose_print "  enriching META/packages_*.txt..."
 
 runpipe0 \
     enrich_pkgpath 'PKGNAME MAINTAINER' $packages_built_prev_fn.tmp '|' \
-    sort > $packages_built_prev_fn
+    sort_uniq > $packages_built_prev_fn
 runpipe0 \
     enrich_pkgpath 'PKGNAME MAINTAINER' $packages_built_fn.tmp '|' \
-    sort > $packages_built_fn
+    sort_uniq > $packages_built_fn
 runpipe0 \
     enrich_pkgpath 'PKGNAME MAINTAINER' $packages_failed_fn.tmp '|' \
-    sort > $packages_failed_fn
+    sort_uniq > $packages_failed_fn
 runpipe0 \
     enrich_pkgpath 'PKGNAME MAINTAINER' $packages_failed_deps_fn.tmp '|' \
-    sort > $packages_failed_deps_fn
+    sort_uniq > $packages_failed_deps_fn
 
 verbose_print "done\n"
 
@@ -485,11 +480,12 @@ verbose_print "done\n"
 
 verbose_print "  creating META/packages_{built,failed}_total.txt..."
 
-env LC_ALL=C sort -u "$packages_built_fn" "$packages_built_prev_fn" \
+sort_uniq "$packages_built_fn" "$packages_built_prev_fn" \
     > "$packages_built_total_fn"
 
-env LC_ALL=C sort -u "$packages_failed_fn" "$packages_failed_deps_fn" \
-    "$packages_failed_scan_fn" > "$packages_failed_total_fn"
+sort_uniq "$packages_failed_fn" "$packages_failed_deps_fn" \
+    "$packages_failed_scan_fn" \
+    > "$packages_failed_total_fn"
 
 verbose_print "done\n"
 
