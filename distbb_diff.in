@@ -103,8 +103,8 @@ pkg_cmp_summary -p \
     $bbdir1/META/pkg_src_summary.txt \
     $bbdir2/META/pkg_src_summary.txt > $cmp_fn
 
-total1_fn=$bbdir1/META/packages_total.txt
-total2_fn=$bbdir2/META/packages_total.txt
+total1_fn=$bbdir1/META/packages_built_total.txt
+total2_fn=$bbdir2/META/packages_built_total.txt
 
 failed_fn=$bbdir2/META/packages_failed.txt
 failed_dep_fn=$bbdir2/META/packages_failed_deps.txt

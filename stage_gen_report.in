@@ -245,7 +245,7 @@ EOF
   <tr><td>Build ended:</td>  <td align="right">$(right_align 38 "${build_end}")</td><td>&nbsp;</td></tr>
 
   <tr><td>&nbsp;</td>                  <td>&nbsp;</td><td>&nbsp;</td></tr>
-  <tr class="pkg-total"><td>Total packages</td>                  <td align="right">$(right_align 20 $packages_total)</td><td>&nbsp;&nbsp;&nbsp;<a href="$(basename $packages_total_fn)" title="List of total packages"> list</a></td></tr>
+  <tr class="pkg-total"><td>Packages built (total)</td>                  <td align="right">$(right_align 20 $packages_built_total)</td><td>&nbsp;&nbsp;&nbsp;<a href="$(basename $packages_built_total_fn)" title="List of total packages"> list</a></td></tr>
   <tr><td>Packages built previously</td>       <td align="right">$(right_align 20 $packages_built_prev_cnt)</td><td>&nbsp;&nbsp;&nbsp;<a href="$(basename $packages_built_prev_fn)" title="List of packages built previously"> list</a></td></tr>
   <tr class="pkg-built"><td>Packages built</td>                  <td align="right">$(right_align 20 $packages_built_cnt)</td><td>&nbsp;&nbsp;&nbsp;<a href="$(basename $packages_built_fn)" title="List of successfully built packages"> list</a></td></tr>
   <tr class="pkg-failed"><td>Packages failed</td>                 <td align="right">$(right_align 20 $packages_failed_cnt)</td><td>&nbsp;&nbsp;&nbsp;<a href="$(basename $packages_failed_fn)" title="List of failed packages"> list</a></td></tr>
@@ -397,7 +397,7 @@ EOF
 
 	best_is_ok=''
 	if test -d $bbdir_best -a \
-	    -f $bbdir_best/META/packages_total.txt -a \
+	    -f $bbdir_best/META/packages_built_total.txt -a \
 	    -f $bbdir_best/META/pkg_src_summary.txt
 	then
 	    best_is_ok=1
@@ -415,19 +415,19 @@ EOF
 	fi
 
 	if test -n "$best_is_ok"; then
-	    mv $bbdir_best/META/packages_total.txt \
-	       $bbdir_best/META/packages_total.txt.old
+	    mv $bbdir_best/META/packages_built_total.txt \
+	       $bbdir_best/META/packages_built_total.txt.old
 	    mv $bbdir_best/META/pkg_src_summary.txt \
 	       $bbdir_best/META/pkg_src_summary.txt.old
 
 	    grep_existing_pkgs \
 		$REPORT1_DIR/META/pkg_src_summary.txt \
-		$REPORT1_DIR/META/packages_total.txt \
-		 $bbdir_best/META/packages_total.txt.old \
-		> $bbdir_best/META/packages_total.txt
+		$REPORT1_DIR/META/packages_built_total.txt \
+		 $bbdir_best/META/packages_built_total.txt.old \
+		> $bbdir_best/META/packages_built_total.txt
 	else
 	    mkdir -p $bbdir_best/META
-	    cp $REPORT1_DIR/META/packages_total.txt \
+	    cp $REPORT1_DIR/META/packages_built_total.txt \
 	       $bbdir_best/META/
 	fi
 
@@ -443,7 +443,7 @@ packages_failed_deps_cnt=$(count_lines "$packages_failed_deps_fn.tmp")
 packages_failed_cnt=$(count_lines "$packages_failed_fn.tmp")
 packages_built_cnt=$(count_lines "$packages_built_fn.tmp")
 packages_built_prev_cnt=$(count_lines "$packages_built_prev_fn.tmp")
-packages_total=$(($packages_built_cnt+$packages_built_prev_cnt))
+packages_built_total=$(($packages_built_cnt+$packages_built_prev_cnt))
 packages_in_summary=$(awk '{cnt += ($0 ~ /^PKGNAME=/)} END {print cnt}' "$PKG_SUMMARY")
 
 enriched_failed_fn="$tmpdir/enriched_failed.tmp"
@@ -475,10 +475,10 @@ verbose_print "done\n"
 
 ##
 
-verbose_print "  creating META/packages_total.txt..."
+verbose_print "  creating META/packages_built_total.txt..."
 
 env LC_ALL=C sort -u "$packages_built_fn" "$packages_built_prev_fn" \
-    > "$packages_total_fn"
+    > "$packages_built_total_fn"
 
 verbose_print "done\n"
 
