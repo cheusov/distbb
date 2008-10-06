@@ -25,6 +25,7 @@ tmpdir=$meta_dir/tmp
 packages_failed_scan_fn=$meta_dir/packages_failed_scan.txt
 packages_failed_deps_fn=$meta_dir/packages_failed_deps.txt
 packages_failed_fn=$meta_dir/packages_failed.txt
+packages_failed_total_fn=$meta_dir/packages_failed_total.txt
 packages_built_prev_fn=$meta_dir/packages_built_prev.txt
 packages_built_fn=$meta_dir/packages_built.txt
 packages_built_total_fn=$meta_dir/packages_built_total.txt

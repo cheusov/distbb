@@ -246,10 +246,11 @@ EOF
 
   <tr><td>&nbsp;</td>                  <td>&nbsp;</td><td>&nbsp;</td></tr>
   <tr class="pkg-total"><td>Packages built (total)</td>                  <td align="right">$(right_align 20 $packages_built_total)</td><td>&nbsp;&nbsp;&nbsp;<a href="$(basename $packages_built_total_fn)" title="List of total packages"> list</a></td></tr>
-  <tr><td>Packages built previously</td>       <td align="right">$(right_align 20 $packages_built_prev_cnt)</td><td>&nbsp;&nbsp;&nbsp;<a href="$(basename $packages_built_prev_fn)" title="List of packages built previously"> list</a></td></tr>
-  <tr class="pkg-built"><td>Packages built</td>                  <td align="right">$(right_align 20 $packages_built_cnt)</td><td>&nbsp;&nbsp;&nbsp;<a href="$(basename $packages_built_fn)" title="List of successfully built packages"> list</a></td></tr>
-  <tr class="pkg-failed"><td>Packages failed</td>                 <td align="right">$(right_align 20 $packages_failed_cnt)</td><td>&nbsp;&nbsp;&nbsp;<a href="$(basename $packages_failed_fn)" title="List of failed packages"> list</a></td></tr>
-  <tr class="pkg-faileddeps"><td>Packages failed due to them</td>     <td align="right">$(right_align 20 $packages_failed_deps_cnt)</td><td>&nbsp;&nbsp;&nbsp;<a href="$(basename $packages_failed_deps_fn)" title="List of packages failed due to their dependencies"> list</a></td></tr>
+  <tr><td>Packages built previously</td>       <td align="right">$(right_align 20 $packages_built_prev_cnt)</td><td>&nbsp;&nbsp;&nbsp;<a href="$(basename $packages_built_prev_fn)" title="Packages built previously"> list</a></td></tr>
+  <tr class="pkg-built"><td>Packages built</td>                  <td align="right">$(right_align 20 $packages_built_cnt)</td><td>&nbsp;&nbsp;&nbsp;<a href="$(basename $packages_built_fn)" title="Successfully built packages"> list</a></td></tr>
+  <tr><td>Packages failed (total)</td>                  <td align="right">$(right_align 20 $packages_failed_total)</td><td>&nbsp;&nbsp;&nbsp;<a href="$(basename $packages_failed_total_fn)" title="All failed packages"> list</a></td></tr>
+  <tr class="pkg-failed"><td>Packages failed</td>                 <td align="right">$(right_align 20 $packages_failed_cnt)</td><td>&nbsp;&nbsp;&nbsp;<a href="$(basename $packages_failed_fn)" title="Really failed packages"> list</a></td></tr>
+  <tr class="pkg-faileddeps"><td>Packages failed due to them</td>     <td align="right">$(right_align 20 $packages_failed_deps_cnt)</td><td>&nbsp;&nbsp;&nbsp;<a href="$(basename $packages_failed_deps_fn)" title="Packages failed due to dependencies"> list</a></td></tr>
 EOF
 
     if  test "$packages_failed_scan_cnt" -gt 0 ||
@@ -441,9 +442,12 @@ EOF
 packages_failed_scan_cnt=$(count_lines "$packages_failed_scan_fn")
 packages_failed_deps_cnt=$(count_lines "$packages_failed_deps_fn.tmp")
 packages_failed_cnt=$(count_lines "$packages_failed_fn.tmp")
+packages_failed_total=$(($packages_failed_cnt+$packages_failed_prev_cnt+$packages_failed_scan_cnt))
+
 packages_built_cnt=$(count_lines "$packages_built_fn.tmp")
 packages_built_prev_cnt=$(count_lines "$packages_built_prev_fn.tmp")
 packages_built_total=$(($packages_built_cnt+$packages_built_prev_cnt))
+
 packages_in_summary=$(awk '{cnt += ($0 ~ /^PKGNAME=/)} END {print cnt}' "$PKG_SUMMARY")
 
 enriched_failed_fn="$tmpdir/enriched_failed.tmp"
@@ -475,10 +479,13 @@ verbose_print "done\n"
 
 ##
 
-verbose_print "  creating META/packages_built_total.txt..."
+verbose_print "  creating META/packages_{built,failed}_total.txt..."
 
 env LC_ALL=C sort -u "$packages_built_fn" "$packages_built_prev_fn" \
     > "$packages_built_total_fn"
+
+env LC_ALL=C sort -u "$packages_failed_fn" "$packages_failed_deps_fn" \
+    "$packages_failed_scan_fn" > "$packages_failed_total_fn"
 
 verbose_print "done\n"
 
