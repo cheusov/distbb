@@ -31,11 +31,13 @@ SCRIPTSDIR=			${LIBEXECDIR}
 SCRIPTSDIR_distbb=		${BINDIR}
 SCRIPTSDIR_distbb_diff=		${BINDIR}
 
-FILES=				distbb.conf distbb.local.mk
-FILES+=				distbb.mk common
+FILES=				distbb.conf distbb.local.mk distbb.mk \
+				common common_pre
+
 FILESDIR=			${EGDIR}
 FILESDIR_distbb.mk=		${DATADIR}
 FILESDIR_common=		${LIBEXECDIR}
+FILESDIR_common_pre=		${LIBEXECDIR}
 
 MKMAN=			no
 
@@ -47,7 +49,7 @@ PROJECTNAME=		distbb
 
 .SUFFIXES:		.in
 
-all: distbb.conf common distbb.mk distbb.local.mk
+#all: distbb.conf common common_pre distbb.mk distbb.local.mk
 
 .in:
 	sed -e 's,@@sysconfdir@@,${SYSCONFDIR},g' \
@@ -69,7 +71,7 @@ distbb.html : distbb.pod
 clean: clean-my
 clean-my:
 	rm -f *~ core* distbb.1 distbb.cat1 ChangeLog
-	rm -rf ${SCRIPTS} ${FILES}
+	rm -f ${SCRIPTS} ${FILES}
 	rm -f distbb.html
 
 ##################################################

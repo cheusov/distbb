@@ -24,9 +24,11 @@
 ######################################################################
 
 set -e
+
 . @@bindir@@/pipestatus
 
-. @@sysconfdir@@/distbb.conf
+. @@libexecdir@@/common_pre
+. "$DISTBB_CONF"
 
 unset PKG_PATH || true
 export BINPKG_SITES=$PACKAGES

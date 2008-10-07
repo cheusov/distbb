@@ -32,7 +32,8 @@ test $# -eq 1
 # init
 BUILD_ID="$1"
 
-. @@sysconfdir@@/distbb.conf
+. @@libexecdir@@/common_pre
+. "$DISTBB_CONF"
 . @@libexecdir@@/common
 
 # main
@@ -298,7 +299,8 @@ fi
 verbose_print "Building\n"
 
 eval runpipe0 \
-    paexec -s -EI -lr $TRANSPORT $SLAVES -c "$DISTBB_SLAVE" < "$queue_fn" '|' \
+    paexec -s -EI -lr $TRANSPORT $SLAVES \
+	-c "'env DISTBB_CONF=$DISTBB_CONF $DISTBB_SLAVE'" < "$queue_fn" '|' \
     postfilter
 
 ######################################################################

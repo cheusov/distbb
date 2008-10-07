@@ -33,6 +33,8 @@ usage: distbb [OPTIONS]
 OPTIONS:
   -h|--help              display this help message
   -V|--version           distbb version
+  -C|--config <config>   config file, the default is
+                         @@sysconfdir@@/distbb.conf
   -p|--pkgs <packages>   build the specified packages
   -f|--file <filename>   build the packages listed in
                          the specified filename ( - for stdin),
@@ -64,6 +66,12 @@ while test $# -ne 0; do
 	    shift;;
 	-p*)
 	    pkgs="$(printf '%s\n' '$1' | cut -b3-)";;
+
+	-C|--config)
+	    DISTBB_CONF="$2"
+	    shift;;
+	-C*)
+	    DISTBB_CONF="$(printf '%s\n' '$1' | cut -b3-)";;
 
 	-D|--diff)
 	    export DISTBB_DIFF=1;;
@@ -117,7 +125,9 @@ fi
 
 echo "BUILD_ID: $BUILD_ID" 1>&2
 
-. @@sysconfdir@@/distbb.conf
+. @@libexecdir@@/common_pre
+export DISTBB_CONF
+. "$DISTBB_CONF"
 
 ######################################################################
 test_var (){
@@ -152,7 +162,7 @@ test_var LIST_ALL_PKGS_CMD
 test_var EXTRA_DEPS_CMD
 test_var DISTBB_LOCAL_MK
 
-if grep BUILD_START @@sysconfdir@@/distbb.conf > /dev/null; then
+if grep BUILD_START "$DISTBB_CONF" > /dev/null; then
     echo 'Replace BUILD_START variable with BUILD_ID in your distbb.conf!' 1>&2
     exit 1
 fi

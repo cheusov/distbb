@@ -1,0 +1,5 @@
+#-*-mode:  sh -*-
+
+if test -z "$DISTBB_CONF"; then
+    DISTBB_CONF=@@sysconfdir@@/distbb.conf
+fi

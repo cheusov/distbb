@@ -32,7 +32,8 @@ test $# -eq 1
 # init
 BUILD_ID="$1"
 
-. @@sysconfdir@@/distbb.conf
+. @@libexecdir@@/common_pre
+. "$DISTBB_CONF"
 . @@libexecdir@@/common
 
 # main

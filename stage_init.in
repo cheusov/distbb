@@ -36,7 +36,8 @@ build_start="$3"
 
 packages="$pkgs_fn" # pkgs_fn - from distbb
 
-. @@sysconfdir@@/distbb.conf
+. @@libexecdir@@/common_pre
+. "$DISTBB_CONF"
 . @@libexecdir@@/common
 
 test -n "$BUILD_ID" -a -n "$REPORTS_DIR" # who knows...
