@@ -36,7 +36,7 @@ build_start="$3"
 
 packages="$pkgs_fn" # pkgs_fn - from distbb
 
-. @@libexecdir@@/common_pre
+DISTBB_CONF=${DISTBB_CONF:-@@sysconfdir@@/distbb.conf}
 . "$DISTBB_CONF"
 . @@libexecdir@@/common
 

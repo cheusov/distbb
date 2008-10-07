@@ -32,12 +32,11 @@ SCRIPTSDIR_distbb=		${BINDIR}
 SCRIPTSDIR_distbb_diff=		${BINDIR}
 
 FILES=				distbb.conf distbb.local.mk distbb.mk \
-				common common_pre
+				common
 
 FILESDIR=			${EGDIR}
 FILESDIR_distbb.mk=		${DATADIR}
 FILESDIR_common=		${LIBEXECDIR}
-FILESDIR_common_pre=		${LIBEXECDIR}
 
 MKMAN=			no
 
@@ -49,7 +48,7 @@ PROJECTNAME=		distbb
 
 .SUFFIXES:		.in
 
-#all: distbb.conf common common_pre distbb.mk distbb.local.mk
+#all: distbb.conf common distbb.mk distbb.local.mk
 
 .in:
 	sed -e 's,@@sysconfdir@@,${SYSCONFDIR},g' \

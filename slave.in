@@ -27,7 +27,7 @@ set -e
 
 . @@bindir@@/pipestatus
 
-. @@libexecdir@@/common_pre
+DISTBB_CONF=${DISTBB_CONF:-@@sysconfdir@@/distbb.conf}
 . "$DISTBB_CONF"
 
 unset PKG_PATH || true
