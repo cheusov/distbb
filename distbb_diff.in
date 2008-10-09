@@ -205,24 +205,28 @@ BEGIN {
    }
    while (xgetline0(failed_scan2_fn)) {
       sub(/:.*$/, "", $1)
-      sub(/-[^-]*$/, "", $2)
-      failed_scan_new [$1, $2] = $3
+      failed_scan_new [$1] = $3
    }
 
    # print results
    for (i in total_old){
-      if (i in pkg_del)
-         print "R", i                   > res_removed_fn
-      else if (! (i in total_new))
+      if (i in pkg_del){
+         sub(SUBSEP ".*$", "", i)
+         if (i in failed_scan_new)
+            print_failed(i, "-")
+         else
+            print "R", i                   > res_removed_fn
+      }else if (! (i in total_new)){
          print_failed(i, "-")
+      }
    }
    for (i in pkg_new){
       if (! (i in total_new))
-         print_failed(i, "n-")
+         print_failed(i, "N-")
    }
    for (i in total_new){
       if (i in pkg_new)
-         print_succeeded(i, "n+")
+         print_succeeded(i, "N+")
       else if (! (i in total_old))
          print_succeeded(i, "+")
    }

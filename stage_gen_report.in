@@ -184,9 +184,10 @@ print_distbb_diff_help_msg (){
     cat <<EOF
 <p><i>'-' package was built successfully but now fails<br>
 '+' package failed previously but now is built successfully<br>
-'d' fails because of failed dependancy<br>
-'n' package is new<br>
-'R' package is removed or pkg_src_summary failed<br>
+'c' pkg_src_summary failed for given package<br>
+'d' package fails/failed due to broken dependency<br>
+'N' package is new<br>
+'R' package was removed<br>
 </i></p>
 EOF
 }
@@ -587,7 +588,7 @@ report_html2txt (){
       printf "%-4s %-24s %-20s %24s\n\n", "", $1, $2, $3
       next
    }
-   $1 ~ /^n?[-+]d?$/ && NF >= 4 || $1 == "R" && NF == 3 {
+   $1 ~ /^[nN]?[-+][dc]?$/ && NF >= 4 || $1 == "R" && NF == 3 {
       sub(/[+]/, "+", $1)
       sub(/[-]/, "-", $1)
 
