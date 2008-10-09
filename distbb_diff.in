@@ -154,7 +154,11 @@ function print_failed (pkg, prefix){
 }
 
 function print_succeeded (pkg, prefix){
-   print prefix, pkg, pkg_ver [pkg]          > res_succeeded_fn
+   if (pkg in failed_dep_old){
+      print prefix "d", pkg, pkg_ver [pkg]          > res_succeeded_fn
+   }else{
+      print prefix, pkg, pkg_ver [pkg]          > res_succeeded_fn
+   }
 }
 
 BEGIN {
@@ -183,6 +187,11 @@ BEGIN {
       sub(/:.*$/, "", $1)
       sub(/-[^-]*$/, "", $2)
       total_new [$1, $2] = $3
+   }
+   while (xgetline0(failed_dep1_fn)) {
+      sub(/:.*$/, "", $1)
+      sub(/-[^-]*$/, "", $2)
+      failed_dep_old [$1, $2] = $3
    }
    while (xgetline0(failed2_fn)) {
       sub(/:.*$/, "", $1)
