@@ -1,7 +1,7 @@
 Version 0.21.0, by Aleksey Cheusov, Thu,  9 Oct 2008 22:52:20 +0300
 
   DISTBB_CONF environment variable points to the distbb configuration file,
-  it is overriden by -C option (dictbb -C). -C option is new option.
+  it is overriden by -C option (distbb -C). -C option is new option.
   By default @@sysconfdir@@/distbb.conf is used.
 
   distbb.conf:
