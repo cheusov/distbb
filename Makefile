@@ -48,7 +48,7 @@ PROJECTNAME=		distbb
 
 .SUFFIXES:		.in
 
-#all: distbb.conf common distbb.mk distbb.local.mk
+all: distbb.conf common distbb.mk distbb.local.mk
 
 .in:
 	sed -e 's,@@sysconfdir@@,${SYSCONFDIR},g' \
