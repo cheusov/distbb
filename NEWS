@@ -1,3 +1,47 @@
+Version 0.21.0, by Aleksey Cheusov, Thu,  9 Oct 2008 22:52:20 +0300
+
+  DISTBB_CONF environment variable points to the distbb configuration file,
+  it is overriden by -C option (dictbb -C). -C option is new option.
+  By default @@sysconfdir@@/distbb.conf is used.
+
+  distbb.conf:
+     New mandatory conf variable DISTBB_LOCAL_MK, that should
+     point to distbb.local.mk
+
+  distbb_diff:
+     +d means that given package is now built correctly but
+     previously was failed DUE TO ITS DEPENDENCIES
+
+     -c means "pkg_src_summary" failed for given package
+
+     n[-+] changed to N[-+]
+
+  REPORT
+
+     META/packages_total.txt renamed to META/packages_built_total.txt,
+     new "Packages built (total)" line added to META/report.html
+     META/packages_built_total.txt = META/packages_built_{*}.txt
+
+     New report file META/packages_failed_total.txt,
+     new "Packages failed (total)" line added to META/report.html
+     META/packages_failed_total.txt = META/packages_failed_{*}.txt
+
+     New report file META/packages_failed_notavail.txt that lists
+     packages marked as "not available",
+     new "packages marked as not available" line added to report.{txt,html}
+
+     New entry to the report: "Inspected packages"
+
+     PKGNAME/stage_xxx.html: links to other stages appear both at the
+     top and bottom of the html page
+
+     If building stage succeeded without any output
+     (e.g. dbb_canbebuilt or dbb_excluded) it is not listed in other
+     PKGNAME/stage_xxx.html files, i.e. no links to such files
+
+     Link to package's summary (PKGNAME/summary.txt) is added to
+     PKGNAME/stage_xxx.html
+
 Version 0.20.1, by Aleksey Cheusov, Tue, 30 Sep 2008 00:58:46 +0300
 
   hot fix for distbb_diff (stage_gen_report might fail)
