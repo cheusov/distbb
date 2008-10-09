@@ -106,9 +106,11 @@ pkg_cmp_summary -p \
 total1_fn=$bbdir1/META/packages_built_total.txt
 total2_fn=$bbdir2/META/packages_built_total.txt
 
-failed_fn=$bbdir2/META/packages_failed.txt
-failed_dep_fn=$bbdir2/META/packages_failed_deps.txt
-failed_scan_fn=$bbdir2/META/packages_failed_scan.txt
+failed_dep1_fn=$bbdir1/META/packages_failed_deps.txt
+
+failed2_fn=$bbdir2/META/packages_failed.txt
+failed_dep2_fn=$bbdir2/META/packages_failed_deps.txt
+failed_scan2_fn=$bbdir2/META/packages_failed_scan.txt
 
 res_failed_fn=$tmp_dir/failed
 res_failed_deps_fn=$tmp_dir/failed_deps
@@ -126,9 +128,10 @@ runawk \
    -v cmp_fn="$cmp_fn" \
    -v total1_fn=$total1_fn \
    -v total2_fn=$total2_fn \
-   -v failed_fn=$failed_fn \
-   -v failed_dep_fn=$failed_dep_fn \
-   -v failed_scan_fn=$failed_scan_fn \
+   -v failed_dep1_fn=$failed_dep1_fn \
+   -v failed2_fn=$failed2_fn \
+   -v failed_dep2_fn=$failed_dep2_fn \
+   -v failed_scan2_fn=$failed_scan2_fn \
    -v res_failed_fn=$res_failed_fn \
    -v res_failed_deps_fn=$res_failed_deps_fn \
    -v res_failed_scan_fn=$res_failed_scan_fn \
@@ -181,17 +184,17 @@ BEGIN {
       sub(/-[^-]*$/, "", $2)
       total_new [$1, $2] = $3
    }
-   while (xgetline0(failed_fn)) {
+   while (xgetline0(failed2_fn)) {
       sub(/:.*$/, "", $1)
       sub(/-[^-]*$/, "", $2)
       failed_new [$1, $2] = $3
    }
-   while (xgetline0(failed_dep_fn)) {
+   while (xgetline0(failed_dep2_fn)) {
       sub(/:.*$/, "", $1)
       sub(/-[^-]*$/, "", $2)
       failed_dep_new [$1, $2] = $3
    }
-   while (xgetline0(failed_scan_fn)) {
+   while (xgetline0(failed_scan2_fn)) {
       sub(/:.*$/, "", $1)
       sub(/-[^-]*$/, "", $2)
       failed_scan_new [$1, $2] = $3
