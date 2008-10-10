@@ -48,6 +48,8 @@ PROJECTNAME=		distbb
 
 .SUFFIXES:		.in
 
+# the following appeares because bsd.file.mk
+# is broken in pkgsrc (NetBSD pkg/39715)
 all: distbb.conf common distbb.mk distbb.local.mk
 
 .in:
