@@ -152,7 +152,7 @@ BEGIN {
    ver = $4
    sub(/.* /, "", ver)
 
-   if ($1 ~ /^n?-$/){
+   if ($1 ~ /^N?-$/){
       stage_fn = report1_dir "/" $3 "-" ver "/curr_stage.tmp"
       getline failed_stage < stage_fn
       close(stage_fn)
