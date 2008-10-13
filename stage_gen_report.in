@@ -657,7 +657,7 @@ other_stages_bar (){
 	    if test "$t" = "$stage"; then
 		printf "$stage"
 	    else
-		printf "<a href=\"stage_%s.html\" title=\"build log for %s\">%s</a>\n" \
+		printf '<a href="stage_%s.html" title="build log for %s">%s</a>\n' \
 		    "$t" "$pkgpath" "$t"
 	    fi
 
@@ -665,7 +665,7 @@ other_stages_bar (){
 	fi
     done
     short_pkgpath="$(echo $pkgpath | cut -f1 -d:)"
-    printf '<br>Summary:<a href=\"summary.txt\" title=\"summary for package %s\">summary</a>' \
+    printf '<br>Summary:<a href="summary.txt" title="summary for package %s">summary</a>' \
 	"$short_pkgpath"
     printf '</p>\n'
 }
