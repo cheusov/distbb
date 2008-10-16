@@ -136,13 +136,11 @@ runawk \
 #use "xgetline.awk"
 
 BEGIN {
-   print "before loading"
    while (xgetline0(pkg_src_summary)){
       if ($0 ~ /^PKGPATH=/) pkgpath = substr($0, 9)
       else if ($0 ~ /^PKGNAME=/) pkgname = substr($0, 9)
       else if (NF == 0) pkgnames [pkgpath] = pkgname
    }
-   print "loading pkg_src_summary done"
 }
 
 function get_log_dir (pkgpath,            pkgname){
