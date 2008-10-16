@@ -31,3 +31,20 @@ dbb_excluded:
 	false
 .endif
 ############################################################
+############################################################
+# dbb_vars target:
+# outputs MAKE_FLAGS, MAKE_ENV, CONFIGURE_ENV etc.
+.if !defined(DBB_VARS) # override it in distbb.local.mk
+DBB_VARS=	TOOLS CONFIGURE_DIRS CONFIGURE_ENV CONFIGURE_SCRIPT 
+DBB_VARS+=	CONFIGURE_ARGS PKGSRC_MAKE_ENV BUILD_DIRS MAKE_ENV
+DBB_VARS+=	MAKE_PROGRAM MAKE_FLAGS BUILD_MAKE_FLAGS INSTALL_DIRS
+DBB_VARS+=	INSTALL_MAKE_FLAGS PLIST_SUBST
+.endif
+
+dbb_vars:
+.for v in ${DBB_VARS}
+.if !empty(${v})
+	@echo ${v}:
+	@for val in ${${v}}; do printf '    %s\n' "$$val"; done
+.endif
+.endfor
