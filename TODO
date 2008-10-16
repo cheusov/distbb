@@ -8,6 +8,8 @@ ideas/thoughts/todo/problems
  - simplify distbb.conf. distbb is very customizable, but
    distbb.conf becomes very large.
 
+ - separate DEPENDS from BUILD_DEPENDS (versions should be analysed)
+
  - modification time of binary packages?
    problem:
      package_A depends on package_B
