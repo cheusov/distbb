@@ -8,9 +8,6 @@ ideas/thoughts/todo/problems
  - simplify distbb.conf. distbb is very customizable, but
    distbb.conf becomes very large.
 
- - distbb -C config-file.conf,
-   stage_* scripts should use config files stored (or linked) in META/
-
  - modification time of binary packages?
    problem:
      package_A depends on package_B
@@ -20,8 +17,6 @@ ideas/thoughts/todo/problems
         modification time of binary packages are currently not checked
 
  - distbb.1
-
- - my-show-vars -> share/distbb/distbb.mk
 
  - I think distbb can be adapted for FreeBSD/OpenBSD Ports
    and other packaging systems
