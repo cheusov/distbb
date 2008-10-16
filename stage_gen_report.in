@@ -39,12 +39,24 @@ DISTBB_CONF=${DISTBB_CONF:-@@sysconfdir@@/distbb.conf}
 # main
 verbose_print "Logs generation...\n"
 
-sort_uniq_inplace $REPORT1_DIR/META/packages_built.txt.tmp
-sort_uniq_inplace $REPORT1_DIR/META/packages_failed.txt.tmp
-sort_uniq_inplace $REPORT1_DIR/META/packages_failed_notavail.txt.tmp
+######################################################################
+
+verbose_print "  sort_uniq META/packages_{build,failed{,_notavail}}.tmp ... "
+
+sort_uniq_inplace $packages_built_fn.tmp
+sort_uniq_inplace $packages_failed_fn.tmp
+sort_uniq_inplace $packages_failed_notavail_fn.tmp
+
+verbose_print "done\n"
+
+######################################################################
 
 build_start=$(cat "$build_start_fn")
 build_end=$(cat "$build_end_fn")
+
+######################################################################
+
+verbose_print "  creating META/packages_failed_deps.txt.tmp ... "
 
 find_failed_deps_packages (){
     runpipe0 \
@@ -54,12 +66,21 @@ find_failed_deps_packages (){
 
 find_failed_deps_packages > "$packages_failed_deps_fn.tmp"
 
-# resort failed_because.txt and failed_deps.txt
+verbose_print "done\n"
+
+######################################################################
+
+verbose_print "  sort_uniq PKGNAMEs/failed_{because,deps}.txt ... "
+
 find $REPORT1_DIR -type f \
     '(' -name failed_because.txt -o -name failed_deps.txt ')' |
 while read f; do
     sort_uniq_inplace "$f"
 done
+
+verbose_print 'done\n'
+
+######################################################################
 
 # main continuing...
 count_lines (){
@@ -442,6 +463,8 @@ EOF
     printf '<hr>\n'
 }
 
+######################################################################
+
 packages_inspected_cnt=$(count_lines "$packages_with_deps_fn")
 
 packages_failed_notavail_cnt=$(count_lines "$packages_failed_notavail_fn.tmp")
@@ -456,9 +479,9 @@ packages_built_total=$(($packages_built_cnt+$packages_built_prev_cnt))
 
 packages_in_summary=$(awk '{cnt += ($0 ~ /^PKGNAME=/)} END {print cnt}' "$PKG_SUMMARY")
 
-##
+######################################################################
 
-verbose_print "  enriching META/packages_*.txt..."
+verbose_print "  enriching META/packages_*.txt ... "
 
 runpipe0 \
     enrich_pkgpath 'PKGNAME MAINTAINER' $packages_built_prev_fn.tmp '|' \
@@ -478,7 +501,7 @@ runpipe0 \
 
 verbose_print "done\n"
 
-##
+######################################################################
 
 verbose_print "  creating META/packages_{built,failed}_total.txt..."
 
@@ -491,7 +514,8 @@ sort_uniq "$packages_failed_fn" "$packages_failed_deps_fn" \
 
 verbose_print "done\n"
 
-##
+######################################################################
+
 html_header (){
     cat <<EOF
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
@@ -572,7 +596,15 @@ report_full_html (){
     html_footer
 }
 
+######################################################################
+
+verbose_print "  creating META/report.html ... "
+
 report_full_html > "$meta_dir/report.html"
+
+verbose_print 'done\n'
+
+######################################################################
 
 report_html2txt (){
    awk '
@@ -621,11 +653,20 @@ report_html2txt (){
    ' "$@"
 }
 
-report_txt_fn="$meta_dir/report.txt"
-cat $REPORT1_DIR/META/tmp/report_body.html |
-report_html2txt | sed 's| *$||' > "$report_txt_fn"
+######################################################################
 
-### generate per package summary.tmp
+verbose_print "  creating META/report.txt ... "
+
+report_txt_fn="$meta_dir/report.txt"
+report_html2txt $REPORT1_DIR/META/tmp/report_body.html |
+sed 's| *$||' > "$report_txt_fn"
+
+verbose_print 'done\n'
+
+######################################################################
+
+verbose_print "  creating PKGNAMEs/summary.txt ... "
+
 runawk -v report1="$REPORT1_DIR" -e '
 #use "xclose.awk"
 
@@ -649,7 +690,10 @@ NF == 0 {
 }
 ' "$pkg_src_summary_fn"
 
-### generate stage_xxx HTMLs
+verbose_print 'done\n'
+
+######################################################################
+
 other_stages_bar (){
     printf '<p>Stages:&nbsp;'
     for t in $TARGETS; do
@@ -691,6 +735,8 @@ stage2html (){
     html_footer
 }
 
+verbose_print "  creating PKGNAMEs/stage_xxx.html ... "
+
 find "$REPORT1_DIR" -name 'stage_*.tmp' |
 while read stage_fn; do
     if test -s $stage_fn; then
@@ -700,3 +746,5 @@ while read stage_fn; do
 done
 
 verbose_print "done\n"
+
+######################################################################
