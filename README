@@ -101,14 +101,14 @@ There are the following stages of the bulk build:
                  pkg_update_src_summary and pkg_update_summary
    build       - actual package building
    gen_report  - report generation
+   update_best - update information about "virtual best" bulk build
    upload_logs - uploading bulk build logs
    upload_pkgs - uploading binary packages
    report      - sending email or other type of notification
 
 They are run in order.
 
-'build', 'upload_logs', 'upload_pkgs' and 'report' stages are rerunable.
-They can be rerun like this
+All stages except 'init' are rerunable.  They can be rerun like this
 
     /usr/pkg_distbb/libexec/distbb/stage_upload_logs <BUILD_ID>
 
