@@ -179,6 +179,7 @@ fi
                                  "$date_start"
 @@libexecdir@@/stage_build       "$BUILD_ID"
 @@libexecdir@@/stage_gen_report  "$BUILD_ID"
+@@libexecdir@@/stage_update_best "$BUILD_ID"
 @@libexecdir@@/stage_upload_logs "$BUILD_ID"
 @@libexecdir@@/stage_upload_pkgs "$BUILD_ID"
 @@libexecdir@@/stage_report      "$BUILD_ID"

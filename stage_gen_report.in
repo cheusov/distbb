@@ -213,26 +213,6 @@ print_distbb_diff_help_msg (){
 EOF
 }
 
-grep_existing_pkgs (){
-    # output packages present in pkg_src_summary
-    # $1 - pkg_src_summary filename
-    # $2..N - packages (enriched PKGPATHs, i.e. with building options)
-    awk -v pkg_src_summary_fn="$1" '
-FILENAME != pkg_src_summary_fn {
-   if ($1 in pkgpaths){
-      print $0
-      delete pkgpaths [$1] # first version is higher,
-                           # no need for older version
-   }
-   next
-}
-$0 ~ /^PKGPATH=/ {
-   pkgpaths [substr($0, 9)] = 1
-   next
-}
-' "$@"
-}
-
 report_html (){
     if test "$PACKAGES_URL"; then
 	url="<a href=\"$PACKAGES_URL\" title=\"binary packages\">binary packages</a>"
@@ -430,33 +410,13 @@ EOF
 	if test -n "$best_is_ok"; then
 	    cat <<EOF
 <hr>
-<h3><a name="best vs new"></a>Progress: virtual "best" bulk build vs. $BUILD_ID</h3>
+<h3><a name="best vs new"></a>Progress: "virtual best" bulk build vs. $BUILD_ID</h3>
 <p><i>Below '-' means that package was built at least
 once in the past, but now fails</i></p>
 EOF
 	    print_distbb_diff_help_msg
 	    distbb_diff $bbdir_best $REPORT1_DIR | distbb_diff2html
 	fi
-
-	if test -n "$best_is_ok"; then
-	    mv $bbdir_best/META/packages_built_total.txt \
-	       $bbdir_best/META/packages_built_total.txt.old
-	    mv $bbdir_best/META/pkg_src_summary.txt \
-	       $bbdir_best/META/pkg_src_summary.txt.old
-
-	    grep_existing_pkgs \
-		$REPORT1_DIR/META/pkg_src_summary.txt \
-		$REPORT1_DIR/META/packages_built_total.txt \
-		 $bbdir_best/META/packages_built_total.txt.old \
-		> $bbdir_best/META/packages_built_total.txt
-	else
-	    mkdir -p $bbdir_best/META
-	    cp $REPORT1_DIR/META/packages_built_total.txt \
-	       $bbdir_best/META/
-	fi
-
-	cp $REPORT1_DIR/META/pkg_src_summary.txt $bbdir_best/META/
-	touch $bbdir_best/META/packages_failed_deps.txt
     fi
 
     # the end

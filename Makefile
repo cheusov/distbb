@@ -23,7 +23,7 @@ SRCROOT?=		${.PARSEDIR}
 
 SCRIPTS=			distbb stage_init \
 				stage_build stage_gen_report \
-				stage_upload_logs \
+				stage_update_best stage_upload_logs \
 				stage_upload_pkgs stage_report \
 				slave distbb_diff
 
@@ -48,7 +48,7 @@ PROJECTNAME=		distbb
 
 .SUFFIXES:		.in
 
-# the following appeares because bsd.file.mk
+# the following is necessary because bsd.file.mk
 # is broken in pkgsrc (NetBSD pkg/39715)
 all: distbb.conf common distbb.mk distbb.local.mk
 

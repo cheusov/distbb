@@ -1,0 +1,95 @@
+#!/bin/sh
+
+# Copyright (c) 2007-2008 Aleksey Cheusov <vle@gmx.net>
+#
+# Permission is hereby granted, free of charge, to any person obtaining
+# a copy of this software and associated documentation files (the
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
+# distribute, sublicense, and/or sell copies of the Software, and to
+# permit persons to whom the Software is furnished to do so, subject to
+# the following conditions:
+#
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+# LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+# OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+# WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+######################################################################
+
+set -e
+. @@bindir@@/pipestatus
+
+# usage: stage_gen_report BUILD_ID
+test $# -eq 1
+
+# init
+BUILD_ID="$1"
+
+DISTBB_CONF=${DISTBB_CONF:-@@sysconfdir@@/distbb.conf}
+. "$DISTBB_CONF"
+. @@libexecdir@@/common
+
+# main
+######################################################################
+if test -z "$DISTBB_DIFF"; then
+    exit 0
+fi
+
+grep_existing_pkgs (){
+    # output packages present in pkg_src_summary
+    # $1 - pkg_src_summary filename
+    # $2..N - packages (enriched PKGPATHs, i.e. with building options)
+    awk -v pkg_src_summary_fn="$1" '
+FILENAME != pkg_src_summary_fn {
+   if ($1 in pkgpaths){
+      print $0
+      delete pkgpaths [$1] # first version is higher,
+                           # no need for older version
+   }
+   next
+}
+$0 ~ /^PKGPATH=/ {
+   pkgpaths [substr($0, 9)] = 1
+   next
+}
+' "$@"
+}
+
+verbose_print 'Updating "virtual best" bulk build...\n'
+bbid_best=.best_bb
+bbdir_best="$REPORTS_DIR/$bbid_best"
+
+best_is_ok=''
+if test -d $bbdir_best -a \
+    -f $bbdir_best/META/packages_built_total.txt -a \
+    -f $bbdir_best/META/pkg_src_summary.txt
+then
+    best_is_ok=1
+fi
+
+if test -n "$best_is_ok"; then
+    mv $bbdir_best/META/packages_built_total.txt \
+	$bbdir_best/META/packages_built_total.txt.old
+    mv $bbdir_best/META/pkg_src_summary.txt \
+	$bbdir_best/META/pkg_src_summary.txt.old
+
+    grep_existing_pkgs \
+	$REPORT1_DIR/META/pkg_src_summary.txt \
+	$REPORT1_DIR/META/packages_built_total.txt \
+	$bbdir_best/META/packages_built_total.txt.old \
+	> $bbdir_best/META/packages_built_total.txt
+else
+    mkdir -p $bbdir_best/META
+    cp $REPORT1_DIR/META/packages_built_total.txt \
+	$bbdir_best/META/
+fi
+
+cp $REPORT1_DIR/META/pkg_src_summary.txt $bbdir_best/META/
+touch $bbdir_best/META/packages_failed_deps.txt
