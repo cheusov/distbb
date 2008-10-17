@@ -21,6 +21,7 @@ dbb_canbebuilt:
 # for your machine
 
 .PHONY: dbb_excluded
+
 .if empty(DBB_EXCL_REASON)
 dbb_excluded:
 	@true
@@ -67,6 +68,8 @@ DBB_QVARS.SUBST_CLASSES=		1
 DBB_QVARS.USE_LANGUAGES=		1
 DBB_QVARS.CONFIGURE_SCRIPT=		1
 .endif
+
+.PHONY: dbb_vars
 
 dbb_vars:
 .for v in ${DBB_VARS}
