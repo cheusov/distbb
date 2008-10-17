@@ -274,6 +274,12 @@ UPLOAD_PKGS_CMD="@@bindir@@/rsync -av --delete-excluded -e ssh $PACKAGES/ cheuso
 #
 UPLOAD_LOGS_CMD="@@bindir@@/rsync -av --delete-excluded --exclude '*.tmp' -e ssh $REPORTS_DIR/$BUILD_ID cheusov@mova.org:~/public_html/pub/pkgsrc-distbb/$OS/$PKGSRCVER/logs/"
 
+# define your post-build actions in this function
+post_build (){
+    gzip  -c "${PKG_SUMMARY}" > "${PKG_SUMMARY%.txt}.gz"
+#    bzip2 -c "${PKG_SUMMARY}" > "${PKG_SUMMARY%.txt}.bz2"
+}
+
 ############################################################
 # You MUST copy the following to your distbb.conf
-I_AM_READY=2
+I_AM_READY=3

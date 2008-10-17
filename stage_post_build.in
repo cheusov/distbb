@@ -1,0 +1,25 @@
+#!/bin/sh
+
+######################################################################
+
+set -e
+. @@bindir@@/pipestatus
+
+# usage: stage_upload_logs BUILD_ID
+test $# -eq 1
+
+# init
+BUILD_ID="$1"
+
+DISTBB_CONF=${DISTBB_CONF:-@@sysconfdir@@/distbb.conf}
+. "$DISTBB_CONF"
+. @@libexecdir@@/common
+
+######################################################################
+cd $REPORT1_DIR
+
+verbose_print "Postbuild user's actions..."
+
+post_build
+
+verbose_print 'done\n'

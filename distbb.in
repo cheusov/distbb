@@ -167,7 +167,7 @@ if grep BUILD_START "$DISTBB_CONF" > /dev/null; then
     exit 1
 fi
 
-if test "$I_AM_READY" -ne 2 2>/dev/null; then
+if test "$I_AM_READY" -ne 3 2>/dev/null; then
     echo 'Read NEWS file! Your distbb.conf needs to be updated ;-)' 1>&2
     exit 1
 fi
@@ -178,6 +178,7 @@ fi
                                  "$skip_updating_src_summary" \
                                  "$date_start"
 @@libexecdir@@/stage_build       "$BUILD_ID"
+@@libexecdir@@/stage_post_build  "$BUILD_ID"
 @@libexecdir@@/stage_gen_report  "$BUILD_ID"
 @@libexecdir@@/stage_update_best "$BUILD_ID"
 @@libexecdir@@/stage_upload_logs "$BUILD_ID"

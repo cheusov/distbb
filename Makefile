@@ -22,7 +22,8 @@ SRCROOT?=		${.PARSEDIR}
 .include "Makefile.version"
 
 SCRIPTS=			distbb stage_init \
-				stage_build stage_gen_report \
+				stage_build stage_post_build \
+				stage_gen_report \
 				stage_update_best stage_upload_logs \
 				stage_upload_pkgs stage_report \
 				slave distbb_diff
