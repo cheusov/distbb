@@ -1,5 +1,7 @@
 ideas/thoughts/todo/problems
 
+ - BUILD_STAGES='build post_build gen_report update_best upload_logs upload_pkgs report'
+
  - links to package's configure.log(s) from PKGNAME/stage_*.html
 
  - simplify distbb.conf. distbb is very customizable, but
