@@ -1,3 +1,21 @@
+Version 0.22beta1, by Aleksey Cheusov, Sat, 18 Oct 2008 21:59:54 +0300
+
+  New stage_post_build containing user's actions is added.
+  Actions are defined in 'post_build' shell function in distbb.conf.
+  Update your existing distbb.conf! I_AM_READY=3 is required.
+
+  distbb.mk: new 'dbb_vars' target that outputs formatted variables
+  values. They may be useful for debugging.
+  I put dbb_vars to the default TARGETS.
+
+  Code that updates "virtual best" bulk build directory
+  is now separated to an individual stage - stage_update_best.
+  It is run after 'stage_gen_report'.
+
+  distbb.conf: loggind directory default changed from xxx/log to xxx/logs.
+
+  stage_gen_report: progress messages become more verbose 
+
 Version 0.21.0, by Aleksey Cheusov, Mon, 13 Oct 2008 14:04:05 +0300
 
   DISTBB_CONF environment variable points to the distbb configuration file,

@@ -100,6 +100,7 @@ There are the following stages of the bulk build:
    init        - initialization, including running
                  pkg_update_src_summary and pkg_update_summary
    build       - actual package building
+   post_build  - run user's actions (post_build function from distbb.conf) 
    gen_report  - report generation
    update_best - update information about "virtual best" bulk build
    upload_logs - uploading bulk build logs
