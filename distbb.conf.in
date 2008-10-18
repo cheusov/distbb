@@ -276,8 +276,8 @@ UPLOAD_LOGS_CMD="@@bindir@@/rsync -av --delete-excluded --exclude '*.tmp' -e ssh
 
 # define your post-build actions in this function
 post_build (){
-    gzip  -c "${PKG_SUMMARY}" > "${PKG_SUMMARY%.txt}.gz"
-#    bzip2 -c "${PKG_SUMMARY}" > "${PKG_SUMMARY%.txt}.bz2"
+    pkg_refresh_summary "${PKG_SUMMARY}" | gzip > "${PKG_SUMMARY%.txt}.gz"
+    pkg_refresh_summary "${PKG_SUMMARY}" | bzip2 > "${PKG_SUMMARY%.txt}.bz2"
 }
 
 ############################################################
