@@ -60,7 +60,7 @@ For "distributed" builds (example - different hosts plus NFS):
 
   NOTE:
     - in "distributed" mode master's /usr/pkg is NOT changed.
-      Neither pkg_add nor pkg_delete is called on master's host.
+      Neither pkg_add nor pkg_delete is called on master host.
     - /usr/pkgsrc/packages/pkg_summary.txt and
       /usr/pkgsrc/pkg_src_summary.txt are created/updated
       from master host
@@ -70,7 +70,7 @@ For "distributed" builds (example - different hosts plus NFS):
       and sending a report (REPORT_CMD) is run on master host.
     - /usr/pkg (and PKGDBDIR) will be removed and recreated
       from bootstrap tarball on ALL slave nodes.
-    - distbb can be run on master's host by unprivileged user
+    - distbb can be run on master host by unprivileged user
       even if packages are built using root privileges
     - in order to correctly build pkg_src_summary, master's
       /usr/pkg/etc/mk.conf must be equal to that from bootstrap tarball.
