@@ -24,13 +24,13 @@ CONFIGURATION/TUTORIAL:
 2) bootstrap pkgsrc for distbb (to /usr/pkg_distbb, for example)
    - install wip/distbb in it
    - install other software you may need
-   - cp /usr/pkg/share/examples/distbb/distbb.conf \
+   - cp /usr/pkg_distbb/share/examples/distbb/distbb.conf \
         /usr/pkg_distbb/etc/distbb.conf
-   - cp /usr/pkg/share/examples/distbb/distbb.local.mk \
+   - cp /usr/pkg_distbb/share/examples/distbb/distbb.local.mk \
         /usr/pkg_distbb/etc/distbb.local.mk
    - edit /usr/pkg_distbb/etc/distbb.conf configuration file
 
-For "distributed" builds:
+For "distributed" builds (example - different hosts plus NFS):
 
 3d) On master host:
     make /usr/pkg_distbb and /usr/pkgsrc directories NFS mountable
@@ -70,7 +70,8 @@ For "distributed" builds:
       and sending a report (REPORT_CMD) is run on master host.
     - /usr/pkg (and PKGDBDIR) will be removed and recreated
       from bootstrap tarball on ALL slave nodes.
-    - distbb can be run under unprivileged user on master's host
+    - distbb can be run on master's host by unprivileged user
+      even if packages are built using root privileges
     - in order to correctly build pkg_src_summary, master's
       /usr/pkg/etc/mk.conf must be equal to that from bootstrap tarball.
 
