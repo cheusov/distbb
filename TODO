@@ -1,6 +1,16 @@
 ideas/thoughts/todo/problems
 
- - BUILD_STAGES='build post_build gen_report update_best upload_logs upload_pkgs report'
+ - silent dbb_init
+
+ - upload_pkgs aware of NO_BIN/NO_CDROM
+
+ - stage_cksum
+
+ - 'distbb -c' for continuing faild bulk build
+
+ - BUILD_STAGES='...upload_logs upload_pkgs report' vs.
+   BUILD_STAGES='...upload_logs report upload_pkgs'
+   for sending report before uploading packages
 
  - links to package's configure.log(s) from PKGNAME/stage_*.html
 
@@ -12,12 +22,11 @@ ideas/thoughts/todo/problems
  - modification time of binary packages?
    problem:
      package_A depends on package_B
-     bin_package_A.tgz file is older (modification time)
-     than bin_package_B.tgz file
+     bin_package_A.tgz file is older than bin_package_B.tgz file
      ===> package_A is NOT rebuilt in this case, that is
-        modification time of binary packages are currently not checked
+        modification time of binary packages is currently not checked
 
- - distbb.1
+ - distbb.1, feature list in README
 
  - I think distbb can be adapted for FreeBSD/OpenBSD Ports
    and other packaging systems
