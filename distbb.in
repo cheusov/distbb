@@ -131,10 +131,12 @@ export DISTBB_CONF
 
 ######################################################################
 test_var (){
+    set +e # workaround for buggy Korn Shell ('set -e' + if + eval + false)
     if eval "test -z \"\$$1\""; then
 	printf "Variable $1 is unset\n", "$1" 1>&2
 	exit 1
     fi
+    set -e
 }
 
 test_var BMAKE
