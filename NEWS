@@ -1,3 +1,25 @@
+Version 0.22.1, by Aleksey Cheusov, Fri, 24 Oct 2008 11:25:43 +0300
+
+  FIXED typo in stag_gen_report:
+       packages_failed_prev_cnt(bug) -> packages_failed_deps_cnt(ok)
+
+  Workaround for the following bug in Korn shell.
+     Seen on Interix's /bin/sh, FreeBSD's /bin/sh (and NetBSD's /bin/ksh)
+
+       0 ~>cat /home/cheusov/tmp/1.sh
+       #!/bin/sh
+       set -e
+       if eval false; then
+           echo 'Really?'
+       fi
+       echo "Ok"
+       0 ~>/bin/sh /home/cheusov/tmp/1.sh # good
+       Ok
+       0 ~>/bin/ksh /home/cheusov/tmp/1.sh # bad
+       1 ~>
+
+  DISTBB feature list in README
+
 Version 0.22.0, by Aleksey Cheusov, Sun, 19 Oct 2008 12:04:34 +0300
 
   New stage_post_build containing user's actions is added.
