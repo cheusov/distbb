@@ -256,8 +256,8 @@ OS="$(uname -s)"
 OSVER="$(uname -r)/$(uname -m)"
 
 #
-PKGSRCVER='2008Q1'
-#PKGSRCVER='current'
+PKGSRCVER='current'
+#PKGSRCVER='2039Q1' # ;-)
 
 #
 PACKAGES_URL="http://mova.org/~cheusov/pub/pkgsrc-distbb/$OS/$PKGSRCVER/packages/"
