@@ -1,8 +1,7 @@
-Version 0.22.2, by Aleksey Cheusov, Fri, 31 Oct 2008 18:28:54 +0200
+Version 0.22.2, by Aleksey Cheusov, Fri, 31 Oct 2008 19:38:24 +0200
 
   FIXED: qt3-libs and qt4-libs fail at dbb_vars stage because of '<'
-  symbol inside CONFIGURE_ARGS value.
-  Workaround: dbb_vars target always succeeds
+  symbol inside CONFIGURE_ARGS value. NOW it is fixed.
 
 Version 0.22.1, by Aleksey Cheusov, Fri, 24 Oct 2008 11:25:43 +0300
 
