@@ -76,9 +76,11 @@ dbb_vars:
 .if !empty(${v})
 	@echo ${v}:
 .if empty(DBB_QVARS.${v})
-	@sh -c 'for val in ${${v}}; do printf "    %s\n" "$$val"; done' || :
+	@printf '    '; \
+	for val in ${${v}:Q}; do printf "%s\n" "$$val"; done | \
+	sed 's,\([^\\]\)  *,\1\n    ,g'
 .else
-	@sh -c 'for val in ${${v}:Q}; do printf "    %s\n" "$$val"; done' || :
+	@for val in ${${v}:Q}; do printf "    %s\n" "$$val"; done
 .endif
 	@echo ''
 .endif
