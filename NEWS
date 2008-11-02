@@ -1,15 +1,17 @@
 Version 0.23.0, by Aleksey Cheusov, Sun,  2 Nov 2008 17:04:29 +0200
 
   While running bulk builds for PKGSRC+WIP packages, I've found that
-  PKGNAME is not uniq in this case. So, neither PKGPATH nor PKGNAME is
-  uniq.  This leads to distbb failure happened because different
-  packages have the same directory for logging.  The same may happen
-  if you build, for example, (for testing purposes) both
-    textproc/dictem:EMACS_TYPE=xemacs215 and
-    textproc/dictem:EMACS_TYPE=xemacs214.
-  To avoid this I've changed per-package logging directory from
-  PKGNAME to category_package_PKGNAME,
-  e.g. pkgtools_pkg_chk_pkg_chk-1.2.3.
+  PKGNAME is not unique for ALL packages. So, neither PKGPATH nor
+  PKGNAME is unique.  This leads to distbb failure happened because
+  different packages have the same directory for logging.  To avoid
+  this I've changed per-package logging directory from PKGNAME to
+  category_package_PKGNAME, e.g. pkgtools_pkg_chk_pkg_chk-1.2.3.
+
+     The same may happen if you build, for example, (for testing
+     purposes) both
+       textproc/dictem:EMACS_TYPE=xemacs215 and
+       textproc/dictem:EMACS_TYPE=xemacs214.
+     In both cases PKGNAME remain the same. This case is not fixed yet.
 
 Version 0.22.2, by Aleksey Cheusov, Fri, 31 Oct 2008 19:38:24 +0200
 
