@@ -15,6 +15,13 @@ sort_uniq_inplace (){
     mv "$1".tmp "$1"
 }
 
+get_log_dir (){
+    # $1 - pkgpath
+    # $2 - pkgname
+    short_pkgpath="$(echo $1 | sed -e 's,:.*,,' -e 's,/,_,')"
+    echo "${short_pkgpath}_$2"
+}
+
 export LC_ALL=C # for sort and uniq
 
 ######################################################################

@@ -98,7 +98,7 @@ right_align (){
 get_failed_stage (){
     # $1 - pkgpath
     # $2 - pkgname
-    cat "$REPORT1_DIR/$2/curr_stage.tmp"
+    cat "${REPORT1_DIR}/$(get_log_dir $1 $2)/curr_stage.tmp"
 }
 
 print_failed_pkg (){
@@ -108,15 +108,16 @@ print_failed_pkg (){
     # $4 - maintainer
     # $5 - pkgname
     short_pkgpath="$(echo $1 | cut -f1 -d:)"
+    log_dir="$(get_log_dir $1 $5)"
     if test -n "$2" && test "$2" != "Breaks"; then
-	__href_beg="`printf '<a href=\"../%s/failed_deps.txt\" title=\"packages failed due to %s\">' $5 $short_pkgpath`"
+	__href_beg="`printf '<a href=\"../%s/failed_deps.txt\" title=\"packages failed due to %s\">' "$log_dir" $short_pkgpath`"
 	__href_end='</a>'
     else
 	__href_beg=''
 	__href_end=''
     fi
 
-    printf "  <tr><td><a href=\"../%s/stage_%s.html\" title=\"build log for %s\">%-27s</a></td> <td class=\"breaks\">${__href_beg}%7s${__href_end}</td> <td>%11s</td> <td align=\"right\">%27s</td>\n    <td align=\"right\">%-25s</td></tr>\n" "$5" "$3" "$short_pkgpath" "$short_pkgpath" "$2" "$3" "$4" "$5"
+    printf "  <tr><td><a href=\"../%s/stage_%s.html\" title=\"build log for %s\">%-27s</a></td> <td class=\"breaks\">${__href_beg}%7s${__href_end}</td> <td>%11s</td> <td align=\"right\">%27s</td>\n    <td align=\"right\">%-25s</td></tr>\n" "$log_dir" "$3" "$short_pkgpath" "$short_pkgpath" "$2" "$3" "$4" "$5"
 }
 
 print_failed_deps_pkg (){
@@ -135,9 +136,9 @@ print_failed_deps_pkg (){
     fi
 
     if test -n "$1"; then
-	printf "  <tr><td><a href=\"../%s/failed_because.txt\" title=\"failed due to...\">%-42s</a></td> <td> %s</td></tr>\n" "$2" "$short_pkgpath" "$3"
+	printf "  <tr><td><a href=\"../%s/failed_because.txt\" title=\"failed due to...\">%-42s</a></td> <td> %s</td></tr>\n" "$(get_log_dir $1 $2)" "$short_pkgpath" "$3"
     else
-	printf "  <tr><td align=\"left\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"../%s/stage_%s.html\" title=\"build log for %s\">     %-37s</a></td><td>       %s</td></tr>\n" "$5" "$failed_stage" "$4" "$4" "$3"
+	printf "  <tr><td align=\"left\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"../%s/stage_%s.html\" title=\"build log for %s\">     %-37s</a></td><td>       %s</td></tr>\n" "$(get_log_dir $4 $5)" "$failed_stage" "$4" "$4" "$3"
     fi
 #    printf "  <tr><td>%-26s</td> <td align=\"left\"><a href=\"../%s/stage_%s.html\" title=\"build log for %s\">%-26s</a></td><td> %s</td></tr>\n" "$short_pkgpath" "$5" "$failed_stage" "$4" "$4" "$3"
 }
@@ -168,13 +169,17 @@ BEGIN {
    # $3 - PKGBASE
    # $4 - version(s)
 
-   sub(/:.*$/, "", $1) # strip building options
+#   sub(/:.*$/, "", $2) # strip building options
 
    ver = $4
    sub(/.* /, "", ver)
 
    if ($1 ~ /^N?-$/){
-      stage_fn = report1_dir "/" $3 "-" ver "/curr_stage.tmp"
+      pkgpath_m = $2
+      sub(/:.*/, "", pkgpath_m)  # remove building options
+      gsub(/\//, "_", pkgpath_m) # s|/|_|
+      stage_fn = report1_dir "/" pkgpath_m "_" $3 "-" ver "/curr_stage.tmp"
+
       getline failed_stage < stage_fn
       close(stage_fn)
 
@@ -303,7 +308,7 @@ EOF
     while read pkgpath pkgname maintainer; do
 	echo "$maintainer $pkgpath"
 	awk -v m=$maintainer '
-	   { print m, $1}' "$REPORT1_DIR/$pkgname/failed_deps.txt"
+	   { print m, $1}' "${REPORT1_DIR}/$(get_log_dir $pkgpath $pkgname)/failed_deps.txt"
     done | sort_uniq |
     awk '{++count [$1]}
     END {for (m in count) print m, count [m] }' |
@@ -330,7 +335,7 @@ EOF
 
     cat "$packages_failed_fn" "$packages_failed_notavail_fn" |
     while read pkgpath pkgname maintainer; do
-	breaks=$(count_lines "$REPORT1_DIR/$pkgname/failed_deps.txt")
+	breaks=$(count_lines "${REPORT1_DIR}/$(get_log_dir $pkgpath $pkgname)/failed_deps.txt")
 	failed_stage=$(get_failed_stage "$pkgpath" "$pkgname")
 	echo "$pkgpath $breaks $failed_stage $maintainer $pkgname"
     done |
@@ -359,7 +364,7 @@ EOF
     echo ''
 
     while read pkgpath pkgname maintainer; do
-	fn="$REPORT1_DIR/$pkgname/failed_because.txt"
+	fn="${REPORT1_DIR}/$(get_log_dir $pkgpath $pkgname)/failed_because.txt"
 	depX=$(head -n "$MAX_FAILED_DEPS_CNT" "$fn")
 	print_failed_deps_pkg \
 	    "$pkgpath" "$pkgname" "$maintainer" '' ''
@@ -631,7 +636,7 @@ runawk -v report1="$REPORT1_DIR" -e '
 #use "xclose.awk"
 
 NF == 0 {
-   summary_dir = report1 "/" pkgname
+   summary_dir = report1 "/" pkgpath_m "_" pkgname
    if (0 == system("test -d \"" summary_dir "\"")){
       summary_fn = summary_dir "/summary.txt"
       cvrt = ("pkg_summary4view > " summary_fn)
@@ -646,6 +651,11 @@ NF == 0 {
    summary = summary "\n" $0
    if ($0 ~ /PKGNAME=/){
       pkgname = substr($0, 9)
+   }
+   if ($0 ~ /PKGPATH=/){
+      pkgpath_m = substr($0, 9)
+      sub(/:.*/, "", pkgpath_m)  # remove options settings
+      gsub(/\//, "_", pkgpath_m) # s|/|_|
    }
 }
 ' "$pkg_src_summary_fn"
