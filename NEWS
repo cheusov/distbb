@@ -1,3 +1,8 @@
+Version 0.23.1, by Aleksey Cheusov, Thu,  6 Nov 2008 01:51:28 +0200
+
+  fix: yet another PKGNAME->PKGPATHm_PKGNAME
+  movement in stage_gen_report
+
 Version 0.23.0, by Aleksey Cheusov, Sun,  2 Nov 2008 17:04:29 +0200
 
   While running bulk builds for PKGSRC+WIP packages, I've found that

@@ -174,20 +174,22 @@ BEGIN {
    ver = $4
    sub(/.* /, "", ver)
 
+   pkgpath_m = $2
+   sub(/:.*/, "", pkgpath_m)  # remove building options
+   gsub(/\//, "_", pkgpath_m) # s|/|_|
+   logsubdir = pkgpath_m "_" $3 "-" ver
+
    if ($1 ~ /^N?-$/){
-      pkgpath_m = $2
-      sub(/:.*/, "", pkgpath_m)  # remove building options
-      gsub(/\//, "_", pkgpath_m) # s|/|_|
-      stage_fn = report1_dir "/" pkgpath_m "_" $3 "-" ver "/curr_stage.tmp"
+      stage_fn = report1_dir "/" logsubdir "/curr_stage.tmp"
 
       getline failed_stage < stage_fn
       close(stage_fn)
 
-      $2 = sprintf("<a href=\"../%s/stage_%s.html\" title=\"build log for %s\">%-27s</a>", $3 "-" ver, failed_stage, $2, $2)
+      $2 = sprintf("<a href=\"../%s/stage_%s.html\" title=\"build log for %s\">%-27s</a>", logsubdir, failed_stage, $2, $2)
 
       $1 = "<td class=\"pkg-failed\">" $1 "</td>"
    }else if ($1 ~ /-d$/){
-      $2 = sprintf("<a href=\"../%s/failed_because.txt\" title=\"failed due to...\">%-27s</a>", $3 "-" ver, $2)
+      $2 = sprintf("<a href=\"../%s/failed_because.txt\" title=\"failed due to...\">%-27s</a>", logsubdir, $2)
 
       $1 = "<td class=\"pkg-faileddeps\">" $1 "</td>"
    }else if ($1 ~ /[+]/){

@@ -1,5 +1,8 @@
 ideas/thoughts/todo/problems
 
+ - PKG_CMP_SUMMARY_CMD - 'pkg_cmp_summary -c' for rebuilding packages
+   changed in CVS
+
  - silent dbb_init
 
  - upload_pkgs aware of NO_BIN/NO_CDROM
