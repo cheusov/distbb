@@ -168,7 +168,7 @@ verbose_print "done\n"
 ######################################################################
 ### comparison binaries against pkgsrc tree
 verbose_print "  pkg_summary vs. pkg_src_summary comparison..."
-pkg_cmp_summary -m -p $refreshed_summary_fn $pkg_src_summary_fn > $summary_cmp_fn
+eval $PKG_CMP_SUMMARY_CMD $refreshed_summary_fn $pkg_src_summary_fn > $summary_cmp_fn
 verbose_print "done\n"
 
 ######################################################################

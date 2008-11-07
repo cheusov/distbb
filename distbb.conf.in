@@ -91,6 +91,10 @@ PKG_SRC_SUMMARY="$PKGSRCDIR/pkg_src_summary.txt"
 
 PKG_UPDATE_SRC_SUMMARY_CMD="@@bindir@@/pkg_src_summary -A > '$PKG_SRC_SUMMARY'"
 
+# program for comparing pkg_summary(5) for available binaries and
+# pkg_src_summary collected from pkgsrc source tree
+PKG_CMP_SUMMARY_CMD='@@bindir@@/pkg_cmp_summary -m -p'
+
 # if you want to build src_summary using several processes or several
 # machines in a network, set PSS_SLAVES.
 # (see pkg_src_summary(1))
@@ -193,27 +197,27 @@ NOTES=''
 
 SPECIAL_PACKAGES="\
 #PKGPATH=pkgtools/digest
-#TARGETS=dbb_init clean dbb_canbebuilt depends fetch checksum extract patch configure build package replace
+#TARGETS=dbb_init clean dbb_vars depends fetch checksum extract patch configure build package
 #EXTRA_OPTS=BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=full CHECK_SHLIBS=no
 #
 #PKGPATH=pkgtools/bootstrap-mk-files
-#TARGETS=dbb_init clean dbb_canbebuilt depends fetch checksum extract patch configure build package replace
+#TARGETS=dbb_init clean dbb_vars depends fetch checksum extract patch configure build package
 #EXTRA_OPTS=BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=full CHECK_SHLIBS=no
 #
 #PKGPATH=net/tnftp
-#TARGETS=dbb_init clean dbb_canbebuilt depends fetch checksum extract patch configure build package replace
+#TARGETS=dbb_init clean dbb_vars depends fetch checksum extract patch configure build package
 #EXTRA_OPTS=BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=full CHECK_SHLIBS=no
 #
 #PKGPATH=sysutils/checkperms
-#TARGETS=dbb_init clean dbb_canbebuilt depends fetch checksum extract patch configure build package replace
+#TARGETS=dbb_init clean dbb_vars depends fetch checksum extract patch configure build package
 #EXTRA_OPTS=BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=full CHECK_SHLIBS=no
 #
 #PKGPATH=devel/bmake
-#TARGETS=dbb_init clean dbb_canbebuilt depends fetch checksum extract patch configure build package replace
+#TARGETS=dbb_init clean dbb_vars depends fetch checksum extract patch configure build package
 #EXTRA_OPTS=BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=full CHECK_SHLIBS=no
 #
 #PKGPATH=pkgtools/pkg_install
-#TARGETS=dbb_init clean dbb_canbebuilt depends fetch checksum extract patch configure build package replace
+#TARGETS=dbb_init clean dbb_vars depends fetch checksum extract patch configure build package
 #EXTRA_OPTS=BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=full CHECK_SHLIBS=no
 #
 #PKGPATH=audio/festival # TARGETS is not changed!
