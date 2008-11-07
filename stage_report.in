@@ -38,5 +38,5 @@ DISTBB_CONF=${DISTBB_CONF:-@@sysconfdir@@/distbb.conf}
 
 # main
 verbose_print "Sending report..."
-eval $REPORT_CMD < $REPORTS_DIR/$BUILD_ID/META/report.txt
+eval $REPORT_CMD
 verbose_print "done\n"

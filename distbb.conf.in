@@ -270,7 +270,9 @@ PACKAGES_URL="http://mova.org/~cheusov/pub/pkgsrc-distbb/$OS/$PKGSRCVER/packages
 REPORT_URL="http://www.mova.org/~cheusov/pub/pkgsrc-distbb/$OS/$PKGSRCVER/logs/$BUILD_ID/META/report.html"
 
 #
-REPORT_CMD="/usr/bin/mail -s \"pkgsrc-$PKGSRCVER $OS $OSVER bulk build results $BUILD_ID\" cheusov@tut.by"
+#USER_ADDRESS=vasya@pupkin.com
+SENDMSG_PROG=/usr/bin/mail
+REPORT_CMD="$SENDMSG_PROG -s 'pkgsrc-$PKGSRCVER $OS $OSVER bulk build results $BUILD_ID' '$USER_ADDRESS' < $REPORTS_DIR/$BUILD_ID/META/report.txt"
 
 #
 UPLOAD_PKGS_CMD="@@bindir@@/rsync -av --delete-excluded -e ssh $PACKAGES/ cheusov@mova.org:~/public_html/pub/pkgsrc-distbb/$OS/$PKGSRCVER/packages/"
@@ -286,4 +288,4 @@ post_build (){
 
 ############################################################
 # You MUST copy the following to your distbb.conf
-I_AM_READY=3
+I_AM_READY=4

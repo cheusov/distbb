@@ -164,13 +164,14 @@ test_var UPLOAD_LOGS_CMD
 test_var LIST_ALL_PKGS_CMD
 test_var EXTRA_DEPS_CMD
 test_var DISTBB_LOCAL_MK
+test_var USER_ADDRESS
 
 if grep BUILD_START "$DISTBB_CONF" > /dev/null; then
     echo 'Replace BUILD_START variable with BUILD_ID in your distbb.conf!' 1>&2
     exit 1
 fi
 
-if test "$I_AM_READY" -ne 3 2>/dev/null; then
+if test "$I_AM_READY" -ne 4 2>/dev/null; then
     echo 'Read NEWS file! Your distbb.conf needs to be updated ;-)' 1>&2
     exit 1
 fi
