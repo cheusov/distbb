@@ -271,8 +271,8 @@ REPORT_URL="http://www.mova.org/~cheusov/pub/pkgsrc-distbb/$OS/$PKGSRCVER/logs/$
 
 #
 #USER_ADDRESS=vasya@pupkin.com
-SENDMSG_PROG=/usr/bin/mail
-REPORT_CMD="$SENDMSG_PROG -s 'pkgsrc-$PKGSRCVER $OS $OSVER bulk build results $BUILD_ID' '$USER_ADDRESS' < $REPORTS_DIR/$BUILD_ID/META/report.txt"
+MAIL_PROG=/usr/bin/mail
+REPORT_CMD="$MAIL_PROG -s 'pkgsrc-$PKGSRCVER $OS $OSVER bulk build results $BUILD_ID' '$USER_ADDRESS' < $REPORTS_DIR/$BUILD_ID/META/report.txt"
 
 #
 UPLOAD_PKGS_CMD="@@bindir@@/rsync -av --delete-excluded -e ssh $PACKAGES/ cheusov@mova.org:~/public_html/pub/pkgsrc-distbb/$OS/$PKGSRCVER/packages/"
