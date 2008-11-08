@@ -1,7 +1,5 @@
 ideas/thoughts/todo/problems
 
- - upload_pkgs aware of NO_BIN/NO_CDROM
-
  - stage_cksum
 
  - links to package's configure.log(s) from PKGNAME/stage_*.html
