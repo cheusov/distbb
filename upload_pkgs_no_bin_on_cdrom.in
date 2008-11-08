@@ -1,0 +1,16 @@
+#!/bin/sh
+
+. @@libexecdir@@/common
+
+print_binrep_spec_files
+
+pkg_grep_summary -e NO_BIN_ON_CDROM < "$pkg_src_summary_fn" |
+sed -n 's,PKGNAME=,,p' |
+awk '
+BEGIN {
+   sufx = ENVIRON ["PKG_SUFX"]
+}
+{
+   print $1 sufx
+}
+'

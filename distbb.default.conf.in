@@ -284,6 +284,7 @@ assign REPORT_MINI_SIZE_LIMIT 70000
 #assign UPLOAD_PKGS_DEST you@your-domain.com:~/public_html/pkgsrc-distbb/packages/
 assign UPLOAD_PKGS_FILES "@@libexecdir@@/upload_pkgs_all_files"
 #assign UPLOAD_PKGS_FILES "@@libexecdir@@/upload_pkgs_built_total"
+#assign UPLOAD_PKGS_FILES "@@libexecdir@@/upload_pkgs_no_bin_on_cdrom"
 assign UPLOAD_PKGS_PROG "@@bindir@@/rsync -av --delete-excluded --include-from=- --exclude \"*\" -e ssh ."
 
 #
