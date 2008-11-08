@@ -622,11 +622,22 @@ report_html2txt (){
 
 ######################################################################
 
-verbose_print "  creating META/report.txt ... "
+verbose_print "  creating META/report{_mini,}.txt ... "
 
 report_txt_fn="$meta_dir/report.txt"
 report_html2txt $REPORT1_DIR/META/tmp/report_body.html |
 sed 's| *$||' > "$report_txt_fn"
+
+report_mini_txt_fn="$meta_dir/report_mini.txt"
+awk '
+/Failures per maintainer/, /------/ {
+   next
+}
+/Failed due to dependencies/, /------/ {
+   next
+}
+{ print }
+' "$report_txt_fn" > "$report_mini_txt_fn"
 
 verbose_print 'done\n'
 
