@@ -165,6 +165,10 @@ test_var LIST_ALL_PKGS_CMD
 test_var EXTRA_DEPS_CMD
 test_var DISTBB_LOCAL_MK
 test_var USER_ADDRESS
+if test -n "$MASTER_MODE"; then
+    test_var "$SLAVES"
+    test_var "$PSS_SLAVES"
+fi
 
 if grep BUILD_START "$DISTBB_CONF" > /dev/null; then
     echo 'Replace BUILD_START variable with BUILD_ID in your distbb.conf!' 1>&2
