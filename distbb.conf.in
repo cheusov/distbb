@@ -1,73 +1,81 @@
 #-*-mode:  sh -*-
 
+assign (){
+    # $1 - varname
+    # $2 - value
+    __cmd="test -z \"\$$1\""
+    if eval "$__cmd"; then
+	eval "$1='$2'"
+    fi
+}
+
 # 
-PKGSRC_PREFIX="/usr/pkg"
+assign PKGSRC_PREFIX /usr/pkg
 
 # pkgsrc friendly make
-BMAKE=/usr/bin/make       # for NetBSD
-#BMAKE=$PKGSRC_PREFIX/bin/bmake # for other OS
+assign  BMAKE /usr/bin/make           # for NetBSD
+#assign BMAKE $PKGSRC_PREFIX/bin/bmake # for other OSes
 
 # pkgsrc prefix
-PKGSRCDIR=/usr/pkgsrc
+assign PKGSRCDIR /usr/pkgsrc
 
 # directories to be deleted before installing bootstrap
 # and building a package
-RMDIRS_CMD="/bin/rm -rf $PKGSRC_PREFIX /var/db/pkg"
-#RMDIRS_CMD="/bin/rm -rf $PKGSRC_PREFIX" # PKGDB is under PREFIX
+assign RMDIRS_CMD "/bin/rm -rf $PKGSRC_PREFIX /var/db/pkg"
+#assign RMDIRS_CMD "/bin/rm -rf $PKGSRC_PREFIX" # PKGDB is under PREFIX
 
 # bootstrap
-BOOTSTRAP="/path/to/bootstrap.tar.gz"
-#BOOTSTRAP=''
+#assign BOOTSTRAP "/path/to/bootstrap.tar.gz"
 
 # Like distbb.conf but for bmake, it is loaded after package's Makefile
 # and before distbb's own distbb.mk
-DISTBB_LOCAL_MK=@@sysconfdir@@/distbb.local.mk
-#DISTBB_LOCAL_MK=/dev/null
+assign DISTBB_LOCAL_MK '@@sysconfdir@@/distbb.local.mk'
+#assign DISTBB_LOCAL_MK /dev/null
 
 # a programs that outputs ALL packages to be built,
 # by default all pkgsrc packages are output
-LIST_ALL_PKGS_CMD='@@bindir@@/pkg_list_all_pkgs'
-#LIST_ALL_PKGS_CMD='/path/to/list_all_pkgsrc_packages_and_my_extra_wip_packages'
+assign LIST_ALL_PKGS_CMD '@@bindir@@/pkg_list_all_pkgs'
+#assign LIST_ALL_PKGS_CMD '/path/to/list_pkgs_with_my_extra_wip_packages'
 
 #
-EXTRACT_BOOTSTRAP_CMD="/bin/tar -xzf $BOOTSTRAP -C /"
+assign EXTRACT_BOOTSTRAP_CMD "/bin/tar -xzf $BOOTSTRAP -C /"
 
 # set it to non-empty string if you want "distributed" bulk build
 # also see SLAVES variable
-MASTER_MODE='yes'
-#MASTER_MODE='' # for single-host building
+#assign MASTER_MODE 'yes'
+#assign MASTER_MODE '' # for single-host building
 
 # hosts|chroots where actual builds are done
-SLAVES='root@host1 root@host2 root@host3'
-#SLAVES='pkgsrc@host1 pkgsrc@host2 pkgsrc@host3'
-#SLAVES='chroot1 chroot2 chroot3'
+#assign SLAVES 'root@host1 root@host2 root@host3'
+#assign SLAVES 'pkgsrc@host1 pkgsrc@host2 pkgsrc@host3'
+#assign SLAVES 'chroot1 chroot2 chroot3'
 
 # transport to the slaves
-TRANSPORT='/usr/bin/ssh -x'
-#TRANSPORT='/usr/bin/rsh'
-#TRANSPORT="@@libexecdir@@/transport_chroot" # not implemented yet
+assign TRANSPORT '/usr/bin/ssh -x'
+#assign TRANSPORT '/usr/bin/rsh'
+#assign TRANSPORT "@@libexecdir@@/transport_chroot" # not implemented yet
 
 # directory for binary packages
-PACKAGES="$PKGSRCDIR/packages"
+assign PACKAGES "$PKGSRCDIR/packages"
 
 # pkg_summary(5)
-PKG_SUMMARY="$PACKAGES/All/pkg_summary.txt"
-PKG_UPDATE_SUMMARY_CMD='@@bindir@@/pkg_update_summary'
-#PKG_UPDATE_SUMMARY_CMD='@@bindir@@/pkg_update_summary -r'
+assign PKG_SUMMARY "$PACKAGES/All/pkg_summary.txt"
+assign PKG_UPDATE_SUMMARY_CMD '@@bindir@@/pkg_update_summary'
+#assign PKG_UPDATE_SUMMARY_CMD '@@bindir@@/pkg_update_summary -r'
 
 # pkg_src_summary (similar to pkg_summary(5) but for source packages)
-PKG_SRC_SUMMARY="$PKGSRCDIR/pkg_src_summary.txt"
+assign PKG_SRC_SUMMARY "$PKGSRCDIR/pkg_src_summary.txt"
 
 # PKG_UPDATE_SRC_SUMMARY_CMD - receives a list of requested packages
 #                              from stdin
 #
 # If you want to build short version of src_summary, uncomment the following
 # (see pkg_src_summary(1))
-#export PSS_FIELDS='PKGNAME PKGPATH DEPENDS BUILD_DEPENDS MAINTAINER NO_BIN_ON_FTP NO_BIN_ON_CDROM'
+#assign PSS_FIELDS 'PKGNAME PKGPATH DEPENDS BUILD_DEPENDS MAINTAINER NO_BIN_ON_FTP NO_BIN_ON_CDROM'
 #
 # For generating an "expanded" PLIST.
 # It is useless for distbb but looks very nice ;-)
-#export PSS_OPTIONS='-p'
+#assign PSS_OPTIONS '-p'
 # (see pkg_src_summary(1))
 #
 # The following variant for PKG_UPDATE_SRC_SUMMARY_CMD
@@ -77,7 +85,7 @@ PKG_SRC_SUMMARY="$PKGSRCDIR/pkg_src_summary.txt"
 # If pkg_update_src_summary is used and both PSS_SLAVES and
 # PSS_TRANSPORT are set, make sure that master host's /usr/pkgsrc is the same
 # as slave hosts' ones.
-#PKG_UPDATE_SRC_SUMMARY_CMD="@@bindir@@/pkg_update_src_summary '$PKG_SRC_SUMMARY'"
+#assign PKG_UPDATE_SRC_SUMMARY_CMD "@@bindir@@/pkg_update_src_summary '$PKG_SRC_SUMMARY'"
 
 # If your machine is very fast, you can use program 'pkg_src_summary'
 # to build src_summary. See below for PSS_* variables
@@ -88,12 +96,11 @@ PKG_SRC_SUMMARY="$PKGSRCDIR/pkg_src_summary.txt"
 # (-m option is for building multi-variant packages, see pkg_src_summary(1),
 # NOTE: -m currently doesn't work when entire pkgsrc tree is built,
 # because lots of packages multi-variant packages have constant PKGBASE )
-
-PKG_UPDATE_SRC_SUMMARY_CMD="@@bindir@@/pkg_src_summary -A > '$PKG_SRC_SUMMARY'"
+assign PKG_UPDATE_SRC_SUMMARY_CMD "@@bindir@@/pkg_src_summary -A > '$PKG_SRC_SUMMARY'"
 
 # program for comparing pkg_summary(5) for available binaries and
 # pkg_src_summary collected from pkgsrc source tree
-PKG_CMP_SUMMARY_CMD='@@bindir@@/pkg_cmp_summary -m -p'
+assign PKG_CMP_SUMMARY_CMD '@@bindir@@/pkg_cmp_summary -m -p'
 
 # if you want to build src_summary using several processes or several
 # machines in a network, set PSS_SLAVES.
@@ -109,46 +116,46 @@ PKG_CMP_SUMMARY_CMD='@@bindir@@/pkg_cmp_summary -m -p'
 # (master host != slave host ===> different pkg_src_summaries)
 # and is therefore is not recomented. It is recomended to always
 # generate pkg_src_summary on slave hosts.
-#export PSS_SLAVES=+6
-#export PSS_SLAVES='' # dangerous for the same reason
+#assign PSS_SLAVES +6
+#assign PSS_SLAVES '' # dangerous for the same reason
 
 # Gnerating pkg_src_summary on slave hosts (recomended)
-#export PSS_SLAVES="$SLAVES $SLAVES" # 2 processes per slave machine
+#assign PSS_SLAVES "$SLAVES $SLAVES" # 2 processes per slave machine
 
-export PSS_SLAVES="$SLAVES" # reasonable default
+assign PSS_SLAVES "$SLAVES" # reasonable default
 
-#export PSS_TRANSPORT='' # (for SMP machine)
-#export PSS_TRANSPORT='/usr/bin/ssh -x'
-#export PSS_TRANSPORT='/usr/bin/rsh'
-#export PSS_TRANSPORT="@@libexecdir@@/transport_chroot" # not implemented yet
-export PSS_TRANSPORT="$TRANSPORT" # reasonable default
+#assign PSS_TRANSPORT '' # (for SMP machine)
+#assign PSS_TRANSPORT '/usr/bin/ssh -x'
+#assign PSS_TRANSPORT '/usr/bin/rsh'
+#assign PSS_TRANSPORT "@@libexecdir@@/transport_chroot" # not implemented yet
+assign PSS_TRANSPORT "$TRANSPORT" # reasonable default
 
-#export PSS_PPERS=20 # to process N packages per slave at once
+#assign PSS_PPERS 20 # to process N packages per slave at once
 
 # directory where reports are saved
-REPORTS_DIR=$HOME/bulk-logs
+assign REPORTS_DIR $HOME/bulk-logs
 
 # binary package extension
-PKG_SUFX=.tgz
-#PKG_SUFX=.tbz
+assign PKG_SUFX .tgz
+#assign PKG_SUFX .tbz
 
 # install the following packages first.
 # These packages are listed as a result of
 # 'bmake show-var VARNAME=BOOTSTRAP_DEPENDS'
-EXTRA_DEPS='pkgtools/digest sysutils/checkperms'
+assign EXTRA_DEPS 'pkgtools/digest sysutils/checkperms'
 # The following command will be called for each package in EXTRA_DEPS
 # to generate their dependancies, for example,
 # sysutils/checkperms depends on pkgtools/digest
-EXTRA_DEPS_CMD="$BMAKE show-var VARNAME=BOOTSTRAP_DEPENDS"
-#EXTRA_DEPS_CMD=: # who knows
+assign EXTRA_DEPS_CMD "$BMAKE show-var VARNAME=BOOTSTRAP_DEPENDS"
+#assign EXTRA_DEPS_CMD : # ?
 
 # for target 'depends'
-DEPENDS_TARGET='do-bin-install'
+assign DEPENDS_TARGET 'do-bin-install'
 
 # Target for clean-ups after package building.
 # If you want to keep working directories, set this variable to dbb_none
-CLEAN_TARGET='clean'
-#CLEAN_TARGET='dbb_none'
+assign CLEAN_TARGET 'clean'
+#assign CLEAN_TARGET 'dbb_none'
 
 # the following targets will be run in order.
 # The target "dbb_init" is special. It makes the following:
@@ -159,26 +166,22 @@ CLEAN_TARGET='clean'
 #    otherwise counters in "Failures per maintainer" will
 #    be not fully correct
 # dbb_vars lists bmake's variables for easier debugging
-TARGETS="dbb_init clean dbb_canbebuilt dbb_excluded"
-TARGETS="$TARGETS dbb_vars depends fetch checksum"
-TARGETS="$TARGETS extract patch configure build install package deinstall"
+assign TARGETS "dbb_init clean dbb_canbebuilt dbb_excluded dbb_vars depends fetch checksum extract patch configure build install package deinstall"
 # the following is for USE_DESTDIR=yes|full
-#TARGETS="dbb_init clean dbb_canbebuilt dbb_excluded"
-#TARGETS="$TARGETS dbb_vars depends fetch checksum"
-#TARGETS="$TARGETS extract patch configure build package bin-install deinstall"
+#assign TARGETS "dbb_init clean dbb_canbebuilt dbb_excluded dbb_vars depends fetch checksum extract patch configure build package bin-install deinstall"
 
 # extra options passed to bmake
 # BATCH is mandatory for bulk builds!
-EXTRA_OPTS='BATCH=yes PKG_VERBOSE=1 CREATE_WRKDIR_SYMLINK=no'
+assign EXTRA_OPTS 'BATCH=yes PKG_VERBOSE=1 CREATE_WRKDIR_SYMLINK=no'
 # the following is for USE_DESTDIR=full bulk builds
-#EXTRA_OPTS='BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=full CHECK_SHLIBS=no'
+#assign EXTRA_OPTS 'BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=full CHECK_SHLIBS=no'
 
 # do not change the following unless you know what you are doing
-DISTBB_SLAVE=@@libexecdir@@/slave
+assign DISTBB_SLAVE @@libexecdir@@/slave
 
 # filename containing notes about bulk build (in html format, of
 # course in utf-8 charset), e.g. unusual build options, compiler etc.
-NOTES=''
+#assign NOTES /path/to/my_notes.txt
 
 # Some packages fail to build because they are a part of pkgsrc
 # bootstrap.  If you want to build them try to uncomment lines in
@@ -195,7 +198,7 @@ NOTES=''
 # NOTE: Do not forget that you can define your own Makefile targets
 #       in distbb.local.mk. This new target can run, for example, pkg_add -u
 
-SPECIAL_PACKAGES="\
+#assign SPECIAL_PACKAGES "\
 #PKGPATH=pkgtools/digest
 #TARGETS=dbb_init clean dbb_vars depends fetch checksum extract patch configure build package
 #EXTRA_OPTS=BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=full CHECK_SHLIBS=no
@@ -226,66 +229,67 @@ SPECIAL_PACKAGES="\
 #PKGPATH=emulators/qemu # TARGETS is not changed!
 #EXTRA_OPTS=CC=/usr/bin/gcc-3.4 CXX=/usr/bin/g++-3.4 BATCH=yes PKG_VERBOSE=1
 #
-"
+#"
 
 # Person running bulk build (in html format, of course in utf-8 charset).
 # If empty string, it is not included to the report.
-RESPONSIBLE=''
-#RESPONSIBLE='Aleksey Cheusov'
-#RESPONSIBLE='Aleksey Cheusov &lt;cheusov@tut.by&gt;'
-#RESPONSIBLE='<a href="mailto:cheusov@tut.by">Aleksey Cheusov</a>'
+#assign RESPONSIBLE ''
+#assign RESPONSIBLE 'Aleksey Cheusov'
+#assign RESPONSIBLE 'Aleksey Cheusov &lt;cheusov@tut.by&gt;'
+#assign RESPONSIBLE '<a href="mailto:cheusov@tut.by">Aleksey Cheusov</a>'
 
 # a number of "top offenders"
-OFFENDERS_CNT=20
+assign OFFENDERS_CNT 20
 
 # a number of failed dependancies that are included to the report
-MAX_FAILED_DEPS_CNT=6
+assign MAX_FAILED_DEPS_CNT 6
 
 # some broken packages need an interaction with user even if BATCH variable
 # is set to YES. This may "hang" a bulk build. If you don't want this,
 # set the following variable to "1", otherwise leave it unset.
-STDIN_FROM_DEV_NULL=1
-#STDIN_FROM_DEV_NULL=''
+assign STDIN_FROM_DEV_NULL 1
+#assign STDIN_FROM_DEV_NULL ''
 
 # if STDIN_FROM_DEV_NULL=1, some packages may produce infinite garbage to
 # stdout and in turn may waste ALL your free disk space. To prevent this,
 # set the following limit. 
-LOG_SIZE_LIMIT=50000000 # ~50Mb seems good enough
-#LOG_SIZE_LIMIT=0 # no limit! Are you sure?
+assign LOG_SIZE_LIMIT 50000000 # ~50Mb seems good enough
+#assign LOG_SIZE_LIMIT 0 # no limit! Are you sure?
 
 #
-OS="$(uname -s)"
+assign OS "$(uname -s)"
 
 #
-OSVER="$(uname -r)/$(uname -m)"
+assign OSVER "$(uname -r)/$(uname -m)"
 
 #
-PKGSRCVER='current'
-#PKGSRCVER='2039Q1' # ;-)
+#assign PKGSRCVER 'current'
+#assign PKGSRCVER '2039Q1' # ;-)
 
 #
-PACKAGES_URL="http://mova.org/~cheusov/pub/pkgsrc-distbb/$OS/$PKGSRCVER/packages/"
+#assign PACKAGES_URL "http://mova.org/~cheusov/pub/pkgsrc-distbb/$OS/$PKGSRCVER/packages/"
 
 #
-REPORT_URL="http://www.mova.org/~cheusov/pub/pkgsrc-distbb/$OS/$PKGSRCVER/logs/$BUILD_ID/META/report.html"
+#assign REPORT_URL "http://www.mova.org/~cheusov/pub/pkgsrc-distbb/$OS/$PKGSRCVER/logs/$BUILD_ID/META/report.html"
 
 #
-#USER_ADDRESS=vasya@pupkin.com
-MAIL_PROG=/usr/bin/mail
-REPORT_CMD="$MAIL_PROG -s 'pkgsrc-$PKGSRCVER $OS $OSVER bulk build results $BUILD_ID' '$USER_ADDRESS' < $REPORTS_DIR/$BUILD_ID/META/report.txt"
+#assign USER_ADDRESS vasya@pupkin.com
+assign MAIL_PROG /usr/bin/mail
+assign REPORT_CMD "$MAIL_PROG -s \"pkgsrc-$PKGSRCVER $OS $OSVER bulk build results $BUILD_ID\" \"$USER_ADDRESS\" < $REPORTS_DIR/$BUILD_ID/META/report.txt"
 
 #
-UPLOAD_PKGS_CMD="@@bindir@@/rsync -av --delete-excluded -e ssh $PACKAGES/ cheusov@mova.org:~/public_html/pub/pkgsrc-distbb/$OS/$PKGSRCVER/packages/"
+assign UPLOAD_PKGS_CMD "@@bindir@@/rsync -av --delete-excluded -e ssh $PACKAGES/ cheusov@mova.org:~/public_html/pub/pkgsrc-distbb/$OS/$PKGSRCVER/packages/"
 
 #
-UPLOAD_LOGS_CMD="@@bindir@@/rsync -av --delete-excluded --exclude '*.tmp' -e ssh $REPORTS_DIR/$BUILD_ID cheusov@mova.org:~/public_html/pub/pkgsrc-distbb/$OS/$PKGSRCVER/logs/"
+assign UPLOAD_LOGS_CMD "@@bindir@@/rsync -av --delete-excluded --exclude '*.tmp' -e ssh $REPORTS_DIR/$BUILD_ID cheusov@mova.org:~/public_html/pub/pkgsrc-distbb/$OS/$PKGSRCVER/logs/"
 
 # define your post-build actions in this function
 post_build (){
-    pkg_refresh_summary "${PKG_SUMMARY}" | gzip > "${PKG_SUMMARY%.txt}.gz"
+    pkg_refresh_summary "${PKG_SUMMARY}" | gzip  > "${PKG_SUMMARY%.txt}.gz"
     pkg_refresh_summary "${PKG_SUMMARY}" | bzip2 > "${PKG_SUMMARY%.txt}.bz2"
 }
 
 ############################################################
-# You MUST copy the following to your distbb.conf
-I_AM_READY=4
+export PSS_SLAVES
+export PSS_OPTIONS
+export PSS_FIELDS
