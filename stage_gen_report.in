@@ -705,8 +705,11 @@ other_stages_bar (){
 	fi
     done
     short_pkgpath="$(echo $pkgpath | cut -f1 -d:)"
-    printf '<br>Summary:<a href="summary.txt" title="summary for package %s">summary</a>' \
+    printf '<br>More info:&nbsp;'
+    printf '<a href="summary.txt" title="summary for package %s">summary</a>' \
 	"$short_pkgpath"
+    printf '&nbsp;'
+    printf '<a href="failed_deps.txt" title="list of packages failed because of this one">failed_deps</a>'
     printf '</p>\n'
 }
 
