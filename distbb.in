@@ -47,7 +47,7 @@ OPTIONS:
   -D|--diff              show difference with previous bulk build
   -B <build_id>          set BUILD_ID (for debugging purposes)
   -r|--retry             if your bulk build failed for some reason, you
-                         can try to continue it from that point it stopped
+                         can try to continue it from the point it stopped at
 EOF
 }
 
