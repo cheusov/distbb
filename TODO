@@ -1,5 +1,7 @@
 ideas/thoughts/todo/problems
 
+ - feature list: regressions section, no_bin_on_ftp/cdrom
+
  - stage_cksum
 
  - links to package's configure.log(s) from PKGNAME/stage_*.html
@@ -15,7 +17,7 @@ ideas/thoughts/todo/problems
 
  - rebuilding packages changed in CVS (without version changes!)
 
- - distbb.1, feature list in README
+ - distbb.1
 
  - I think distbb can be adapted for FreeBSD/OpenBSD Ports
    and other packaging systems
