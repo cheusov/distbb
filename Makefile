@@ -33,10 +33,11 @@ SCRIPTSDIR_distbb=		${BINDIR}
 SCRIPTSDIR_distbb_diff=		${BINDIR}
 
 FILES=				distbb.conf distbb.local.mk distbb.mk \
-				common
+				common distbb.default.conf
 
 FILESDIR=			${EGDIR}
 FILESDIR_distbb.mk=		${DATADIR}
+FILESDIR_distbb.default.conf=	${DATADIR}
 FILESDIR_common=		${LIBEXECDIR}
 
 MKMAN=			no
