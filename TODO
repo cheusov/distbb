@@ -7,8 +7,6 @@ ideas/thoughts/todo/problems
 
  - stage_cksum
 
- - 'distbb -c' for continuing faild bulk build
-
  - links to package's configure.log(s) from PKGNAME/stage_*.html
 
  - separate DEPENDS from BUILD_DEPENDS (versions should be analysed)

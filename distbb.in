@@ -29,7 +29,10 @@ usage (){
     cat <<EOF
 distbb - DISTributed Bulk Builds for pkgsrc
 
-usage: distbb [OPTIONS]
+usage: distbb -h
+       distbb -V
+       distbb [OPTIONS]
+       distbb -r -B <BUILDID> [OPTIONS]
 OPTIONS:
   -h|--help              display this help message
   -V|--version           distbb version
@@ -43,6 +46,8 @@ OPTIONS:
   -k                     skip updating pkg_src_summary
   -D|--diff              show difference with previous bulk build
   -B <build_id>          set BUILD_ID (for debugging purposes)
+  -r|--retry             if your bulk build failed for some reason, you
+                         can try to continue it from that point it stopped
 EOF
 }
 
@@ -85,6 +90,9 @@ while test $# -ne 0; do
 	-k)
 	    skip_updating_src_summary=1;;
 
+	-r)
+	    retry=1;;
+
 	--)
 	    shift
 	    break;;
@@ -112,6 +120,11 @@ if test -n "$pkgs"; then
     done
 fi
 
+if test -n "$retry" && test -z "$BUILD_ID"; then
+    echo '-r option needs -B' 1>&2
+    exit 1
+fi
+
 ######################################################################
 
 . @@bindir@@/pipestatus
@@ -126,9 +139,10 @@ fi
 echo "BUILD_ID: $BUILD_ID" 1>&2
 
 DISTBB_CONF=${DISTBB_CONF:-@@sysconfdir@@/distbb.conf}
-export DISTBB_CONF
 . "$DISTBB_CONF"
+. @@libexecdir@@/common
 
+export DISTBB_CONF
 ######################################################################
 test_var (){
     set +e # workaround for buggy Korn Shell ('set -e' + if + eval + false)
@@ -190,11 +204,21 @@ fi
 
 ######################################################################
 
-@@libexecdir@@/stage_init        "$BUILD_ID" \
-                                 "$skip_updating_src_summary" \
-                                 "$date_start"
-for stage in $BUILD_STAGES; do
-    eval @@libexecdir@@/stage_${stage} "$BUILD_ID"
+for stage in init $BUILD_STAGES; do
+    done_fn=$tmpdir/stage_${stage}.done
+    if test -n "$retry" && test -f ${done_fn}; then
+	echo "stage_$stage skipped"
+	continue
+    fi
+
+    if test "$stage" = init; then
+	@@libexecdir@@/stage_init \
+	    "$BUILD_ID" "$skip_updating_src_summary" "$date_start"
+    else
+	eval @@libexecdir@@/stage_${stage} "$BUILD_ID"
+    fi
+
+    touch ${done_fn}
 done
 
 ######################################################################
