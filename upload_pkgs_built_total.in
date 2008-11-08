@@ -11,4 +11,4 @@ BEGIN {
 {
    print $2 sufx
 }
-' $packages_built_total_fn | tee /dev/stderr
+' $packages_built_total_fn
