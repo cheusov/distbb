@@ -629,14 +629,27 @@ report_html2txt $REPORT1_DIR/META/tmp/report_body.html |
 sed 's| *$||' > "$report_txt_fn"
 
 report_mini_txt_fn="$meta_dir/report_mini.txt"
-awk '
+awk -v size_limit="$REPORT_MINI_SIZE_LIMIT" '
+BEGIN {
+   sz = 0
+   size_limit += 0
+}
+
 /Failures per maintainer/, /------/ {
    next
 }
 /Failed due to dependencies/, /------/ {
    next
 }
-{ print }
+{
+   print
+   sz += length($0)+1
+   if (sz > size_limit){
+      print "\n========= report is cut off because of its size, see full report ========="
+      print "====================================================================="
+      exit
+   }
+}
 ' "$report_txt_fn" > "$report_mini_txt_fn"
 
 verbose_print 'done\n'
