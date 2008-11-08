@@ -38,5 +38,6 @@ DISTBB_CONF=${DISTBB_CONF:-@@sysconfdir@@/distbb.conf}
 
 # main
 verbose_print "Uploading packages..."
-eval $UPLOAD_PKGS_CMD
+cd $PACKAGES/All
+eval "$UPLOAD_PKGS_FILES | $UPLOAD_PKGS_PROG $UPLOAD_PKGS_DEST"
 verbose_print "done\n"

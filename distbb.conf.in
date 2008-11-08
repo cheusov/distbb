@@ -1,36 +1,26 @@
 #-*-mode:  sh -*-
 
-PKGSRC_PREFIX=/home/cheusov/pkg
-BMAKE=$PKGSRC_PREFIX/bin/bmake
-PKGSRCDIR=/srv/pkgsrc_current
+PKGSRC_PREFIX=/usr/pkg
+BMAKE=/usr/bin/make
+PKGSRCDIR=/usr/pkgsrc
 RMDIRS_CMD="/bin/rm -rf $PKGSRC_PREFIX /var/db/pkg"
-BOOTSTRAP="/srv/pkgsrc_distfiles/bootstrap-unpriv.tar.gz"
-EXTRACT_BOOTSTRAP_CMD="/bin/tar -xf $BOOTSTRAP -C /"
+BOOTSTRAP="/usr/pkgsrc/packages/All/bootstrap.tar"
+EXTRACT_BOOTSTRAP_CMD="/bin/tar -f $BOOTSTRAP -C /"
 MASTER_MODE=yes
 SLAVES='root@host1 root@host2 root@host3'
 REPORTS_DIR=$HOME/bulk-logs
-TARGETS='dbb_init clean dbb_canbebuilt dbb_excluded dbb_vars depends fetch checksum extract patch configure build install package deinstall'
-NOTES=/path/to/my_notes.txt
 
-assign SPECIAL_PACKAGES "\
-PKGPATH=pkgtools/bootstrap-mk-files
-TARGETS=dbb_init clean dbb_vars depends fetch checksum extract patch configure build package
-EXTRA_OPTS=BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=full CHECK_SHLIBS=no
+TARGETS='dbb_init clean dbb_canbebuilt dbb_excluded dbb_vars depends'
+TARGETS="$TARGETS fetch checksum extract patch configure"
+TARGETS="$TARGETS build install package deinstall"
 
-PKGPATH=devel/bmake
-TARGETS=dbb_init clean dbb_vars depends fetch checksum extract patch configure build package
-EXTRA_OPTS=BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=full CHECK_SHLIBS=no
+USER_MAIL=you@your-domain.com
 
-PKGPATH=pkgtools/pkg_install
-TARGETS=dbb_init clean dbb_vars depends fetch checksum extract patch configure build package
-EXTRA_OPTS=BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=full CHECK_SHLIBS=no
+UPLOAD_PKGS_DEST=cheusov@localhost:~/tmp/distbb_test2/packages/
+UPLOAD_LOGS_DEST=cheusov@localhost:~/tmp/distbb_test2/log/
 
-"
-
-USER_ADDRESS=vasya@pupkin.com
-
-UPLOAD_PKGS_CMD="@@bindir@@/rsync -av --delete-excluded -e ssh $PACKAGES/ cheusov@mova.org:~/public_html/pub/pkgsrc-distbb/$OS/$PKGSRCVER/packages/"
-UPLOAD_LOGS_CMD="@@bindir@@/rsync -av --delete-excluded --exclude \"*.tmp\" -e ssh $REPORTS_DIR/$BUILD_ID cheusov@mova.org:~/public_html/pub/pkgsrc-distbb/$OS/$PKGSRCVER/logs/"
+PACKAGES_URL="http://your-domain.com/~you/pkgsrc-distbb/packages/"
+REPORT_URL_PREFIX="http://your-domain.com/~you/pkgsrc-distbb/logs/"
 
 # define your post-build actions in this function
 post_build (){

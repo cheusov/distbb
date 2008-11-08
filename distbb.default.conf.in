@@ -71,7 +71,7 @@ assign PKG_SRC_SUMMARY "$PKGSRCDIR/pkg_src_summary.txt"
 #
 # If you want to build short version of src_summary, uncomment the following
 # (see pkg_src_summary(1))
-#assign PSS_FIELDS 'PKGNAME PKGPATH DEPENDS BUILD_DEPENDS MAINTAINER NO_BIN_ON_FTP NO_BIN_ON_CDROM'
+assign PSS_FIELDS 'PKGNAME PKGPATH DEPENDS BUILD_DEPENDS MAINTAINER DESCRIPTION NO_BIN_ON_FTP NO_BIN_ON_CDROM'
 #
 # For generating an "expanded" PLIST.
 # It is useless for distbb but looks very nice ;-)
@@ -270,18 +270,23 @@ assign OSVER "$(uname -r)/$(uname -m)"
 #assign PACKAGES_URL "http://mova.org/~cheusov/pub/pkgsrc-distbb/$OS/$PKGSRCVER/packages/"
 
 #
-#assign REPORT_URL "http://www.mova.org/~cheusov/pub/pkgsrc-distbb/$OS/$PKGSRCVER/logs/$BUILD_ID/META/report.html"
+#assign REPORT_URL_PREFIX "http://your-domain.com/~you/pkgsrc-distbb/logs/"
+assign REPORT_URL "$REPORT_URL_PREFIX/$BUILD_ID/META/report.html"
 
 #
-#assign USER_ADDRESS vasya@pupkin.com
+#assign USER_MAIL you@your-domain.com
+
 assign MAIL_PROG /usr/bin/mail
 assign REPORT_CMD "$MAIL_PROG -s \"pkgsrc-$PKGSRCVER $OS $OSVER bulk build results $BUILD_ID\" \"$USER_ADDRESS\" < $REPORTS_DIR/$BUILD_ID/META/report.txt"
 
 #
-assign UPLOAD_PKGS_CMD "@@bindir@@/rsync -av --delete-excluded -e ssh $PACKAGES/ cheusov@mova.org:~/public_html/pub/pkgsrc-distbb/$OS/$PKGSRCVER/packages/"
+#assign UPLOAD_PKGS_DEST you@your-domain.com:~/public_html/pkgsrc-distbb/packages/
+assign UPLOAD_PKGS_FILES "find . -type f"
+assign UPLOAD_PKGS_PROG "@@bindir@@/rsync -av --delete-excluded --files-from=- -e ssh ."
 
 #
-assign UPLOAD_LOGS_CMD "@@bindir@@/rsync -av --delete-excluded --exclude \"*.tmp\" -e ssh $REPORTS_DIR/$BUILD_ID cheusov@mova.org:~/public_html/pub/pkgsrc-distbb/$OS/$PKGSRCVER/logs/"
+#assign UPLOAD_LOGS_DEST you@your-domain.com:~/public_html/pkgsrc-distbb/logs/
+assign UPLOAD_LOGS_PROG "@@bindir@@/rsync -av --delete-excluded --exclude \"*.tmp\" -e ssh"
 
 ############################################################
 export PSS_SLAVES

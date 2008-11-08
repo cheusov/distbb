@@ -159,15 +159,23 @@ test_var DISTBB_SLAVE
 test_var OFFENDERS_CNT
 test_var MAX_FAILED_DEPS_CNT
 test_var REPORT_CMD
-test_var UPLOAD_PKGS_CMD
-test_var UPLOAD_LOGS_CMD
+test_var UPLOAD_PKGS_PROG
+test_var UPLOAD_LOGS_PROG
 test_var LIST_ALL_PKGS_CMD
 test_var EXTRA_DEPS_CMD
 test_var DISTBB_LOCAL_MK
-test_var USER_ADDRESS
+if test "$MAIL_PROG" != ':'; then
+    test_var USER_MAIL
+fi
 if test -n "$MASTER_MODE"; then
-    test_var "$SLAVES"
-    test_var "$PSS_SLAVES"
+    test_var SLAVES
+    test_var PSS_SLAVES
+fi
+if test "$UPLOAD_LOGS_PROG" != ':'; then
+    test_var UPLOAD_LOGS_DEST
+fi
+if test "$UPLOAD_PKGS_PROG" != ':'; then
+    test_var UPLOAD_PKGS_DEST
 fi
 
 if grep BUILD_START "$DISTBB_CONF" > /dev/null; then
