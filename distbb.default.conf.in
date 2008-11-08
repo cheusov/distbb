@@ -278,7 +278,7 @@ assign REPORT_URL "$REPORT_URL_PREFIX/$BUILD_ID/META/report.html"
 
 assign MAIL_PROG /usr/bin/mail
 assign REPORT_CMD "$MAIL_PROG -s \"pkgsrc-$PKGSRCVER $OS $OSVER bulk build results $BUILD_ID\" \"$USER_ADDRESS\" < $REPORTS_DIR/$BUILD_ID/META/report_mini.txt"
-assign REPORT_MINI_SIZE_LIMIT=70000
+assign REPORT_MINI_SIZE_LIMIT 70000
 
 #
 #assign UPLOAD_PKGS_DEST you@your-domain.com:~/public_html/pkgsrc-distbb/packages/
@@ -289,6 +289,9 @@ assign UPLOAD_PKGS_PROG "@@bindir@@/rsync -av --delete-excluded --include-from=-
 #
 #assign UPLOAD_LOGS_DEST you@your-domain.com:~/public_html/pkgsrc-distbb/logs/
 assign UPLOAD_LOGS_PROG "@@bindir@@/rsync -av --delete-excluded --exclude \"*.tmp\" -e ssh"
+
+# list of building stages, except 'init'
+assign BUILD_STAGES 'build post_build gen_report update_best upload_logs upload_pkgs report'
 
 ############################################################
 export PSS_SLAVES

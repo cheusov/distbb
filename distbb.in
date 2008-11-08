@@ -193,12 +193,8 @@ fi
 @@libexecdir@@/stage_init        "$BUILD_ID" \
                                  "$skip_updating_src_summary" \
                                  "$date_start"
-@@libexecdir@@/stage_build       "$BUILD_ID"
-@@libexecdir@@/stage_post_build  "$BUILD_ID"
-@@libexecdir@@/stage_gen_report  "$BUILD_ID"
-@@libexecdir@@/stage_update_best "$BUILD_ID"
-@@libexecdir@@/stage_upload_logs "$BUILD_ID"
-@@libexecdir@@/stage_upload_pkgs "$BUILD_ID"
-@@libexecdir@@/stage_report      "$BUILD_ID"
+for stage in $BUILD_STAGES; do
+    eval @@libexecdir@@/stage_${stage} "$BUILD_ID"
+done
 
 ######################################################################

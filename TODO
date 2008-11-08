@@ -9,10 +9,6 @@ ideas/thoughts/todo/problems
 
  - 'distbb -c' for continuing faild bulk build
 
- - BUILD_STAGES='...upload_logs upload_pkgs report' vs.
-   BUILD_STAGES='...upload_logs report upload_pkgs'
-   for sending report before uploading packages
-
  - links to package's configure.log(s) from PKGNAME/stage_*.html
 
  - simplify distbb.conf. distbb is very customizable, but
