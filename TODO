@@ -11,9 +11,6 @@ ideas/thoughts/todo/problems
 
  - links to package's configure.log(s) from PKGNAME/stage_*.html
 
- - simplify distbb.conf. distbb is very customizable, but
-   distbb.conf becomes very large.
-
  - separate DEPENDS from BUILD_DEPENDS (versions should be analysed)
 
  - modification time of binary packages?
