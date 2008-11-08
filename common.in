@@ -22,6 +22,13 @@ get_log_dir (){
     echo "${short_pkgpath}_$2"
 }
 
+print_binrep_spec_files (){
+    echo pkg_summary.bz2
+    echo pkg_summary.gz
+    echo pkg_summary.txt
+    echo SHA512.gz
+}
+
 export LC_ALL=C # for sort and uniq
 
 ######################################################################
@@ -121,7 +128,6 @@ fname in f2n {
 }
 
 ######################################################################
-export PKG_SUFX PKGSRCDIR BMAKE
 unset PKG_PATH || true
 
 export PATH=@@bindir@@:@@sbindir@@:$PATH

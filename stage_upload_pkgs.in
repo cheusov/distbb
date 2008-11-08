@@ -39,5 +39,6 @@ DISTBB_CONF=${DISTBB_CONF:-@@sysconfdir@@/distbb.conf}
 # main
 verbose_print "Uploading packages..."
 cd $PACKAGES/All
+export REPORTS_DIR BUILD_ID
 eval "$UPLOAD_PKGS_FILES | $UPLOAD_PKGS_PROG $UPLOAD_PKGS_DEST"
 verbose_print "done\n"

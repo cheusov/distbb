@@ -1,0 +1,14 @@
+#!/bin/sh
+
+. @@libexecdir@@/common
+
+print_binrep_spec_files
+
+awk '
+BEGIN {
+   sufx = ENVIRON ["PKG_SUFX"]
+}
+{
+   print $2 sufx
+}
+' $packages_built_total_fn | tee /dev/stderr

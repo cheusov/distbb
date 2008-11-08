@@ -282,8 +282,9 @@ assign REPORT_MINI_SIZE_LIMIT=70000
 
 #
 #assign UPLOAD_PKGS_DEST you@your-domain.com:~/public_html/pkgsrc-distbb/packages/
-assign UPLOAD_PKGS_FILES "find . -type f"
-assign UPLOAD_PKGS_PROG "@@bindir@@/rsync -av --delete-excluded --files-from=- -e ssh ."
+assign UPLOAD_PKGS_FILES "@@libexecdir@@/upload_pkgs_all_files"
+#assign UPLOAD_PKGS_FILES "@@libexecdir@@/upload_pkgs_built_total"
+assign UPLOAD_PKGS_PROG "@@bindir@@/rsync -av --delete-excluded --include-from=- --exclude \"*\" -e ssh ."
 
 #
 #assign UPLOAD_LOGS_DEST you@your-domain.com:~/public_html/pkgsrc-distbb/logs/
@@ -293,3 +294,7 @@ assign UPLOAD_LOGS_PROG "@@bindir@@/rsync -av --delete-excluded --exclude \"*.tm
 export PSS_SLAVES
 export PSS_OPTIONS
 export PSS_FIELDS
+
+export PKG_SUFX
+export PKGSRCDIR
+export BMAKE
