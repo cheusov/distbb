@@ -110,7 +110,7 @@ print_failed_pkg (){
     short_pkgpath="$(echo $1 | cut -f1 -d:)"
     log_dir="$(get_log_dir $1 $5)"
     if test -n "$2" && test "$2" != "Breaks"; then
-	__href_beg="`printf '<a href=\"../%s/failed_deps.txt\" title=\"packages failed due to %s\">' "$log_dir" $short_pkgpath`"
+	__href_beg="`printf '<a href=\"../%s/failed_deps.html\" title=\"packages failed due to %s\">' "$log_dir" $short_pkgpath`"
 	__href_end='</a>'
     else
 	__href_beg=''
@@ -689,9 +689,16 @@ NF == 0 {
 verbose_print 'done\n'
 
 ######################################################################
+pkgname_pkgpath2html (){
+    # $1 - PKGNAME
+    # $2 - PKGPATH
+    printf 'PKGNAME: %s<br>\nPKGPATH: %s<br>\n' "$1" "$2"
+}
+######################################################################
 
 other_stages_bar (){
-    printf '<p>Stages:&nbsp;'
+    printf '<p>'
+    printf 'Stages:&nbsp;'
     for t in $TARGETS; do
 	if test -s "$pkgdir/stage_$t.tmp"; then
 	    if test "$t" = "$stage"; then
@@ -709,7 +716,7 @@ other_stages_bar (){
     printf '<a href="summary.txt" title="summary for package %s">summary</a>' \
 	"$short_pkgpath"
     printf '&nbsp;'
-    printf '<a href="failed_deps.txt" title="list of packages failed because of this one">failed_deps</a>'
+    printf '<a href="failed_deps.html" title="list of packages failed because of this one">failed_deps</a>'
     printf '</p>\n'
 }
 
@@ -747,7 +754,7 @@ done
 verbose_print "done\n"
 
 ######################################################################
-failed_pkg2html (){
+failed_because_txt2html (){
     # $1 - PKGNAME
     # $2 - PKGPATH
     html_header
@@ -756,10 +763,12 @@ failed_pkg2html (){
 
     printf '<p>'
 
-    printf 'Info:&nbsp;'
+    pkgname_pkgpath2html "$1" "$2"
+    printf 'More info:&nbsp;'
     printf '<a href="summary.txt" title="summary for package">summary</a><br>'
     printf 'List of failed dependencies:<br>\n'
 
+    depX="$(cat ${REPORT1_DIR}/$(get_log_dir $pkgpath $pkgname)/failed_because.txt)"
     for deppath in $depX; do
 	depname=$(pkgpath2pkgname "$deppath")
 	stage_fn="${REPORT1_DIR}/$(get_log_dir $deppath $depname)/curr_stage.tmp"
@@ -777,8 +786,43 @@ verbose_print "  creating PKGNAMEs/info.html ... "
 
 while read pkgpath pkgname maintainer; do
     fn="${REPORT1_DIR}/$(get_log_dir $pkgpath $pkgname)/info.html"
-    failed_pkg2html "$pkgname" "$pkgpath" > "$fn"
+    failed_because_txt2html "$pkgname" "$pkgpath" > "$fn"
 done < "$packages_failed_deps_fn"
+
+verbose_print "done\n"
+
+######################################################################
+failed_deps_txt2html (){
+    # $1 - PKGNAME
+    # $2 - PKGPATH
+    html_header
+
+    short_pkgpath="$(echo $2 | cut -f1 -d:)"
+
+    printf '<p>'
+
+    pkgname_pkgpath2html "$1" "$2"
+    printf 'List of packages failed because of this one:<br>\n'
+
+    depX="$(cat ${REPORT1_DIR}/$(get_log_dir $pkgpath $pkgname)/failed_deps.txt)"
+    for deppath in $depX; do
+	depname=$(pkgpath2pkgname "$deppath")
+	printf '&nbsp;&nbsp;&nbsp;<a href="../%s/info.html" title="information for package">%s</a><br>' \
+	    "$(get_log_dir $deppath $depname)" "$deppath"
+    done
+
+    printf '</p>\n'
+
+    html_footer
+}
+
+verbose_print "  creating PKGNAMEs/failed_deps.html ... "
+
+cat "$packages_failed_fn" "$packages_failed_notavail_fn" |
+while read pkgpath pkgname maintainer; do
+    fn="${REPORT1_DIR}/$(get_log_dir $pkgpath $pkgname)/failed_deps.html"
+    failed_deps_txt2html "$pkgname" "$pkgpath" > "$fn"
+done
 
 verbose_print "done\n"
 
