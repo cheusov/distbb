@@ -747,3 +747,39 @@ done
 verbose_print "done\n"
 
 ######################################################################
+failed_pkg2html (){
+    # $1 - PKGNAME
+    # $2 - PKGPATH
+    html_header
+
+    short_pkgpath="$(echo $2 | cut -f1 -d:)"
+
+    printf '<p>'
+
+    printf 'Info:&nbsp;'
+    printf '<a href="summary.txt" title="summary for package">summary</a><br>'
+    printf 'List of failed dependencies:<br>\n'
+
+    for deppath in $depX; do
+	depname=$(pkgpath2pkgname "$deppath")
+	stage_fn="${REPORT1_DIR}/$(get_log_dir $deppath $depname)/curr_stage.tmp"
+	stage="$(cat $stage_fn)"
+	printf '&nbsp;&nbsp;&nbsp;<a href="../%s/stage_%s.html" title="summary for package">%s</a><br>' \
+	    "$(get_log_dir $deppath $depname)" "$stage" "$deppath"
+    done
+
+    printf '</p>\n'
+
+    html_footer
+}
+
+verbose_print "  creating PKGNAMEs/info.html ... "
+
+while read pkgpath pkgname maintainer; do
+    fn="${REPORT1_DIR}/$(get_log_dir $pkgpath $pkgname)/info.html"
+    failed_pkg2html "$pkgname" "$pkgpath" > "$fn"
+done < "$packages_failed_deps_fn"
+
+verbose_print "done\n"
+
+######################################################################
