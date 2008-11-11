@@ -25,7 +25,7 @@ assign RMDIRS_CMD "/bin/rm -rf $PKGSRC_PREFIX /var/db/pkg"
 #assign RMDIRS_CMD "/bin/rm -rf $PKGSRC_PREFIX" # PKGDB is under PREFIX
 
 # bootstrap
-#assign BOOTSTRAP "/path/to/bootstrap.tar.gz"
+#assign BOOTSTRAP "/path/to/bootstrap.tar"
 
 # Like distbb.conf but for bmake, it is loaded after package's Makefile
 # and before distbb's own distbb.mk
@@ -38,7 +38,7 @@ assign LIST_ALL_PKGS_CMD '@@bindir@@/pkg_list_all_pkgs'
 #assign LIST_ALL_PKGS_CMD '/path/to/list_pkgs_with_my_extra_wip_packages'
 
 #
-assign EXTRACT_BOOTSTRAP_CMD "/bin/tar -xzf $BOOTSTRAP -C /"
+assign EXTRACT_BOOTSTRAP_CMD "/bin/tar -xf $BOOTSTRAP -C /"
 
 # set it to non-empty string if you want "distributed" bulk build
 # also see SLAVES variable
