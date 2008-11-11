@@ -53,7 +53,7 @@ PROJECTNAME=		distbb
 # the following is necessary because bsd.file.mk
 # is broken in pkgsrc (NetBSD pkg/39715)
 all: distbb.conf common distbb.mk distbb.local.mk \
-     upload_pkgs_all_files upload_pkgs_built_total \
+     upload_pkgs_all_files upload_pkgs_built_total distbb.default.conf \
      upload_pkgs_no_bin_on_cdrom upload_pkgs_no_bin_on_ftp
 
 .in:
