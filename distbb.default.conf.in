@@ -277,7 +277,7 @@ assign REPORT_URL "$REPORT_URL_PREFIX/$BUILD_ID/META/report.html"
 #assign USER_MAIL you@your-domain.com
 
 assign MAIL_PROG /usr/bin/mail
-assign REPORT_CMD "$MAIL_PROG -s \"pkgsrc-$PKGSRCVER $OS $OSVER bulk build results $BUILD_ID\" \"$USER_ADDRESS\" < $REPORTS_DIR/$BUILD_ID/META/report_mini.txt"
+assign REPORT_CMD "$MAIL_PROG -s \"pkgsrc-$PKGSRCVER $OS $OSVER bulk build results $BUILD_ID\" \"$USER_MAIL\" < $REPORTS_DIR/$BUILD_ID/META/report_mini.txt"
 assign REPORT_MINI_SIZE_LIMIT 70000
 
 #
