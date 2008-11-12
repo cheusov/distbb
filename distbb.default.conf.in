@@ -130,7 +130,7 @@ assign PSS_SLAVES "$SLAVES" # reasonable default
 #assign PSS_TRANSPORT "@@libexecdir@@/transport_chroot" # not implemented yet
 assign PSS_TRANSPORT "$TRANSPORT" # reasonable default
 
-#assign PSS_PPERS 20 # to process N packages per slave at once
+assign PSS_PPERS 3 # to process N packages per slave at once
 
 # directory where reports are saved
 assign REPORTS_DIR $HOME/bulk-logs
@@ -299,6 +299,7 @@ assign BUILD_STAGES 'build post_build gen_report update_best upload_logs upload_
 export PSS_SLAVES
 export PSS_OPTIONS
 export PSS_FIELDS
+export PSS_TRANSPORT
 
 export PKG_SUFX
 export PKGSRCDIR
