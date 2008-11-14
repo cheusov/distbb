@@ -9,21 +9,21 @@ distbb - distributed bulk builds framework for pkgsrc (www.pkgsrc.org).
        Though, currently only NetBSD and Linux are tested. Solaris support
        is in progress.
      - Several machines in a network or chroots can be used for
-       building packages. That is independent packages are built
+       building packages. That is, independent packages can be built
        in parallel using all available power (CPUs and/or machines).
      - Either all available packages (default) or only specified packages
-       (distbb -f) can be built. Even individual packages
-       may also be built easily (distbb -p).
-     - Collecting an information about source packages is also distributed.
-       Different packages are analysed in parallel.
-     - DISTBB is really modular. Tool for running things in parallel
-       is completely independent from DISTBB. It is a separate
-       universal tool which is developped and
-       packaged separatedly (wip/paexec).
+       (distbb -f) can be built. Individual packages may also be built
+       easily (distbb -p).
+     - Collecting an information about source packages
+       (pkg_src_summary stage) is also distributed.
+       Different packages are analysed in parallel .
+     - DISTBB is _really_ modular. Tool for running things in parallel
+       is completely independent from DISTBB. It is a separate (wip/paexec)
+       universal tool which is developped and packaged separatedly.
        Another thing separated from DISTBB is a collection of tools
        for manipulating so called packages summary. See pkg_summary(5)
        and wip/pkg_summary-utils package for more information.
-       Other separated universal tools are wip/pipestatus and wip/runawk.
+       Other helper tools are wip/pipestatus and wip/runawk.
      - DISTBB is small. It is about 30% smaller than Hubert Feyrer's
        bulk build framework and is more than twice smaller than
        Joerg Sonnenberger's pbulk.
@@ -48,6 +48,19 @@ distbb - distributed bulk builds framework for pkgsrc (www.pkgsrc.org).
        no problem, build them using gcc-3 if it is available on your system).
        Another example is to set/unset "stack smashing protection"
        for individual packages.
+     - DISTBB is able to upload building logs to the external server,
+       e.g. publicly available.
+     - DISTBB is able to upload binary packages.
+       Uploading packages is aware of NO_BIN_ON_CDROM
+       and NO_BIN_ON_FTP restrictions. See UPLOAD_PKGS_FILES variable
+       in distbb.default.conf.
+     - Bulk build results can be sent to the user via
+       email (or jabber, icq etc.).
+     - Bulk build logs include (optionally) difference with previous
+       bulk build and "global" progress sections. This is very powerful
+       feature absent (at the time of writing) in bbf and pbulk.
+       Command like tool for comparing results of two bulk builds
+       is also available.
      - Normally DISTBB receives packages in PKGPATH form, e.g. archivers/gzip,
        wip/distbb etc. One can also use so called enriched PKGPATHs.
        Enriching here means additional building options in the following form
