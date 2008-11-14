@@ -1,7 +1,5 @@
 ideas/thoughts/todo/problems
 
- - feature list: regressions section, no_bin_on_ftp/cdrom
-
  - stage_cksum
 
  - links to package's configure.log(s) from PKGNAME/stage_*.html

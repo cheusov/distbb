@@ -149,9 +149,6 @@ assign EXTRA_DEPS 'pkgtools/digest sysutils/checkperms'
 assign EXTRA_DEPS_CMD "$BMAKE show-var VARNAME=BOOTSTRAP_DEPENDS"
 #assign EXTRA_DEPS_CMD : # ?
 
-# for target 'depends'
-assign DEPENDS_TARGET 'do-bin-install'
-
 # Target for clean-ups after package building.
 # If you want to keep working directories, set this variable to dbb_none
 assign CLEAN_TARGET 'clean'
@@ -172,9 +169,9 @@ assign TARGETS "dbb_init clean dbb_canbebuilt dbb_excluded dbb_vars depends fetc
 
 # extra options passed to bmake
 # BATCH is mandatory for bulk builds!
-assign EXTRA_OPTS 'BATCH=yes PKG_VERBOSE=1 CREATE_WRKDIR_SYMLINK=no'
+assign EXTRA_OPTS 'DEPENDS_TARGET=do-bin-install BATCH=yes PKG_VERBOSE=1 CREATE_WRKDIR_SYMLINK=no'
 # the following is for USE_DESTDIR=full bulk builds
-#assign EXTRA_OPTS 'BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=full CHECK_SHLIBS=no'
+#assign EXTRA_OPTS 'USE_DESTDIR=full DEPENDS_TARGET=do-bin-install BATCH=yes PKG_VERBOSE=1 CHECK_SHLIBS=no'
 
 # do not change the following unless you know what you are doing
 assign DISTBB_SLAVE @@libexecdir@@/slave

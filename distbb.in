@@ -166,7 +166,6 @@ test_var PKG_UPDATE_SRC_SUMMARY_CMD
 test_var PKG_CMP_SUMMARY_CMD
 test_var REPORTS_DIR
 test_var PKG_SUFX
-test_var DEPENDS_TARGET
 test_var CLEAN_TARGET
 test_var TARGETS
 test_var DISTBB_SLAVE

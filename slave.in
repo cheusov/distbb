@@ -146,7 +146,7 @@ do_build_package (){
     fi
 
     # $TARGETS
-    bmake_opts="$EXTRA_OPTS DEPENDS_TARGET=$DEPENDS_TARGET $multivar_opts"
+    bmake_opts="$EXTRA_OPTS $multivar_opts"
 
     for t in $TARGETS; do
 	header $t
