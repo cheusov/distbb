@@ -78,7 +78,8 @@ dbb_vars:
 .if empty(DBB_QVARS.${v})
 	@printf '    '; \
 	for val in ${${v}:Q}; do printf "%s\n" "$$val"; done | \
-	sed 's,\([^\\]\)  *,\1\n    ,g'
+	sed 's,\([^\\]\)  *,\1
+    ,g'
 .else
 	@for val in ${${v}:Q}; do printf "    %s\n" "$$val"; done
 .endif
