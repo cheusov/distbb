@@ -60,7 +60,7 @@ printf '' > $progress_fn
 
 ######################################################################
 ### unpacking bootstrap
-verbose_print "  unpacking bootstrap to PREFIX..."
+verbose_print "  removing PREFIX and unpacking bootstrap..."
 if test "$MASTER_MODE"; then
     for s in $SLAVES; do
 	eval $TRANSPORT "$s" $RMDIRS_CMD
