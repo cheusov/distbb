@@ -16,10 +16,10 @@ TARGETS="$TARGETS build install package deinstall"
 
 USER_MAIL=you@your-domain.com
 
-UPLOAD_PKGS_DEST=cheusov@localhost:~/tmp/distbb_test2/packages/
-UPLOAD_LOGS_DEST=cheusov@localhost:~/tmp/distbb_test2/log/
+UPLOAD_PKGS_DEST=you@your-domain.com:~/public_html/pkgsrc-distbb/packages/
+UPLOAD_LOGS_DEST=you@your-domain.com:~/public_html/pkgsrc-distbb/logs/
 
-PACKAGES_URL="http://your-domain.com/~you/pkgsrc-distbb/packages/"
+     PACKAGES_URL="http://your-domain.com/~you/pkgsrc-distbb/packages/"
 REPORT_URL_PREFIX="http://your-domain.com/~you/pkgsrc-distbb/logs/"
 
 # define your post-build actions in this function
