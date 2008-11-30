@@ -136,7 +136,7 @@ print_failed_deps_pkg (){
     fi
 
     if test -n "$1"; then
-	printf "  <tr><td><a href=\"../%s/failed_because.txt\" title=\"failed due to...\">%-42s</a></td> <td> %s</td></tr>\n" "$(get_log_dir $1 $2)" "$short_pkgpath" "$3"
+	printf "  <tr><td><a href=\"../%s/info.html\" title=\"failed due to...\">%-42s</a></td> <td> %s</td></tr>\n" "$(get_log_dir $1 $2)" "$short_pkgpath" "$3"
     else
 	printf "  <tr><td align=\"left\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"../%s/stage_%s.html\" title=\"build log for %s\">     %-37s</a></td><td>       %s</td></tr>\n" "$(get_log_dir $4 $5)" "$failed_stage" "$4" "$4" "$3"
     fi
@@ -189,7 +189,7 @@ BEGIN {
 
       $1 = "<td class=\"pkg-failed\">" $1 "</td>"
    }else if ($1 ~ /-d$/){
-      $2 = sprintf("<a href=\"../%s/failed_because.txt\" title=\"failed due to...\">%-27s</a>", logsubdir, $2)
+      $2 = sprintf("<a href=\"../%s/info.html\" title=\"failed due to...\">%-27s</a>", logsubdir, $2)
 
       $1 = "<td class=\"pkg-faileddeps\">" $1 "</td>"
    }else if ($1 ~ /[+]/){
