@@ -1,3 +1,62 @@
+Version 0.24.0, by Aleksey Cheusov
+
+  distbb.conf is splitted into two parts: global defaults
+  (distbb.default.conf) and user's settings (distbb.conf). This is
+  major change in distbb! Instead of upgrading your existing
+  distbb.conf it is *strongly* recommended to recreate it from
+  examples/ template. Sorry for inconvenience.
+
+  added: 'distbb -r|--retry' option. if your bulk build failed for
+  some reason, you may continue it from that point it stopped at by
+  running 'distbb -r -B YYYYMM.HHMM'
+
+  stage_upload_pkgs now supports NO_BIN_ON_CDROM and NO_BIN_ON_FTP.
+  By default all packages are uploaded. If you want to change this,
+  set UPLOAD_PKGS_FILES variable in your distbb.conf
+  (See distbb.default.conf for a list of available variants).
+
+  stage_xxxx.html improvements. Packages failed due to their
+  dependencies now have their own info.html. So, you can see its
+  summary and decide whether to fix this package or not.
+
+  DEPENDS_TARGET configuration variable is removed, now it should be
+  a part of EXTRA_OPTS. See distbb.default.conf
+
+  mini report is introduced (META/report_mini.txt) which is sent by
+  stage_report (by default). In this mini report "Failures per
+  maintainer" and "Failed due to dependencies" sections are removed.
+  A purpose of this is to reduce a size of the report sent by email
+  (pkgsrc-bulk mailing list has limitations).
+
+  New config variable REPORT_MINI_SIZE_LIMIT. report_mini.txt sent by
+  email is limited to approximately REPORT_MINI_SIZE_LIMIT bytes.
+
+  PKGNAMEs are removed from report{,_mini}.txt. This also reduces
+  report's size.
+
+  New configuration variable BUILD_STAGES which stores a list of
+  building stages.  If you want to, for example, send report before
+  uploading binaries, change this variable in your distbb.conf.
+  But be careful, list of available stages may change in the future.
+
+  dbb_init target does not output useless noise to stdout anymore. As
+  a result it is usually not listed in failed package's stage_*.html.
+
+  Usage of REPORT_CMD changed. Now redirection from stdin (report.txt)
+  should be inside it. Update your distbb.conf and set I_AM_READY to 4
+
+  ADDED: new config variables USER_MAIL and MAIL_PROG. They are for
+  stage_report.
+
+  ADDED: PKG_CMP_SUMMARY_CMD configuration variable, for setting
+  a program for comparing pkg_summary(5) for available binaries and
+  pkg_src_summary collected from pkgsrc source tree.
+
+  distbb.default.conf SPECIAL_PACKAGES:
+  'dbb_canbebuild' and 'replace' targets removed, 'dbb_vars' added
+
+  dbb_vars target fix: POSIX sed does not except \n
+
 Version 0.23.1, by Aleksey Cheusov, Thu,  6 Nov 2008 01:51:28 +0200
 
   fix: yet another PKGNAME->PKGPATHm_PKGNAME
