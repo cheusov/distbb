@@ -78,8 +78,7 @@ dbb_vars:
 .if empty(DBB_QVARS.${v})
 	@printf '    '; \
 	for val in ${${v}:Q}; do printf "%s\n" "$$val"; done | \
-	sed 's,\([^\\]\)  *,\1\
-    ,g'
+	awk '{gsub(/[^\\] +/, "&\n    "); sub(/ +$$/, ""); print}'
 .else
 	@for val in ${${v}:Q}; do printf "    %s\n" "$$val"; done
 .endif
