@@ -143,11 +143,7 @@ assign PKG_SUFX .tgz
 # These packages are listed as a result of
 # 'bmake show-var VARNAME=BOOTSTRAP_DEPENDS'
 assign EXTRA_DEPS 'pkgtools/digest sysutils/checkperms'
-# The following command will be called for each package in EXTRA_DEPS
-# to generate their dependancies, for example,
-# sysutils/checkperms depends on pkgtools/digest
-assign EXTRA_DEPS_CMD "$BMAKE show-var VARNAME=BOOTSTRAP_DEPENDS"
-#assign EXTRA_DEPS_CMD : # ?
+#assign EXTRA_DEPS 'pkgtools/digest sysutils/checkperms devel/popt devel/distcc'
 
 # Target for clean-ups after package building.
 # If you want to keep working directories, set this variable to dbb_none
@@ -225,6 +221,12 @@ assign DISTBB_SLAVE @@libexecdir@@/slave
 #
 #PKGPATH=emulators/qemu # TARGETS is not changed!
 #EXTRA_OPTS=CC=/usr/bin/gcc-3.4 CXX=/usr/bin/g++-3.4 BATCH=yes PKG_VERBOSE=1
+#
+#PKGPATH=devel/popt # distcc is not available yet, so, we set CC to gcc
+#EXTRA_OPTS=CC=/usr/bin/gcc BATCH=yes PKG_VERBOSE=1
+#
+#PKGPATH=devel/distcc # distcc is not available yet, so, we set CC to gcc
+#EXTRA_OPTS=CC=/usr/bin/gcc BATCH=yes PKG_VERBOSE=1
 #
 #"
 
