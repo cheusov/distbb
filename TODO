@@ -1,7 +1,5 @@
 ideas/thoughts/todo/problems
 
- - EXTRA_DEPS without EXTRA_DEPS_CMD - just build packages in order.
-
  - stage_cksum
 
  - links to package's configure.log(s) from PKGNAME/stage_*.html
