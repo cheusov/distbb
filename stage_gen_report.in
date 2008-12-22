@@ -291,7 +291,8 @@ EOF
     <li><a href="#failures per maintainer">Failures per maintainer</a></li>
     <li><a href="#failed">Failed packages</a></li>
     <li><a href="#failed depends">Failed due to dependencies</a></li>
-    <li><a href="#old vs new">Progress since previous bulk build</a></li>
+    <li><a href="#old vs new">Progress: previous bulk build vs. this one</a></li>
+    <li><a href="#best vs new">Progress: virtually best bulk build vs. this one</a></li>
 </ul>
 
 EOF
@@ -401,7 +402,7 @@ EOF
 	fi
     fi
 
-    # virtual "best" bulk build vs. this one
+    # virtually "best" bulk build vs. this one
     if test -n "$DISTBB_DIFF"; then
 	bbid_best=.best_bb
 	bbdir_best="$REPORTS_DIR/$bbid_best"
@@ -417,7 +418,7 @@ EOF
 	if test -n "$best_is_ok"; then
 	    cat <<EOF
 <hr>
-<h3><a name="best vs new"></a>Progress: "virtual best" bulk build vs. $BUILD_ID</h3>
+<h3><a name="best vs new"></a>Progress: "virtually best" bulk build vs. $BUILD_ID</h3>
 <p><i>Below '-' means that package was built at least
 once in the past, but now fails</i></p>
 EOF
