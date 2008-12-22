@@ -175,7 +175,6 @@ test_var REPORT_CMD
 test_var UPLOAD_PKGS_PROG
 test_var UPLOAD_LOGS_PROG
 test_var LIST_ALL_PKGS_CMD
-test_var EXTRA_DEPS_CMD
 test_var DISTBB_LOCAL_MK
 if test "$MAIL_PROG" != ':'; then
     test_var USER_MAIL
