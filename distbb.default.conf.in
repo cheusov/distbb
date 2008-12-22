@@ -165,7 +165,7 @@ assign CLEAN_TARGET 'clean'
 # dbb_vars lists bmake's variables for easier debugging
 assign TARGETS "dbb_init clean dbb_canbebuilt dbb_excluded dbb_vars depends fetch checksum extract patch configure build install package deinstall"
 # the following is for USE_DESTDIR=yes|full
-#assign TARGETS "dbb_init clean dbb_canbebuilt dbb_excluded dbb_vars depends fetch checksum extract patch configure build package bin-install deinstall"
+#assign TARGETS "dbb_init clean dbb_canbebuilt dbb_excluded dbb_vars depends fetch checksum extract patch configure build package do-bin-install deinstall"
 
 # extra options passed to bmake
 # BATCH is mandatory for bulk builds!
