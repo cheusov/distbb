@@ -161,13 +161,8 @@ function get_log_dir (pkgpath,            pkgname){
    next
 }
 
-$0 ~ /^[^ ]+ [0-9]+ success$/ {
-   status [$2] = "success"
-   next
-}
-
-$0 ~ /^[^ ]+ [0-9]+ failure$/ {
-   status [$2] = "failure"
+$0 ~ /^[^ ]+ [0-9]+ (success|failure|fatal)$/ {
+   status [$2] = $3
    next
 }
 
@@ -219,6 +214,14 @@ function free_arrs (task){
    delete status [task]
    delete stage [task]
    delete failed_deps [task]
+}
+
+status [$2] == "fatal" {
+   # fatal
+   print "    FATAL:", pkgpath, "on", run_on [$2]
+   xsystem("rm -rf " get_log_dir(pkgpaths [$2]))
+   free_arrs($2)
+   next
 }
 
 status [$2] == "success" {
@@ -299,7 +302,7 @@ fi
 verbose_print "Building\n"
 
 eval runpipe0 \
-    paexec -s -EI -lr $TRANSPORT $SLAVES \
+    paexec -s -z -EI -lr $TRANSPORT $SLAVES \
 	-c "'env DISTBB_CONF=$DISTBB_CONF $DISTBB_SLAVE'" < "$queue_fn" '|' \
     postfilter
 
