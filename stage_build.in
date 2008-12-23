@@ -145,7 +145,7 @@ BEGIN {
 
 function get_log_dir (pkgpath,            pkgname){
    pkgname = pkgnames [pkgpath]
-   assert(pkgname != "", "bad pkgname! this should not happen!")
+   assert(pkgname != "", "bad pkgname=`" pkgname "`, this should not happen!")
    sub(/:.*/, "", pkgpath)  # remove options settings
    gsub(/\//, "_", pkgpath) # s|/|_|
    return report1_dir "/" pkgpath "_" pkgname
