@@ -1,3 +1,16 @@
+Version 0.25.0, by Aleksey Cheusov
+
+  Now bulk builds don't stop in case of connection failure to the
+  build host (power down, segfault, hang up for any reason etc.). Such
+  a host is marked as unavailable and distbb continuous to work
+  reassigning a failed package (if any) to another build host.
+
+  EXTRA_DEPS_CMD variable has been removed from configuration.
+  Packages listed in EXTRA_DEPS are built one-by-one in order they are
+  listed in.
+
+  stage_gen_report: new link in "Jumps" section
+
 Version 0.24.0, by Aleksey Cheusov
 
   distbb.conf is splitted into two parts: global defaults
