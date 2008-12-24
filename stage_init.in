@@ -43,6 +43,7 @@ DISTBB_CONF=${DISTBB_CONF:-@@sysconfdir@@/distbb.conf}
 test -n "$BUILD_ID" -a -n "$REPORTS_DIR" # who knows...
 rm -rf $REPORT1_DIR
 mkdir -p -m 700 $tmpdir
+cp @@icondir@@/distbb.ico $REPORT1_DIR/
 
 echo "$build_start" > $build_start_fn
 
