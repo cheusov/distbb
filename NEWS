@@ -1,3 +1,12 @@
+Version 0.26.0, by Aleksey Cheusov, Sat, 27 Dec 2008 01:14:15 +0200
+
+  all .html pages of the report have favicon taken from here
+  http://www.netbsd.org/~dillo/ made by Dieter Baron.
+  Later I'll try to create my own...
+
+  added: option -s. If applied, an exit status is 0 if building *ALL*
+  packages succeeded, otherwise exit status is 5.
+
 Version 0.25.0, by Aleksey Cheusov, Wed, 24 Dec 2008 01:23:09 +0200
 
   Now bulk builds don't stop in case of connection failure to the
