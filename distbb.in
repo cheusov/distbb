@@ -48,6 +48,7 @@ OPTIONS:
   -B <build_id>          set BUILD_ID (for debugging purposes)
   -r|--retry             if your bulk build failed for some reason, you
                          can try to continue it from the point it stopped at
+  -s|--strict            exit status is 0, if ALL packages succeded, 5 otherwise
 EOF
 }
 
@@ -92,6 +93,9 @@ while test $# -ne 0; do
 
 	-r)
 	    retry=1;;
+
+	-s)
+	    strict=1;;
 
 	--)
 	    shift
@@ -220,3 +224,14 @@ for stage in init $BUILD_STAGES; do
 done
 
 ######################################################################
+
+if test -n "$strict"; then
+    if test -s "$packages_failed_notavail_fn" ||
+	test -s "$packages_failed_scan_fn" ||
+	test -s "$packages_failed_fn"
+    then
+	exit 5
+    else
+	exit 0
+    fi
+fi
