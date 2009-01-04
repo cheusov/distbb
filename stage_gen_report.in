@@ -598,7 +598,7 @@ report_html2txt (){
       gsub(/&[a-z]*;/, "")
    }
    $2 == "PKGBASE" {
-      printf "%-4s %-24s %-20s %24s\n\n", "", $1, $2, $3
+      printf "%-4s %-24s %-20s %5s %24s\n\n", "", $1, $2, $3, $4
       next
    }
    $1 ~ /^[nN]?[-+][dc]?$/ && NF >= 4 || $1 == "R" && NF == 3 {
@@ -610,8 +610,14 @@ report_html2txt (){
       pkgbase = $3
       $1 = $2 = $3 = ""
       vers = substr($0, 4)
+      if (match(vers, /[[:alnum:]._]+( -> [[:alnum:]._]+)?$/) > 1){
+         breaks = substr(vers, 1, RSTART-2)
+         vers   = substr(vers, RSTART, RLENGTH)
+      }else{
+         breaks = ""
+      }
 
-      printf "%-4s %-24s %-20s %24s\n", diff, pkgpath, pkgbase, vers
+      printf "%-4s %-24s %-20s %5s %24s\n", diff, pkgpath, pkgbase, breaks, vers
       next
    }
    /^Failed packages/, /------------/ {
