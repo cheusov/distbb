@@ -154,14 +154,15 @@ pkgpath2pkgname (){
 }
 
 distbb_diff2html (){
-    awk -v report1_dir=$REPORT1_DIR -F'\t' '
-function p (progress, pkgpath, pkgbase, version) {
-   printf "<tr>%s <td> %s</td><td> %s</td><td> %s</td></tr>\n",
-	progress, pkgpath, pkgbase, version
+    awk -v report1_dir=$REPORT1_DIR -F'\t' -v q="'" '
+function p (progress, pkgpath, pkgbase, version, breaks) {
+   printf "<tr>%s <td> %s</td><td> %s</td><td> %s</td><td> %s</td></tr>\n",
+	progress, pkgpath, pkgbase, breaks, version
 }
 BEGIN {
    printf "<table width=\"100%%\">"
-   p("<td></td>", "<b>Package</b>", "<b>PKGBASE</b>", "<b>Version(s)</b>")
+   p("<td></td>", "<b>Package</b>", "<b>PKGBASE</b>",
+     "<b>Version(s)</b>", "<b>Breaks</b>")
 }
 {
    # $1 - result
@@ -179,25 +180,32 @@ BEGIN {
    gsub(/\//, "_", pkgpath_m) # s|/|_|
    logsubdir = pkgpath_m "_" $3 "-" ver
 
+   breaks = ""
+
    if ($1 ~ /^N?-$/){
-      stage_fn = report1_dir "/" logsubdir "/curr_stage.tmp"
+      stage_fn  = report1_dir "/" logsubdir "/curr_stage.tmp"
+      breaks_fn = report1_dir "/" logsubdir "/failed_deps.txt"
 
       getline failed_stage < stage_fn
       close(stage_fn)
 
+      breaks_pipe = ("awk " q "END {print NR}" q " " breaks_fn)
+      breaks_pipe | getline breaks
+      close(breaks_pipe)
+      if (breaks+0 == 0)
+         breaks = ""
+
       $2 = sprintf("<a href=\"../%s/stage_%s.html\" title=\"build log for %s\">%-27s</a>", logsubdir, failed_stage, $2, $2)
 
       $1 = "<td class=\"pkg-failed\">" $1 "</td>"
-   }else if ($1 ~ /-d$/){
-      $2 = sprintf("<a href=\"../%s/info.html\" title=\"failed due to...\">%-27s</a>", logsubdir, $2)
-
-      $1 = "<td class=\"pkg-faileddeps\">" $1 "</td>"
+   }else if ($1 ~ /[+-]d$/){
+      next
    }else if ($1 ~ /[+]/){
       $1 = "<td class=\"pkg-built\">" $1 "</td>"
    }else{
       $1 = "<td>" $1 "</td>"
    }
-   p($1, $2, $3, $4)
+   p($1, $2, $3, $4, breaks)
 
    diff = 1
 }
