@@ -1,3 +1,9 @@
+Version 0.27.0, by Aleksey Cheusov, Wed,  7 Jan 2009 00:58:45 +0200
+
+  report.*, regress sections:
+      - "Breaks" column is added
+      - packages failed due to broken dependencies are removed
+
 Version 0.26.0, by Aleksey Cheusov, Sat, 27 Dec 2008 01:14:15 +0200
 
   all .html pages of the report have favicon taken from here
