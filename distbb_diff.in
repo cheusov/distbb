@@ -218,8 +218,9 @@ BEGIN {
    # print results
    for (i in total_old){
       if (i in pkg_del){
-         sub(SUBSEP ".*$", "", i)
-         if (i in failed_scan_new)
+         pkgpath = i
+         sub(SUBSEP ".*$", "", pkgpath)
+         if (pkgpath in failed_scan_new)
             print_failed(i, "-")
          else
             print "R", i                   > res_removed_fn
