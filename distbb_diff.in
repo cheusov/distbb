@@ -109,6 +109,7 @@ total2_fn=$bbdir2/META/packages_built_total.txt
 failed_dep1_fn=$bbdir1/META/packages_failed_deps.txt
 
 failed2_fn=$bbdir2/META/packages_failed.txt
+failed_notavail2_fn=$bbdir2/META/packages_failed_notavail.txt
 failed_dep2_fn=$bbdir2/META/packages_failed_deps.txt
 failed_scan2_fn=$bbdir2/META/packages_failed_scan.txt
 
@@ -130,6 +131,7 @@ runawk \
    -v total2_fn=$total2_fn \
    -v failed_dep1_fn=$failed_dep1_fn \
    -v failed2_fn=$failed2_fn \
+   -v failed_notavail2_fn=$failed_notavail2_fn \
    -v failed_dep2_fn=$failed_dep2_fn \
    -v failed_scan2_fn=$failed_scan2_fn \
    -v res_failed_fn=$res_failed_fn \
@@ -194,6 +196,11 @@ BEGIN {
       failed_dep_old [$1, $2] = $3
    }
    while (xgetline0(failed2_fn)) {
+      sub(/:.*$/, "", $1)
+      sub(/-[^-]*$/, "", $2)
+      failed_new [$1, $2] = $3
+   }
+   while (xgetline0(failed_notavail2_fn)) {
       sub(/:.*$/, "", $1)
       sub(/-[^-]*$/, "", $2)
       failed_new [$1, $2] = $3
