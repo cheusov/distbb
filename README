@@ -6,8 +6,7 @@ distbb - distributed bulk builds framework for pkgsrc (www.pkgsrc.org).
      - DISTBB can build packages in an isolated environment, e.g. chroots
        virtual machines etc. That is working system is kept intact.
      - DISTBB was written with portability in mind.
-       Though, currently only NetBSD and Linux are tested. Solaris support
-       is in progress.
+       Though, currently only NetBSD, Linux, Interix and Solaris are tested.
      - Several machines in a network or chroots can be used for
        building packages. That is, independent packages can be built
        in parallel using all available power (CPUs and/or machines).
@@ -24,9 +23,10 @@ distbb - distributed bulk builds framework for pkgsrc (www.pkgsrc.org).
        for manipulating so called packages summary. See pkg_summary(5)
        and wip/pkg_summary-utils package for more information.
        Other helper tools are wip/pipestatus and wip/runawk.
-     - DISTBB is small. It is about 30% smaller than Hubert Feyrer's
-       bulk build framework and is more than twice smaller than
-       Joerg Sonnenberger's pbulk.
+     - DISTBB is small. It is as small as Hubert Feyrer's
+       bulk build framework and is more than 30% smaller than
+       Joerg Sonnenberger's pbulk. At the same time
+       it provides more features.
      - DISTBB is written completely in SHELL and AWK. "C" language is
        not used at all. This is just wrong tool for things like DISTBB.
        PERL is not used too. It is too big and I don't like it :-)
@@ -48,8 +48,7 @@ distbb - distributed bulk builds framework for pkgsrc (www.pkgsrc.org).
        no problem, build them using gcc-3 if it is available on your system).
        Another example is to set/unset "stack smashing protection"
        for individual packages.
-     - DISTBB is able to upload building logs to the external server,
-       e.g. publicly available.
+     - DISTBB is able to upload building logs to the external server.
      - DISTBB is able to upload binary packages.
        Uploading packages is aware of NO_BIN_ON_CDROM
        and NO_BIN_ON_FTP restrictions. See UPLOAD_PKGS_FILES variable
@@ -61,6 +60,10 @@ distbb - distributed bulk builds framework for pkgsrc (www.pkgsrc.org).
        feature absent (at the time of writing) in bbf and pbulk.
        Command like tool for comparing results of two bulk builds
        is also available.
+     - In distributed mode distbb is immune to client hosts' failures.
+       In case client host failes, this host is marked as broken
+       and distbb continuos to work with the rest clients
+       moving broken package (if any) to other alive client.
      - Normally DISTBB receives packages in PKGPATH form, e.g. archivers/gzip,
        wip/distbb etc. One can also use so called enriched PKGPATHs.
        Enriching here means additional building options in the following form
