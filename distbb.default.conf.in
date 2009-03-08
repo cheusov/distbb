@@ -234,8 +234,8 @@ assign DISTBB_SLAVE @@libexecdir@@/slave
 # If empty string, it is not included to the report.
 #assign RESPONSIBLE ''
 #assign RESPONSIBLE 'Aleksey Cheusov'
-#assign RESPONSIBLE 'Aleksey Cheusov &lt;cheusov@tut.by&gt;'
-#assign RESPONSIBLE '<a href="mailto:cheusov@tut.by">Aleksey Cheusov</a>'
+#assign RESPONSIBLE 'Aleksey Cheusov &lt;vle@gmx.net&gt;'
+#assign RESPONSIBLE '<a href="mailto:vle@gmx.net">Aleksey Cheusov</a>'
 
 # a number of "top offenders"
 assign OFFENDERS_CNT 20
@@ -293,6 +293,10 @@ assign UPLOAD_LOGS_PROG "@@bindir@@/rsync -av --delete-excluded --exclude \"*.tm
 
 # list of building stages, except 'init'
 assign BUILD_STAGES 'build post_build gen_report update_best upload_logs upload_pkgs report'
+
+# Extra options passed paexec(1)
+assign PAEXEC_EXTRA_OPTS -z
+#assign PAEXEC_EXTRA_OPTS -Z300
 
 ############################################################
 export PSS_SLAVES

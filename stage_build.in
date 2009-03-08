@@ -302,7 +302,7 @@ fi
 verbose_print "Building\n"
 
 eval runpipe0 \
-    paexec -s -z -EI -lr $TRANSPORT $SLAVES \
+    paexec -s $PAEXEC_EXTRA_OPTS -EI -lr $TRANSPORT $SLAVES \
 	-c "'env DISTBB_CONF=$DISTBB_CONF $DISTBB_SLAVE'" < "$queue_fn" '|' \
     postfilter
 
