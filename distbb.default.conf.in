@@ -95,7 +95,7 @@ assign PSS_FIELDS 'PKGNAME PKGPATH DEPENDS BUILD_DEPENDS MAINTAINER DESCRIPTION 
 # If you build only a few packages using 'distbb -f' this variant is prefered.
 # (-m option is for building multi-variant packages, see pkg_src_summary(1),
 # NOTE: -m currently doesn't work when entire pkgsrc tree is built,
-# because lots of packages multi-variant packages have constant PKGBASE )
+# because lots of multi-variant packages have constant PKGBASE )
 assign PKG_UPDATE_SRC_SUMMARY_CMD "@@bindir@@/pkg_src_summary -A > \"$PKG_SRC_SUMMARY\""
 
 # program for comparing pkg_summary(5) for available binaries and
