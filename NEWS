@@ -1,3 +1,20 @@
+Version 0.29.0, by Aleksey Cheusov, Sun, 15 Mar 2009 21:30:20 +0200
+
+  DISTBB now depends on latest paexec.
+
+  New configuration variable PAEXEC_EXTRA_OPTS for passing extra
+  options to paexec(1). It defaults to -Z300.
+
+  As of this version if one or more (but not all simultaneously!) of
+  your build hosts hanged up, or other type of bad things happened,
+  distbb will try to restore connection to them automatically every 5
+  minutes (by default, see PAEXEC_EXTRA_OPTS). That is, now you can
+  run pkgsrc bulk builds even on not very stable hardware, software
+  and even over unreliable network, e.g. internet, without warrying
+  about manual restarting a bulk build. Now you can reboot your build
+  hosts freely. If you prefer old distbb behaviour, set
+  PAEXEC_EXTRA_OPTS to -z. See paexec(1).
+
 Version 0.28.0, by Aleksey Cheusov, Wed,  7 Jan 2009 00:58:45 +0200
 
   distbb_diff takes into account "not available" packages
