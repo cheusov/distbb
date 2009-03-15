@@ -295,8 +295,8 @@ assign UPLOAD_LOGS_PROG "@@bindir@@/rsync -av --delete-excluded --exclude \"*.tm
 assign BUILD_STAGES 'build post_build gen_report update_best upload_logs upload_pkgs report'
 
 # Extra options passed paexec(1)
-assign PAEXEC_EXTRA_OPTS -z
-#assign PAEXEC_EXTRA_OPTS -Z300
+#assign PAEXEC_EXTRA_OPTS -z
+assign PAEXEC_EXTRA_OPTS -Z300
 
 ############################################################
 export PSS_SLAVES
