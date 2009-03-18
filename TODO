@@ -1,5 +1,7 @@
 ideas/thoughts/todo/problems
 
+ - link from stage_xxx.html to report.html
+
  - stage_cksum
 
  - links to package's configure.log(s) from PKGNAME/stage_*.html
