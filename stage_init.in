@@ -134,7 +134,9 @@ if test -z "$skip_updating_src_summary"; then
     verbose_print "done\n"
 fi
 
-pkg_assignments2pkgpath "$PKG_SRC_SUMMARY" > "$pkg_src_summary_fn"
+pkg_assignments2pkgpath "$PKG_SRC_SUMMARY" > "$pkg_src_summary_fn.tmp"
+pkg_summary2bb_pkgs "$pkg_src_summary_fn.tmp" > "$pkg_src_summary_fn"
+rm "$pkg_src_summary_fn.tmp"
 
 ######################################################################
 ### packages for which pkg_src_summary failed.
