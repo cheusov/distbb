@@ -185,7 +185,18 @@ verbose_print "done\n"
 verbose_print "  dependencies from pkg_src_summary file..."
 
 extract_depends (){
-    awk -v deps_fn="$deps_fn" '
+    runawk -v deps_fn="$deps_fn" -v summary_fn="$pkg_src_summary_fn" -e '
+#use "xgetline.awk"
+
+BEGIN {
+   while (xgetline0(summary_fn)){
+      if ($0 ~ /^PKGPATH=/){
+         pkgpaths [substr($0, substr(9))]
+      }
+   }
+   xclose(summary_fn)
+}
+
 /^PKGPATH=/ {
    pkgpath = substr($0, 9)
    next
@@ -196,7 +207,8 @@ extract_depends (){
    gsub(/[^ \t]+:[.][.]\/[.][.]\//, "")
 
    for (i=1; i <= NF; ++i){
-      deps [$i] = 1
+      if ($i in pkgpaths)
+         deps [$i] = 1
    }
 
    next
