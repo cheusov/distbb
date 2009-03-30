@@ -1,22 +1,19 @@
 ##################################################
 
-PREFIX?=/usr/local
-SYSCONFDIR?=${PREFIX}/etc
-BINDIR?=${PREFIX}/bin
-SBINDIR?=${PREFIX}/sbin
-MANDIR?=${PREFIX}/man
-LIBEXECDIR?=${PREFIX}/libexec/distbb
-DATADIR?=${PREFIX}/share/distbb
-EGDIR?=${PREFIX}/share/distbb
-ICONDIR?=${DATADIR}
+PREFIX?=			/usr/local
+SYSCONFDIR?=			${PREFIX}/etc
+BINDIR?=			${PREFIX}/bin
+SBINDIR?=			${PREFIX}/sbin
+MANDIR?=			${PREFIX}/man
+LIBEXECDIR?=			${PREFIX}/libexec/distbb
+DATADIR?=			${PREFIX}/share/distbb
+EGDIR?=				${PREFIX}/share/distbb
+ICONDIR?=			${DATADIR}
 
-POD2MAN?=		pod2man
-POD2HTML?=		pod2html
+POD2MAN?=			pod2man
+POD2HTML?=			pod2html
 
-INST_DIR?=		${INSTALL} -d
-
-# directory with distbb sources
-SRCROOT?=		${.PARSEDIR}
+INST_DIR?=			${INSTALL} -d
 
 ##################################################
 
@@ -42,15 +39,15 @@ FILESDIR_distbb.default.conf=	${DATADIR}
 FILESDIR_distbb.ico=		${ICONDIR}
 FILESDIR_common=		${LIBEXECDIR}
 
-MKMAN=			no
+MKMAN=				no
 
-WARNS=			4
+WARNS=				4
 
-BIRTHDATE=		2008-03-03
+BIRTHDATE=			2008-03-03
 
-PROJECTNAME=		distbb
+PROJECTNAME=			distbb
 
-.SUFFIXES:		.in
+.SUFFIXES:			.in
 
 # the following is necessary because bsd.file.mk
 # is broken in pkgsrc (NetBSD pkg/39715)
@@ -98,6 +95,5 @@ install-dirs:
 .endif
 
 ##################################################
-.PATH : ${SRCROOT}
 
 .include <bsd.prog.mk>
