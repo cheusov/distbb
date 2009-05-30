@@ -298,6 +298,9 @@ assign BUILD_STAGES 'build post_build gen_report update_best upload_logs upload_
 #assign PAEXEC_EXTRA_OPTS -z
 assign PAEXEC_EXTRA_OPTS -Z300
 
+# Extra options passed to paexec(1) while running pkg_src_summary(1)
+assign PSS_PAEXEC_EXTRA_OPTS "$PAEXEC_EXTRA_OPTS"
+
 ############################################################
 export PSS_SLAVES
 export PSS_OPTIONS
