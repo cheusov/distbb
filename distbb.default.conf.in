@@ -306,6 +306,7 @@ export PSS_SLAVES
 export PSS_OPTIONS
 export PSS_FIELDS
 export PSS_TRANSPORT
+export PSS_PAEXEC_EXTRA_OPTS
 
 export PKG_SUFX
 export PKGSRCDIR
