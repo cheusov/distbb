@@ -1,3 +1,22 @@
+Version 0.30.0, by Aleksey Cheusov, Sat, 30 May 2009 18:33:40 +0300
+
+  FIXED: {alter,native}:../depend/encies were handled incorrectly.
+  As a result distbb wrongly detected cyclic dependencies, e.g.
+     devel/p5-Module-Build -> devel/p5-version
+     devel/p5-version -> devel/p5-Module-Build
+  To fix this problem an external utility pkg_summary2build_graph is
+  used for creating a dependency graph for building packages.
+
+  Improvements for  bulk building multivariant packages.
+
+  PSS_PAEXEC_EXTRA_OPTS is by default set to $PAEXEC_EXTRA_OPTS.
+  See pkg_src_summary(1) and paexec(1).
+
+  xxx.done files have been renamed to xxx_done.tmp and therefore are
+  not uploaded anymore.
+
+  Minor fixes in Makefile.
+
 Version 0.29.0, by Aleksey Cheusov, Sun, 15 Mar 2009 21:30:20 +0200
 
   DISTBB now depends on latest paexec.
