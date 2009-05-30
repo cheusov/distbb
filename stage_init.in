@@ -184,48 +184,12 @@ verbose_print "done\n"
 
 verbose_print "  dependencies from pkg_src_summary file..."
 
-extract_depends (){
-    runawk -v deps_fn="$deps_fn" -v summary_fn="$pkg_src_summary_fn" -e '
-#use "xgetline.awk"
-#use "xclose.awk"
-
-BEGIN {
-   while (xgetline0(summary_fn)){
-      if ($0 ~ /^PKGPATH=/){
-         pkgpaths [substr($0, 9)]
-      }
-   }
-   xclose(summary_fn)
-}
-
-/^PKGPATH=/ {
-   pkgpath = substr($0, 9)
-   next
-}
-
-/^(BUILD_)?DEPENDS=/ {
-   sub(/^[^=]*=/, "")
-   gsub(/[^ \t]+:[.][.]\/[.][.]\//, "")
-
-   for (i=1; i <= NF; ++i){
-      if ($i in pkgpaths)
-         deps [$i] = 1
-   }
-
-   next
-}
-
-NF == 0 {
-   for (i in deps){
-      print i, pkgpath > deps_fn
-   }
-   delete deps
-   pkgpath = ""
-}
-' "$pkg_src_summary_fn"
-}
-
-extract_depends
+if ! pkg_summary2build_graph "$pkg_src_summary_fn" \
+    1> "$deps_fn" \
+    2> "$build_deps_graph_log_fn"
+then
+    cat "$build_deps_graph_log_fn" 1>&2
+fi
 
 verbose_print "done\n"
 
