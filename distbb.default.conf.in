@@ -160,14 +160,14 @@ assign CLEAN_TARGET 'clean'
 #    be not fully correct
 # dbb_vars lists bmake's variables for easier debugging
 assign TARGETS "dbb_init clean dbb_canbebuilt dbb_excluded dbb_vars depends fetch checksum extract patch configure build install package deinstall"
-# the following is for USE_DESTDIR=yes|full
+# the following is for USE_DESTDIR=yes
 #assign TARGETS "dbb_init clean dbb_canbebuilt dbb_excluded dbb_vars depends fetch checksum extract patch configure build package do-bin-install deinstall"
 
 # extra options passed to bmake
 # BATCH is mandatory for bulk builds!
 assign EXTRA_OPTS 'DEPENDS_TARGET=do-bin-install BATCH=yes PKG_VERBOSE=1 CREATE_WRKDIR_SYMLINK=no'
-# the following is for USE_DESTDIR=full bulk builds
-#assign EXTRA_OPTS 'USE_DESTDIR=full DEPENDS_TARGET=do-bin-install BATCH=yes PKG_VERBOSE=1 CHECK_SHLIBS=no'
+# the following is for USE_DESTDIR=yes bulk builds
+#assign EXTRA_OPTS 'USE_DESTDIR=yes DEPENDS_TARGET=do-bin-install BATCH=yes PKG_VERBOSE=1 CHECK_SHLIBS=no'
 
 # do not change the following unless you know what you are doing
 assign DISTBB_SLAVE @@libexecdir@@/slave
@@ -194,27 +194,27 @@ assign DISTBB_SLAVE @@libexecdir@@/slave
 #assign SPECIAL_PACKAGES "\
 #PKGPATH=pkgtools/digest
 #TARGETS=dbb_init clean dbb_vars depends fetch checksum extract patch configure build package
-#EXTRA_OPTS=BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=full CHECK_SHLIBS=no
+#EXTRA_OPTS=BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=yes CHECK_SHLIBS=no
 #
 #PKGPATH=pkgtools/bootstrap-mk-files
 #TARGETS=dbb_init clean dbb_vars depends fetch checksum extract patch configure build package
-#EXTRA_OPTS=BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=full CHECK_SHLIBS=no
+#EXTRA_OPTS=BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=yes CHECK_SHLIBS=no
 #
 #PKGPATH=net/tnftp
 #TARGETS=dbb_init clean dbb_vars depends fetch checksum extract patch configure build package
-#EXTRA_OPTS=BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=full CHECK_SHLIBS=no
+#EXTRA_OPTS=BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=yes CHECK_SHLIBS=no
 #
 #PKGPATH=sysutils/checkperms
 #TARGETS=dbb_init clean dbb_vars depends fetch checksum extract patch configure build package
-#EXTRA_OPTS=BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=full CHECK_SHLIBS=no
+#EXTRA_OPTS=BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=yes CHECK_SHLIBS=no
 #
 #PKGPATH=devel/bmake
 #TARGETS=dbb_init clean dbb_vars depends fetch checksum extract patch configure build package
-#EXTRA_OPTS=BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=full CHECK_SHLIBS=no
+#EXTRA_OPTS=BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=yes CHECK_SHLIBS=no
 #
 #PKGPATH=pkgtools/pkg_install
 #TARGETS=dbb_init clean dbb_vars depends fetch checksum extract patch configure build package
-#EXTRA_OPTS=BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=full CHECK_SHLIBS=no
+#EXTRA_OPTS=BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=yes CHECK_SHLIBS=no
 #
 #PKGPATH=audio/festival # TARGETS is not changed!
 #EXTRA_OPTS=CC=/usr/bin/gcc-3.4 CXX=/usr/bin/g++-3.4 BATCH=yes PKG_VERBOSE=1
