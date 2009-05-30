@@ -1,7 +1,5 @@
 ideas/thoughts/todo/problems
 
- - do not upload .done
-
  - distbb -B excepting path?
 
  - distbb -K skipping updating pkg_summary
