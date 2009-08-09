@@ -1,3 +1,8 @@
+Version 0.31.0, by Aleksey Cheusov, Sun,  9 Aug 2009 21:00:34 +0300
+
+  There is no need to add /usr/pkg_distbb/bin to PATH environment
+  variable on all build hosts.
+
 Version 0.30.0, by Aleksey Cheusov, Sat, 30 May 2009 18:33:40 +0300
 
   FIXED: {alter,native}:../depend/encies were handled incorrectly.

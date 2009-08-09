@@ -150,8 +150,7 @@ For "distributed" builds (example - different hosts plus NFS):
 
 5d) On all slave hosts:
 
-    Make sure PATH environment variable includes
-    /usr/pkg_distbb/bin and /usr/pkg/bin
+    Make sure PATH environment variable includes /usr/pkg/bin
 
 6d) On master host:
     /usr/pkg_distbb/bin/distbb -h
