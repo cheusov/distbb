@@ -131,4 +131,5 @@ fname in f2n {
 ######################################################################
 unset PKG_PATH || true
 
-export PATH=@@bindir@@:@@sbindir@@:$PATH
+export PATH=@@bindir@@:$PATH
+export PSS_POST_PATH=@@bindir@@
