@@ -121,7 +121,7 @@ verbose_print "done\n"
 ######################################################################
 ### updating PKG_SRC_SUMMARY
 if test -z "$skip_updating_src_summary"; then
-    verbose_print "  Updating pkg_src_summary..."
+    verbose_print "  updating pkg_src_summary..."
     set +e # workaround for buggy Korn Shell
            # ('set -e' + if + eval + false)
     if ! eval "@@libexecdir@@/wrapper $PKG_UPDATE_SRC_SUMMARY_CMD \
