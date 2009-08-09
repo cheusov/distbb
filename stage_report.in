@@ -38,5 +38,5 @@ DISTBB_CONF=${DISTBB_CONF:-@@sysconfdir@@/distbb.conf}
 
 # main
 verbose_print "Sending report..."
-eval $REPORT_CMD
+eval @@libexecdir@@/wrapper $REPORT_CMD
 verbose_print "done\n"

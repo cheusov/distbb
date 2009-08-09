@@ -64,12 +64,12 @@ printf '' > $progress_fn
 verbose_print "  removing PREFIX and unpacking bootstrap..."
 if test "$MASTER_MODE"; then
     for s in $SLAVES; do
-	eval $TRANSPORT "$s" $RMDIRS_CMD
-	eval $TRANSPORT "$s" $EXTRACT_BOOTSTRAP_CMD
+	eval $TRANSPORT "$s" @@libexecdir@@/wrapper $RMDIRS_CMD
+	eval $TRANSPORT "$s" @@libexecdir@@/wrapper $EXTRACT_BOOTSTRAP_CMD
     done
 else
-    eval $RMDIRS_CMD
-    eval $EXTRACT_BOOTSTRAP_CMD
+    eval @@libexecdir@@/wrapper $RMDIRS_CMD
+    eval @@libexecdir@@/wrapper $EXTRACT_BOOTSTRAP_CMD
 fi
 verbose_print "done\n"
 
@@ -94,9 +94,9 @@ else
     if test -n "$MASTER_MODE" -a -n "$TRANSPORT" -a -n "$SLAVES"; then
 	slave1="$(echo $SLAVES | sed 's, .*$,,')"
 	environ="BMAKE=$BMAKE PKGSRCDIR=$PKGSRCDIR CKSUM=$CKSUM"
-	eval $TRANSPORT $slave1 "env $environ $LIST_ALL_PKGS_CMD" > $packages_fn.tmp
+	eval $TRANSPORT $slave1 "env $environ @@libexecdir@@/wrapper $LIST_ALL_PKGS_CMD" > $packages_fn.tmp
     else
-	eval $LIST_ALL_PKGS_CMD > $packages_fn.tmp
+	eval @@libexecdir@@/wrapper $LIST_ALL_PKGS_CMD > $packages_fn.tmp
     fi
 fi
 
@@ -114,7 +114,7 @@ verbose_print "done\n"
 
 refreshed_summary_fn=$tmpdir/refreshed_summary.tmp
 verbose_print "  updating pkg_summary..."
-eval $PKG_UPDATE_SUMMARY_CMD $PKG_SUMMARY $PACKAGES/All
+eval @@libexecdir@@/wrapper $PKG_UPDATE_SUMMARY_CMD $PKG_SUMMARY $PACKAGES/All
 pkg_refresh_summary $PKG_SUMMARY >$refreshed_summary_fn
 verbose_print "done\n"
 
@@ -124,7 +124,7 @@ if test -z "$skip_updating_src_summary"; then
     verbose_print "  Updating pkg_src_summary..."
     set +e # workaround for buggy Korn Shell
            # ('set -e' + if + eval + false)
-    if ! eval "$PKG_UPDATE_SRC_SUMMARY_CMD \
+    if ! eval "@@libexecdir@@/wrapper $PKG_UPDATE_SRC_SUMMARY_CMD \
 	< $packages_fn.tmp 2> $build_src_summary_log_fn"
     then
 	cat $build_src_summary_log_fn 1>&2
@@ -171,7 +171,7 @@ verbose_print "done\n"
 ######################################################################
 ### comparison binaries against pkgsrc tree
 verbose_print "  pkg_summary vs. pkg_src_summary comparison..."
-eval $PKG_CMP_SUMMARY_CMD $refreshed_summary_fn $pkg_src_summary_fn > $summary_cmp_fn
+eval @@libexecdir@@/wrapper $PKG_CMP_SUMMARY_CMD $refreshed_summary_fn $pkg_src_summary_fn > $summary_cmp_fn
 verbose_print "done\n"
 
 ######################################################################

@@ -303,13 +303,14 @@ verbose_print "Building\n"
 
 eval runpipe0 \
     paexec -s $PAEXEC_EXTRA_OPTS -EI -lr $TRANSPORT $SLAVES \
-	-c "'env DISTBB_CONF=$DISTBB_CONF $DISTBB_SLAVE'" < "$queue_fn" '|' \
+       -c "'env DISTBB_CONF=$DISTBB_CONF @@libexecdir@@/wrapper $DISTBB_SLAVE'" \
+       < "$queue_fn" '|' \
     postfilter
 
 ######################################################################
 
 verbose_print "Updating pkg_summary..."
-eval $PKG_UPDATE_SUMMARY_CMD $PKG_SUMMARY $PACKAGES/All
+eval @@libexecdir@@/wrapper $PKG_UPDATE_SUMMARY_CMD $PKG_SUMMARY $PACKAGES/All
 verbose_print "done\n"
 
 ######################################################################
