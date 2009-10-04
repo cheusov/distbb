@@ -1,5 +1,16 @@
 ideas/thoughts/todo/problems
 
+ - RSYNC_CMD
+
+ - net/tnftp -> EXTRA_DEPS
+
+ - dbb_package -> install+package or package depending
+   on PKG_DESTDIR_SUPPORT
+
+ - MASTER_MOD= ===> unset SLAVES for PSS_SLAVES in state_init
+
+ - link from stage_*.html to META/report.html
+
  - distbb -B excepting path?
 
  - distbb -K skipping updating pkg_summary
@@ -14,7 +25,7 @@ ideas/thoughts/todo/problems
 
  - links to package's configure.log(s) from PKGNAME/stage_*.html
 
- - separate DEPENDS from BUILD_DEPENDS (versions should be analysed)
+ - separate DEPENDS and BUILD_DEPENDS (versions should be analysed)
 
  - modification time of binary packages?
    problem:
