@@ -69,7 +69,7 @@ deps_fn=$tmpdir/deps.tmp
 # raw packages or packages requested by user
 packages_fn=$tmpdir/packages.tmp
 # multi-variant packages, that is raw packages enriched with
-# build option, line www/ap2-python:PYTHON_VERSION_REQD=25,PKG_APACHE=apache22
+# build option, like www/ap2-python:PYTHON_VERSION_REQD=25,PKG_APACHE=apache22
 packages_fn=$tmpdir/packages.tmp
 packages_with_deps_fn=$tmpdir/packages_with_deps.tmp
 
