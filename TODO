@@ -1,7 +1,5 @@
 ideas/thoughts/todo/problems
 
- - RSYNC_CMD
-
  - dbb_package -> install+package or package depending
    on PKG_DESTDIR_SUPPORT
 
