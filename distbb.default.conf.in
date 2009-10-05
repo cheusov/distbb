@@ -3,10 +3,12 @@
 assign (){
     # $1 - varname
     # $2 - value
+    eval +e # workaround for buggy FreeBSD /bin/sh
     __cmd="test -z \"\$$1\""
     if eval "$__cmd"; then
 	eval "$1='$2'"
     fi
+    eval -e # workaround for buggy FreeBSD /bin/sh
 }
 
 # 
@@ -142,7 +144,7 @@ assign PKG_SUFX .tgz
 # install the following packages first.
 # These packages are listed as a result of
 # 'bmake show-var VARNAME=BOOTSTRAP_DEPENDS'
-assign EXTRA_DEPS 'pkgtools/digest sysutils/checkperms pkgtools/pkg_install'
+assign EXTRA_DEPS 'pkgtools/digest net/tnftp sysutils/checkperms'
 #assign EXTRA_DEPS 'pkgtools/digest sysutils/checkperms pkgtools/pkg_install devel/popt devel/distcc'
 
 # Target for clean-ups after package building.
