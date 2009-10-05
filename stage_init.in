@@ -26,13 +26,12 @@
 set -e
 . @@bindir@@/pipestatus
 
-# usage: stage_init BUILD_ID UPDATE_SRC_SUMMARY BUILD_START
-test $# -eq 3
+# usage: stage_init BUILD_ID BUILD_START
+test $# -eq 2
 
 # init
 BUILD_ID="$1"
-skip_updating_src_summary="$2"
-build_start="$3"
+build_start="$2"
 
 packages="$pkgs_fn" # pkgs_fn - from distbb
 
@@ -113,18 +112,23 @@ verbose_print "done\n"
 ### updating PKG_SUMMARY
 
 refreshed_summary_fn=$tmpdir/refreshed_summary.tmp
-verbose_print "  updating pkg_summary..."
-eval @@libexecdir@@/wrapper $PKG_UPDATE_SUMMARY_CMD $PKG_SUMMARY $PACKAGES/All
-pkg_refresh_summary $PKG_SUMMARY >$refreshed_summary_fn
-verbose_print "done\n"
+if test -n "$skip_updating_summary"; then
+    refreshed_summary_fn=$PKG_SUMMARY
+else
+    verbose_print "  updating pkg_summary..."
+    eval @@libexecdir@@/wrapper $PKG_UPDATE_SUMMARY_CMD $PKG_SUMMARY $PACKAGES/All
+    pkg_refresh_summary $PKG_SUMMARY >$refreshed_summary_fn
+    verbose_print "done\n"
+fi
 
 ######################################################################
 ### updating PKG_SRC_SUMMARY
-if test -z "$MASTER_MODE"; then
-    unset PSS_SLAVES || true
-fi
 
 if test -z "$skip_updating_src_summary"; then
+    if test -z "$MASTER_MODE"; then
+	unset PSS_SLAVES || true
+    fi
+
     verbose_print "  updating pkg_src_summary..."
     set +e # workaround for buggy Korn Shell
            # ('set -e' + if + eval + false)

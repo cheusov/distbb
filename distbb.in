@@ -44,6 +44,7 @@ OPTIONS:
                          by default all packages from pkgsrc source tree
                          are built
   -k                     skip updating pkg_src_summary
+  -K                     skip updating pkg_summary
   -D|--diff              show difference with previous bulk build
   -B <build_id>          set BUILD_ID (for debugging purposes)
   -r|--retry             if your bulk build failed for some reason, you
@@ -90,6 +91,9 @@ while test $# -ne 0; do
 
 	-k)
 	    skip_updating_src_summary=1;;
+
+	-K)
+	    skip_updating_summary=1;;
 
 	-r)
 	    retry=1;;
@@ -214,8 +218,10 @@ for stage in init $BUILD_STAGES; do
     fi
 
     if test "$stage" = init; then
+	export skip_updating_src_summary
+	export skip_updating_summary
 	@@libexecdir@@/stage_init \
-	    "$BUILD_ID" "$skip_updating_src_summary" "$date_start"
+	    "$BUILD_ID" "$date_start"
     else
 	eval @@libexecdir@@/stage_${stage} "$BUILD_ID"
     fi

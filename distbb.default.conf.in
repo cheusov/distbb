@@ -3,12 +3,12 @@
 assign (){
     # $1 - varname
     # $2 - value
-    eval +e # workaround for buggy FreeBSD /bin/sh
+    set +e # workaround for buggy FreeBSD /bin/sh
     __cmd="test -z \"\$$1\""
     if eval "$__cmd"; then
 	eval "$1='$2'"
     fi
-    eval -e # workaround for buggy FreeBSD /bin/sh
+    set -e # workaround for buggy FreeBSD /bin/sh
 }
 
 # 
