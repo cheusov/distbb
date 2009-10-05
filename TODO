@@ -7,8 +7,6 @@ ideas/thoughts/todo/problems
 
  - distbb -B excepting path?
 
- - distbb -K skipping updating pkg_summary
-
  - 'make_pkgs emacs-w3m' fatals!
 
  - META/packages_status.txt
