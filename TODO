@@ -7,8 +7,6 @@ ideas/thoughts/todo/problems
  - dbb_package -> install+package or package depending
    on PKG_DESTDIR_SUPPORT
 
- - MASTER_MOD= ===> unset SLAVES for PSS_SLAVES in state_init
-
  - link from stage_*.html to META/report.html
 
  - distbb -B excepting path?
