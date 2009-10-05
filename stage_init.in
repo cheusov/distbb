@@ -112,14 +112,13 @@ verbose_print "done\n"
 ### updating PKG_SUMMARY
 
 refreshed_summary_fn=$tmpdir/refreshed_summary.tmp
-if test -n "$skip_updating_summary"; then
-    refreshed_summary_fn=$PKG_SUMMARY
-else
+if test -z "$skip_updating_summary"; then
     verbose_print "  updating pkg_summary..."
     eval @@libexecdir@@/wrapper $PKG_UPDATE_SUMMARY_CMD $PKG_SUMMARY $PACKAGES/All
-    pkg_refresh_summary $PKG_SUMMARY >$refreshed_summary_fn
     verbose_print "done\n"
 fi
+
+pkg_refresh_summary $PKG_SUMMARY >$refreshed_summary_fn
 
 ######################################################################
 ### updating PKG_SRC_SUMMARY
