@@ -142,8 +142,8 @@ assign PKG_SUFX .tgz
 # install the following packages first.
 # These packages are listed as a result of
 # 'bmake show-var VARNAME=BOOTSTRAP_DEPENDS'
-assign EXTRA_DEPS 'pkgtools/digest sysutils/checkperms'
-#assign EXTRA_DEPS 'pkgtools/digest sysutils/checkperms devel/popt devel/distcc'
+assign EXTRA_DEPS 'pkgtools/digest sysutils/checkperms pkgtools/pkg_install'
+#assign EXTRA_DEPS 'pkgtools/digest sysutils/checkperms pkgtools/pkg_install devel/popt devel/distcc'
 
 # Target for clean-ups after package building.
 # If you want to keep working directories, set this variable to dbb_none
