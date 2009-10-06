@@ -49,7 +49,11 @@ OPTIONS:
   -B <build_id>          set BUILD_ID (for debugging purposes)
   -r|--retry             if your bulk build failed for some reason, you
                          can try to continue it from the point it stopped at
-  -s|--strict            exit status is 0, if ALL packages succeded, 5 otherwise
+  -s|--strict            exit status is 0, if ALL packages succeded,
+                         or 5 otherwise
+  -l <label>             label for bulk build, unless -B option is applied
+                         bulk build file will be stored
+                         in $REPORTS_DIR/$BUILD_ID-<label> directory
 EOF
 }
 
@@ -88,6 +92,12 @@ while test $# -ne 0; do
 	    shift;;
 	-B*)
 	    BUILD_ID="$(printf '%s\n' $1 | cut -b3-)";;
+
+	-l)
+	    label="$2"
+	    shift;;
+	-l*)
+	    label="$(printf '%s\n' $1 | cut -b3-)";;
 
 	-k)
 	    skip_updating_src_summary=1;;
@@ -142,6 +152,9 @@ date_start="$(date -u '+%Y-%m-%d %H:%M') UTC"
 # date start in YYYYMMDD-HHMM format
 if test -z "$BUILD_ID"; then
     BUILD_ID="$(echo $date_start | awk '{gsub(/[:-]/, ""); print $1 "." $2}')"
+    if test -n "$label"; then
+	BUILD_ID="$BUILD_ID-$label"
+    fi
 fi
 
 echo "BUILD_ID: $BUILD_ID" 1>&2
@@ -216,6 +229,8 @@ for stage in init $BUILD_STAGES; do
 	echo "stage_$stage skipped"
 	continue
     fi
+
+    echo REPORT1_DIR=$REPORT1_DIR 1>&2
 
     if test "$stage" = init; then
 	export skip_updating_src_summary
