@@ -1,3 +1,5 @@
+Version 0.32rc1, by Aleksey Cheusov, Tue,  6 Oct 2009 18:05:01 +0300
+
 Version 0.31.0, by Aleksey Cheusov, Sun,  9 Aug 2009 21:00:34 +0300
 
   There is no need to add /usr/pkg_distbb/bin to PATH environment
