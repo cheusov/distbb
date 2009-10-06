@@ -221,9 +221,9 @@ for stage in init $BUILD_STAGES; do
 	export skip_updating_src_summary
 	export skip_updating_summary
 	@@libexecdir@@/stage_init \
-	    "$BUILD_ID" "$date_start"
+	    "$REPORT1_DIR" "$date_start"
     else
-	eval @@libexecdir@@/stage_${stage} "$BUILD_ID"
+	eval @@libexecdir@@/stage_${stage} "$REPORT1_DIR"
     fi
 
     touch ${done_fn}

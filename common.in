@@ -41,7 +41,13 @@ if test -z "$REPORTS_DIR"; then
     exit 2
 fi
 
-REPORT1_DIR=$REPORTS_DIR/$BUILD_ID
+if echo "$BUILD_ID" | grep ^/ > /dev/null; then
+    REPORT1_DIR=$BUILD_ID
+    BUILD_ID=$(basename $BUILD_ID)
+else
+    REPORT1_DIR=$REPORTS_DIR/$BUILD_ID
+fi
+
 meta_dir=$REPORT1_DIR/META
 tmpdir=$meta_dir/tmp
 

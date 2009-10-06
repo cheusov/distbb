@@ -38,5 +38,5 @@ DISTBB_CONF=${DISTBB_CONF:-@@sysconfdir@@/distbb.conf}
 
 # main
 verbose_print "Uploading logs..."
-eval $UPLOAD_LOGS_PROG $REPORTS_DIR/$BUILD_ID $UPLOAD_LOGS_DEST
+eval $UPLOAD_LOGS_PROG $REPORT1_DIR $UPLOAD_LOGS_DEST
 verbose_print "done\n"
