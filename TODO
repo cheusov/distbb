@@ -5,8 +5,6 @@ ideas/thoughts/todo/problems
 
  - link from stage_*.html to META/report.html
 
- - distbb -B excepting path?
-
  - 'make_pkgs emacs-w3m' fatals!
 
  - META/packages_status.txt
