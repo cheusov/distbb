@@ -1,13 +1,9 @@
 ideas/thoughts/todo/problems
 
- - remove <p></p> around NOTES
-
  - dbb_package -> install+package or package depending
    on PKG_DESTDIR_SUPPORT
 
  - link from stage_*.html to META/report.html
-
- - 'make_pkgs emacs-w3m' fatals!
 
  - META/packages_status.txt
 
