@@ -1,5 +1,7 @@
 ideas/thoughts/todo/problems
 
+ - remove <p></p> around NOTES
+
  - dbb_package -> install+package or package depending
    on PKG_DESTDIR_SUPPORT
 
