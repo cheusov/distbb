@@ -250,9 +250,7 @@ EOF
 
     if test "$NOTES"; then
 	echo '<h3><a name="notes"></a>Notes</h3>'
-	printf '<p>'
 	cat "$NOTES"
-	printf '</p>'
     fi
 
     cat <<EOF
