@@ -264,8 +264,6 @@ for stage in init $BUILD_STAGES; do
 	continue
     fi
 
-    echo REPORT1_DIR=$REPORT1_DIR 1>&2
-
     if test "$stage" = init; then
 	export skip_updating_src_summary
 	export skip_updating_summary
