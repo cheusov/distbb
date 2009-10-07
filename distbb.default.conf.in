@@ -281,7 +281,7 @@ assign REPORT_URL "$REPORT_URL_PREFIX/`basename $BUILD_ID`/META/report.html"
 assign REPORT_FILE report_mini.txt
 
 assign MAIL_PROG /usr/bin/mail
-assign REPORT_CMD "$MAIL_PROG -s 'pkgsrc-$PKGSRCVER $OS $OSVER bulk build results `basename $BUILD_ID`' '$USER_MAIL'"
+assign REPORT_CMD "$MAIL_PROG -s \"pkgsrc-$PKGSRCVER $OS $OSVER bulk build results `basename $BUILD_ID`\" \"$USER_MAIL\""
 assign REPORT_MINI_SIZE_LIMIT 70000
 
 # rsync command for uploading logs and packages
