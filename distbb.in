@@ -147,7 +147,7 @@ while test $# -ne 0; do
     shift
 done
 
-if test -n "exclude_state_upload"; then
+if test -n "$exclude_state_upload"; then
     exclude_state_upload_logs=1
     exclude_state_upload_pkgs=1
 fi
