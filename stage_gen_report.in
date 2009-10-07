@@ -654,6 +654,9 @@ awk -v size_limit="$REPORT_MINI_SIZE_LIMIT" '
 BEGIN {
    sz = 0
    size_limit += 0
+   cutoff_msg = "\n========= report is cut off because of its size, see a full report ========="
+   cutoff_msg = cutoff_msg "====================================================================="
+   cutoff_msg_sz = length(cutoff_msg)
 }
 
 /Failures per maintainer/, /------/ {
@@ -663,13 +666,12 @@ BEGIN {
    next
 }
 {
-   print
    sz += length($0)+1
-   if (sz > size_limit){
-      print "\n========= report is cut off because of its size, see full report ========="
-      print "====================================================================="
+   if (sz+cutoff_msg_sz > size_limit){
+      print cutoff_msg
       exit
    }
+   print
 }
 ' "$report_txt_fn" > "$report_mini_txt_fn"
 

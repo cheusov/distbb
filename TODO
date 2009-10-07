@@ -1,7 +1,5 @@
 ideas/thoughts/todo/problems
 
- - exact limit on report.txt
-
  - warn about "> soft-YYYYMMDD soft-A.B.C"
 
  - dbb_package -> install+package or package depending
