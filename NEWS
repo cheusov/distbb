@@ -1,4 +1,41 @@
-Version 0.32rc1, by Aleksey Cheusov, Tue,  6 Oct 2009 18:05:01 +0300
+Version 0.32.0, by Aleksey Cheusov, Thu,  8 Oct 2009 20:58:24 +0300
+
+  fix: workaround for buggy FreeBSD (at least 6.2-7.2) shell that
+  doesn't handle correctly 'if eval false;' statement if 'set -e'
+  mode is activated.
+
+  fix: PSS_SLAVES is unset before building src_summary in !MASTER mode.
+
+  New variable RSYNC_CMD is introduced. It sets the command used for
+  uploading logs and packages. [rsync]
+
+  New variable REPORT_FILE is introduced. It defaults to
+  "report_mini.txt" for shortened report. Set it to "report.txt" for
+  full report. REPORT_CMD variable doesn't contain `<' redirection
+  anymore.
+
+  New option "distbb -K" for skipping a pkg_summary updating step.
+
+  New option "distbb -l" for labeling a bulk build. Unless -B option
+  was applied, BUILD_ID and logging directory will look like
+  YYYYMMDD-<label>.
+
+  New option "distbb -x" for excluding specified stages from bulk build.
+  For example, "distbb -xupload_pkgs -xupload_logs -p wip/distbb".
+
+  NOTES section in META/report.html is not surrounded by <p></p> pair.
+  Do it manually if you need.
+
+  "distbb -B" can get a full path to the logging directory, not just
+  subdirectory of $REPORTS_DIR. Such a directory may be everywhere,
+  not necessarily under $REPORTS_DIR.
+
+  By default net/tnftp is also a part of EXTRA_DEPS.
+
+  Better handling of REPORT_MINI_SIZE_LIMIT.
+
+  Warning messages about packages versions going backward are
+  collected in $build_src_summary_log_fn
 
 Version 0.31.0, by Aleksey Cheusov, Sun,  9 Aug 2009 21:00:34 +0300
 
