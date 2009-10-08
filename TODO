@@ -1,7 +1,5 @@
 ideas/thoughts/todo/problems
 
- - warn about "> soft-YYYYMMDD soft-A.B.C"
-
  - dbb_package -> install+package or package depending
    on PKG_DESTDIR_SUPPORT
 
