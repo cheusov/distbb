@@ -178,8 +178,19 @@ verbose_print "done\n"
 ######################################################################
 ### comparison binaries against pkgsrc tree
 verbose_print "  pkg_summary vs. pkg_src_summary comparison..."
-eval @@libexecdir@@/wrapper $PKG_CMP_SUMMARY_CMD $refreshed_summary_fn $pkg_src_summary_fn > $summary_cmp_fn
+eval @@libexecdir@@/wrapper \
+    $PKG_CMP_SUMMARY_CMD $refreshed_summary_fn $pkg_src_summary_fn \
+    > $summary_cmp_fn
 verbose_print "done\n"
+
+if grep '^>' $summary_cmp_fn > /dev/null; then
+    cat > "$build_src_summary_log_fn" <<'EOF'
+ ------------------
+Versions of some packages go backward
+
+EOF
+    grep '^>' $summary_cmp_fn >> "$build_src_summary_log_fn"
+fi
 
 ######################################################################
 ### extracting DEPENDS and BUILD_DEPENDS
