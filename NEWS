@@ -1,4 +1,4 @@
-Version 0.32.0, by Aleksey Cheusov, Thu,  8 Oct 2009 20:58:24 +0300
+Version 0.32.0, by Aleksey Cheusov, Sun, 11 Oct 2009 10:53:00 +0300
 
   fix: workaround for buggy FreeBSD (at least 6.2-7.2) shell that
   doesn't handle correctly 'if eval false;' statement if 'set -e'

@@ -1,6 +1,6 @@
 ideas/thoughts/todo/problems
 
- - dbb_package -> install+package or package depending
+ - dbb_package -> "install"+"package" or just "package" depending
    on PKG_DESTDIR_SUPPORT
 
  - link from stage_*.html to META/report.html
