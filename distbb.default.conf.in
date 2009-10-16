@@ -286,7 +286,7 @@ assign MAIL_PROG /usr/bin/mail
 if test -n "$BUILD_ID"; then
     assign REPORT_CMD "$MAIL_PROG -s \"pkgsrc-$PKGSRCVER $OS $OSVER bulk build results `basename $BUILD_ID`\" \"$USER_MAIL\""
 fi
-assign REPORT_MINI_SIZE_LIMIT 70000
+assign REPORT_MINI_SIZE_LIMIT 95000
 
 # rsync command for uploading logs and packages
 assign RSYNC_CMD rsync
