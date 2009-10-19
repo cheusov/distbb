@@ -1,5 +1,10 @@
 ideas/thoughts/todo/problems
 
+ http://mova.org/~cheusov/pub/pkgsrc-distbb/Linux/current/logs/20091016.2105/audio_py-karaoke_py26-karaoke-0.7.1/stage_depends.html
+ http://mova.org/~cheusov/pub/pkgsrc-distbb/Linux/current/logs/20091016.2105/devel_bmake_bmake-20090909/stage_depends.html
+
+ - STAGES with full paths, defaulting to libexec/distbb/stage_<name>
+
  - css as an external file
 
  - untar bootstrap for -r (dbb_init)
