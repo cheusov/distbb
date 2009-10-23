@@ -313,6 +313,12 @@ assign PAEXEC_EXTRA_OPTS -Z300
 # Extra options passed to paexec(1) while running pkg_src_summary(1)
 assign PSS_PAEXEC_EXTRA_OPTS "$PAEXEC_EXTRA_OPTS"
 
+# Icon file
+assign ICON_FILE @@icondir@@/distbb.ico
+
+# CSS file
+assign CSS_FILE @@cssdir@@/distbb.css
+
 ############################################################
 export PSS_SLAVES
 export PSS_OPTIONS

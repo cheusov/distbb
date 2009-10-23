@@ -9,6 +9,7 @@ LIBEXECDIR?=			${PREFIX}/libexec/distbb
 DATADIR?=			${PREFIX}/share/distbb
 EGDIR?=				${PREFIX}/share/distbb
 ICONDIR?=			${DATADIR}
+CSSDIR?=			${DATADIR}
 
 POD2MAN?=			pod2man
 POD2HTML?=			pod2html
@@ -30,13 +31,15 @@ SCRIPTSDIR=			${LIBEXECDIR}
 SCRIPTSDIR_distbb=		${BINDIR}
 SCRIPTSDIR_distbb_diff=		${BINDIR}
 
-FILES=				distbb.conf distbb.local.mk distbb.mk \
-				common distbb.default.conf distbb.ico
+INFILES=			distbb.conf distbb.local.mk distbb.mk \
+				common distbb.default.conf
+FILES=				${INFILES} distbb.css distbb.ico
 
 FILESDIR=			${EGDIR}
 FILESDIR_distbb.mk=		${DATADIR}
 FILESDIR_distbb.default.conf=	${DATADIR}
 FILESDIR_distbb.ico=		${ICONDIR}
+FILESDIR_distbb.css=		${CSSDIR}
 FILESDIR_common=		${LIBEXECDIR}
 
 MKMAN=				no
@@ -63,6 +66,7 @@ all: distbb.conf common distbb.mk distbb.local.mk \
 	    -e 's,@@sbindir@@,${SBINDIR},g' \
 	    -e 's,@@datadir@@,${DATADIR},g' \
 	    -e 's,@@icondir@@,${ICONDIR},g' \
+	    -e 's,@@cssdir@@,${CSSDIR},g' \
 	    -e 's,@@version@@,${VERSION},g' \
 	    ${.ALLSRC} > ${.TARGET}
 
@@ -76,7 +80,7 @@ distbb.html : distbb.pod
 clean: clean-my
 clean-my:
 	rm -f *~ core* distbb.1 distbb.cat1 ChangeLog
-	rm -f ${SCRIPTS} ${FILES:Ndistbb.ico}
+	rm -f ${SCRIPTS} ${INFILES}
 	rm -f distbb.html
 
 ##################################################
@@ -85,6 +89,7 @@ install-dirs:
 	$(INST_DIR) ${DESTDIR}${BINDIR}
 	$(INST_DIR) ${DESTDIR}${EGDIR}
 	$(INST_DIR) ${DESTDIR}${ICONDIR}
+	$(INST_DIR) ${DESTDIR}${CSSDIR}
 	$(INST_DIR) ${DESTDIR}${DATADIR}
 	$(INST_DIR) ${DESTDIR}${LIBEXECDIR}
 .if "$(MKMAN)" != "no"
