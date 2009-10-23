@@ -1,0 +1,44 @@
+tr {
+	Vertical-Align: top;
+}
+
+td {
+	Vertical-Align: top;
+}
+
+h1 {
+	Font-Size: 3.5ex;
+	Line-Height: 1em;
+	Color: #000066;
+}
+
+h2 {
+	Font-Size: 2.5ex;
+	Line-Height: 1em;
+	Color: #660000;
+}
+
+h3 {
+	Font-Size: 2ex;
+	Color: #660066;
+}
+
+.pkg-total {
+	Color: blue;
+}
+
+.pkg-built {
+	Color: green;
+}
+
+.pkg-failed {
+	Color: red;
+}
+
+.pkg-faileddeps {
+	Color: orange;
+}
+
+.breaks {
+	Color: red;
+}
