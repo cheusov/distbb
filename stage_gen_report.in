@@ -261,7 +261,7 @@ EOF
   <tr><td>Build ended:</td>  <td align="right">$(right_align 38 "${build_end}")</td><td>&nbsp;</td></tr>
 
   <tr><td>&nbsp;</td>                  <td>&nbsp;</td><td>&nbsp;</td></tr>
-  <tr class="pkg-total"><td>$(left_align 40 "Inspected packages")</td><td align="right">$packages_inspected_cnt</td><td></td></tr>
+  <tr><td>$(left_align 40 "Inspected packages")</td><td align="right">$packages_inspected_cnt</td><td></td></tr>
   <tr class="pkg-total"><td>$(left_align 40 "Built packages (total)")</td><td align="right">$packages_built_total</td><td>&nbsp;&nbsp;&nbsp;<a href="$(basename $packages_built_total_fn)" title="All built packages"> list</a></td></tr>
   <tr><td>&nbsp;&nbsp;  $(left_align 38 "built previously")</td><td align="right">$packages_built_prev_cnt</td><td>&nbsp;&nbsp;&nbsp;<a href="$(basename $packages_built_prev_fn)" title="Packages built previously"> list</a></td></tr>
   <tr class="pkg-built"><td>&nbsp;&nbsp;  $(left_align 38 "really built")</td><td align="right">$packages_built_cnt</td><td>&nbsp;&nbsp;&nbsp;<a href="$(basename $packages_built_fn)" title="Successfully built packages"> list</a></td></tr>
