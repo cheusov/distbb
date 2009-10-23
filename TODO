@@ -4,8 +4,6 @@ ideas/thoughts/todo/problems
 
  - css as an external file
 
- - untar bootstrap for -r (dbb_init)
-
  - dbb_package -> "install"+"package" or just "package" depending
    on PKG_DESTDIR_SUPPORT
 
