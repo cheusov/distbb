@@ -172,10 +172,10 @@ fi
 . @@bindir@@/pipestatus
 
 # date start for placint it to html/txt report
-date_start="$(date -u '+%Y-%m-%d %H:%M') UTC"
+build_start="$(date -u '+%Y-%m-%d %H:%M') UTC"
 # date start in YYYYMMDD-HHMM format
 if test -z "$BUILD_ID"; then
-    BUILD_ID="$(echo $date_start | awk '{gsub(/[:-]/, ""); print $1 "." $2}')"
+    BUILD_ID="$(echo $build_start | awk '{gsub(/[:-]/, ""); print $1 "." $2}')"
     if test -n "$label"; then
 	BUILD_ID="$BUILD_ID-$label"
     fi
@@ -247,7 +247,22 @@ fi
 
 ######################################################################
 
+# exporting variables for stage_init
+export skip_updating_src_summary
+export skip_updating_summary
+export build_start
+
+#
 for stage in init $BUILD_STAGES; do
+#    echo stage=$stage 1>&2
+
+    if echo "$stage" | grep '^/' > /dev/null; then
+	stage_fn="$stage"
+	stage=$(basename $stage)
+    else
+	stage_fn="@@libexecdir@@/stage_$stage"
+    fi
+
     eval x='$'exclude_state_$stage
     if test -n "$x"; then
 	continue
@@ -255,18 +270,11 @@ for stage in init $BUILD_STAGES; do
 
     done_fn=$tmpdir/stage_${stage}_done.tmp
     if test -n "$retry" && test -f ${done_fn}; then
-	echo "stage_$stage skipped"
+	echo "$stage skipped"
 	continue
     fi
 
-    if test "$stage" = init; then
-	export skip_updating_src_summary
-	export skip_updating_summary
-	@@libexecdir@@/stage_init \
-	    "$REPORT1_DIR" "$date_start"
-    else
-	eval @@libexecdir@@/stage_${stage} "$REPORT1_DIR"
-    fi
+    eval ${stage_fn} "$REPORT1_DIR"
 
     touch ${done_fn}
 done

@@ -1,7 +1,5 @@
 ideas/thoughts/todo/problems
 
- - STAGES with full paths, defaulting to libexec/distbb/stage_<name>
-
  - css as an external file
 
  - dbb_package -> "install"+"package" or just "package" depending

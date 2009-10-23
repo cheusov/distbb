@@ -26,12 +26,12 @@
 set -e
 . @@bindir@@/pipestatus
 
-# usage: stage_init BUILD_ID BUILD_START
-test $# -eq 2
+# usage: stage_init BUILD_ID
+test $# -eq 1
 
 # init
 BUILD_ID="$1"
-build_start="$2"
+test -n "$build_start" # MUST be set in environment
 
 packages="$pkgs_fn" # pkgs_fn - from distbb
 
