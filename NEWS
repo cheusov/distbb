@@ -1,3 +1,12 @@
+Version 0.33.0, by Aleksey Cheusov, Sat, 24 Oct 2009 13:34:25 +0300
+
+  add: new build stage "upload" in BUILD_STAGES instead of two
+  "upload_logs" and "upload_pkgs".
+
+  Two new variables are introduced: CSS_FILE and ICON_FILE.
+  Now user can override default the default distbb.css and distbb.ico.
+  .pkg-total style is not used for "Inspected packages" line.
+
 Version 0.32.0, by Aleksey Cheusov, Sun, 11 Oct 2009 10:53:00 +0300
 
   fix: workaround for buggy FreeBSD (at least 6.2-7.2) shell that
