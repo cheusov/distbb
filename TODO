@@ -1,6 +1,6 @@
 ideas/thoughts/todo/problems
 
- -
+ - Analyse REQUIRES and PROVIDES while running bulk builds
 
  - dbb_package -> "install"+"package" or just "package" depending
    on PKG_DESTDIR_SUPPORT
