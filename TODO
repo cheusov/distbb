@@ -1,5 +1,8 @@
 ideas/thoughts/todo/problems
 
+ - pkg_summary.txt consisting of only built packages,
+   no "packages in pkg_summary.txt" message in report.html
+
  - distbb_diff: ignore :blablabla=1 part while comparing.
    .best_bb.old vs. 20100221.1315
 
