@@ -1,5 +1,21 @@
 ideas/thoughts/todo/problems
 
+ - distbb_diff: ignore :blablabla=1 part while comparing.
+   .best_bb.old vs. 20100221.1315
+
+ - build graph is build using {THIS,xxx}:../../yyy/zzz,
+   but 'make depends' {xxx,THIS}:../../TH/IS
+   This is a BIG problem
+
+ - pkg_src_summary -A may build an incomplete summary in case
+   {x,y}:../z/a deps.
+   file:///home/cheusov/bulk-logs/20100109.0059/META/report.html
+   See devel/p5-ExtUtils-ParseXS and
+   pkg_src_summary:filter_needed_deps function.
+
+ - pkg_cmp_summary should compare DEPENDS and BUILD_DEPENDS and print !
+   if the y different  
+
  - Analyse REQUIRES and PROVIDES while running bulk builds
 
  - dbb_package -> "install"+"package" or just "package" depending
