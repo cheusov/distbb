@@ -79,8 +79,6 @@ packages_fn=$tmpdir/packages.tmp
 packages_fn=$tmpdir/packages.tmp
 packages_with_deps_fn=$tmpdir/packages_with_deps.tmp
 
-trans_clos_rebuild_fn=$tmpdir/trans_closure_rebuild.tmp
-
 bb_history_fn=$REPORTS_DIR/bulk_builds_history.txt
 
 version=@@version@@

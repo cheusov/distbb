@@ -196,12 +196,12 @@ fi
 ######################################################################
 ### extracting DEPENDS and BUILD_DEPENDS
 
-# store DEPENDS and BUILD_DEPENDS dependcies in
-#  "$deps_fn", "$bdeps_fn" and $extradeps_fn files
+# store DEPENDS and BUILD_DEPENDS dependencies in
+#  "$deps_fn" file
 # input: "$PKG_SRC_SUMMARY file and $EXTRA_DEPS packages.
-# output format: <PKGNAME> <DEPENDANCY_PKGPATH> <PKGPATH>
+# output format: <DEPENDANCY_PKGPATH> <PKGPATH>
 
-verbose_print "  dependencies from pkg_src_summary file..."
+verbose_print "  build graph from pkg_src_summary file..."
 
 if ! pkg_summary2build_graph "$pkg_src_summary_fn" \
     1> "$deps_fn" \
@@ -241,82 +241,14 @@ sort_uniq_inplace $deps_fn
 verbose_print "done\n"
 
 ######################################################################
-### input: graph as a list of arcs
-### output: transitive close of this graph
-transitive_closure (){
-    awk '
-# AWK badly suits for this task :-(
-
-BEGIN {
-   SUBSEP = " "
-}
-
-{
-   arc [$1, $2] = 1
-
-   outgoing [$1] = outgoing [$1] " " $2
-   incoming [$2] = incoming [$2] " " $1
-
-   nodes [$1] = 1
-   nodes [$2] = 1
-}
-
-END {
-   for (k in nodes){
-      cnt_i = split(incoming [k], arr_i)
-      for (ii = 1; ii <= cnt_i; ++ii){
-         i = arr_i [ii]
-
-         cnt_j = split(outgoing [k], arr_j)
-         for (jj = 1; jj <= cnt_j; ++jj){
-            j = arr_j [jj]
-            if (! ((i SUBSEP j) in arc)){
-               arc [i, j] = 1
-               incoming [j] = incoming [j] " " i
-               outgoing [i] = outgoing [i] " " j
-            }
-         }
-      }
-   }
-
-   for (idx in arc){
-      print idx
-   }
-}
-' "$@"
-}
-
-verbose_print "  transitive closure of the dependancy graph..."
-trans_clos_fn=$tmpdir/trans_closure.tmp
-transitive_closure $deps_fn > $trans_clos_fn
-verbose_print "done\n"
-
-######################################################################
 ### initial packages with dependancies
-
-# print packages found in $1 (packages_fn)
-# and packages they depend on
-with_dependancies (){
-    awk -v pkgs="$1" '
-BEGIN {
-   while (0 < (getline < pkgs)){
-      hash [$1] = 1
-      print $1
-   }
-}
-
-($1 != "dummy") && ($2 in hash) {
-   print $1
-}
-' "$2"
-}
 
 # remove comments and empty lines
 if test "$packages"; then
     verbose_print "  initial packages with their dependancies..."
 
     runpipe0 \
-	with_dependancies "$packages_fn" "$trans_clos_fn" '|' \
+	@@libexecdir@@/subgraph_deps -f "$packages_fn" "$deps_fn" '|' \
 	sort_uniq > $packages_with_deps_fn
 
     verbose_print "done\n"
@@ -325,91 +257,15 @@ else
 fi
 
 ######################################################################
-### final transitive closure
-verbose_print "  reduced transitive closure..."
+### packages to be rebuild
 
-trans_closure_final (){
-    awk -v pkgs="$1" '
-BEGIN {
-   while (0 < (getline < pkgs)){
-      hash [$1] = 1
-   }
-}
+verbose_print "  packages to be rebuild..."
 
-$2 in hash {
-   print $0
-}
-' "$2"
-}
+changed_pkgs_fn=$tmpdir/changed.tmp
+awk '$1 ~ /^[^=-]$/ {print $2}' "$summary_cmp_fn" > "$changed_pkgs_fn"
 
-trans_clos_final_fn=$tmpdir/trans_closure_final.tmp
-trans_closure_final \
-    "$packages_with_deps_fn" \
-    "$trans_clos_fn" > "$trans_clos_final_fn"
-
-trans_clos_full_fn=$tmpdir/trans_closure_full.tmp
-mv "$trans_clos_fn" "$trans_clos_full_fn"
-mv "$trans_clos_final_fn" "$trans_clos_fn"
-
-verbose_print "done\n"
-
-######################################################################
-### direct packages that need to be rebuilt
-verbose_print "  direct packages to be built..."
-
-rebuild1_fn=$tmpdir/rebuild1.tmp
-
-awk -v pkgs="$packages_with_deps_fn" '
-BEGIN {
-   while (0 < (getline < pkgs)){
-      hash [$1] = 1
-   }
-}
-
-($1 != "=") && ($1 != "-") && ($2 in hash) {print $2}
-' "$summary_cmp_fn" > $rebuild1_fn
-
-verbose_print "done\n"
-
-######################################################################
-### all packages that need to be rebuilt
-verbose_print "  all packages to be built..."
-
-all_packages_to_be_build () {
-    awk -v pkgs="$rebuild1_fn" '
-BEGIN {
-   while (0 < (getline < pkgs)){
-      hash [$1] = 1
-      print $1
-   }
-}
-
-($1 in hash) {
-   print $2
-}
-' "$trans_clos_fn"
-}
-
-all_packages_to_be_build2 () {
-    awk -v pkgs="$rebuild_fn" '
-BEGIN {
-   while (0 < (getline < pkgs)){
-      hash [$1] = 1
-   }
-}
-
-($1 in hash) {
-   print $1, $2
-}
-' "$trans_clos_fn"
-}
-
-runpipe0 \
-    all_packages_to_be_build '|' \
-    sort_uniq > $rebuild_fn
-runpipe0 \
-    all_packages_to_be_build2 '|' \
-    sort_uniq > $trans_clos_rebuild_fn
+@@libexecdir@@/subgraph_deps -f "$changed_pkgs_fn" "$packages_with_deps_fn" \
+    > "$rebuild_fn"
 
 verbose_print "done\n"
 
@@ -418,19 +274,8 @@ verbose_print "done\n"
 
 verbose_print "  packages built previously (no need to rebuild)..."
 
-generate_built_prev (){
-    awk '
-{ cnt [$1] += 1 }
-END {
-   for (pkg in cnt) {
-      if (cnt [pkg] == 1) print pkg
-   }
-}
-'  "$packages_with_deps_fn" "$rebuild_fn"
-}
-
 runpipe0 \
-    generate_built_prev '|' \
+    @@libexecdir@@/subgraph_deps -xr -f "$changed_pkgs_fn" "$packages_with_deps_fn" '|' \
     sort_uniq > "$packages_built_prev_fn.tmp"
 
 verbose_print "done\n"

@@ -106,7 +106,7 @@ END {
 
 verbose_print "Initial queue..."
 
-gen_queue "$trans_clos_rebuild_fn" "$rebuild_fn" > $queue_fn
+gen_queue "$rebuild_fn" > $queue_fn
 
 verbose_print "done\n"
 
