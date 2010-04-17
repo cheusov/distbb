@@ -1,0 +1,70 @@
+#!/usr/bin/env runawk
+
+#use "power_getopt.awk"
+#use "xgetline.awk"
+
+#.begin-str help
+# depends_on_given - takes a dependency graph A of packages and a list of
+# of individual packages B and outputs subgraph of A consisting of packages
+# that depend on packages listed A directly or indirectly.
+#
+# usage: depends_on_given [OPTIONS] [files...]
+# OPTIONS:
+#    -h|--help          display this screen
+#    =f <file>          list of packages
+#.end-str
+
+BEGIN {
+	fn = getarg("f")
+	while (xgetline0(fn)){
+#		print "in list:", $0
+		list [$0] = 1
+	}
+}
+
+NF == 2 {
+	arc [$1, ++count [$1]] = $2
+	singles [$1] = singles [$2] = 1
+	next
+}
+
+NF == 1 {
+	singles [$1] = 1
+}
+
+function rec (pkg,                    i,to){
+	if (pkg in result)
+		return
+
+	if (! (pkg in count))
+		return
+
+	result [pkg] = 1
+#	print "ura", pkg, count [pkg]
+	for (i=1; i <= count [pkg]; ++i){
+		to = arc [pkg, i]
+		rec(to)
+		result [to] = 1
+	}
+}
+
+END {
+	for (i in list){
+#		print  i
+		rec(i)
+	}
+#	for (i in result){
+#		print "result:", i
+#	}
+	for (i in arc){
+		from = substr(i, 1, index(i, SUBSEP)-1)
+#		print "from=" from
+		if (from in result)
+			print from, arc [i]
+	}
+	for (i in singles){
+#		print "i=" i
+		if ((i in list) && !(i in result))
+			print i
+	}
+}
