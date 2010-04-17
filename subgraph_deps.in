@@ -12,10 +12,12 @@
 # OPTIONS:
 #    -h|--help          display this screen
 #    =f <file>          list of packages
+#    -r                 output dependencies
 #.end-str
 
 BEGIN {
 	fn = getarg("f")
+	output_deps = getarg("r")
 	while (xgetline0(fn)){
 #		print "in list:", $0
 		list [$0] = 1
@@ -23,7 +25,11 @@ BEGIN {
 }
 
 NF == 2 {
-	arc [$1, ++count [$1]] = $2
+	if (output_deps)
+		arc [$2, ++count [$2]] = $1
+	else
+		arc [$1, ++count [$1]] = $2
+
 	singles [$1] = singles [$2] = 1
 	next
 }
@@ -49,6 +55,9 @@ function rec (pkg,                    i,to){
 }
 
 END {
+#	for (i in singles){
+#		print "singles: ", i, count [i]
+#	}
 	for (i in list){
 #		print  i
 		rec(i)
@@ -59,8 +68,12 @@ END {
 	for (i in arc){
 		from = substr(i, 1, index(i, SUBSEP)-1)
 #		print "from=" from
-		if (from in result)
-			print from, arc [i]
+		if (from in result){
+			if (output_deps)
+				print arc [i], from
+			else
+				print from, arc [i]
+		}
 	}
 	for (i in singles){
 #		print "i=" i
