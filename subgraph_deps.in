@@ -13,7 +13,8 @@
 #    -h|--help          display this screen
 #    =f <file>          list of packages
 #    -r                 output dependencies
-#    -x                 excluding given packages
+#    -x                 excluding given packages, also individual packages are
+#                       output, not a subgraph
 #.end-str
 
 BEGIN {
