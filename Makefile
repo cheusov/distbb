@@ -26,7 +26,7 @@ SCRIPTS=	distbb stage_init stage_build stage_post_build \
 		slave distbb_diff upload_pkgs_all_files \
 		upload_pkgs_built_total upload_pkgs_no_bin_on_cdrom \
 		upload_pkgs_no_bin_on_ftp wrapper make-depends \
-		subgraph_deps
+		subgraph_deps get_direct_pkgname_deps
 
 SCRIPTSDIR=			${LIBEXECDIR}
 SCRIPTSDIR_distbb=		${BINDIR}

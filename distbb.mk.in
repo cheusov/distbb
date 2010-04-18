@@ -85,3 +85,13 @@ dbb_vars:
 	@echo ''
 .endif
 .endfor
+
+############################################################
+############################################################
+# dbb_depends target:
+# install all required dependencies, removing {al,ter}:../native/dependencies
+.PHONY: dbb_depends
+dbb_depends:
+	${SU_CMD} 'env MAKE="${MAKE}" MAKEFLAGS="${MAKEFLAGS}" \
+	    PACKAGES="${PACKAGES}" PKG_ADD="${PKG_ADD}" \
+	    @@libexecdir@@/make-depends "${PKGPATHe}"'

@@ -259,7 +259,7 @@ fi
 ######################################################################
 ### packages to be rebuild
 
-verbose_print "  packages to be rebuild..."
+verbose_print "  packages to rebuild..."
 
 changed_pkgs_fn=$tmpdir/changed.tmp
 awk '$1 ~ /^[^=-]$/ {print $2}' "$summary_cmp_fn" > "$changed_pkgs_fn"
@@ -277,6 +277,16 @@ verbose_print "  packages built previously (no need to rebuild)..."
 runpipe0 \
     @@libexecdir@@/subgraph_deps -xr -f "$changed_pkgs_fn" "$packages_with_deps_fn" '|' \
     sort_uniq > "$packages_built_prev_fn.tmp"
+
+verbose_print "done\n"
+
+######################################################################
+### list of already built packages
+
+verbose_print "  copying auxiliary files..."
+
+cp "$pkg_src_summary_fn" $aux_pkg_src_summary_fn
+cp "$deps_fn"            $aux_full_deps_fn
 
 verbose_print "done\n"
 

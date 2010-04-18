@@ -1,0 +1,28 @@
+#!/bin/sh
+
+#
+# run 'make depends' with changed DEPENDS and BUILD_DEPENDS.
+# Alternative dependencies are removed.
+#
+
+# $1 - enriched pkgpath
+
+#set -e
+
+test -n "$PKG_ADD"
+test -n "$PACKAGES"
+
+test $# -eq 1
+
+get_deps (){
+    @@libexecdir@@/get_direct_pkgname_deps "$1" \
+	$PACKAGES/full_deps.txt \
+	$PACKAGES/pkg_src_summary.txt
+}
+
+export PKG_PATH="${PACKAGES}/All"
+
+for p in `get_deps $1`; do
+    echo $PKG_ADD "$PACKAGES/All/$p"
+    $PKG_ADD "$PACKAGES/All/$p"
+done

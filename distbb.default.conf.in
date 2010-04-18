@@ -161,7 +161,7 @@ assign CLEAN_TARGET 'clean'
 #    otherwise counters in "Failures per maintainer" will
 #    be not fully correct
 # dbb_vars lists bmake's variables for easier debugging
-assign TARGETS "dbb_init clean dbb_canbebuilt dbb_excluded dbb_vars depends fetch checksum extract patch configure build install package deinstall"
+assign TARGETS "dbb_init clean dbb_canbebuilt dbb_excluded dbb_vars dbb_depends fetch checksum extract patch configure build install package deinstall"
 # the following is for USE_DESTDIR=yes
 #assign TARGETS "dbb_init clean dbb_canbebuilt dbb_excluded dbb_vars depends fetch checksum extract patch configure build package do-bin-install deinstall"
 

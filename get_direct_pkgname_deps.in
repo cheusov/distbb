@@ -1,0 +1,18 @@
+#!/bin/sh
+
+# $1 - enriched PKGPATH 
+# $2 - file that contains a dependency graph 
+# $3 - pkg_src_summary.txt
+
+set -e
+
+test $# -eq 3
+
+tmpdir=`mktemp -d /tmp/distbb.deps.XXXXXX`
+if test -z "$tmpdir"; then
+    exit 1
+fi
+
+awk -v pkgpath="$1" '$2 == pkgpath {print $1}' "$2" > $tmpdir/pkgpaths.txt
+pkg_grep_summary -S PKGPATHe $tmpdir/pkgpaths.txt < "$3" |
+sed -n 's/^PKGNAME=//p'

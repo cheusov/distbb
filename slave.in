@@ -160,7 +160,7 @@ do_build_package (){
 		# an interaction with user
 		set +e # workaround for buggy Korn Shell
 		       # ('set -e' + if + eval + false)
-		if ! eval $BMAKE -f Makefile \
+		if ! eval env PKGPATHe="$1" $BMAKE -f Makefile \
 		            -f "$DISTBB_LOCAL_MK" \
 		            -f @@datadir@@/distbb.mk \
 		            $bmake_opts $t $stdin_from_dev_null
