@@ -60,8 +60,10 @@ packages_built_prev_fn=$meta_dir/packages_built_prev.txt
 packages_built_fn=$meta_dir/packages_built.txt
 packages_built_total_fn=$meta_dir/packages_built_total.txt
 progress_fn=$meta_dir/progress.txt
+
 build_src_summary_log_fn=$meta_dir/build_src_summary_log.txt
 build_deps_graph_log_fn=$meta_dir/build_deps_graph_log.txt
+
 pkg_src_summary_fn=$meta_dir/pkg_src_summary.txt
 summary_cmp_fn=$meta_dir/summary_cmp.txt
 
@@ -70,7 +72,7 @@ build_end_fn=$meta_dir/build_end.tmp
 
 queue_fn=$tmpdir/queue.tmp
 rebuild_fn=$tmpdir/rebuild.tmp
-deps_fn=$tmpdir/deps.tmp
+full_deps_fn=$tmpdir/full_deps.tmp
 
 aux_pkg_src_summary_fn=$PACKAGES/pkg_src_summary.txt
 aux_full_deps_fn=$PACKAGES/full_deps.txt

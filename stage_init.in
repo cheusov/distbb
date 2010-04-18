@@ -197,14 +197,14 @@ fi
 ### extracting DEPENDS and BUILD_DEPENDS
 
 # store DEPENDS and BUILD_DEPENDS dependencies in
-#  "$deps_fn" file
+#  "$full_deps_fn" file
 # input: "$PKG_SRC_SUMMARY file and $EXTRA_DEPS packages.
 # output format: <DEPENDANCY_PKGPATH> <PKGPATH>
 
 verbose_print "  build graph from pkg_src_summary file..."
 
 if ! pkg_summary2build_graph "$pkg_src_summary_fn" \
-    1> "$deps_fn" \
+    1> "$full_deps_fn" \
     2> "$build_deps_graph_log_fn"
 then
     cat "$build_deps_graph_log_fn" 1>&2
@@ -234,9 +234,9 @@ $1 ~ /^PKGPATH=/ {
     if (!($1 in deps))
 	print _deps [cnt], $1
 }
-' $pkg_src_summary_fn >> $deps_fn
+' $pkg_src_summary_fn >> "$full_deps_fn"
 
-sort_uniq_inplace $deps_fn
+sort_uniq_inplace "$full_deps_fn"
 
 verbose_print "done\n"
 
@@ -248,12 +248,12 @@ if test "$packages"; then
     verbose_print "  initial packages with their dependancies..."
 
     runpipe0 \
-	@@libexecdir@@/subgraph_deps -f "$packages_fn" "$deps_fn" '|' \
-	sort_uniq > $packages_with_deps_fn
+	@@libexecdir@@/subgraph_deps -f "$packages_fn" "$full_deps_fn" '|' \
+	sort_uniq > "$packages_with_deps_fn"
 
     verbose_print "done\n"
 else
-    cp $packages_fn $packages_with_deps_fn
+    cp "$packages_fn" "$packages_with_deps_fn"
 fi
 
 ######################################################################
@@ -286,7 +286,7 @@ verbose_print "done\n"
 verbose_print "  copying auxiliary files..."
 
 cp "$pkg_src_summary_fn" $aux_pkg_src_summary_fn
-cp "$deps_fn"            $aux_full_deps_fn
+cp "$full_deps_fn"       $aux_full_deps_fn
 
 verbose_print "done\n"
 

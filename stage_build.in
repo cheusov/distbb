@@ -43,7 +43,7 @@ cd $REPORT1_DIR
 ######################################################################
 ### graph of packages for paexec
 gen_queue (){
-    runawk -v deps_fn="$deps_fn" -v progress_fn="$progress_fn" -e '
+    runawk -v deps_fn="$full_deps_fn" -v progress_fn="$progress_fn" -e '
 #use "xgetline.awk"
 #use "xclose.awk"
 
