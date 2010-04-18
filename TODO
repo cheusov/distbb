@@ -1,5 +1,20 @@
 ideas/thoughts/todo/problems
 
+  - 1) Package A depends on {B,C}:../../some/where/C
+    2) B is already built
+    1) + 2) ==> B is not installed by "make depends"
+
+  - Why this happends? ~/bulk-logs/20100403.0159
+  started: graphics/py-clutter:PYTHON_VERSION_REQD=25 on root@pkgsrc-63
+awk: /tmp/runawk.aZSekT:59: (FILENAME=- FNR=417922) fatal: can't redirect to `/home/cheusov/bulk-logs/20100403.0159/net_nicotine_nicotine-1.0.8nb7/stage_preinit.tmp' (No such file or directory)
+
+ - Partial bulk build for audio_flac123 fails
+   file:///home/cheusov/bulk-logs/20100314.1851/audio_flac123_flac123-0.0.11/stage_dbb_depends.html
+   DEPENDS
+      ERROR: [depends.mk] A package matching ``libao-[a-z]*-[0-9]*'' should
+      ERROR:     be installed, but one cannot be found.  Perhaps there is a
+      ERROR:     stale work directory for ../../audio/libao-oss?
+
  - pkg_summary.txt consisting of only built packages,
    no "packages in pkg_summary.txt" message in report.html
 
