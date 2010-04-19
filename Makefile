@@ -18,7 +18,7 @@ INST_DIR?=			${INSTALL} -d
 
 ##################################################
 
-.include "Makefile.version"
+.include "version.mk"
 
 SCRIPTS=	distbb stage_init stage_build stage_post_build \
 		stage_gen_report stage_update_best stage_upload \
