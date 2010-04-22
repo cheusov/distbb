@@ -275,7 +275,9 @@ verbose_print "done\n"
 verbose_print "  packages built previously (no need to rebuild)..."
 
 runpipe0 \
-    @@libexecdir@@/subgraph_deps -xr -f "$changed_pkgs_fn" "$packages_with_deps_fn" '|' \
+    @@libexecdir@@/subgraph_deps -xr \
+        -f "$changed_pkgs_fn" "$packages_with_deps_fn" '|' \
+    awk 'NF == 2 {$0 = $1 "\n" $2} {print}' |
     sort_uniq > "$packages_built_prev_fn.tmp"
 
 verbose_print "done\n"
