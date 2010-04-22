@@ -2,14 +2,15 @@
 
 #use "power_getopt.awk"
 #use "xgetline.awk"
+#use "xclose.awk"
 #use "tmpfile.awk"
 
 #.begin-str help
-# gen_queue - takes a dependency graph A of packages and a
+# gen_queue - takes a dependency graph of packages to rebuild and
 # progress.txt filename that contains a list of packages that either
-# failed or succeeded, then output a subgraph of A with packages to build.
+# failed or succeeded, then output a subgraph with packages to build.
 #
-# usage: subgraph_deps [OPTIONS] [files...]
+# usage: gen_queue [OPTIONS] [files...]
 # OPTIONS:
 #    -h|--help          display this screen
 #    =f <file>          progress.txt filename
@@ -20,10 +21,35 @@ BEGIN {
 	assert(fn != "") # this option is mandatory
 
 	failures_fn = tmpfile()
-	pipe = "./subgraph_deps.in -xr -f " failures_fn
+	pipe = "pkg_subgraph_deps -v -f " failures_fn
+
+	printf "" > failures_fn
 
 	while(xgetline0(fn)){
 		if ($1 == "failure")
-			
+			print $2 > failures_fn
+		else if ($1 == "success")
+			success [$2] = 1
+		else
+			abort()
 	}
+
+	xclose(failures_fn)
+}
+
+NF == 1 {
+	if (! ($1 in success))
+		print $1 | pipe
+}
+
+NF == 2 {
+	n1 = ($1 in success)
+	n2 = ($2 in success)
+
+	if (!n1 && !n2)
+		print $1, $2 | pipe
+	else if (!n1)
+		print $1 | pipe
+	else if (!n2)
+		print $2 | pipe
 }

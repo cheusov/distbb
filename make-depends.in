@@ -23,6 +23,5 @@ get_deps (){
 export PKG_PATH="${PACKAGES}/All"
 
 for p in `get_deps $1`; do
-    echo $PKG_ADD "$PACKAGES/All/$p"
-    $PKG_ADD "$PACKAGES/All/$p"
+    $PKG_ADD -u "$PACKAGES/All/$p"
 done

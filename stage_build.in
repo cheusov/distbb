@@ -42,71 +42,9 @@ cd $REPORT1_DIR
 
 ######################################################################
 ### graph of packages for paexec
-gen_queue (){
-    runawk -v deps_fn="$full_deps_fn" -v progress_fn="$progress_fn" -e '
-#use "xgetline.awk"
-#use "xclose.awk"
-
-BEGIN {
-   while (xgetline0(progress_fn)){
-      if ($1 == "success") success [$2] = 0
-      if ($1 == "failure") failure [$2] = 0
-   }
-   xclose(progress_fn)
-
-   while (xgetline0(deps_fn)){
-      deps [$1, $2] = 0
-   }
-   xclose(deps_fn)
-
-   pcount = 0
-}
-
-NF == 2 {
-   if ($1 in success) next
-   if ($2 in failure) next
-   if ($1 in failure) {
-      failure [$2] = 0 # failed due to broken dependency
-      next
-   }
-
-   if (($1 SUBSEP $2) in deps){
-      p1 [pcount] = $1
-      p2 [pcount] = $2
-      ++pcount
-   }
-
-   next
-}
-
-NF == 1 && !($1 in success) && !($1 in failure) {
-   s [$1] = 1
-   next
-}
-
-END {
-   for (i in p1){
-      e1 = p1 [i]
-      e2 = p2 [i]
-      if (!(e1 in success) && !(e1 in failure) &&
-          !(e2 in success) && !(e2 in failure)) 
-      {
-         print e1, e2
-         printed [e1] = printed [e2] = 1
-      }
-   }
-   for (i in s){
-      if (! (i in printed)){
-         print i
-      }
-   }
-}
-' "$@"
-}
-
 verbose_print "Initial queue..."
 
-gen_queue "$rebuild_fn" > $queue_fn
+@@libexecdir@@/gen_queue -f "$progress_fn" "$rebuild_fn" > $queue_fn
 
 verbose_print "done\n"
 

@@ -230,7 +230,7 @@ BEGIN {
 }
 $1 ~ /^PKGPATH=/ {
     $1 = substr($1, 9)
-    print "dummy", $1
+    print $1
     if (!($1 in deps))
 	print _deps [cnt], $1
 }
@@ -245,10 +245,10 @@ verbose_print "done\n"
 
 # remove comments and empty lines
 if test "$packages"; then
-    verbose_print "  initial packages with their dependancies..."
+    verbose_print "  initial packages with their dependencies..."
 
     runpipe0 \
-	@@libexecdir@@/subgraph_deps -f "$packages_fn" "$full_deps_fn" '|' \
+	pkg_subgraph_deps -r -f "$packages_fn" "$full_deps_fn" '|' \
 	sort_uniq > "$packages_with_deps_fn"
 
     verbose_print "done\n"
@@ -264,7 +264,7 @@ verbose_print "  packages to rebuild..."
 changed_pkgs_fn=$tmpdir/changed.tmp
 awk '$1 ~ /^[^=-]$/ {print $2}' "$summary_cmp_fn" > "$changed_pkgs_fn"
 
-@@libexecdir@@/subgraph_deps -f "$changed_pkgs_fn" "$packages_with_deps_fn" \
+pkg_subgraph_deps -f "$changed_pkgs_fn" "$packages_with_deps_fn" \
     > "$rebuild_fn"
 
 verbose_print "done\n"
@@ -275,8 +275,7 @@ verbose_print "done\n"
 verbose_print "  packages built previously (no need to rebuild)..."
 
 runpipe0 \
-    @@libexecdir@@/subgraph_deps -xr \
-        -f "$changed_pkgs_fn" "$packages_with_deps_fn" '|' \
+    pkg_subgraph_deps -v -f "$changed_pkgs_fn" "$packages_with_deps_fn" '|' \
     awk 'NF == 2 {$0 = $1 "\n" $2} {print}' |
     sort_uniq > "$packages_built_prev_fn.tmp"
 
@@ -287,8 +286,8 @@ verbose_print "done\n"
 
 verbose_print "  copying auxiliary files..."
 
-cp "$pkg_src_summary_fn" $aux_pkg_src_summary_fn
-cp "$full_deps_fn"       $aux_full_deps_fn
+cp "$pkg_src_summary_fn"     "$aux_pkg_src_summary_fn"
+cp "$packages_with_deps_fn"  "$aux_full_deps_fn"
 
 verbose_print "done\n"
 
