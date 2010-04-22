@@ -1,0 +1,29 @@
+#!/usr/bin/env runawk
+
+#use "power_getopt.awk"
+#use "xgetline.awk"
+#use "tmpfile.awk"
+
+#.begin-str help
+# gen_queue - takes a dependency graph A of packages and a
+# progress.txt filename that contains a list of packages that either
+# failed or succeeded, then output a subgraph of A with packages to build.
+#
+# usage: subgraph_deps [OPTIONS] [files...]
+# OPTIONS:
+#    -h|--help          display this screen
+#    =f <file>          progress.txt filename
+#.end-str
+
+BEGIN {
+	fn = getarg("f")
+	assert(fn != "") # this option is mandatory
+
+	failures_fn = tmpfile()
+	pipe = "./subgraph_deps.in -xr -f " failures_fn
+
+	while(xgetline0(fn)){
+		if ($1 == "failure")
+			
+	}
+}
