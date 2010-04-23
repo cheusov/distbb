@@ -270,7 +270,7 @@ for stage in init $BUILD_STAGES; do
 	continue
     fi
 
-    done_fn=$tmpdir/stage_${stage}_done.tmp
+    done_fn=$tmpdir/done_stage_${stage}.tmp
     if test -n "$retry" && test -f ${done_fn}; then
 	echo "$stage skipped"
 	continue
