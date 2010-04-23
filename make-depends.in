@@ -7,7 +7,9 @@
 
 # $1 - enriched pkgpath
 
-#set -e
+set -e
+
+export PATH=@@bindir@@:$PATH
 
 test -n "$PKG_ADD"
 test -n "$PACKAGES"
