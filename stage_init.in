@@ -185,7 +185,7 @@ eval @@libexecdir@@/wrapper \
 verbose_print "done\n"
 
 if grep '^>' $summary_cmp_fn > /dev/null; then
-    cat > "$build_src_summary_log_fn" <<'EOF'
+    cat >> "$build_src_summary_log_fn" <<'EOF'
  ------------------
 Versions of some packages go backward
 
@@ -257,7 +257,7 @@ else
 fi
 
 ######################################################################
-### packages to be rebuild
+### packages to rebuild
 
 verbose_print "  packages to rebuild..."
 
