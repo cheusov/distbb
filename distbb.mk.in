@@ -93,4 +93,6 @@ dbb_vars:
 .PHONY: dbb_depends
 dbb_depends:
 	${SU_CMD} 'env PACKAGES="${PACKAGES}" PKG_ADD="${PKG_ADD}" \
+	    aux_full_deps_fn=${aux_full_deps_fn} \
+	    aux_pkg_src_summary_fn=${aux_pkg_src_summary_fn} \
 	    @@libexecdir@@/make-depends "${PKGPATHe}"'
