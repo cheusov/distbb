@@ -1,1 +1,1 @@
-VERSION=	0.34rc2
+VERSION=	0.34rc3
