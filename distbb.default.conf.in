@@ -60,6 +60,11 @@ assign TRANSPORT '/usr/bin/ssh -x'
 # directory for binary packages
 assign PACKAGES "$PKGSRCDIR/packages"
 
+# directory shared between master and slave hosts where common files
+# are stored. This directory have to be writable by user running
+# distbb command and readable from slave hosts.
+assign MSCOMMONDIR "$PACKAGES/.distbb"
+
 # pkg_summary(5)
 assign PKG_SUMMARY "$PACKAGES/All/pkg_summary.txt"
 assign PKG_UPDATE_SUMMARY_CMD '@@bindir@@/pkg_update_summary'

@@ -39,6 +39,15 @@ DISTBB_CONF=${DISTBB_CONF:-@@sysconfdir@@/distbb.conf}
 . "$DISTBB_CONF"
 . @@libexecdir@@/common
 
+if echo > "$MSCOMMONDIR/check"; then
+    rm "$MSCOMMONDIR/check"
+else
+    cat <<EOF
+$MSCOMMONDIR directory is not writable or doesn't exist.
+EOF
+    exit 1
+fi
+
 test -n "$BUILD_ID" -a -n "$REPORTS_DIR" # who knows...
 rm -rf $REPORT1_DIR
 mkdir -p -m 700 $tmpdir

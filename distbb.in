@@ -221,6 +221,8 @@ test_var UPLOAD_PKGS_PROG
 test_var UPLOAD_LOGS_PROG
 test_var LIST_ALL_PKGS_CMD
 test_var DISTBB_LOCAL_MK
+test_var MSCOMMONDIR
+
 if test "$MAIL_PROG" != ':'; then
     test_var USER_MAIL
 fi
