@@ -11,10 +11,25 @@ set -e
 
 export PATH=@@bindir@@:$PATH
 
-test -n "$PKG_ADD"
-test -n "$PACKAGES"
-test -n "$aux_full_deps_fn"
-test -n "$aux_pkg_src_summary_fn"
+if test -z "$PKG_ADD"; then
+	echo 'PKG_ADD must be set' 1>&2
+	exit 1
+fi
+
+if test -z "$PACKAGES"; then
+	echo 'PACKAGES must be set' 1>&2
+	exit 1
+fi
+
+if test -z "$aux_full_deps_fn"; then
+	echo '$aux_full_deps_fn must be set' 1>&2
+	exit 1
+fi
+
+if test -z "$aux_pkg_src_summary_fn"; then
+	echo '$aux_pkg_src_summary_fn must be set' 1>&2
+	exit 1
+fi
 
 test $# -eq 1
 
