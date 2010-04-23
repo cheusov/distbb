@@ -13,13 +13,15 @@ export PATH=@@bindir@@:$PATH
 
 test -n "$PKG_ADD"
 test -n "$PACKAGES"
+test -n "$aux_full_deps_fn"
+test -n "$aux_pkg_src_summary_fn"
 
 test $# -eq 1
 
 get_deps (){
     @@libexecdir@@/get_direct_pkgname_deps "$1" \
-	$PACKAGES/full_deps.txt \
-	$PACKAGES/pkg_src_summary.txt
+	"$aux_full_deps_fn" \
+	"$aux_pkg_src_summary_fn"
 }
 
 export PKG_PATH="${PACKAGES}/All"

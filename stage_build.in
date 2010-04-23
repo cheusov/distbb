@@ -239,9 +239,11 @@ fi
 
 verbose_print "Building\n"
 
+env_for_slave="DISTBB_CONF=$DISTBB_CONF aux_pkg_src_summary_fn=$aux_pkg_src_summary_fn aux_full_deps_fn=$aux_full_deps_fn"
+
 eval runpipe0 \
     paexec -s $PAEXEC_EXTRA_OPTS -EI -lr $TRANSPORT $SLAVES \
-       -c "'env DISTBB_CONF=$DISTBB_CONF @@libexecdir@@/wrapper $DISTBB_SLAVE'" \
+       -c "'env $env_for_slave @@libexecdir@@/wrapper $DISTBB_SLAVE'" \
        < "$queue_fn" '|' \
     postfilter
 
