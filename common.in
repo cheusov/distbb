@@ -74,8 +74,8 @@ queue_fn=$tmpdir/queue.tmp
 rebuild_fn=$tmpdir/rebuild.tmp
 full_deps_fn=$tmpdir/full_deps.tmp
 
-aux_pkg_src_summary_fn=$PACKAGES/pkg_src_summary.txt
-aux_full_deps_fn=$PACKAGES/full_deps.txt
+aux_pkg_src_summary_fn=$MSCOMMONDIR/pkg_src_summary.txt
+aux_full_deps_fn=$MSCOMMONDIR/full_deps.txt
 
 # raw packages or packages requested by user
 packages_fn=$tmpdir/packages.tmp
