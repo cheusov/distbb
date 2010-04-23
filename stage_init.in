@@ -262,7 +262,7 @@ if test "$packages"; then
 
     verbose_print "done\n"
 else
-    cp "$packages_fn" "$packages_with_deps_fn"
+    cp "$full_deps_fn" "$packages_with_deps_fn"
 fi
 
 ######################################################################
