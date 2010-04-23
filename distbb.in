@@ -26,7 +26,7 @@
 set -e
 
 usage (){
-    cat <<EOF
+    cat <<'EOF'
 distbb - DISTributed Bulk Builds for pkgsrc
 
 usage: distbb -h
