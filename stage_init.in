@@ -206,14 +206,14 @@ fi
 ### extracting DEPENDS and BUILD_DEPENDS
 
 # store DEPENDS and BUILD_DEPENDS dependencies in
-#  "$full_deps_fn" file
+#  "$all_deps_fn" file
 # input: "$PKG_SRC_SUMMARY file and $EXTRA_DEPS packages.
 # output format: <DEPENDANCY_PKGPATH> <PKGPATH>
 
 verbose_print "  build graph from pkg_src_summary file..."
 
 if ! pkg_summary2build_graph "$pkg_src_summary_fn" \
-    1> "$full_deps_fn" \
+    1> "$all_deps_fn" \
     2> "$build_deps_graph_log_fn"
 then
     cat "$build_deps_graph_log_fn" 1>&2
@@ -243,9 +243,9 @@ $1 ~ /^PKGPATH=/ {
     if (!($1 in deps))
 	print _deps [cnt], $1
 }
-' $pkg_src_summary_fn >> "$full_deps_fn"
+' $pkg_src_summary_fn >> "$all_deps_fn"
 
-sort_uniq_inplace "$full_deps_fn"
+sort_uniq_inplace "$all_deps_fn"
 
 verbose_print "done\n"
 
@@ -257,12 +257,12 @@ if test "$packages"; then
     verbose_print "  initial packages with their dependencies..."
 
     runpipe0 \
-	pkg_subgraph_deps -r -f "$packages_fn" "$full_deps_fn" '|' \
-	sort_uniq > "$packages_with_deps_fn"
+	pkg_subgraph_deps -r -f "$packages_fn" "$all_deps_fn" '|' \
+	sort_uniq > "$reqd_deps_fn"
 
     verbose_print "done\n"
 else
-    cp "$full_deps_fn" "$packages_with_deps_fn"
+    cp "$all_deps_fn" "$reqd_deps_fn"
 fi
 
 ######################################################################
@@ -273,7 +273,7 @@ verbose_print "  packages to rebuild..."
 changed_pkgs_fn=$tmpdir/changed.tmp
 awk '$1 ~ /^[^=-]$/ {print $2}' "$summary_cmp_fn" > "$changed_pkgs_fn"
 
-pkg_subgraph_deps -f "$changed_pkgs_fn" "$packages_with_deps_fn" \
+pkg_subgraph_deps -f "$changed_pkgs_fn" "$reqd_deps_fn" \
     > "$rebuild_fn"
 
 verbose_print "done\n"
@@ -284,7 +284,7 @@ verbose_print "done\n"
 verbose_print "  packages built previously (no need to rebuild)..."
 
 runpipe0 \
-    pkg_subgraph_deps -v -f "$changed_pkgs_fn" "$packages_with_deps_fn" '|' \
+    pkg_subgraph_deps -v -f "$changed_pkgs_fn" "$reqd_deps_fn" '|' \
     awk 'NF == 2 {$0 = $1 "\n" $2} {print}' '|' \
     sort_uniq > "$packages_built_prev_fn.tmp"
 
@@ -295,8 +295,8 @@ verbose_print "done\n"
 
 verbose_print "  copying auxiliary files..."
 
-cp "$pkg_src_summary_fn"     "$aux_pkg_src_summary_fn"
-cp "$packages_with_deps_fn"  "$aux_full_deps_fn"
+cp "$pkg_src_summary_fn" "$aux_pkg_src_summary_fn"
+cp "$reqd_deps_fn"       "$aux_reqd_deps_fn"
 
 verbose_print "done\n"
 

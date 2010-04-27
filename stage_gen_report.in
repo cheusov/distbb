@@ -446,7 +446,12 @@ EOF
 
 ######################################################################
 
-packages_inspected_cnt=$(count_lines "$packages_with_deps_fn")
+list_inspected_pkgs (){
+    awk 'NF==2 {$0 = $1 "\n" $2} {print}' "$reqd_deps_fn" |
+    sort -u
+}
+
+packages_inspected_cnt=$(list_inspected_pkgs | count_lines)
 
 packages_failed_notavail_cnt=$(count_lines "$packages_failed_notavail_fn.tmp")
 packages_failed_scan_cnt=$(count_lines "$packages_failed_scan_fn")

@@ -21,8 +21,8 @@ if test -z "$PACKAGES"; then
 	exit 1
 fi
 
-if test -z "$aux_full_deps_fn"; then
-	echo '$aux_full_deps_fn must be set' 1>&2
+if test -z "$aux_reqd_deps_fn"; then
+	echo '$aux_reqd_deps_fn must be set' 1>&2
 	exit 1
 fi
 
@@ -35,7 +35,7 @@ test $# -eq 1
 
 get_deps (){
     @@libexecdir@@/get_direct_pkgname_deps "$1" \
-	"$aux_full_deps_fn" \
+	"$aux_reqd_deps_fn" \
 	"$aux_pkg_src_summary_fn"
 }
 
