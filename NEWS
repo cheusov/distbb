@@ -1,3 +1,23 @@
+Version 0.34.0, by Aleksey Cheusov, Sat,  1 May 2010 21:03:58 +0300
+
+  ${MSCOMMONDIR} directory visible on master and slave hosts is needed
+  for running bulk builds. It defaults to ${PACKAGES}/.distbb.
+
+  FIX: some packages having alternatuive dependencies unexpectedly
+  failed at "depends" phase. Now new target "dbb_depends" is used for
+  installing dependencies. Make sure your locally modified TARGETS
+  contains "dbb_depends", not "depends".
+
+  New implementation for stage_init which is much smaller, easier and
+  cleaner. Some clean-ups and improvements in stage_build.
+
+  Latest pkg_summary-utils, pipestatus and runawk are required.
+
+  fix in stage_init.in: we should not rewrite build_src_summary_log_fn
+  file while searching for versions going backward.
+
+  fix in distbb: usage message should not interpret $ signs.
+
 Version 0.33.0, by Aleksey Cheusov, Sat, 24 Oct 2009 13:34:25 +0300
 
   add: new build stage "upload" in BUILD_STAGES instead of two
