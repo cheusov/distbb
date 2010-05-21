@@ -95,4 +95,5 @@ dbb_depends:
 	${SU_CMD} 'env PACKAGES="${PACKAGES}" PKG_ADD="${PKG_ADD}" \
 	    aux_reqd_deps_fn=${aux_reqd_deps_fn} \
 	    aux_pkg_src_summary_fn=${aux_pkg_src_summary_fn} \
-	    @@libexecdir@@/make-depends "${PKGPATHe}"'
+	    @@libexecdir@@/make-depends "${PKGPATHe}"' && \
+	${MAKE} depends DEPENDS_TARGET=do-bin-install ${MAKEFLAGS}
