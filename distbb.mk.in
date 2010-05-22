@@ -1,4 +1,5 @@
 ############################################################
+############################################################
 # dbb_available target:
 # failes if NOT_FOR_PLATFORM, ONLY_FOR_PLATFORM etc. fail
 .PHONY: dbb_canbebuilt
@@ -12,6 +13,7 @@ dbb_canbebuilt:
 	false
 .endif
 
+############################################################
 ############################################################
 # dbb_excluded target:
 # fails if the person that runs bulk build (you) manually excluded
@@ -95,5 +97,26 @@ dbb_depends:
 	${SU_CMD} 'env PACKAGES="${PACKAGES}" PKG_ADD="${PKG_ADD}" \
 	    aux_reqd_deps_fn=${aux_reqd_deps_fn} \
 	    aux_pkg_src_summary_fn=${aux_pkg_src_summary_fn} \
-	    @@libexecdir@@/make-depends "${PKGPATHe}"' && \
-	${MAKE} depends DEPENDS_TARGET=do-bin-install ${MAKEFLAGS}
+	    @@libexecdir@@/make-depends "${PKGPATHe}"'
+
+############################################################
+############################################################
+# dbb_package target:
+.PHONY: dbb_package
+dbb_package:
+.if defined(UNPRIV_USER) && ${PKG_DESTDIR_SUPPORT} == "user-destdir" \
+		&& ${USE_DESTDIR} == "yes"
+	${SU_UNPRIV_CMD} ${MAKE} ${MAKEFLAGS} package
+.else
+	${MAKE} ${MAKEFLAGS} package
+.endif
+
+############################################################
+############################################################
+# dbb_clean target:
+.PHONY: clean
+dbb_clean: clean
+	mkdir -p ${WRKDIR}
+.if defined(UNPRIV_USER)
+	chown -R '${UNPRIV_USER}' '${WRKDIR}'
+.endif

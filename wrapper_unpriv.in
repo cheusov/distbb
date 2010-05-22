@@ -1,0 +1,13 @@
+#!/bin/sh
+
+shquote (){
+    __cmd=`printf '%s\n' "$1" | sed "s|'|'\\\\\''|g"`
+    printf "%s\n" "'$__cmd'"
+}
+
+for i in "$@"; do
+    cmd="$cmd "`shquote "$1"`
+    shift
+done
+
+su -c "$cmd" "$UNPRIV_USER"

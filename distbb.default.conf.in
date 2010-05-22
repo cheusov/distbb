@@ -103,7 +103,7 @@ assign PSS_FIELDS 'PKGNAME PKGPATH DEPENDS BUILD_DEPENDS MAINTAINER DESCRIPTION 
 # (-m option is for building multi-variant packages, see pkg_src_summary(1),
 # NOTE: -m currently doesn't work when entire pkgsrc tree is built,
 # because lots of multi-variant packages have constant PKGBASE )
-assign PKG_UPDATE_SRC_SUMMARY_CMD "@@bindir@@/pkg_src_summary -A > \"$PKG_SRC_SUMMARY\""
+assign PKG_UPDATE_SRC_SUMMARY_CMD "@@bindir@@/pkg_src_summary -b -A > \"$PKG_SRC_SUMMARY\""
 
 # program for comparing pkg_summary(5) for available binaries and
 # pkg_src_summary collected from pkgsrc source tree
@@ -156,6 +156,22 @@ assign EXTRA_DEPS 'pkgtools/digest net/tnftp sysutils/checkperms'
 # If you want to keep working directories, set this variable to dbb_none
 assign CLEAN_TARGET 'clean'
 #assign CLEAN_TARGET 'dbb_none'
+
+# Packages can be built in unprivileged mode with a help of DESTDIR
+# support.  Instead of specifying SU_CMD and givin an ordinary user
+# privileges to become root you can login as root on slave hosts and
+# then become ordinary user without sudo, fakeroot etc.
+# For this, set UNPRIV_USER variable.
+if test -n "$UNPRIV_USER"; then
+    export UNPRIV_USER
+    assign SU_UNPRIV_CMD '@@libexecdir@@/wrapper_unpriv'
+    export SU_UNPRIV_CMD
+    for t in dbb_canbebuilt dbb_excluded dbb_vars fetch checksum \
+	extract patch configure build
+    do
+	assign SU_UNPRIV_CMD_$t "$SU_UNPRIV_CMD"
+    done
+fi
 
 # the following targets will be run in order.
 # The target "dbb_init" is special. It makes the following:

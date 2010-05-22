@@ -154,16 +154,19 @@ do_build_package (){
 	    dbb_init)
 		# remove /usr/pkg and unpack bootstrap
 		eval $RMDIRS_CMD
-		eval $EXTRACT_BOOTSTRAP_CMD;;
+		eval $EXTRACT_BOOTSTRAP_CMD
+		wrkdir=`$BMAKE -f Makefile show-var VARNAME=WRKDIR`
+		mkdir -p "$wrkdir";;
 	    *)
 		# < /dev/null - for building packages that require
 		# an interaction with user
 		set +e # workaround for buggy Korn Shell
 		       # ('set -e' + if + eval + false)
-		if ! eval env PKGPATHe="$1" $BMAKE -f Makefile \
-		            -f "$DISTBB_LOCAL_MK" \
-		            -f @@datadir@@/distbb.mk \
-		            $bmake_opts $t $stdin_from_dev_null
+		if ! eval "\$SU_UNPRIV_CMD_$t" \
+		    env PKGPATHe="$1" $BMAKE -f Makefile \
+		    -f "$DISTBB_LOCAL_MK" \
+		    -f @@datadir@@/distbb.mk DEPENDS_TARGET=do-bin-install \
+		    $bmake_opts $t $stdin_from_dev_null
 		then
 		    set -e
 		    return 1
