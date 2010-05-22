@@ -155,11 +155,11 @@ do_build_package (){
 		# remove /usr/pkg and unpack bootstrap
 		eval $RMDIRS_CMD
 		eval $EXTRACT_BOOTSTRAP_CMD
-		if test -n "$UNPRIV_USER"; then
-		    wrkdir=`$BMAKE -f Makefile show-var VARNAME=WRKDIR`
-		    mkdir -p "$wrkdir"
-		    chown -R "$UNPRIV_USER" "$wrkdir"
-		fi;;
+#		if test -n "$UNPRIV_USER"; then
+#		    wrkdir=`$BMAKE -f Makefile show-var VARNAME=WRKDIR`
+#		    mkdir -p "$wrkdir"
+#		    chown -R "$UNPRIV_USER" "$wrkdir"
+#		fi;;
 	    *)
 		# < /dev/null - for building packages that require
 		# an interaction with user
