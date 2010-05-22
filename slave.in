@@ -160,6 +160,7 @@ do_build_package (){
 #		    mkdir -p "$wrkdir"
 #		    chown -R "$UNPRIV_USER" "$wrkdir"
 #		fi;;
+		;;
 	    *)
 		# < /dev/null - for building packages that require
 		# an interaction with user
