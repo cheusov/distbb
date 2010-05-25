@@ -182,7 +182,7 @@ fi
 #    otherwise counters in "Failures per maintainer" will
 #    be not fully correct
 # dbb_vars lists bmake's variables for easier debugging
-assign TARGETS "dbb_init dbb_clean dbb_canbebuilt dbb_excluded dbb_vars dbb_depends fetch checksum extract patch configure build install package deinstall"
+assign TARGETS "dbb_init dbb_clean dbb_canbebuilt dbb_excluded dbb_vars dbb_depends fetch checksum extract patch configure build install package"
 #  the following is for USE_DESTDIR=yes
 #assign TARGETS "dbb_init dbb_clean dbb_canbebuilt dbb_excluded dbb_vars dbb_depends fetch checksum extract patch configure build package"
 
@@ -256,9 +256,9 @@ assign DISTBB_SLAVE @@libexecdir@@/slave
 # Person running bulk build (in html format, of course in utf-8 charset).
 # If empty string, it is not included to the report.
 #assign RESPONSIBLE ''
-#assign RESPONSIBLE 'Aleksey Cheusov'
-#assign RESPONSIBLE 'Aleksey Cheusov &lt;vle@gmx.net&gt;'
-#assign RESPONSIBLE '<a href="mailto:vle@gmx.net">Aleksey Cheusov</a>'
+#assign RESPONSIBLE 'Ivan Ivanov'
+#assign RESPONSIBLE 'Ivan Ivanov &lt;ivan@example.com&gt;'
+#assign RESPONSIBLE '<a href="mailto:ivan@example.com">Ivan Ivanov</a>'
 
 # a number of "top offenders"
 assign OFFENDERS_CNT 20
