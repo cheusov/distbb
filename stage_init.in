@@ -39,7 +39,7 @@ DISTBB_CONF=${DISTBB_CONF:-@@sysconfdir@@/distbb.conf}
 . "$DISTBB_CONF"
 . @@libexecdir@@/common
 
-if echo > "$MSCOMMONDIR/check"; then
+if touch "$MSCOMMONDIR/check"; then
     rm "$MSCOMMONDIR/check"
 else
     cat <<EOF
