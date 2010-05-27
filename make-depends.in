@@ -41,6 +41,14 @@ get_deps (){
 
 export PKG_PATH="${PACKAGES}/All"
 
-for p in `get_deps $1`; do
-    $PKG_ADD -u "$PACKAGES/All/$p"
+pkgs_deps=`get_deps $1`
+echo 'Packages to install:'
+for p in $pkgs_deps; do
+    echo " $p"
+done
+echo ''
+
+echo 'Installing'
+for p in $pkgs_deps; do
+    $PKG_ADD -u "$PACKAGES/All/$p$PKG_SUFX"
 done

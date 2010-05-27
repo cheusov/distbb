@@ -97,6 +97,7 @@ dbb_depends:
 	${SU_CMD} 'env PACKAGES="${PACKAGES}" PKG_ADD="${PKG_ADD}" \
 	    aux_reqd_deps_fn=${aux_reqd_deps_fn} \
 	    aux_pkg_src_summary_fn=${aux_pkg_src_summary_fn} \
+	    PKG_SUFX=${PKG_SUFX} \
 	    @@libexecdir@@/make-depends "${PKGPATHe}"'
 
 ############################################################
