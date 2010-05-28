@@ -256,9 +256,9 @@ assign DISTBB_SLAVE @@libexecdir@@/slave
 # Person running bulk build (in html format, of course in utf-8 charset).
 # If empty string, it is not included to the report.
 #assign RESPONSIBLE ''
-#assign RESPONSIBLE 'Ivan Ivanov'
-#assign RESPONSIBLE 'Ivan Ivanov &lt;ivan@example.com&gt;'
-#assign RESPONSIBLE '<a href="mailto:ivan@example.com">Ivan Ivanov</a>'
+#assign RESPONSIBLE 'Vasya Pupkin'
+#assign RESPONSIBLE 'Vasya Pupkin &lt;pupkin@example.com&gt;'
+#assign RESPONSIBLE '<a href="mailto:pupkin@example.com">Vasya Pupkin</a>'
 
 # a number of "top offenders"
 assign OFFENDERS_CNT 20
