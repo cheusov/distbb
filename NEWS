@@ -1,3 +1,32 @@
+Version 0.35.0, by Aleksey Cheusov, Fri, 28 May 2010 17:51:53 +0300
+
+  Support for unprivileged bulk builds without su/sudo etc.
+    Features:
+    - The following targets are always run in an unprivileged mode:
+      dbb_canbebuilt, dbb_excluded, dbb_vars, fetch, checksum, extract,
+      patch, configure and build.
+    - "package" targets are run in unprivileged mode
+      depending on variables PKG_DESTDIR_SUPPORT, USE_DESTDIR
+      and UNPRIV_USER (set in distbb.conf).
+    Requirements:
+    - slave hosts should be accessed using user "root".
+    - special variable UNPRIV_USER should be set to unprivileged user
+      in distbb.conf.
+    - target "clean" should be replaced with "dbb_clean" in TARGETS
+      (the default).
+    - target "package" should be changed to "dbb_package" in TARGETS
+      (the default).
+
+  stage_init: Minor fix for some broken shells
+    (http://gnats.netbsd.org/39466). Solution: touch command
+    is used instead 'echo >'
+
+  slave: do-bin-install target is not used anymore,
+    there is no need for it.
+
+  BOOTSTRAP_DEPENDS are handled automatically. There is not need to
+  list them in EXTRA_DEPS. Latest pkg_summary-utils>=0.39 is needed.
+
 Version 0.34.0, by Aleksey Cheusov, Sat,  1 May 2010 21:03:58 +0300
 
   ${MSCOMMONDIR} directory visible on master and slave hosts is needed
