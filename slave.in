@@ -151,7 +151,7 @@ do_build_package (){
     for t in $TARGETS; do
 	header $t
 	case "$t" in
-	    dbb_init)
+	    dbb_init|Init)
 		# remove /usr/pkg and unpack bootstrap
 		eval $RMDIRS_CMD
 		eval $EXTRACT_BOOTSTRAP_CMD

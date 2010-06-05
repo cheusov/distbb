@@ -2,7 +2,7 @@
 ############################################################
 # dbb_available target:
 # failes if NOT_FOR_PLATFORM, ONLY_FOR_PLATFORM etc. fail
-.PHONY: dbb_canbebuilt
+.PHONY: dbb_canbebuilt dbb_available Available
 
 .if "${_CBBH}" == "yes"
 dbb_canbebuilt:
@@ -13,6 +13,8 @@ dbb_canbebuilt:
 	false
 .endif
 
+dbb_available Available: dbb_canbebuilt
+
 ############################################################
 ############################################################
 # dbb_excluded target:
@@ -22,7 +24,7 @@ dbb_canbebuilt:
 # or you may want to dbb_exclude something just because it is too heavy
 # for your machine
 
-.PHONY: dbb_excluded
+.PHONY: dbb_excluded Excluded
 
 .if empty(DBB_EXCL_REASON)
 dbb_excluded:
@@ -33,6 +35,8 @@ dbb_excluded:
 	${DBB_EXCL_REASON:@m@${ECHO} ${m};@} \
 	false
 .endif
+
+Excluded: dbb_excluded
 
 ############################################################
 ############################################################
@@ -71,7 +75,7 @@ DBB_QVARS.USE_LANGUAGES=		1
 DBB_QVARS.CONFIGURE_SCRIPT=		1
 .endif
 
-.PHONY: dbb_vars
+.PHONY: dbb_vars Vars
 
 dbb_vars:
 .for v in ${DBB_VARS}
@@ -88,11 +92,13 @@ dbb_vars:
 .endif
 .endfor
 
+Vars: dbb_vars
+
 ############################################################
 ############################################################
 # dbb_depends target:
 # install all required dependencies, removing {al,ter}:../native/dependencies
-.PHONY: dbb_depends
+.PHONY: dbb_depends Depends
 dbb_depends:
 	${SU_CMD} 'env PACKAGES="${PACKAGES}" PKG_ADD="${PKG_ADD}" \
 	    aux_reqd_deps_fn=${aux_reqd_deps_fn} \
@@ -101,13 +107,15 @@ dbb_depends:
 	    @@libexecdir@@/make-depends "${PKGPATHe}"'
 	${MAKE} ${MAKEFLAGS} depends DEPENDS_TARGET=do-bin-install
 
+Depends: dbb_depends
+
 ############################################################
 ############################################################
 # dbb_package target:
 PACKAGES.tmp=${WRKDIR}/packages
 PKGFILE.tmp=${PACKAGES.tmp}/All/package${PKG_SUFX}
 
-.PHONY: dbb_package
+.PHONY: dbb_package Package
 dbb_package:
 .if defined(UNPRIV_USER) && ${PKG_DESTDIR_SUPPORT} == "user-destdir" \
 		&& ${USE_DESTDIR} == "yes"
@@ -123,12 +131,16 @@ dbb_package:
 	${SU_UNPRIV_CMD} ${MAKE} ${MAKEFLAGS} package-links
 .endif
 
+Package: dbb_package
+
 ############################################################
 ############################################################
 # dbb_clean target:
-.PHONY: clean
+.PHONY: clean Clean
 dbb_clean: clean
 	mkdir -p ${WRKDIR}
 .if defined(UNPRIV_USER)
 	chown -R '${UNPRIV_USER}' '${WRKDIR}'
 .endif
+
+Clean: dbb_clean

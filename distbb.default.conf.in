@@ -146,10 +146,10 @@ assign REPORTS_DIR $HOME/bulk-logs
 assign PKG_SUFX .tgz
 #assign PKG_SUFX .tbz
 
-# install the following packages first.
-# These packages are listed as a result of
-# 'bmake show-var VARNAME=BOOTSTRAP_DEPENDS'
-assign EXTRA_DEPS 'pkgtools/digest net/tnftp sysutils/checkperms'
+# install the following packages first in the specified order.
+# NOTE: If you need to build package X first, you MUST specify *ALL*
+# its dependencies.
+assign EXTRA_DEPS ''
 #assign EXTRA_DEPS 'pkgtools/digest sysutils/checkperms pkgtools/pkg_install devel/popt devel/distcc'
 
 # Target for clean-ups after package building.
@@ -167,6 +167,7 @@ if test -n "$UNPRIV_USER"; then
     assign SU_UNPRIV_CMD '@@libexecdir@@/wrapper_unpriv'
     export SU_UNPRIV_CMD
     for t in dbb_canbebuilt dbb_excluded dbb_vars fetch checksum \
+	Available Excluded Vars \
 	extract patch configure build
     do
 	assign SU_UNPRIV_CMD_$t "$SU_UNPRIV_CMD"
@@ -174,17 +175,17 @@ if test -n "$UNPRIV_USER"; then
 fi
 
 # the following targets will be run in order.
-# The target "dbb_init" is special. It makes the following:
+# The target "Init" (dbb_init) is special. It makes the following:
 #    remove /usr/pkg directory (see RMDIRS_CMD)
 #    unpack bootstrap (see EXTRACT_BOOTSTRAP_CMD)
-# dbb_canbebuilt target checks PKG_FAIL_REASON...
+# Available (dbb_canbebuilt) target checks PKG_FAIL_REASON...
 #    It is recommended to include it to TARGETS,
 #    otherwise counters in "Failures per maintainer" will
 #    be not fully correct
-# dbb_vars lists bmake's variables for easier debugging
-assign TARGETS "dbb_init dbb_clean dbb_canbebuilt dbb_excluded dbb_vars dbb_depends fetch checksum extract patch configure build install package"
+# Vars (dbb_vars) lists bmake's variables for easier debugging
+assign TARGETS "Init Clean Available Excluded Vars Depends fetch checksum extract patch configure build install package"
 #  the following is for USE_DESTDIR=yes
-#assign TARGETS "dbb_init dbb_clean dbb_canbebuilt dbb_excluded dbb_vars dbb_depends fetch checksum extract patch configure build package"
+#assign TARGETS "Init Clean Available Excluded Vars Depends fetch checksum extract patch configure build package"
 
 # extra options passed to bmake
 # BATCH is mandatory for bulk builds!
@@ -216,27 +217,27 @@ assign DISTBB_SLAVE @@libexecdir@@/slave
 
 #assign SPECIAL_PACKAGES "\
 #PKGPATH=pkgtools/digest
-#TARGETS=dbb_init clean dbb_vars dbb_depends fetch checksum extract patch configure build package
+#TARGETS=Init Clean Vars Depends fetch checksum extract patch configure build package
 #EXTRA_OPTS=BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=yes CHECK_SHLIBS=no
 #
 #PKGPATH=pkgtools/bootstrap-mk-files
-#TARGETS=dbb_init clean dbb_vars dbb_depends fetch checksum extract patch configure build package
+#TARGETS=Init Clean Vars Depends fetch checksum extract patch configure build package
 #EXTRA_OPTS=BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=yes CHECK_SHLIBS=no
 #
 #PKGPATH=net/tnftp
-#TARGETS=dbb_init clean dbb_vars dbb_depends fetch checksum extract patch configure build package
+#TARGETS=Init Clean Vars Depends fetch checksum extract patch configure build package
 #EXTRA_OPTS=BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=yes CHECK_SHLIBS=no
 #
 #PKGPATH=sysutils/checkperms
-#TARGETS=dbb_init clean dbb_vars dbb_depends fetch checksum extract patch configure build package
+#TARGETS=Init Clean Vars Depends fetch checksum extract patch configure build package
 #EXTRA_OPTS=BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=yes CHECK_SHLIBS=no
 #
 #PKGPATH=devel/bmake
-#TARGETS=dbb_init clean dbb_vars dbb_depends fetch checksum extract patch configure build package
+#TARGETS=Init Clean Vars Depends fetch checksum extract patch configure build package
 #EXTRA_OPTS=BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=yes CHECK_SHLIBS=no
 #
 #PKGPATH=pkgtools/pkg_install
-#TARGETS=dbb_init clean dbb_vars dbb_depends fetch checksum extract patch configure build package
+#TARGETS=Init Clean Vars Depends fetch checksum extract patch configure build package
 #EXTRA_OPTS=BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=yes CHECK_SHLIBS=no
 #
 #PKGPATH=audio/festival # TARGETS is not changed!

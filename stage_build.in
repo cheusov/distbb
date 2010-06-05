@@ -186,7 +186,7 @@ status [$2] == "success" {
 
 status [$2] == "failure" {
    # failed
-   if (stage [$2] ~ /^(dbb_canbebuilt|dbb_available|dbb_excluded)$/){
+   if (stage [$2] ~ /^(dbb_canbebuilt|dbb_available|dbb_excluded|Available|Excluded)$/){
       print "    Not Available:", pkgpath, "on", run_on [$2]
       print pkgpath >> packages_failed_notavail_fn
       xclose(packages_failed_notavail_fn)
