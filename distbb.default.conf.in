@@ -189,7 +189,7 @@ assign TARGETS "Init Clean Available Excluded Vars Depends fetch checksum extrac
 
 # extra options passed to bmake
 # BATCH is mandatory for bulk builds!
-assign EXTRA_OPTS 'DEPENDS_TARGET=this-is-a-bug BATCH=yes PKG_VERBOSE=1 CREATE_WRKDIR_SYMLINK=no'
+assign EXTRA_OPTS 'DEPENDS_TARGET=do-bin-install BATCH=yes PKG_VERBOSE=1'
 # the following is for USE_DESTDIR=yes bulk builds
 #assign EXTRA_OPTS 'USE_DESTDIR=yes DEPENDS_TARGET=this-is-a-bug BATCH=yes PKG_VERBOSE=1 CHECK_SHLIBS=no'
 
