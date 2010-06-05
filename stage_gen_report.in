@@ -228,13 +228,7 @@ print_distbb_diff_help_msg (){
 EOF
 }
 
-report_html (){
-    if test "$PACKAGES_URL"; then
-	url="<a href=\"$PACKAGES_URL\" title=\"binary packages\">binary packages</a>"
-    else
-	url='binary packages'
-    fi
-
+report_html_header (){
     cat <<EOF
 <h1>pkgsrc bulk build results (distbb-$version)</h1>
 
@@ -243,16 +237,23 @@ report_html (){
 <!--  <p><a href="$REPORT_URL" title="Full report">$REPORT_URL</a></p> -->
 
 EOF
+}
 
+report_html_responsible (){
     if test "$RESPONSIBLE"; then
 	echo "<p>$RESPONSIBLE</p> <!-- REMOVE ME -->"
     fi
+}
 
+report_html_notes (){
+    echo '<hr>'
     if test "$NOTES"; then
 	echo '<h3><a name="notes"></a>Notes</h3>'
 	cat "$NOTES"
     fi
+}
 
+report_html_summary (){
     cat <<EOF
 
 <h3><a name="summary"></a>Summary</h3>
@@ -286,6 +287,12 @@ EOF
 EOF
     fi
 
+    if test "$PACKAGES_URL"; then
+	url="<a href=\"$PACKAGES_URL\" title=\"binary packages\">binary packages</a>"
+    else
+	url='binary packages'
+    fi
+
     cat <<EOF
   <tr><td>$(left_align 40 "Packages in pkg_summary")</td><td align="right">$packages_in_summary</td></tr>
 </table>
@@ -309,7 +316,9 @@ EOF
 </ul>
 
 EOF
+}
 
+report_html_fails_per_maintainer (){
     # failures per maintainer
     cat <<EOF
 <hr>
@@ -335,7 +344,9 @@ EOF
     }'
 
     printf '</table>\n'
+}
 
+report_html_failed_pkgs (){
     # failed packages
     cat <<EOF
 <hr>
@@ -363,7 +374,9 @@ EOF
 	print_failed_pkg "$pkgpath"  "$breaks" "$failed_stage" "$maintainer" "$pkgname"
     done
     printf '%s\n' "</table>"
+}
 
+report_html_failed_deps (){
     # failed dependencies
     cat <<EOF
 <hr>
@@ -391,7 +404,9 @@ EOF
 	done
     done < "$packages_failed_deps_fn"
     printf '%s\n' "</table>"
+}
 
+report_html_prev_vs_curr (){
     # previous bulk build vs. this one
     if test -n "$DISTBB_DIFF"; then
 	if test -f $bb_history_fn; then
@@ -414,7 +429,9 @@ EOF
 	    distbb_diff $bbdir_prev $REPORT1_DIR | distbb_diff2html
 	fi
     fi
+}
 
+report_html_best_vs_curr (){
     # virtually "best" bulk build vs. this one
     if test -n "$DISTBB_DIFF"; then
 	bbid_best=.best_bb
@@ -439,9 +456,26 @@ EOF
 	    distbb_diff $bbdir_best $REPORT1_DIR | distbb_diff2html
 	fi
     fi
+}
 
+report_html_footer (){
     # the end
     printf '<hr>\n'
+}
+
+report_html (){
+    report_html_header
+
+    report_html_responsible
+    report_html_summary
+    report_html_notes
+    report_html_failed_pkgs
+    report_html_failed_deps
+    report_html_prev_vs_curr
+    report_html_best_vs_curr
+    report_html_fails_per_maintainer
+
+    report_html_footer
 }
 
 ######################################################################
