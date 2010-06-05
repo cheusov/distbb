@@ -253,6 +253,23 @@ report_html_notes (){
     fi
 }
 
+report_html_jumpto (){
+    cat <<EOF
+<div class="infobox">
+<p>Jump to:
+<ul>
+    <li><a href="#summary">Summary</a></li>
+    <li><a href="#failures per maintainer">Failures per maintainer</a></li>
+    <li><a href="#failed">Failed packages</a></li>
+    <li><a href="#failed depends">Failed due to deps</a></li>
+    <li><a href="#old vs new">Progress: prev. vs. curr.</a></li>
+    <li><a href="#best vs new">Progress: best vs. curr.</a></li>
+</ul>
+</div>
+
+EOF
+}
+
 report_html_summary (){
     cat <<EOF
 
@@ -293,6 +310,8 @@ EOF
 	url='binary packages'
     fi
 
+    report_html_jumpto
+
     cat <<EOF
   <tr><td>$(left_align 40 "Packages in pkg_summary")</td><td align="right">$packages_in_summary</td></tr>
 </table>
@@ -301,21 +320,9 @@ Results of failed packages are available below.<br>
 Progress messages are <a href="$(basename $progress_fn)" title="Progress messages">here</a>.<br> <!-- REMOVE ME -->
 pkg_src_summary is <a href="$(basename $pkg_src_summary_fn)" title="pkgsrc source packages summary">here</a>.<br> <!-- REMOVE ME -->
 pkg_summary vs. pkg_src_summary <a href="$(basename $summary_cmp_fn)" title="binary packages agains pkgsrc tree">comparison</a>.<br> <!-- REMOVE ME -->
-EOF
-
-    cat <<EOF
 </p>
-<p>Jump to:
-<ul>
-    <li><a href="#summary">Summary</a></li>
-    <li><a href="#failures per maintainer">Failures per maintainer</a></li>
-    <li><a href="#failed">Failed packages</a></li>
-    <li><a href="#failed depends">Failed due to dependencies</a></li>
-    <li><a href="#old vs new">Progress: previous bulk build vs. this one</a></li>
-    <li><a href="#best vs new">Progress: virtually best bulk build vs. this one</a></li>
-</ul>
-
 EOF
+
 }
 
 report_html_fails_per_maintainer (){

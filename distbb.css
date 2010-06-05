@@ -42,3 +42,12 @@ h3 {
 .breaks {
 	Color: red;
 }
+
+.infobox {
+        float: right;
+        margin-left: 2ex;
+        margin-top: 1ex;
+        margin-bottom: 1ex;
+        padding: 1ex 1ex;
+        border: 1px solid #aaa;
+}
