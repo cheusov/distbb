@@ -447,7 +447,8 @@ EOF
 ######################################################################
 
 list_inspected_pkgs (){
-    awk 'NF==2 {$0 = $1 "\n" $2} {print}' "$reqd_deps_fn" |
+    awk 'NF==2 {print $1; print $2; next}
+         NF==1 {print $1}' "$reqd_deps_fn" |
     sort -u
 }
 
