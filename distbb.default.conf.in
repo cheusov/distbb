@@ -191,7 +191,7 @@ assign TARGETS "Init Clean Available Excluded Vars Depends fetch checksum extrac
 # BATCH is mandatory for bulk builds!
 assign EXTRA_OPTS 'DEPENDS_TARGET=do-bin-install BATCH=yes PKG_VERBOSE=1'
 # the following is for USE_DESTDIR=yes bulk builds
-#assign EXTRA_OPTS 'USE_DESTDIR=yes DEPENDS_TARGET=this-is-a-bug BATCH=yes PKG_VERBOSE=1 CHECK_SHLIBS=no'
+#assign EXTRA_OPTS 'USE_DESTDIR=yes DEPENDS_TARGET=do-bin-install BATCH=yes PKG_VERBOSE=1 CHECK_SHLIBS=no'
 
 # do not change the following unless you know what you are doing
 assign DISTBB_SLAVE @@libexecdir@@/slave

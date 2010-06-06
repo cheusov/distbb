@@ -1,3 +1,28 @@
+Version 0.36.0, by Aleksey Cheusov, Sun,  6 Jun 2010 15:01:56 +0300
+
+  report:
+    - sections are reordered. The most important are placed at the top
+      of report.
+    - new better place for JumpTo section
+    - final report looks much better with capitalized targets than with targets
+      prepanded with dbb_. Target synonyms:
+	Init:     dbb_init
+	Clean:    dbb_clean
+	Vars:     dbb_vars
+	Available dbb_available: dbb_canbebuilt
+	Excluded: dbb_excluded
+	Depends:  dbb_depends
+	Package:  dbb_package
+
+  DEPENDS_TARGET=do-bin-install restored.
+
+  target "dbb_depends" (and "Depends"):
+    - -I is added to pkg_add for installing dependencioes.
+
+  fixed: sometimes "Inspected packages" count may show wrong number.
+
+  EXTRA_DEPS defaults to empty list.
+
 Version 0.35.0, by Aleksey Cheusov, Fri, 28 May 2010 17:51:53 +0300
 
   Support for unprivileged bulk builds without su/sudo etc.
