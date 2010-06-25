@@ -147,6 +147,7 @@ do_build_package (){
 
     # $TARGETS
     bmake_opts="$EXTRA_OPTS $multivar_opts"
+    export bmake_opts
 
     for t in $TARGETS; do
 	header $t

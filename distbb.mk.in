@@ -119,7 +119,7 @@ PKGFILE.tmp=${PACKAGES.tmp}/All/package${PKG_SUFX}
 dbb_package:
 .if defined(UNPRIV_USER) && ${PKG_DESTDIR_SUPPORT} == "user-destdir" \
 		&& ${USE_DESTDIR} == "yes"
-	${SU_UNPRIV_CMD} ${MAKE} ${MAKEFLAGS} package
+	${SU_UNPRIV_CMD} ${MAKE} ${bmake_opts} package
 .else
 	set -e; \
 	${SU_UNPRIV_CMD} ${RM} -f ${PKGFILE}; \
