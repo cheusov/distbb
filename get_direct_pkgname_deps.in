@@ -13,6 +13,8 @@ if test -z "$tmpdir"; then
     exit 1
 fi
 
+trap "rm -rf $tmpdir" 0 1 2 3 15
+
 awk -v pkgpath="$1" '$2 == pkgpath {print $1}' "$2" > $tmpdir/pkgpaths.txt
 pkg_grep_summary -S PKGPATHe $tmpdir/pkgpaths.txt < "$3" |
 sed -n 's/^PKGNAME=//p'
