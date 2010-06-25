@@ -1,3 +1,12 @@
+===================================================================
+Version 0.36.1, by Aleksey Cheusov, Fri, 25 Jun 2010 14:22:27 +0300
+
+  FIX: Do not use MAKEFLAGS for recursive make invocations. This fixes
+  UNPRIV_USER mode. Thanks to Klaus Heinz for the report.
+
+  FIX in pkg_src_summary: remove temporary directory
+
+===================================================================
 Version 0.36.0, by Aleksey Cheusov, Sun,  6 Jun 2010 15:01:56 +0300
 
   report:
@@ -23,6 +32,7 @@ Version 0.36.0, by Aleksey Cheusov, Sun,  6 Jun 2010 15:01:56 +0300
 
   EXTRA_DEPS defaults to empty list.
 
+===================================================================
 Version 0.35.0, by Aleksey Cheusov, Fri, 28 May 2010 17:51:53 +0300
 
   Support for unprivileged bulk builds without su/sudo etc.
@@ -52,6 +62,7 @@ Version 0.35.0, by Aleksey Cheusov, Fri, 28 May 2010 17:51:53 +0300
   BOOTSTRAP_DEPENDS are handled automatically. There is not need to
   list them in EXTRA_DEPS. Latest pkg_summary-utils>=0.39 is needed.
 
+===================================================================
 Version 0.34.0, by Aleksey Cheusov, Sat,  1 May 2010 21:03:58 +0300
 
   ${MSCOMMONDIR} directory visible on master and slave hosts is needed
@@ -72,6 +83,7 @@ Version 0.34.0, by Aleksey Cheusov, Sat,  1 May 2010 21:03:58 +0300
 
   fix in distbb: usage message should not interpret $ signs.
 
+===================================================================
 Version 0.33.0, by Aleksey Cheusov, Sat, 24 Oct 2009 13:34:25 +0300
 
   add: new build stage "upload" in BUILD_STAGES instead of two
@@ -81,6 +93,7 @@ Version 0.33.0, by Aleksey Cheusov, Sat, 24 Oct 2009 13:34:25 +0300
   Now user can override default the default distbb.css and distbb.ico.
   .pkg-total style is not used for "Inspected packages" line.
 
+===================================================================
 Version 0.32.0, by Aleksey Cheusov, Sun, 11 Oct 2009 10:53:00 +0300
 
   fix: workaround for buggy FreeBSD (at least 6.2-7.2) shell that
@@ -120,11 +133,13 @@ Version 0.32.0, by Aleksey Cheusov, Sun, 11 Oct 2009 10:53:00 +0300
   Warning messages about packages versions going backward are
   collected in $build_src_summary_log_fn
 
+===================================================================
 Version 0.31.0, by Aleksey Cheusov, Sun,  9 Aug 2009 21:00:34 +0300
 
   There is no need to add /usr/pkg_distbb/bin to PATH environment
   variable on all build hosts.
 
+===================================================================
 Version 0.30.0, by Aleksey Cheusov, Sat, 30 May 2009 18:33:40 +0300
 
   FIXED: {alter,native}:../depend/encies were handled incorrectly.
@@ -144,6 +159,7 @@ Version 0.30.0, by Aleksey Cheusov, Sat, 30 May 2009 18:33:40 +0300
 
   Minor fixes in Makefile.
 
+===================================================================
 Version 0.29.0, by Aleksey Cheusov, Sun, 15 Mar 2009 21:30:20 +0200
 
   DISTBB now depends on latest paexec.
@@ -161,16 +177,19 @@ Version 0.29.0, by Aleksey Cheusov, Sun, 15 Mar 2009 21:30:20 +0200
   hosts freely. If you prefer old distbb behaviour, set
   PAEXEC_EXTRA_OPTS to -z. See paexec(1).
 
+===================================================================
 Version 0.28.0, by Aleksey Cheusov, Wed,  7 Jan 2009 00:58:45 +0200
 
   distbb_diff takes into account "not available" packages
 
+===================================================================
 Version 0.27.0, by Aleksey Cheusov, Wed,  7 Jan 2009 00:58:45 +0200
 
   report.*, regress sections:
       - "Breaks" column is added
       - packages failed due to broken dependencies are removed
 
+===================================================================
 Version 0.26.0, by Aleksey Cheusov, Sat, 27 Dec 2008 01:14:15 +0200
 
   all .html pages of the report have favicon taken from here
@@ -180,6 +199,7 @@ Version 0.26.0, by Aleksey Cheusov, Sat, 27 Dec 2008 01:14:15 +0200
   added: option -s. If applied, an exit status is 0 if building *ALL*
   packages succeeded, otherwise exit status is 5.
 
+===================================================================
 Version 0.25.0, by Aleksey Cheusov, Wed, 24 Dec 2008 01:23:09 +0200
 
   Now bulk builds don't stop in case of connection failure to the
@@ -193,6 +213,7 @@ Version 0.25.0, by Aleksey Cheusov, Wed, 24 Dec 2008 01:23:09 +0200
 
   stage_gen_report: new link in "Jumps" section
 
+===================================================================
 Version 0.24.0, by Aleksey Cheusov
 
   distbb.conf is splitted into two parts: global defaults
@@ -252,11 +273,13 @@ Version 0.24.0, by Aleksey Cheusov
 
   dbb_vars target fix: POSIX sed does not except \n
 
+===================================================================
 Version 0.23.1, by Aleksey Cheusov, Thu,  6 Nov 2008 01:51:28 +0200
 
   fix: yet another PKGNAME->PKGPATHm_PKGNAME
   movement in stage_gen_report
 
+===================================================================
 Version 0.23.0, by Aleksey Cheusov, Sun,  2 Nov 2008 17:04:29 +0200
 
   While running bulk builds for PKGSRC+WIP packages, I've found that
@@ -272,11 +295,13 @@ Version 0.23.0, by Aleksey Cheusov, Sun,  2 Nov 2008 17:04:29 +0200
        textproc/dictem:EMACS_TYPE=xemacs214.
      In both cases PKGNAME remain the same. This case is not fixed yet.
 
+===================================================================
 Version 0.22.2, by Aleksey Cheusov, Fri, 31 Oct 2008 19:38:24 +0200
 
   FIXED: qt3-libs and qt4-libs fail at dbb_vars stage because of '<'
   symbol inside CONFIGURE_ARGS value. NOW it is fixed.
 
+===================================================================
 Version 0.22.1, by Aleksey Cheusov, Fri, 24 Oct 2008 11:25:43 +0300
 
   FIXED typo in stag_gen_report:
@@ -299,6 +324,7 @@ Version 0.22.1, by Aleksey Cheusov, Fri, 24 Oct 2008 11:25:43 +0300
 
   DISTBB feature list in README
 
+===================================================================
 Version 0.22.0, by Aleksey Cheusov, Sun, 19 Oct 2008 12:04:34 +0300
 
   New stage_post_build containing user's actions is added.
@@ -317,6 +343,7 @@ Version 0.22.0, by Aleksey Cheusov, Sun, 19 Oct 2008 12:04:34 +0300
 
   stage_gen_report: progress messages become more verbose 
 
+===================================================================
 Version 0.21.0, by Aleksey Cheusov, Mon, 13 Oct 2008 14:04:05 +0300
 
   DISTBB_CONF environment variable points to the distbb configuration file,
@@ -361,10 +388,12 @@ Version 0.21.0, by Aleksey Cheusov, Mon, 13 Oct 2008 14:04:05 +0300
      Link to package's summary (PKGNAME/summary.txt) is added to
      PKGNAME/stage_xxx.html
 
+===================================================================
 Version 0.20.1, by Aleksey Cheusov, Tue, 30 Sep 2008 00:58:46 +0300
 
   hot fix for distbb_diff (stage_gen_report might fail)
 
+===================================================================
 Version 0.20.0, by Aleksey Cheusov, Sun, 14 Sep 2008 11:11:33 +0300
 
   FIX: serious bug in "stage_build is rerunable" feature.
@@ -434,11 +463,13 @@ Version 0.20.0, by Aleksey Cheusov, Sun, 14 Sep 2008 11:11:33 +0300
      obsolete PAEXEC_BUFSIZE removed,
      -m option added to pkg_src_summary (PKG_UPDATE_SRC_SUMMARY)
 
+===================================================================
 Version 0.19.1, by Aleksey Cheusov, Sun, 14 Sep 2008 11:11:33 +0300
 
   minor addition in stage_gen_report: failed package in "Failed due to
   dependencies" section are now printed in their "short" form.
 
+===================================================================
 Version 0.19.0, by Aleksey Cheusov, Sat, 13 Sep 2008 12:00:06 +0300
 
   Multivariant packages, that is packages/modules for different
@@ -488,6 +519,7 @@ Version 0.19.0, by Aleksey Cheusov, Sat, 13 Sep 2008 12:00:06 +0300
   Code for removing the empty logging directories is moved from
   stage_gen_report to stage_build
 
+===================================================================
 Version 0.18.0, by Aleksey Cheusov, Wed,  3 Sep 2008 00:25:49 +0300
 
   stage_build becomes rerunable. If, for example, your SLAVE hosts
@@ -506,6 +538,7 @@ Version 0.18.0, by Aleksey Cheusov, Wed,  3 Sep 2008 00:25:49 +0300
   wip/netbsd-uuencode is not used anymore. PAEXEC sends unencoded data
   to distbb.
 
+===================================================================
 Version 0.17.0, by Aleksey Cheusov, Fri, 25 Jul 2008 15:57:14 +0300
 
   ADDED: -p option. If you want to build a few packages, you
@@ -548,6 +581,7 @@ Version 0.17.0, by Aleksey Cheusov, Fri, 25 Jul 2008 15:57:14 +0300
 
   dbb_init moved back from distbb.mk to the script "slave"
 
+===================================================================
 Version 0.16.0, by Aleksey Cheusov, Sat, 19 Jul 2008 14:13:26 +0300
 
   fixed: after bulk build finished, not all empty CATEGORY/PACKAGE
@@ -590,10 +624,12 @@ Version 0.16.0, by Aleksey Cheusov, Sat, 19 Jul 2008 14:13:26 +0300
 
   Minor fixes and additions in example distbb.conf
 
+===================================================================
 Version 0.15.1, by Aleksey Cheusov, Mon,  7 Jul 2008 18:06:24 +0300
 
  FIXED: another bug in handling EXTRA_DEPS
 
+===================================================================
 Version 0.15.0, by Aleksey Cheusov, Sat, 21 Jun 2008 19:59:21 +0300
 
   META/packages_total.txt file is built that contains a list of built
@@ -612,6 +648,7 @@ Version 0.15.0, by Aleksey Cheusov, Sat, 21 Jun 2008 19:59:21 +0300
   with master host is that master's and slave's /usr/pkgsrc may be not
   the same.
 
+===================================================================
 Version 0.14.0, by Aleksey Cheusov, Wed, 18 Jun 2008 22:14:56 +0300
 
   FIXED: sometimes packages are built in a wrong order.
@@ -651,6 +688,7 @@ Version 0.14.0, by Aleksey Cheusov, Wed, 18 Jun 2008 22:14:56 +0300
 
   Other minor fixes, improvements and code clean-ups.
 
+===================================================================
 Version 0.13.0, by Aleksey Cheusov, Thu, 12 Jun 2008 23:40:46 +0300
 
   ADDED: mega-feature/new variable SPECIAL_PACKAGES
@@ -706,6 +744,7 @@ Version 0.13.0, by Aleksey Cheusov, Thu, 12 Jun 2008 23:40:46 +0300
 
   distbb.conf: fix in comment: package-deinstall -> deinstall
 
+===================================================================
 Version 0.12.0, by Aleksey Cheusov, Sun,  8 Jun 2008 02:49:08 +0300
 
   Two new variables (for distbb.conf) are introduced:
@@ -732,6 +771,7 @@ Version 0.12.0, by Aleksey Cheusov, Sun,  8 Jun 2008 02:49:08 +0300
    README: distbb is NOT fork of pbulk in any way! ;-)
    It was written from scratch.
 
+===================================================================
 Version 0.11.0, by Aleksey Cheusov, Thu, 15 May 2008 18:59:18 +0300
 
   Both .html and .txt report include a number failed dependencies for
@@ -757,6 +797,7 @@ Version 0.11.0, by Aleksey Cheusov, Thu, 15 May 2008 18:59:18 +0300
   share/examples/distbb/distbb.local.mk to etc/distbb.local.mk
   and edit for preferences.
 
+===================================================================
 Version 0.10.0, by Aleksey Cheusov
 
   At startup, PREFIX and PKGDBDIR directories are deleted and
@@ -768,6 +809,7 @@ Version 0.10.0, by Aleksey Cheusov
   PKG_UPDATE_SRC_SUMMARY_CMD. If you'll use distributed one,
   make sure PATH variable contains /usr/pkg_distbb/bin directory.
 
+===================================================================
 Version 0.9.0, by Aleksey Cheusov, Fri,  9 May 2008 13:02:30 +0300
 
   Instead of red counts the "Breaks" column now contains the link to
@@ -781,6 +823,7 @@ Version 0.9.0, by Aleksey Cheusov, Fri,  9 May 2008 13:02:30 +0300
 
   BUILD_START renamed to BUILD_ID
 
+===================================================================
 Version 0.8.0, by Aleksey Cheusov, Sun,  4 May 2008 20:50:43 +0300
 
   Sometimes building packages stops because some of them require an
@@ -812,6 +855,7 @@ Version 0.8.0, by Aleksey Cheusov, Sun,  4 May 2008 20:50:43 +0300
   # The following is for pkg_summary-tools > 0.5.0
   #PKG_UPDATE_SRC_SUMMARY_CMD='@@bindir@@/pkg_update_src_summary -f "PKGNAME PKGPATH DEPENDS BUILD_DEPENDS"'
 
+===================================================================
 Version 0.7.0, by Aleksey Cheusov, Thu, 17 Apr 2008 12:30:58 +0300
 
   stage_init.in: completely reimplemented. An algorithm become easier
@@ -833,11 +877,13 @@ Version 0.7.0, by Aleksey Cheusov, Thu, 17 Apr 2008 12:30:58 +0300
 
   Minor changes and fixes in README
 
+===================================================================
 Version 0.6.2, by Aleksey Cheusov, Sun, 13 Apr 2008 12:34:17 +0300
 
   Failures of PKG_SRC_SUMMARY_CMD for individual packages are logged
   and reported
 
+===================================================================
 Version 0.6.1, by Aleksey Cheusov, Sun,  6 Apr 2008 15:33:26 +0300
 
   distbb.conf:
@@ -845,6 +891,7 @@ Version 0.6.1, by Aleksey Cheusov, Sun,  6 Apr 2008 15:33:26 +0300
 
   FIXED: another BUG in handling EXTRA_DEPS
 
+===================================================================
 Version 0.6.0, by Aleksey Cheusov
 
   distbb.conf:
@@ -857,6 +904,7 @@ Version 0.6.0, by Aleksey Cheusov
 
   pkg_src_update_summary  renamed to pkg_update_src_summary
 
+===================================================================
 Version 0.5.0, by Aleksey Cheusov, Wed,  2 Apr 2008 23:31:24 +0300
 
   First publicly available release
