@@ -50,5 +50,5 @@ echo ''
 
 echo 'Installing'
 for p in $pkgs_deps; do
-    $PKG_ADD -I -u "$PACKAGES/All/$p$PKG_SUFX"
+    $PKG_ADD -u "$PACKAGES/All/$p$PKG_SUFX"
 done
