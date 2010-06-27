@@ -1,4 +1,11 @@
 ===================================================================
+Version 0.36.2, by Aleksey Cheusov, Sun, 27 Jun 2010 20:27:41 +0300
+
+  FIX: Use of 'pkg_add -I' for installing dependencies
+  was bad idea. Some packages may fails due to this change.
+  Now pkg_add is use for purpose.
+
+===================================================================
 Version 0.36.1, by Aleksey Cheusov, Fri, 25 Jun 2010 14:22:27 +0300
 
   FIX: Do not use MAKEFLAGS for recursive make invocations. This fixes
