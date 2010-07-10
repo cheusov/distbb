@@ -1,5 +1,7 @@
 ideas/thoughts/todo/problems
 
+ - <pre> </pre> vs. 20100627.2046/lang_sr_sr-2.3.3nb7/stage_build.html
+
  - devel/omake fails
 
  - PKG_SUFX is deprecated, use PKG_COMPRESS
