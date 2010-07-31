@@ -1,5 +1,8 @@
 ideas/thoughts/todo/problems
 
+ - Ensure that packages failed at Available phase are excluded
+   from report.txt and report_mini.txt
+
  - <pre> </pre> vs. 20100627.2046/lang_sr_sr-2.3.3nb7/stage_build.html
 
  - devel/omake fails
