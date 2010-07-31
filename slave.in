@@ -214,7 +214,7 @@ check_max_log_size (){
 
 	curr += length($0)+1
 	if (limit && curr >= limit){
-	    print "Maximum log size is reached! Exiting..."
+	    print " Maximum log size is reached! Exiting..."
 	    exit 1
 	}
     }' "$@"
