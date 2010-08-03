@@ -1,4 +1,12 @@
 ===================================================================
+Version 0.36.3, by Aleksey Cheusov, Tue,  3 Aug 2010 23:38:47 +0300
+
+  fix: 'trap... should be before creating tempdir'
+
+  fix: reaching maximum log size limit doesn't break bulk build
+  anymore
+
+===================================================================
 Version 0.36.2, by Aleksey Cheusov, Sun, 27 Jun 2010 20:27:41 +0300
 
   FIX: Use of 'pkg_add -I' for installing dependencies
