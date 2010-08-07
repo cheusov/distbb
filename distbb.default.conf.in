@@ -183,7 +183,11 @@ fi
 #    otherwise counters in "Failures per maintainer" will
 #    be not fully correct
 # Vars (dbb_vars) lists bmake's variables for easier debugging
-assign TARGETS "Init Clean Available Excluded Vars Depends fetch checksum extract patch configure build install package"
+if test -n "$UNPRIV_USER"; then
+    assign TARGETS "Init Clean Available Excluded Vars Depends fetch checksum extract patch configure build Package"
+else
+    assign TARGETS "Init Clean Available Excluded Vars Depends fetch checksum extract patch configure build install package"
+fi
 #  the following is for USE_DESTDIR=yes
 #assign TARGETS "Init Clean Available Excluded Vars Depends fetch checksum extract patch configure build package"
 
