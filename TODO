@@ -1,7 +1,5 @@
 ideas/thoughts/todo/problems
 
- - devel/omake fails
-
  - PKG_SUFX is deprecated, use PKG_COMPRESS
 
  - pkg_cmp_summary should compare DEPENDS and BUILD_DEPENDS and print !
