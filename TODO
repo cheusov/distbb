@@ -1,8 +1,5 @@
 ideas/thoughts/todo/problems
 
- - Ensure that packages failed at Available phase are excluded
-   from report.txt and report_mini.txt
-
  - devel/omake fails
 
  - PKG_SUFX is deprecated, use PKG_COMPRESS
