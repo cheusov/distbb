@@ -717,9 +717,8 @@ pkgname_pkgpath2html (){
 }
 ######################################################################
 
-other_stages_bar (){
-    printf '<p>'
-    printf 'Stages:&nbsp;'
+stages_bar (){
+    printf '<div>Stages:&nbsp;'
     for t in $TARGETS; do
 	if test -s "$pkgdir/stage_$t.tmp"; then
 	    if test "$t" = "$stage"; then
@@ -732,21 +731,33 @@ other_stages_bar (){
 	    printf '&nbsp;'
 	fi
     done
+    printf '</div>\n'
+}
+
+more_info_bar (){
     short_pkgpath="$(echo $pkgpath | cut -f1 -d:)"
-    printf '<br>More info:&nbsp;'
+    printf '<div>More info:&nbsp;'
     printf '<a href="summary.txt" title="summary for package %s">summary</a>' \
 	"$short_pkgpath"
     printf '&nbsp;'
-    printf '<a href="failed_deps.html" title="list of packages failed because of this one">failed_deps</a>'
-    printf '</p>\n'
+    printf '<a href="failed_deps.html" title="list of packages failed because of this one">failed_deps</a></div>\n'
+}
+
+link_to_top (){
+    printf '<div class="up-link"><a href="../META/report.html" title="report.html">Up</a></div>\n'
+}
+
+bars (){
+    # $1: "u" - link at the top, "d" - link at the bottom
+    if test $1 = u; then link_to_top; fi
+    stages_bar
+    more_info_bar
+    if test $1 = d; then link_to_top; fi
 }
 
 quote_bad_symbols (){
-    runawk -f multisub.awk -e '
-{
-   print multisub($0, "<:&lt;   >:&gt;   &:&amp;")
-}
-' "$@"
+    runawk -f multisub.awk -e \
+	'{ print multisub($0, "<:&lt;   >:&gt;   &:&amp;") }' "$@"
 }
 
 stage2html (){
@@ -756,7 +767,7 @@ stage2html (){
     pkgpath="$(echo $1 | sed 's,^.*/\([^/]*/[^/]*\)/[^/]*$,\1,')"
     stage="$(echo $1 | sed 's,^.*stage_\(.*\)[.].*$,\1,')"
 
-    other_stages_bar
+    bars u
 
     # log itself
     printf "<pre>"
@@ -764,7 +775,7 @@ stage2html (){
     printf "</pre>"
 
     if test "$(count_lines $1)" -gt 20; then
-	other_stages_bar
+	bars d
     fi
 
     html_footer

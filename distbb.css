@@ -23,6 +23,10 @@ h3 {
 	Color: #440044;
 }
 
+.up-link {
+	text-align: center
+}
+
 .pkg-total {
 	Color: green;
 }

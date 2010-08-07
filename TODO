@@ -10,8 +10,6 @@ ideas/thoughts/todo/problems
 
  - Analyse REQUIRES and PROVIDES while running bulk builds
 
- - link from stage_*.html to META/report.html
-
  - META/packages_status.txt
 
  - stage_cksum
