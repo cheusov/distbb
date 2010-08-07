@@ -741,6 +741,14 @@ other_stages_bar (){
     printf '</p>\n'
 }
 
+quote_bad_symbols (){
+    runawk -f multisub.awk -e '
+{
+   print multisub($0, "<:;lt&   >:;gt&   &:;amp&")
+}
+' "$@"
+}
+
 stage2html (){
     html_header
 
@@ -752,7 +760,7 @@ stage2html (){
 
     # log itself
     printf "<pre>"
-    cat "$1"
+    quote_bad_symbols "$1"
     printf "</pre>"
 
     if test "$(count_lines $1)" -gt 20; then
