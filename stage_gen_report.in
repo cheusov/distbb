@@ -744,7 +744,7 @@ other_stages_bar (){
 quote_bad_symbols (){
     runawk -f multisub.awk -e '
 {
-   print multisub($0, "<:;lt&   >:;gt&   &:;amp&")
+   print multisub($0, "<:&lt;   >:&gt;   &:&amp;")
 }
 ' "$@"
 }
