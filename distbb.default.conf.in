@@ -349,6 +349,10 @@ assign ICON_FILE @@icondir@@/distbb.ico
 # CSS file
 assign CSS_FILE @@cssdir@@/distbb.css
 
+# Archivers
+assign GZIP gzip
+assign BZIP bzip2
+
 ############################################################
 export PSS_SLAVES
 export PSS_OPTIONS
