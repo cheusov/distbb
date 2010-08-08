@@ -1,7 +1,5 @@
 ideas/thoughts/todo/problems
 
- - PKG_SUFX is deprecated, use PKG_COMPRESS
-
  - Analyse REQUIRES and PROVIDES while running bulk builds
 
  - META/packages_status.txt

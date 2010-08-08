@@ -31,6 +31,8 @@ DISTBB_CONF=${DISTBB_CONF:-@@sysconfdir@@/distbb.conf}
 . "$DISTBB_CONF"
 
 unset PKG_PATH || true
+unset PKG_SUFX || true
+
 export BINPKG_SITES=$PACKAGES
 
 ######################################################################
