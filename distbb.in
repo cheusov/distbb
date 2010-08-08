@@ -39,10 +39,12 @@ OPTIONS:
   -C|--config <config>   config file, the default is
                          @@sysconfdir@@/distbb.conf
   -p|--pkgs <packages>   build the specified packages
+                         (implies -x summary -x checksum -x upload_pkgs)
   -f|--file <filename>   build the packages listed in
                          the specified filename ( - for stdin),
                          by default all packages from pkgsrc source tree
                          are built
+                         (implies -x summary -x checksum -x upload_pkgs)
   -k                     skip updating pkg_src_summary
   -K                     skip updating pkg_summary
   -D|--diff              show difference with previous bulk build
@@ -58,7 +60,14 @@ OPTIONS:
                          Multiple -x are allowed.
                          "-x upload" is equivalent to
                          "-x upload_logs -x upload_pkgs".
+  -X <stage>             enable <stage> (antonym for -x)
 EOF
+}
+
+partial_bb (){
+    exclude_state_summary=1
+    exclude_state_checksum=1
+    exclude_state_upload_pkgs=1
 }
 
 while test $# -ne 0; do
@@ -73,15 +82,19 @@ while test $# -ne 0; do
 	#
 	-f|--file)
 	    export pkgs_fn="$2"
+	    partial_bb
 	    shift;;
 	-f*)
+	    partial_bb
 	    export pkgs_fn="$(printf '%s\n' '$1' | cut -b3-)";;
 
 	#
 	-p|--pkgs)
+	    partial_bb
 	    pkgs="$2"
 	    shift;;
 	-p*)
+	    partial_bb
 	    pkgs="$(printf '%s\n' '$1' | cut -b3-)";;
 
 	#
@@ -127,6 +140,15 @@ while test $# -ne 0; do
 	    eval "exclude_state_$excl=1";;
 
 	#
+	-X)
+	    excl="$2"
+	    eval "unset exclude_state_$excl || true"
+	    shift;;
+	-X*)
+	    excl="$(printf '%s\n' $1 | cut -b3-)"
+	    eval "unset exclude_state_$excl || true";;
+
+	#
 	-r)
 	    retry=1;;
 
@@ -146,6 +168,9 @@ while test $# -ne 0; do
     esac
     shift
 done
+
+exclude_state_upload_pkgs="${exclude_state_upload_pkgs}${exclude_state_upload}"
+exclude_state_upload_logs="${exclude_state_upload_logs}${exclude_state_upload}"
 
 if test $# -ne 0; then
     usage
