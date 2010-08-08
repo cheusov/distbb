@@ -6,6 +6,7 @@ Version 0.37.0, by Aleksey Cheusov, Sun,  8 Aug 2010 21:35:42 +0300
        anymore.
      - Html text inside <pre></pre> is quoted (<, >, & , " and '
        sumbols)
+     - Another fix in report.html (conformance to HTML 4.0.1 Strict)
 
   New stages have been added:
      - summary: for creating pkg_summary.txt containing summaries
