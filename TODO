@@ -1,5 +1,7 @@
 ideas/thoughts/todo/problems
 
+ - distbb.1
+
  - Analyse REQUIRES and PROVIDES while running bulk builds
 
  - META/packages_status.txt
@@ -16,8 +18,6 @@ ideas/thoughts/todo/problems
         build time of binary packages is currently not checked
 
  - rebuilding packages changed in CVS (without version changes!)
-
- - distbb.1
 
  - I think distbb can be adapted for FreeBSD/OpenBSD Ports
    and other packaging systems
