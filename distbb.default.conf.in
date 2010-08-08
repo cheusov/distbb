@@ -334,7 +334,7 @@ assign UPLOAD_LOGS_PROG "$RSYNC_CMD -av --delete-excluded --exclude \"*.tmp\" -e
 
 # list of building stages, except 'init'
 assign BUILD_STAGES \
-    'build post_build gen_report update_best summary upload report'
+    'build post_build gen_report update_best summary checksum upload report'
 
 # Extra options passed paexec(1)
 #assign PAEXEC_EXTRA_OPTS -z
@@ -351,7 +351,7 @@ assign CSS_FILE @@cssdir@@/distbb.css
 
 # Archivers
 assign GZIP gzip
-assign BZIP bzip2
+assign BZIP2 bzip2
 
 ############################################################
 export PSS_SLAVES
