@@ -1,4 +1,30 @@
 ===================================================================
+Version 0.37.0, by Aleksey Cheusov, Sun,  8 Aug 2010 21:35:42 +0300
+
+  Fixes:
+     - Warning message about deprecated PKG_SUFX should not appear
+       anymore.
+     - Html text inside <pre></pre> is quoted (<, >, & , " and '
+       sumbols)
+
+  New stages have been added:
+     - summary: for creating pkg_summary.txt containing summaries
+                of successfully built packages only
+     - checksum: SHA512.{txt,gz,bz2}
+
+  For partial bulk builds the following stages are disabled
+  by default: summary, checksum, upload_pkgs.
+
+  distbb: New option -X, antonym for -x.
+
+  New variable PKG_ALL_SUMMARY keeps filename containing summaries of
+  all available binary packages. A number of such packages is not a
+  part of the report anymore. PKG_UPDATE_SUMMARY_CMD has been renamed
+  to PKG_UPDATE_ALL_SUMMARY_CMD.
+
+  Two new supported variables: GZIP and BZIP2.
+
+===================================================================
 Version 0.36.3, by Aleksey Cheusov, Tue,  3 Aug 2010 23:38:47 +0300
 
   fix: 'trap...' in sh script should be before creating tempdir

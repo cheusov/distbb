@@ -1,14 +1,18 @@
-ideas/thoughts/todo/problems
+Plan0)
 
  - distbb.1
 
- - Analyse REQUIRES and PROVIDES while running bulk builds
-
  - META/packages_status.txt
 
- - links to package's configure.log(s) from PKGNAME/stage_*.html
+ - Automatically create r/o chroot under NetBSD, replacement for pkg_comp.
 
- - separate DEPENDS and BUILD_DEPENDS (versions should be analysed)
+Plan1)
+
+ - Analyse REQUIRES and PROVIDES while running bulk builds?
+
+ - links to package's configure.log(s) from PKGNAME/stage_*.html?
+
+ - separate DEPENDS and BUILD_DEPENDS (versions should be analysed)?
 
  - build time of binary packages?
    problem:
@@ -17,7 +21,9 @@ ideas/thoughts/todo/problems
      ===> package_A is NOT rebuilt in this case, that is
         build time of binary packages is currently not checked
 
- - rebuilding packages changed in CVS (without version changes!)
+ - rebuilding packages changed in CVS (without version changes)?
+
+Plan2)
 
  - I think distbb can be adapted for FreeBSD/OpenBSD Ports
    and other packaging systems
