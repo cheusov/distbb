@@ -21,9 +21,10 @@ INST_DIR?=			${INSTALL} -d
 .include "version.mk"
 
 SCRIPTS=	distbb stage_init stage_build stage_post_build \
-		stage_gen_report stage_update_best stage_upload \
-		stage_upload_logs stage_upload_pkgs stage_report \
-		slave distbb_diff upload_pkgs_all_files \
+		stage_gen_report stage_update_best \
+		stage_summary \
+		stage_upload stage_upload_logs stage_upload_pkgs \
+		stage_report slave distbb_diff upload_pkgs_all_files \
 		upload_pkgs_built_total upload_pkgs_no_bin_on_cdrom \
 		upload_pkgs_no_bin_on_ftp make-depends \
 		gen_queue get_direct_pkgname_deps \

@@ -315,7 +315,6 @@ EOF
     fi
 
     cat <<EOF
-  <tr><td>$(left_align 40 "Packages in pkg_summary")</td><td align="right">$packages_in_summary</td></tr>
 </table>
 <p>Packages not listed here resulted in a $url.<br>
 Results of failed packages are available below.<br>
@@ -506,8 +505,6 @@ packages_failed_total=$(($packages_failed_cnt+$packages_failed_deps_cnt+$package
 packages_built_cnt=$(count_lines "$packages_built_fn.tmp")
 packages_built_prev_cnt=$(count_lines "$packages_built_prev_fn.tmp")
 packages_built_total=$(($packages_built_cnt+$packages_built_prev_cnt))
-
-packages_in_summary=$(awk '{cnt += ($0 ~ /^PKGNAME=/)} END {print cnt}' "$PKG_SUMMARY")
 
 ######################################################################
 

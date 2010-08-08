@@ -66,9 +66,12 @@ assign PACKAGES "$PKGSRCDIR/packages"
 assign MSCOMMONDIR "$PACKAGES/.distbb"
 
 # pkg_summary(5)
+# PKG_ALL_SUMMARY will keep information about all binary packages
+assign PKG_ALL_SUMMARY "$PACKAGES/All/pkg_all_summary.txt"
+# PKG_SUMMARY will keep information about sucessfully built binary packages
 assign PKG_SUMMARY "$PACKAGES/All/pkg_summary.txt"
-assign PKG_UPDATE_SUMMARY_CMD '@@bindir@@/pkg_update_summary'
-#assign PKG_UPDATE_SUMMARY_CMD '@@bindir@@/pkg_update_summary -r'
+assign PKG_UPDATE_ALL_SUMMARY_CMD '@@bindir@@/pkg_update_summary'
+#assign PKG_UPDATE_ALL_SUMMARY_CMD '@@bindir@@/pkg_update_summary -r'
 
 # pkg_src_summary (similar to pkg_summary(5) but for source packages)
 assign PKG_SRC_SUMMARY "$PKGSRCDIR/pkg_src_summary.txt"
@@ -330,7 +333,8 @@ assign UPLOAD_PKGS_PROG "$RSYNC_CMD -av --delete-excluded --include-from=- --exc
 assign UPLOAD_LOGS_PROG "$RSYNC_CMD -av --delete-excluded --exclude \"*.tmp\" -e ssh"
 
 # list of building stages, except 'init'
-assign BUILD_STAGES 'build post_build gen_report update_best upload report'
+assign BUILD_STAGES \
+    'build post_build gen_report update_best summary upload report'
 
 # Extra options passed paexec(1)
 #assign PAEXEC_EXTRA_OPTS -z

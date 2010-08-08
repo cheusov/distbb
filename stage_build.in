@@ -248,12 +248,6 @@ eval runpipe0 \
     postfilter
 
 ######################################################################
-
-verbose_print "Updating pkg_summary..."
-eval @@libexecdir@@/wrapper $PKG_UPDATE_SUMMARY_CMD $PKG_SUMMARY $PACKAGES/All
-verbose_print "done\n"
-
-######################################################################
 rmdir $REPORT1_DIR/* 2>/dev/null || true
 
 if test -n "$DISTBB_DIFF"; then

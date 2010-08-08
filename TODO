@@ -1,15 +1,16 @@
-ideas/thoughts/todo/problems
-
- - PKG_SUFX is deprecated, use PKG_COMPRESS
+ - stage_cksum
 
  - pkg_summary.txt consisting of only built packages,
    no "packages in pkg_summary.txt" message in report.html
 
+
+ideas/thoughts/todo/problems
+
+ - PKG_SUFX is deprecated, use PKG_COMPRESS
+
  - Analyse REQUIRES and PROVIDES while running bulk builds
 
  - META/packages_status.txt
-
- - stage_cksum
 
  - links to package's configure.log(s) from PKGNAME/stage_*.html
 

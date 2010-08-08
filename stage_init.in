@@ -119,16 +119,16 @@ sort_uniq_inplace $packages_fn.tmp
 verbose_print "done\n"
 
 ######################################################################
-### updating PKG_SUMMARY
+### updating PKG_ALL_SUMMARY
 
 refreshed_summary_fn=$tmpdir/refreshed_summary.tmp
 if test -z "$skip_updating_summary"; then
-    verbose_print "  updating pkg_summary..."
-    eval @@libexecdir@@/wrapper $PKG_UPDATE_SUMMARY_CMD $PKG_SUMMARY $PACKAGES/All
+    verbose_print "  updating pkg_all_summary..."
+    eval @@libexecdir@@/wrapper $PKG_UPDATE_ALL_SUMMARY_CMD "$PKG_ALL_SUMMARY" "$PACKAGES/All"
     verbose_print "done\n"
 fi
 
-pkg_refresh_summary $PKG_SUMMARY >$refreshed_summary_fn
+pkg_refresh_summary "$PKG_ALL_SUMMARY" >$refreshed_summary_fn
 
 ######################################################################
 ### updating PKG_SRC_SUMMARY

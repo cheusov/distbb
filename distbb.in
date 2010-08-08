@@ -204,8 +204,9 @@ test_var PKGSRC_PREFIX
 test_var RMDIRS_CMD
 test_var EXTRACT_BOOTSTRAP_CMD
 test_var PACKAGES
+test_var PKG_ALL_SUMMARY
+test_var PKG_UPDATE_ALL_SUMMARY_CMD
 test_var PKG_SUMMARY
-test_var PKG_UPDATE_SUMMARY_CMD
 test_var PKG_SRC_SUMMARY
 test_var PKG_UPDATE_SRC_SUMMARY_CMD
 test_var PKG_CMP_SUMMARY_CMD
@@ -239,6 +240,11 @@ fi
 
 if grep BUILD_START "$DISTBB_CONF" > /dev/null; then
     echo 'Replace BUILD_START variable with BUILD_ID in your distbb.conf!' 1>&2
+    exit 1
+fi
+
+if test "$PKG_ALL_SUMMARY" = "$PKG_SUMMARY"; then
+    echo 'PKG_ALL_SUMMARY and PKG_SUMMARY must not be equal' 1>&2
     exit 1
 fi
 
