@@ -1,9 +1,3 @@
- - stage_cksum
-
- - pkg_summary.txt consisting of only built packages,
-   no "packages in pkg_summary.txt" message in report.html
-
-
 ideas/thoughts/todo/problems
 
  - PKG_SUFX is deprecated, use PKG_COMPRESS
