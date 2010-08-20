@@ -1,4 +1,9 @@
 ===================================================================
+Version 0.37.1, by Aleksey Cheusov, Tue, 17 Aug 2010 16:46:45 +0300
+
+  Fixed: error in a newly created "summary" stage.
+
+===================================================================
 Version 0.37.0, by Aleksey Cheusov, Sun,  8 Aug 2010 21:35:42 +0300
 
   Fixes:
