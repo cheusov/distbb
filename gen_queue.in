@@ -10,7 +10,7 @@
 # progress.txt filename that contains a list of packages that either
 # failed or succeeded, then output a subgraph with packages to build.
 #
-# usage: gen_queue [OPTIONS] [files...]
+# usage: gen_queue [OPTIONS] [dep_graph...]
 # OPTIONS:
 #    -h|--help          display this screen
 #    =f <file>          progress.txt filename
