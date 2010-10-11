@@ -1,0 +1,69 @@
+#!/usr/bin/env runawk
+
+#use "power_getopt.awk"
+#use "xgetline.awk"
+#use "xclose.awk"
+#use "has_prefix.awk"
+
+#.begin-str help
+# gen_weights - takes a dependency graph of packages and pkg_src_summary
+# on input and outputs weights of packages in paexec(1) format, i.e.
+#    weight: <pkgname1> <weight1>
+#    weight: <pkgname2> <weight2>
+#    ...
+#
+# usage: gen_weights [OPTIONS] [pkg_src_summaries...]
+# OPTIONS:
+#    -h|--help          display this screen
+#    =f <file>          dep_graph filename
+#.end-str
+
+BEGIN {
+	fn = getarg("f")
+	assert(fn != "") # this option is mandatory
+
+	while(xgetline0(fn)){
+		if (NF >= 1)
+			pkg [$1] = 0
+		if (NF == 2)
+			pkg [$2] = 0
+	}
+
+	xclose(fn)
+	mult = 1
+	cxx_mult = 30
+}
+
+NF == 0 {
+	if (pkgpath in pkg){
+#		print pkg
+		$0 = alldistfiles
+		sum_sz = 0
+		for (i=1; i <= NF; ++i){
+			idx = index($i, ":")
+			sum_sz += substr($i, idx+1)
+		}
+		print "weight:", pkgpath, int((sum_sz / 1048576 + 1) * mult)
+	}
+	mult = 1
+	pkgpath = alldistfiles = ""
+	next
+}
+
+has_prefix($0, "PKGPATH=") {
+	pkgpath = substr($0, 9)
+#	print "pkgpath", pkgpath
+	next
+}
+
+has_prefix($0, "ALLDISTFILES=") {
+	alldistfiles = substr($0, 14)
+	next
+}
+
+has_prefix($0, "USE_LANGUAGES=") {
+	if ($0 ~ /[Cc][+][+]/)
+		mult = cxx_mult
+
+	next
+}

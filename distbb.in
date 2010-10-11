@@ -70,112 +70,41 @@ partial_bb (){
     exclude_state_upload_pkgs=1
 }
 
-while test $# -ne 0; do
-    case "$1" in
-	-h|--help)
-	    usage
-	    exit 0;;
-	-V|--version)
-	    echo distbb-@@version@@
-	    exit 0;;
+exclude (){
+    eval "exclude_state_$1=1"
+}
 
-	#
-	-f|--file)
-	    export pkgs_fn="$2"
-	    partial_bb
-	    shift;;
-	-f*)
-	    partial_bb
-	    export pkgs_fn="$(printf '%s\n' '$1' | cut -b3-)";;
+unexclude (){
+    unset "exclude_state_$1" || true
+}
 
-	#
-	-p|--pkgs)
-	    partial_bb
-	    pkgs="$2"
-	    shift;;
-	-p*)
-	    partial_bb
-	    pkgs="$(printf '%s\n' '$1' | cut -b3-)";;
-
-	#
-	-C|--config)
-	    DISTBB_CONF="$2"
-	    shift;;
-	-C*)
-	    DISTBB_CONF="$(printf '%s\n' '$1' | cut -b3-)";;
-
-	#
-	-D|--diff)
-	    export DISTBB_DIFF=1;;
-
-	#
-	-B)
-	    BUILD_ID="$2"
-	    shift;;
-	-B*)
-	    BUILD_ID="$(printf '%s\n' $1 | cut -b3-)";;
-
-	#
-	-l)
-	    label="$2"
-	    shift;;
-	-l*)
-	    label="$(printf '%s\n' $1 | cut -b3-)";;
-
-	#
-	-k)
-	    skip_updating_src_summary=1;;
-
-	#
-	-K)
-	    skip_updating_summary=1;;
-
-	#
-	-x)
-	    excl="$2"
-	    eval "exclude_state_$excl=1"
-	    shift;;
-	-x*)
-	    excl="$(printf '%s\n' $1 | cut -b3-)"
-	    eval "exclude_state_$excl=1";;
-
-	#
-	-X)
-	    excl="$2"
-	    eval "unset exclude_state_$excl || true"
-	    shift;;
-	-X*)
-	    excl="$(printf '%s\n' $1 | cut -b3-)"
-	    eval "unset exclude_state_$excl || true";;
-
-	#
-	-r)
-	    retry=1;;
-
-	#
-	-s)
-	    strict=1;;
-
-	#
-	--)
-	    shift
-	    break;;
-	-*)
-	    echo "Bad option $1" 1>&2
-	    exit 1;;
-	*)
-	    break
-    esac
-    shift
-done
-
-exclude_state_upload_pkgs="${exclude_state_upload_pkgs}${exclude_state_upload}"
-exclude_state_upload_logs="${exclude_state_upload_logs}${exclude_state_upload}"
-
+process_args (){
+    alt_getopt \
+	'h help'       'usage; exit 0' \
+	'V version'    'echo distbb-@@version@@; exit 0' \
+	'=f file'      'partial_bb; export pkgs_fn=' \
+	'=p pkgs'      'partial_bb; pkgs=' \
+	'=C config'    DISTBB_CONF= \
+	'D diff'       'export DISTBB_DIFF=1' \
+	=B             BUILD_ID= \
+	=l             label= \
+	k              skip_updating_src_summary=1 \
+	K              skip_updating_summary=1 \
+	=x             'exclude ' \
+	=X             'unexclude ' \
+	r              retry=1 \
+	s              strict=1 \
+	-- "$@"
+}
+cmds=`process_args "$@"`
+eval "$cmds"
 if test $# -ne 0; then
     usage
     exit 1
 fi
+
+exclude_state_upload_pkgs="${exclude_state_upload_pkgs}${exclude_state_upload}"
+exclude_state_upload_logs="${exclude_state_upload_logs}${exclude_state_upload}"
 
 if test -n "$pkgs"; then
     export pkgs_fn=`mktemp /tmp/distbb.XXXXXX`
