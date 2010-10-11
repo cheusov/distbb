@@ -1,1 +1,1 @@
-VERSION=	0.38beta1
+VERSION=	0.38.0
