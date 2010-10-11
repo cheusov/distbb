@@ -338,7 +338,7 @@ assign BUILD_STAGES \
 
 # Extra options passed paexec(1)
 #assign PAEXEC_EXTRA_OPTS -z
-assign PAEXEC_EXTRA_OPTS '-Z300 -W'
+assign PAEXEC_EXTRA_OPTS '-Z300 -W1'
 
 # Extra options passed to paexec(1) while running pkg_src_summary(1)
 assign PSS_PAEXEC_EXTRA_OPTS "$PAEXEC_EXTRA_OPTS"
