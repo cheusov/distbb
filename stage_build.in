@@ -24,7 +24,7 @@
 ######################################################################
 
 set -e
-. @@bindir@@/pipestatus
+. @bindir@/pipestatus
 
 # usage: stage_upload_logs BUILD_ID
 test $# -eq 1
@@ -32,9 +32,9 @@ test $# -eq 1
 # init
 BUILD_ID="$1"
 
-DISTBB_CONF=${DISTBB_CONF:-@@sysconfdir@@/distbb.conf}
+DISTBB_CONF=${DISTBB_CONF:-@sysconfdir@/distbb.conf}
 . "$DISTBB_CONF"
-. @@libexecdir@@/common
+. @libexecdir@/common
 
 # main
 ######################################################################
@@ -44,8 +44,8 @@ cd $REPORT1_DIR
 ### graph of packages for paexec
 verbose_print "Initial queue..."
 
-@@libexecdir@@/gen_queue -f "$progress_fn" "$rebuild_fn" > "$queue_fn"
-@@libexecdir@@/gen_weights -f "$queue_fn" "$pkg_src_summary_fn" > "$queue_fn.tmp"
+@libexecdir@/gen_queue -f "$progress_fn" "$rebuild_fn" > "$queue_fn"
+@libexecdir@/gen_weights -f "$queue_fn" "$pkg_src_summary_fn" > "$queue_fn.tmp"
 cat "$queue_fn.tmp" >> "$queue_fn"
 rm "$queue_fn.tmp"
 
@@ -246,7 +246,7 @@ env_for_slave="DISTBB_CONF=$DISTBB_CONF aux_pkg_src_summary_fn=$aux_pkg_src_summ
 
 eval runpipe0 \
     paexec -s $PAEXEC_EXTRA_OPTS -EI -lr $TRANSPORT $SLAVES \
-       -c "'env $env_for_slave @@libexecdir@@/wrapper $DISTBB_SLAVE'" \
+       -c "'env $env_for_slave @libexecdir@/wrapper $DISTBB_SLAVE'" \
        < "$queue_fn" '|' \
     postfilter
 

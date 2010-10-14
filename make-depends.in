@@ -9,7 +9,7 @@
 
 set -e
 
-export PATH=@@bindir@@:$PATH
+export PATH=@bindir@:$PATH
 
 if test -z "$PKG_ADD"; then
 	echo 'PKG_ADD must be set' 1>&2
@@ -34,7 +34,7 @@ fi
 test $# -eq 1
 
 get_deps (){
-    @@libexecdir@@/get_direct_pkgname_deps "$1" \
+    @libexecdir@/get_direct_pkgname_deps "$1" \
 	"$aux_reqd_deps_fn" \
 	"$aux_pkg_src_summary_fn"
 }

@@ -104,7 +104,7 @@ dbb_depends:
 	    aux_reqd_deps_fn=${aux_reqd_deps_fn} \
 	    aux_pkg_src_summary_fn=${aux_pkg_src_summary_fn} \
 	    PKG_SUFX=${PKG_SUFX} \
-	    @@libexecdir@@/make-depends "${PKGPATHe}"'
+	    @libexecdir@/make-depends "${PKGPATHe}"'
 	${MAKE} ${MAKEFLAGS} depends DEPENDS_TARGET=do-bin-install
 
 Depends: dbb_depends

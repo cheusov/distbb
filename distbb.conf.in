@@ -31,4 +31,4 @@ post_build (){
 ######################################################################
 I_AM_READY=4
 
-. @@datadir@@/distbb.default.conf
+. @datadir@/distbb.default.conf

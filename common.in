@@ -86,7 +86,7 @@ reqd_deps_fn=$tmpdir/reqd_deps.tmp
 
 bb_history_fn=$REPORTS_DIR/bulk_builds_history.txt
 
-version=@@version@@
+version=@version@
 
 ######################################################################
 enrich_pkgpath (){
@@ -140,5 +140,5 @@ fname in f2n {
 ######################################################################
 unset PKG_PATH || true
 
-export PATH=@@bindir@@:$PATH
-export PSS_POST_PATH=@@bindir@@
+export PATH=@bindir@:$PATH
+export PSS_POST_PATH=@bindir@

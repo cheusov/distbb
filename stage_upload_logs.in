@@ -24,7 +24,7 @@
 ######################################################################
 
 set -e
-. @@bindir@@/pipestatus
+. @bindir@/pipestatus
 
 # usage: stage_upload_logs BUILD_ID
 test $# -eq 1
@@ -32,9 +32,9 @@ test $# -eq 1
 # init
 BUILD_ID="$1"
 
-DISTBB_CONF=${DISTBB_CONF:-@@sysconfdir@@/distbb.conf}
+DISTBB_CONF=${DISTBB_CONF:-@sysconfdir@/distbb.conf}
 . "$DISTBB_CONF"
-. @@libexecdir@@/common
+. @libexecdir@/common
 
 # main
 verbose_print "Uploading logs..."

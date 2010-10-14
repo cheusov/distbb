@@ -31,9 +31,9 @@ test $# -eq 1
 # init
 BUILD_ID="$1"
 
-DISTBB_CONF=${DISTBB_CONF:-@@sysconfdir@@/distbb.conf}
+DISTBB_CONF=${DISTBB_CONF:-@sysconfdir@/distbb.conf}
 . "$DISTBB_CONF"
-. @@libexecdir@@/common
+. @libexecdir@/common
 
 # main
 verbose_print "Generating checksums for binary packages..."
@@ -47,7 +47,7 @@ cd "$PACKAGES"
     echo "All/pkg_summary.txt"
     awk -v sufx="$PKG_SUFX" 'NF == 3 {print "All/" $2 sufx}' "$total_pkgs" |
     sort
-} | xargs "@@bindir@@/digest" SHA512 > SHA512.txt
+} | xargs "@bindir@/digest" SHA512 > SHA512.txt
 
 "$GZIP"  < SHA512.txt > SHA512.gz
 "$BZIP2" < SHA512.txt > SHA512.bz2

@@ -31,12 +31,12 @@ assign RMDIRS_CMD "/bin/rm -rf $PKGSRC_PREFIX /var/db/pkg"
 
 # Like distbb.conf but for bmake, it is loaded after package's Makefile
 # and before distbb's own distbb.mk
-assign DISTBB_LOCAL_MK '@@sysconfdir@@/distbb.local.mk'
+assign DISTBB_LOCAL_MK '@sysconfdir@/distbb.local.mk'
 #assign DISTBB_LOCAL_MK /dev/null
 
 # a programs that outputs ALL packages to be built,
 # by default all pkgsrc packages are output
-assign LIST_ALL_PKGS_CMD '@@bindir@@/pkg_list_all_pkgs'
+assign LIST_ALL_PKGS_CMD '@bindir@/pkg_list_all_pkgs'
 #assign LIST_ALL_PKGS_CMD '/path/to/list_pkgs_with_my_extra_wip_packages'
 
 #
@@ -55,7 +55,7 @@ assign EXTRACT_BOOTSTRAP_CMD "/bin/tar -xf $BOOTSTRAP -C /"
 # transport to the slaves
 assign TRANSPORT '/usr/bin/ssh -x'
 #assign TRANSPORT '/usr/bin/rsh'
-#assign TRANSPORT "@@libexecdir@@/transport_chroot" # not implemented yet
+#assign TRANSPORT "@libexecdir@/transport_chroot" # not implemented yet
 
 # directory for binary packages
 assign PACKAGES "$PKGSRCDIR/packages"
@@ -70,8 +70,8 @@ assign MSCOMMONDIR "$PACKAGES/.distbb"
 assign PKG_ALL_SUMMARY "$PACKAGES/All/pkg_all_summary.txt"
 # PKG_SUMMARY will keep information about sucessfully built binary packages
 assign PKG_SUMMARY "$PACKAGES/All/pkg_summary.txt"
-assign PKG_UPDATE_ALL_SUMMARY_CMD '@@bindir@@/pkg_update_summary'
-#assign PKG_UPDATE_ALL_SUMMARY_CMD '@@bindir@@/pkg_update_summary -r'
+assign PKG_UPDATE_ALL_SUMMARY_CMD '@bindir@/pkg_update_summary'
+#assign PKG_UPDATE_ALL_SUMMARY_CMD '@bindir@/pkg_update_summary -r'
 
 # pkg_src_summary (similar to pkg_summary(5) but for source packages)
 assign PKG_SRC_SUMMARY "$PKGSRCDIR/pkg_src_summary.txt"
@@ -95,7 +95,7 @@ assign PSS_FIELDS 'PKGNAME PKGPATH DEPENDS BUILD_DEPENDS MAINTAINER DESCRIPTION 
 # If pkg_update_src_summary is used and both PSS_SLAVES and
 # PSS_TRANSPORT are set, make sure that master host's /usr/pkgsrc is the same
 # as slave hosts' ones.
-#assign PKG_UPDATE_SRC_SUMMARY_CMD "@@bindir@@/pkg_update_src_summary '$PKG_SRC_SUMMARY'"
+#assign PKG_UPDATE_SRC_SUMMARY_CMD "@bindir@/pkg_update_src_summary '$PKG_SRC_SUMMARY'"
 
 # If your machine is very fast, you can use program 'pkg_src_summary'
 # to build src_summary. See below for PSS_* variables
@@ -106,11 +106,11 @@ assign PSS_FIELDS 'PKGNAME PKGPATH DEPENDS BUILD_DEPENDS MAINTAINER DESCRIPTION 
 # (-m option is for building multi-variant packages, see pkg_src_summary(1),
 # NOTE: -m currently doesn't work when entire pkgsrc tree is built,
 # because lots of multi-variant packages have constant PKGBASE )
-assign PKG_UPDATE_SRC_SUMMARY_CMD "@@bindir@@/pkg_src_summary -b -A > \"$PKG_SRC_SUMMARY\""
+assign PKG_UPDATE_SRC_SUMMARY_CMD "@bindir@/pkg_src_summary -b -A > \"$PKG_SRC_SUMMARY\""
 
 # program for comparing pkg_summary(5) for available binaries and
 # pkg_src_summary collected from pkgsrc source tree
-assign PKG_CMP_SUMMARY_CMD '@@bindir@@/pkg_cmp_summary -m -p'
+assign PKG_CMP_SUMMARY_CMD '@bindir@/pkg_cmp_summary -m -p'
 
 # if you want to build src_summary using several processes or several
 # machines in a network, set PSS_SLAVES.
@@ -137,7 +137,7 @@ assign PSS_SLAVES "$SLAVES" # reasonable default
 #assign PSS_TRANSPORT '' # (for SMP machine)
 #assign PSS_TRANSPORT '/usr/bin/ssh -x'
 #assign PSS_TRANSPORT '/usr/bin/rsh'
-#assign PSS_TRANSPORT "@@libexecdir@@/transport_chroot" # not implemented yet
+#assign PSS_TRANSPORT "@libexecdir@/transport_chroot" # not implemented yet
 assign PSS_TRANSPORT "$TRANSPORT" # reasonable default
 
 assign PSS_PPERS 3 # to process N packages per slave at once
@@ -167,7 +167,7 @@ assign CLEAN_TARGET 'clean'
 # For this, set UNPRIV_USER variable.
 if test -n "$UNPRIV_USER"; then
     export UNPRIV_USER
-    assign SU_UNPRIV_CMD '@@libexecdir@@/wrapper_unpriv'
+    assign SU_UNPRIV_CMD '@libexecdir@/wrapper_unpriv'
     export SU_UNPRIV_CMD
     for t in dbb_canbebuilt dbb_excluded dbb_vars fetch checksum \
 	Available Excluded Vars \
@@ -201,7 +201,7 @@ assign EXTRA_OPTS 'DEPENDS_TARGET=do-bin-install BATCH=yes PKG_VERBOSE=1'
 #assign EXTRA_OPTS 'USE_DESTDIR=yes DEPENDS_TARGET=do-bin-install BATCH=yes PKG_VERBOSE=1 CHECK_SHLIBS=no'
 
 # do not change the following unless you know what you are doing
-assign DISTBB_SLAVE @@libexecdir@@/slave
+assign DISTBB_SLAVE @libexecdir@/slave
 
 # filename containing notes about bulk build (in html format, of
 # course in utf-8 charset), e.g. unusual build options, compiler etc.
@@ -322,10 +322,10 @@ assign RSYNC_CMD rsync
 
 #
 #assign UPLOAD_PKGS_DEST you@your-domain.com:~/public_html/pkgsrc-distbb/packages/
-assign UPLOAD_PKGS_FILES "@@libexecdir@@/upload_pkgs_all_files"
-#assign UPLOAD_PKGS_FILES "@@libexecdir@@/upload_pkgs_built_total"
-#assign UPLOAD_PKGS_FILES "@@libexecdir@@/upload_pkgs_no_bin_on_cdrom"
-#assign UPLOAD_PKGS_FILES "@@libexecdir@@/upload_pkgs_no_bin_on_ftp"
+assign UPLOAD_PKGS_FILES "@libexecdir@/upload_pkgs_all_files"
+#assign UPLOAD_PKGS_FILES "@libexecdir@/upload_pkgs_built_total"
+#assign UPLOAD_PKGS_FILES "@libexecdir@/upload_pkgs_no_bin_on_cdrom"
+#assign UPLOAD_PKGS_FILES "@libexecdir@/upload_pkgs_no_bin_on_ftp"
 assign UPLOAD_PKGS_PROG "$RSYNC_CMD -av --delete-excluded --include-from=- --exclude \"*\" -e ssh ."
 
 #
@@ -344,10 +344,10 @@ assign PAEXEC_EXTRA_OPTS '-Z300 -W1'
 assign PSS_PAEXEC_EXTRA_OPTS "$PAEXEC_EXTRA_OPTS"
 
 # Icon file
-assign ICON_FILE @@icondir@@/distbb.ico
+assign ICON_FILE @icondir@/distbb.ico
 
 # CSS file
-assign CSS_FILE @@cssdir@@/distbb.css
+assign CSS_FILE @cssdir@/distbb.css
 
 # Archivers
 assign GZIP gzip

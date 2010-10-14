@@ -37,7 +37,7 @@ OPTIONS:
   -h|--help              display this help message
   -V|--version           distbb version
   -C|--config <config>   config file, the default is
-                         @@sysconfdir@@/distbb.conf
+                         @sysconfdir@/distbb.conf
   -p|--pkgs <packages>   build the specified packages
                          (implies -x summary -x checksum -x upload_pkgs)
   -f|--file <filename>   build the packages listed in
@@ -81,7 +81,7 @@ unexclude (){
 process_args (){
     alt_getopt \
 	'h help'       'usage; exit 0' \
-	'V version'    'echo distbb-@@version@@; exit 0' \
+	'V version'    'echo distbb-@version@; exit 0' \
 	'=f file'      'partial_bb; export pkgs_fn=' \
 	'=p pkgs'      'partial_bb; pkgs=' \
 	'=C config'    DISTBB_CONF= \
@@ -123,7 +123,7 @@ fi
 
 ######################################################################
 
-. @@bindir@@/pipestatus
+. @bindir@/pipestatus
 
 # date start for placint it to html/txt report
 build_start="$(date -u '+%Y-%m-%d %H:%M') UTC"
@@ -137,9 +137,9 @@ fi
 
 echo "BUILD_ID: $BUILD_ID" 1>&2
 
-DISTBB_CONF=${DISTBB_CONF:-@@sysconfdir@@/distbb.conf}
+DISTBB_CONF=${DISTBB_CONF:-@sysconfdir@/distbb.conf}
 . "$DISTBB_CONF"
-. @@libexecdir@@/common
+. @libexecdir@/common
 
 export DISTBB_CONF
 ######################################################################
@@ -222,7 +222,7 @@ for stage in init $BUILD_STAGES; do
 	stage_fn="$stage"
 	stage=$(basename $stage)
     else
-	stage_fn="@@libexecdir@@/stage_$stage"
+	stage_fn="@libexecdir@/stage_$stage"
     fi
 
     eval x='$'exclude_state_$stage

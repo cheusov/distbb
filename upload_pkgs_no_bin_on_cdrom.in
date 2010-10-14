@@ -1,6 +1,6 @@
 #!/bin/sh
 
-. @@libexecdir@@/common
+. @libexecdir@/common
 
 print_binrep_spec_files
 
