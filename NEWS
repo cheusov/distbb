@@ -1,5 +1,5 @@
 ===================================================================
-Version 0.38beta1, by Aleksey Cheusov, Mon, 11 Oct 2010 00:03:13 +0300
+Version 0.38.0, by Aleksey Cheusov, Mon, 11 Oct 2010 00:03:13 +0300
 
   In order to minimize total build time, heavier packages are built
   first.  This is implemented with a help of recent paexec(1).  Simple
