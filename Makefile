@@ -23,11 +23,12 @@ INSCRIPTS =	distbb stage_init stage_build stage_post_build \
 INFILES =			distbb.conf distbb.local.mk distbb.mk \
 				common distbb.default.conf
 
+SCRIPTS=			${INSCRIPTS}
 SCRIPTSDIR =			${LIBEXECDIR}
 SCRIPTSDIR_distbb =		${BINDIR}
 SCRIPTSDIR_distbb_diff =	${BINDIR}
 
-FILES =				distbb.css distbb.ico
+FILES =				${INFILES} distbb.css distbb.ico
 
 FILESDIR =			${EGDIR}
 FILESDIR_distbb.mk =		${DATADIR}
