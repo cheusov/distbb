@@ -45,8 +45,9 @@ cd "$PACKAGES"
     echo "All/pkg_summary.bz2"
     echo "All/pkg_summary.gz"
     echo "All/pkg_summary.txt"
-    awk -v sufx="$PKG_SUFX" '{print "All/" $2 sufx}' "$total_pkgs" | sort
-} | xargs "$PKGSRC_PREFIX/bin/digest" SHA512 > SHA512.txt
+    awk -v sufx="$PKG_SUFX" 'NF == 3 {print "All/" $2 sufx}' "$total_pkgs" |
+    sort
+} | xargs "@@bindir@@/digest" SHA512 > SHA512.txt
 
 "$GZIP"  < SHA512.txt > SHA512.gz
 "$BZIP2" < SHA512.txt > SHA512.bz2
