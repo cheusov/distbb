@@ -26,6 +26,7 @@ REPORT_URL_PREFIX="http://your-domain.com/~you/pkgsrc-distbb/logs/"
 
 # define your post-build actions in this function
 post_build (){
+    :
 }
 
 ######################################################################
