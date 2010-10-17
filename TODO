@@ -1,5 +1,7 @@
 Plan0)
 
+ - use shlock for protectiion against running several instances of distbb
+
  - distbb.1
 
  - META/packages_status.txt
