@@ -25,6 +25,8 @@
 
 set -e
 
+export PATH=@bindir@:$PATH
+
 usage (){
     cat <<'EOF'
 distbb - DISTributed Bulk Builds for pkgsrc
@@ -34,24 +36,24 @@ usage: distbb -h
        distbb [OPTIONS]
        distbb -r -B <BUILDID> [OPTIONS]
 OPTIONS:
-  -h|--help              display this help message
-  -V|--version           distbb version
-  -C|--config <config>   config file, the default is
+  -h                     display this help message
+  -V                     distbb version
+  -C <config>            config file, the default is
                          @sysconfdir@/distbb.conf
-  -p|--pkgs <packages>   build the specified packages
+  -p <packages>          build the specified packages
                          (implies -x summary -x checksum -x upload_pkgs)
-  -f|--file <filename>   build the packages listed in
+  -f <filename>          build the packages listed in
                          the specified filename ( - for stdin),
                          by default all packages from pkgsrc source tree
                          are built
                          (implies -x summary -x checksum -x upload_pkgs)
   -k                     skip updating pkg_src_summary
   -K                     skip updating pkg_summary
-  -D|--diff              show difference with previous bulk build
+  -D                     show difference with previous bulk build
   -B <build_id>          set BUILD_ID (for debugging purposes)
-  -r|--retry             if your bulk build failed for some reason, you
+  -r                     if your bulk build failed for some reason, you
                          can try to continue it from the point it stopped at
-  -s|--strict            exit status is 0, if ALL packages succeded,
+  -s                     exit status is 0, if ALL packages succeded,
                          or 5 otherwise
   -l <label>             label for bulk build, unless -B option is applied
                          bulk build file will be stored
@@ -98,6 +100,7 @@ process_args (){
 }
 cmds=`process_args "$@"`
 eval "$cmds"
+
 if test $# -ne 0; then
     usage
     exit 1
