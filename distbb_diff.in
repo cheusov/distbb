@@ -49,25 +49,15 @@ d   - package failed due to broken dependency
 EOF
 }
 
-while test $# -ne 0; do
-    case "$1" in
-	-h)
-	    usage
-	    exit 0;;
-	-V)
-	    echo distbb-@version@
-	    exit 0;;
-	--)
-	    shift
-	    break;;
-	-*)
-	    echo "Bad option $1" 1>&2
-	    exit 1;;
-	*)
-	    break
+while getopts hV f
+do
+    case $f in
+	h)      usage; exit 0;;
+        V)      echo 'distbb-@version@'; exit 0;;
+        '?')    usage; exit 1;;
     esac
-    shift
 done
+shift `expr $OPTIND - 1`
 
 if test $# -ne 2; then
     usage
