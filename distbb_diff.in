@@ -33,8 +33,8 @@ distbb_diff - compare results of two bulk builds
 
 usage: distbb_diff [OPTIONS] bbdir1 bbdir2
 OPTIONS:
-  -h|--help              display this help message
-  -V|--version           distbb version
+  -h       display this help message
+  -V       distbb version
 
 bbdir1 - path to bulk build directory, e.g. ~/bulk-logs/20080915.1010
 bbdir2 - path to bulk build directory
@@ -51,10 +51,10 @@ EOF
 
 while test $# -ne 0; do
     case "$1" in
-	-h|--help)
+	-h)
 	    usage
 	    exit 0;;
-	-V|--version)
+	-V)
 	    echo distbb-@version@
 	    exit 0;;
 	--)
