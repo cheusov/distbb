@@ -218,19 +218,14 @@ export skip_updating_summary
 export build_start
 
 #
-for stage in init $BUILD_STAGES; do
-#    echo stage=$stage 1>&2
-
+run_stage (){
+    # $1 - stage
+    stage="$1"
     if echo "$stage" | grep '^/' > /dev/null; then
 	stage_fn="$stage"
 	stage=$(basename $stage)
     else
 	stage_fn="@libexecdir@/stage_$stage"
-    fi
-
-    eval x='$'exclude_state_$stage
-    if test -n "$x"; then
-	continue
     fi
 
     done_fn=$tmpdir/done_stage_${stage}.tmp
@@ -242,6 +237,21 @@ for stage in init $BUILD_STAGES; do
     eval ${stage_fn} "$REPORT1_DIR"
 
     touch ${done_fn}
+}
+
+#
+run_stage init
+
+for s in init $BUILD_STAGES; do
+    eval x='$'exclude_state_$s
+    if test -n "$x"; then
+	done_fn=$tmpdir/done_stage_${s}.tmp
+	printf '' > "$done_fn"
+    fi
+done
+
+for s in $BUILD_STAGES; do
+    run_stage "$s"
 done
 
 ######################################################################
