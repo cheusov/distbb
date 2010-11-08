@@ -82,20 +82,20 @@ unexclude (){
 
 process_args (){
     alt_getopt \
-	'h help'       'usage; exit 0' \
-	'V version'    'echo distbb-@version@; exit 0' \
-	'=f file'      'partial_bb; export pkgs_fn=' \
-	'=p pkgs'      'partial_bb; pkgs=' \
-	'=C config'    DISTBB_CONF= \
-	'D diff'       'export DISTBB_DIFF=1' \
-	=B             BUILD_ID= \
-	=l             label= \
-	k              skip_updating_src_summary=1 \
-	K              skip_updating_summary=1 \
-	=x             'exclude ' \
-	=X             'unexclude ' \
-	r              retry=1 \
-	s              strict=1 \
+	'h'       'usage; exit 0' \
+	'V'       'echo distbb-@version@; exit 0' \
+	'=f'      'partial_bb; export pkgs_fn=' \
+	'=p'      'partial_bb; pkgs=' \
+	'=C'      DISTBB_CONF= \
+	'D'       'export DISTBB_DIFF=1' \
+	=B        BUILD_ID= \
+	=l        label= \
+	k         skip_updating_src_summary=1 \
+	K         skip_updating_summary=1 \
+	=x        'exclude ' \
+	=X        'unexclude ' \
+	r         retry=1 \
+	s         strict=1 \
 	-- "$@"
 }
 cmds=`process_args "$@"`

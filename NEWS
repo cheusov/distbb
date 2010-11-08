@@ -1,4 +1,17 @@
 ===================================================================
+Version 0.38.2, by Aleksey Cheusov, Mon,  8 Nov 2010 23:52:31 +0200
+
+  pkg_summary-utils>=0.47 is needed
+
+  Long options were removed from distbb.
+  Use standard short options!
+
+  -x creates .done files, so they permist between -r sessions
+
+  pkg_summary2build_graph was replaced with pkg_summary2deps -Ap.
+       The former will be removed from pkg_summary-utils soon.
+
+===================================================================
 Version 0.38.1, by Aleksey Cheusov, Fri, 15 Oct 2010 22:30:15 +0300
 
   In order to minimize total build time, heavier packages are built
