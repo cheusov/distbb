@@ -1,5 +1,9 @@
 Plan0)
 
+ - analyse common files and CONFLICTS, red "sanity checks"?
+
+ - pkg_lint_summary -abcde --> linting summary.
+
  - use shlock for protectiion against running several instances of distbb
 
  - distbb.1
