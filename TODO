@@ -6,7 +6,11 @@ Plan0)
 
  - pkg_info -N
 
- - use shlock for protection against running several instances of distbb
+ - analyse common files and CONFLICTS, red "sanity checks"?
+
+ - pkg_lint_summary -abcde --> linting summary.
+
+ - use shlock for protectiion against running several instances of distbb
 
  - distbb.1
 
