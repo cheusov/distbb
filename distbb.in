@@ -243,7 +243,7 @@ run_stage (){
 run_stage init
 
 for s in init $BUILD_STAGES; do
-    eval x='$'exclude_state_$s
+    eval x='$'exclude_stage_$s
     if test -n "$x"; then
 	done_fn=$tmpdir/done_stage_${s}.tmp
 	printf '' > "$done_fn"
