@@ -1,5 +1,11 @@
 Plan0)
 
+ - distbb -i -- rebuild installed packages and generate summary
+
+ - create final pkg_summary.txt in bulk-buld/META and then copy it
+
+ - pkg_info -N
+
  - analyse common files and CONFLICTS, red "sanity checks"?
 
  - pkg_lint_summary -abcde --> linting summary.
@@ -29,7 +35,7 @@ Plan1)
 
  - rebuilding packages changed in CVS (without version changes)?
 
-Plan2)
+Plan +inf)
 
  - I think distbb can be adapted for FreeBSD/OpenBSD Ports
    and other packaging systems
