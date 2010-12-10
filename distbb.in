@@ -229,9 +229,9 @@ run_stage (){
     fi
 
     done_fn=$tmpdir/done_stage_${stage}.tmp
-    if test -n "$retry" && test -f ${done_fn}; then
+    if test -f "${done_fn}"; then
 	echo "$stage skipped"
-	continue
+	return
     fi
 
     eval ${stage_fn} "$REPORT1_DIR"
@@ -240,9 +240,12 @@ run_stage (){
 }
 
 #
+if test -z "$retry"; then
+    rm -f "$tmpdir/done_stage_init.tmp"
+fi
 run_stage init
 
-for s in init $BUILD_STAGES; do
+for s in $BUILD_STAGES; do
     eval x='$'exclude_stage_$s
     if test -n "$x"; then
 	done_fn=$tmpdir/done_stage_${s}.tmp
