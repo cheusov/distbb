@@ -67,17 +67,17 @@ EOF
 }
 
 partial_bb (){
-    exclude_state_summary=1
-    exclude_state_checksum=1
-    exclude_state_upload_pkgs=1
+    exclude_stage_summary=1
+    exclude_stage_checksum=1
+    exclude_stage_upload_pkgs=1
 }
 
 exclude (){
-    eval "exclude_state_$1=1"
+    eval "exclude_stage_$1=1"
 }
 
 unexclude (){
-    unset "exclude_state_$1" || true
+    unset "exclude_stage_$1" || true
 }
 
 process_args (){
@@ -106,8 +106,8 @@ if test $# -ne 0; then
     exit 1
 fi
 
-exclude_state_upload_pkgs="${exclude_state_upload_pkgs}${exclude_state_upload}"
-exclude_state_upload_logs="${exclude_state_upload_logs}${exclude_state_upload}"
+exclude_stage_upload_pkgs="${exclude_stage_upload_pkgs}${exclude_stage_upload}"
+exclude_stage_upload_logs="${exclude_stage_upload_logs}${exclude_stage_upload}"
 
 if test -n "$pkgs"; then
     export pkgs_fn=`mktemp /tmp/distbb.XXXXXX`
@@ -228,7 +228,7 @@ for stage in init $BUILD_STAGES; do
 	stage_fn="@libexecdir@/stage_$stage"
     fi
 
-    eval x='$'exclude_state_$stage
+    eval x='$'exclude_stage_$stage
     if test -n "$x"; then
 	continue
     fi
