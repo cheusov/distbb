@@ -1,6 +1,12 @@
 Plan0)
 
- - use shlock for protectiion against running several instances of distbb
+ - distbb -i -- rebuild installed packages and generate summary
+
+ - create final pkg_summary.txt in bulk-buld/META and then copy it
+
+ - pkg_info -N
+
+ - use shlock for protection against running several instances of distbb
 
  - distbb.1
 
