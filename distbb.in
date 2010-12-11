@@ -36,33 +36,36 @@ usage: distbb -h
        distbb [OPTIONS]
        distbb -r -B <BUILDID> [OPTIONS]
 OPTIONS:
-  -h                     display this help message
-  -V                     distbb version
-  -C <config>            config file, the default is
-                         @sysconfdir@/distbb.conf
-  -p <packages>          build the specified packages
-                         (implies -x summary -x checksum -x upload_pkgs)
-  -f <filename>          build the packages listed in
-                         the specified filename ( - for stdin),
-                         by default all packages from pkgsrc source tree
-                         are built
-                         (implies -x summary -x checksum -x upload_pkgs)
-  -k                     skip updating pkg_src_summary
-  -K                     skip updating pkg_summary
-  -D                     show difference with previous bulk build
-  -B <build_id>          set BUILD_ID (for debugging purposes)
-  -r                     if your bulk build failed for some reason, you
-                         can try to continue it from the point it stopped at
-  -s                     exit status is 0, if ALL packages succeded,
-                         or 5 otherwise
-  -l <label>             label for bulk build, unless -B option is applied
-                         bulk build file will be stored
-                         in $REPORTS_DIR/$BUILD_ID-<label> directory
-  -x <stage>             exclude <stage> from BUILD_STAGES.
-                         Multiple -x are allowed.
-                         "-x upload" is equivalent to
-                         "-x upload_logs -x upload_pkgs".
-  -X <stage>             enable <stage> (antonym for -x)
+  -h                display this help message
+  -V                distbb version
+  -C <config>       config file, the default is
+                    @sysconfdir@/distbb.conf
+  -p <packages>     build the specified packages
+                    (implies -x summary -x checksum -x upload_pkgs)
+  -f <filename>     build the packages listed in
+                    the specified filename ( - for stdin),
+                    by default all packages from pkgsrc source tree
+                    are built
+                    (implies -x summary -x checksum -x upload_pkgs)
+  -k                skip updating pkg_src_summary
+  -K                skip updating pkg_summary
+  -D                show difference with previous bulk build
+  -B <build_id>     set BUILD_ID (for debugging purposes)
+  -r                if your bulk build failed for some reason, you
+                    can try to continue it from the point it stopped at
+  -s                exit status is 0, if ALL packages succeded,
+                    or 5 otherwise
+  -l <label>        label for bulk build, unless -B option is applied
+                    bulk build file will be stored
+                    in $REPORTS_DIR/$BUILD_ID-<label> directory
+  -x <stage>        exclude <stage> from BUILD_STAGES.
+                    Multiple -x are allowed.
+                    "-x upload" is equivalent to
+                    "-x upload_logs -x upload_pkgs".
+  -X <stage>        enable <stage> (antonym for -x)
+  -i                build all installed packages and generate pkg_summary.txt
+  -I <pkg_db>       the same as -i but installed packages
+                    are obtained from <pkg_db>
 EOF
 }
 
@@ -70,6 +73,12 @@ partial_bb (){
     exclude_stage_summary=1
     exclude_stage_checksum=1
     exclude_stage_upload_pkgs=1
+}
+
+full_bb (){
+    unset exclude_stage_summary || true
+    unset exclude_stage_checksum || true
+    unset exclude_stage_upload_pkgs || true
 }
 
 exclude (){
@@ -80,12 +89,12 @@ unexclude (){
     unset "exclude_stage_$1" || true
 }
 
-while getopts hVf:p:C:DB:l:kKx:X:rs f; do
+while getopts hVf:p:C:DB:l:kKx:X:rsiI: f; do
     case $f in
-	h)  usage; exit 0;;
-	V)  echo distbb-@version@; exit 0;;
-	f)   partial_bb; export pkgs_fn="$OPTARG";;
-	p)   partial_bb; pkgs="$OPTARG";;
+	h)   usage; exit 0;;
+	V)   echo distbb-@version@; exit 0;;
+	f)   partial_bb; installed=; pkgs=; pkgs_fn="$OPTARG";;
+	p)   partial_bb; installed=; pkgs_fn=; pkgs="$OPTARG";;
 	C)   DISTBB_CONF="$OPTARG";;
 	D)   export DISTBB_DIFF=1;;
 	B)   BUILD_ID="$OPTARG";;
@@ -96,10 +105,14 @@ while getopts hVf:p:C:DB:l:kKx:X:rs f; do
 	X)   unexclude="$OPTARG";;
 	r)   retry=1;;
 	s)   strict=1;;
-        \?) printf '%s\n' "$USAGE"; exit 1;;
+	i)   full_bb; pkgs=; pkgs_fn=; K_opt=; installed=1;;
+	I)   full_bb; pkgs=; pkgs_fn=; K_opt="-K $OPTARG"; installed=1;;
+	'?') printf '%s\n' "$USAGE"; exit 1;;
     esac
 done
 shift `expr $OPTIND - 1`
+
+export pkgs_fn
 
 if test $# -ne 0; then
     usage
@@ -109,14 +122,20 @@ fi
 exclude_stage_upload_pkgs="${exclude_stage_upload_pkgs}${exclude_stage_upload}"
 exclude_stage_upload_logs="${exclude_stage_upload_logs}${exclude_stage_upload}"
 
-if test -n "$pkgs"; then
+if test -n "$pkgs$installed"; then
     export pkgs_fn=`mktemp /tmp/distbb.XXXXXX`
     test -n "$pkgs_fn"
     trap "rm -f $pkgs_fn" 0 1 2 15
 
-    for p in $pkgs; do
-	printf "%s\n" $p >> $pkgs_fn
-    done
+    if test -n "$pkgs"; then
+	for p in $pkgs; do
+	    printf "%s\n" $p >> "$pkgs_fn"
+	done
+    else
+	pkg_bin_summary -f PKGPATH,ASSIGNMENTS -- -a $K_opt |
+	pkg_assignments2pkgpath |
+	sed -n 's/^PKGPATH=//p' > "$pkgs_fn"
+    fi
 fi
 
 if test -n "$retry" && test -z "$BUILD_ID"; then
