@@ -80,26 +80,26 @@ unexclude (){
     unset "exclude_stage_$1" || true
 }
 
-process_args (){
-    alt_getopt \
-	'h'       'usage; exit 0' \
-	'V'       'echo distbb-@version@; exit 0' \
-	'=f'      'partial_bb; export pkgs_fn=' \
-	'=p'      'partial_bb; pkgs=' \
-	'=C'      DISTBB_CONF= \
-	'D'       'export DISTBB_DIFF=1' \
-	=B        BUILD_ID= \
-	=l        label= \
-	k         skip_updating_src_summary=1 \
-	K         skip_updating_summary=1 \
-	=x        'exclude ' \
-	=X        'unexclude ' \
-	r         retry=1 \
-	s         strict=1 \
-	-- "$@"
-}
-cmds=`process_args "$@"`
-eval "$cmds"
+while getopts hVf:p:C:DB:l:kKx:X:rs f; do
+    case $f in
+	h)  usage; exit 0;;
+	V)  echo distbb-@version@; exit 0;;
+	f)   partial_bb; export pkgs_fn="$OPTARG";;
+	p)   partial_bb; pkgs="$OPTARG";;
+	C)   DISTBB_CONF="$OPTARG";;
+	D)   export DISTBB_DIFF=1;;
+	B)   BUILD_ID="$OPTARG";;
+	l)   label="$OPTARG";;
+	k)   skip_updating_src_summary=1;;
+	K)   skip_updating_summary=1;;
+	x)   exclude="$OPTARG";;
+	X)   unexclude="$OPTARG";;
+	r)   retry=1;;
+	s)   strict=1;;
+        \?) printf '%s\n' "$USAGE"; exit 1;;
+    esac
+done
+shift `expr $OPTIND - 1`
 
 if test $# -ne 0; then
     usage
