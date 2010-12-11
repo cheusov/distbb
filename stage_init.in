@@ -271,7 +271,7 @@ fi
 verbose_print "  packages to rebuild..."
 
 changed_pkgs_fn=$tmpdir/changed.tmp
-awk '$1 ~ /^[^=->]$/ {print $2}' "$summary_cmp_fn" > "$changed_pkgs_fn"
+awk '$1 ~ /^[^=>-]$/ {print $2}' "$summary_cmp_fn" > "$changed_pkgs_fn"
 
 pkg_subgraph_deps -f "$changed_pkgs_fn" "$reqd_deps_fn" \
     > "$rebuild_fn"
