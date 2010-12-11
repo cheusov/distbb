@@ -1,12 +1,12 @@
 Plan0)
 
- - distbb -i -- rebuild installed packages and generate summary
-
  - create final pkg_summary.txt in bulk-buld/META and then copy it
 
  - pkg_info -N
 
- - analyse common files and CONFLICTS, red "sanity checks"?
+ - Red "sanity checks" in report.html
+   *) analyse common files and CONFLICTS
+   *) analyse REQUIRES and PROVIDES (pkg_lint_summary -l)
 
  - pkg_lint_summary -abcde --> linting summary.
 
@@ -19,8 +19,6 @@ Plan0)
  - Automatically create r/o chroot under NetBSD, replacement for pkg_comp.
 
 Plan1)
-
- - Analyse REQUIRES and PROVIDES while running bulk builds?
 
  - links to package's configure.log(s) from PKGNAME/stage_*.html?
 
