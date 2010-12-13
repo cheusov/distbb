@@ -320,7 +320,7 @@ EOF
 Results of failed packages are available below.<br>
 Progress messages are <a href="$(basename $progress_fn)" title="Progress messages">here</a>.<br> <!-- REMOVE ME -->
 pkg_src_summary is <a href="$(basename $pkg_src_summary_fn)" title="pkgsrc source packages summary">here</a>.<br> <!-- REMOVE ME -->
-pkg_summary vs. pkg_src_summary <a href="$(basename $summary_cmp_fn)" title="binary packages agains pkgsrc tree">comparison</a>.<br> <!-- REMOVE ME -->
+pkg_src_summary vs. pkg_summary <a href="$(basename $summary_cmp_fn)" title="binary packages agains pkgsrc tree">comparison</a>.<br> <!-- REMOVE ME -->
 </p>
 EOF
 

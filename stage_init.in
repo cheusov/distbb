@@ -121,14 +121,11 @@ verbose_print "done\n"
 ######################################################################
 ### updating PKG_ALL_SUMMARY
 
-refreshed_summary_fn=$tmpdir/refreshed_summary.tmp
 if test -z "$skip_updating_summary"; then
     verbose_print "  updating pkg_all_summary..."
     eval @libexecdir@/wrapper $PKG_UPDATE_ALL_SUMMARY_CMD "$PKG_ALL_SUMMARY" "$PACKAGES/All"
     verbose_print "done\n"
 fi
-
-pkg_refresh_summary "$PKG_ALL_SUMMARY" >$refreshed_summary_fn
 
 ######################################################################
 ### updating PKG_SRC_SUMMARY
@@ -189,17 +186,17 @@ verbose_print "done\n"
 ### comparison binaries against pkgsrc tree
 verbose_print "  pkg_summary vs. pkg_src_summary comparison..."
 eval @libexecdir@/wrapper \
-    $PKG_CMP_SUMMARY_CMD $refreshed_summary_fn $pkg_src_summary_fn \
+    $PKG_CMP_SUMMARY_CMD $pkg_src_summary_fn $PKG_ALL_SUMMARY \
     > $summary_cmp_fn
 verbose_print "done\n"
 
-if grep '^>' $summary_cmp_fn > /dev/null; then
+if grep '^<' $summary_cmp_fn > /dev/null; then
     cat >> "$build_src_summary_log_fn" <<'EOF'
  ------------------
 Versions of some packages go backward
 
 EOF
-    grep '^>' $summary_cmp_fn >> "$build_src_summary_log_fn"
+    grep '^<' $summary_cmp_fn >> "$build_src_summary_log_fn"
 fi
 
 ######################################################################
@@ -270,11 +267,14 @@ fi
 
 verbose_print "  packages to rebuild..."
 
-changed_pkgs_fn=$tmpdir/changed.tmp
-awk '$1 ~ /^[^=-]$/ {print $2}' "$summary_cmp_fn" > "$changed_pkgs_fn"
+built_pkgs_fn=$tmpdir/built.tmp
+awk '$1 ~ /^=$/ {print $2}' "$summary_cmp_fn" > "$built_pkgs_fn"
 
-pkg_subgraph_deps -f "$changed_pkgs_fn" "$reqd_deps_fn" \
-    > "$rebuild_fn"
+changed_pkgs_fn=$tmpdir/changed.tmp
+awk '{print $2}' "$summary_cmp_fn" |
+grep -vF -f "$built_pkgs_fn" > "$changed_pkgs_fn" || true
+
+pkg_subgraph_deps -f "$changed_pkgs_fn" "$reqd_deps_fn" > "$rebuild_fn"
 
 verbose_print "done\n"
 
@@ -284,8 +284,7 @@ verbose_print "done\n"
 verbose_print "  packages built previously (no need to rebuild)..."
 
 runpipe0 \
-    pkg_subgraph_deps -v -f "$changed_pkgs_fn" "$reqd_deps_fn" '|' \
-    awk 'NF == 2 {$0 = $1 "\n" $2} {print}' '|' \
+    pkg_subgraph_deps -n -f "$built_pkgs_fn" "$reqd_deps_fn" '|' \
     sort_uniq > "$packages_built_prev_fn.tmp"
 
 verbose_print "done\n"
