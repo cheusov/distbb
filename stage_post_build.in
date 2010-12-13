@@ -1,5 +1,10 @@
 #!/bin/sh
 
+# Copyright (c) 2008-2010 Aleksey Cheusov <vle@gmx.net>
+# All rights reserved.
+#
+# See LICENSE file
+
 ######################################################################
 
 set -e

@@ -1,5 +1,12 @@
 #!/bin/sh
 
+# Copyright (c) 2008-2010 Aleksey Cheusov <vle@gmx.net>
+# All rights reserved.
+#
+# See LICENSE file
+
+######################################################################
+
 # $1 - enriched PKGPATH 
 # $2 - file that contains full dependency graph 
 # $3 - pkg_src_summary.txt
