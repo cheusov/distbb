@@ -132,7 +132,7 @@ if test -n "$pkgs$installed"; then
 	    printf "%s\n" $p >> "$pkgs_fn"
 	done
     else
-	pkg_bin_summary -f PKGPATH,ASSIGNMENTS -- -a $K_opt |
+	pkg_bin_summary -f PKGPATH,ASSIGNMENTS -- -u $K_opt |
 	pkg_assignments2pkgpath |
 	sed -n 's/^PKGPATH=//p' > "$pkgs_fn"
     fi
