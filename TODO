@@ -8,7 +8,7 @@ Plan0)
    *) analyse common files and CONFLICTS
    *) analyse REQUIRES and PROVIDES (pkg_lint_summary -l)
 
- - use shlock for protectiion against running several instances of distbb
+ - use shlock for protection against running several instances of distbb
 
  - distbb.1
 

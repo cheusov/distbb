@@ -1,5 +1,7 @@
 ===================================================================
-Version 0.39, by Aleksey Cheusov, Sat, 11 Dec 2010 03:55:00 +0200
+Version 0.39.1, by Aleksey Cheusov, Tue, 14 Dec 2010 02:03:12 +0200
+
+  Package with versions going backward are not rebuilt anymore.
 
   New options -i and -I were added for building
   all installed packages
@@ -7,6 +9,9 @@ Version 0.39, by Aleksey Cheusov, Sat, 11 Dec 2010 03:55:00 +0200
   distbb:
     - fix for 'continue' operator outside loop
     - fix for -r broken in 0.38.2
+
+  License has been changed from MIT to functionally equivalent
+  2-clause BSD.
 
 ===================================================================
 Version 0.38.2, by Aleksey Cheusov, Mon,  8 Nov 2010 23:52:31 +0200
