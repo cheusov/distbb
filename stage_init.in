@@ -254,7 +254,11 @@ fi
 verbose_print "  packages to rebuild..."
 
 unchanged_pkgs_fn=$tmpdir/unchanged.tmp
-awk '$1 ~ /^=$/ {print $2}' "$summary_cmp_fn" > "$unchanged_pkgs_fn"
+awk '$1 ~ /^=$/ {print $3 "-" $4}' "$summary_cmp_fn" \
+    > "$unchanged_pkgs_fn".pkgname
+pkg_grep_summary -t strfile PKGNAME "$unchanged_pkgs_fn".pkgname \
+    < "$pkg_src_summary_fn" |
+sed -n 's/^PKGPATH=//p' > $tmpdir/unchanged.tmp
 
 changed_pkgs_fn=$tmpdir/changed.tmp
 {
