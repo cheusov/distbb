@@ -1,4 +1,9 @@
 ===================================================================
+Version 0.39.2, by Aleksey Cheusov, Wed, 15 Dec 2010 13:45:20 +0200
+
+  Fix for bug introduced in 0.39.1
+
+===================================================================
 Version 0.39.1, by Aleksey Cheusov, Tue, 14 Dec 2010 02:03:12 +0200
 
   Package with versions going backward are not rebuilt anymore.
