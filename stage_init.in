@@ -172,7 +172,7 @@ verbose_print "done\n"
 ### comparison binaries against pkgsrc tree
 verbose_print "  pkg_summary vs. pkg_src_summary comparison..."
 eval @libexecdir@/wrapper \
-    $PKG_CMP_SUMMARY_CMD $pkg_src_summary_fn $PKG_ALL_SUMMARY \
+    $PKG_CMP_SUMMARY_CMD "$pkg_src_summary_fn" "$PKG_ALL_SUMMARY" \
     > $summary_cmp_fn
 verbose_print "done\n"
 
@@ -254,19 +254,15 @@ fi
 verbose_print "  packages to rebuild..."
 
 unchanged_pkgs_fn=$tmpdir/unchanged.tmp
-awk '$1 ~ /^=$/ {print $3 "-" $4}' "$summary_cmp_fn" \
-    > "$unchanged_pkgs_fn".pkgname
-pkg_grep_summary -t strfile PKGNAME "$unchanged_pkgs_fn".pkgname \
-    < "$pkg_src_summary_fn" |
-sed -n 's/^PKGPATH=//p' > $tmpdir/unchanged.tmp
+awk '$1 ~ /^=$/ {print $2}' "$summary_cmp_fn" > "$unchanged_pkgs_fn"
 
 changed_pkgs_fn=$tmpdir/changed.tmp
-{
-  awk '{hash [$2]=0} END {for (i in hash) print i}' "$summary_cmp_fn"
-  cat "$unchanged_pkgs_fn" "$unchanged_pkgs_fn"
-} | sort | uniq -c | awk '$1 == 1 {print $2}' > "$changed_pkgs_fn"
+awk 'FILENAME != "-" {hash [$1]=0; next}
+    !($2 in hash) {print $2}' "$unchanged_pkgs_fn" - \
+	< "$summary_cmp_fn" | sort -u > "$changed_pkgs_fn"
 
-pkg_subgraph_deps -f "$changed_pkgs_fn" "$reqd_deps_fn" > "$rebuild_fn"
+pkg_subgraph_deps -f "$changed_pkgs_fn" "$reqd_deps_fn" \
+    > "$rebuild_fn"
 
 verbose_print "done\n"
 
