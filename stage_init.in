@@ -257,9 +257,10 @@ unchanged_pkgs_fn=$tmpdir/unchanged.tmp
 awk '$1 ~ /^=$/ {print $2}' "$summary_cmp_fn" > "$unchanged_pkgs_fn"
 
 changed_pkgs_fn=$tmpdir/changed.tmp
+sed -n 's/^PKGPATH=//p' "$pkg_src_summary_fn" |
 awk 'FILENAME != "-" {hash [$1]=0; next}
-    !($2 in hash) {print $2}' "$unchanged_pkgs_fn" - \
-	< "$summary_cmp_fn" | sort -u > "$changed_pkgs_fn"
+    !($0 in hash) {print $0}' "$unchanged_pkgs_fn" - |
+sort -u > "$changed_pkgs_fn"
 
 pkg_subgraph_deps -f "$changed_pkgs_fn" "$reqd_deps_fn" \
     > "$rebuild_fn"
