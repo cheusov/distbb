@@ -1,5 +1,7 @@
 Plan0)
 
+ - WEIGH_PACKAGES_CMD - tools for assigning weights to packages
+
  - create final pkg_summary.txt in bulk-buld/META and then copy it
 
  - pkg_info -N
@@ -21,13 +23,6 @@ Plan1)
  - links to package's configure.log(s) from PKGNAME/stage_*.html?
 
  - separate DEPENDS and BUILD_DEPENDS (versions should be analysed)?
-
- - build time of binary packages?
-   problem:
-     package_A depends on package_B
-     bin_package_A.tgz was built earlier than bin_package_B.tgz file
-     ===> package_A is NOT rebuilt in this case, that is
-        build time of binary packages is currently not checked
 
  - rebuilding packages changed in CVS (without version changes)?
 
