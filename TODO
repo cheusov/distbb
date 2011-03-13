@@ -1,5 +1,7 @@
 Plan0)
 
+ - Add PLIST to pkg_summary.txt
+
  - create final pkg_summary.txt in bulk-buld/META and then copy it
 
  - pkg_info -N
