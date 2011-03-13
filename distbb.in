@@ -85,8 +85,8 @@ while getopts hVf:p:C:DB:l:kKx:X:rsiI: f; do
 	l)   label="$OPTARG";;
 	k)   skip_updating_src_summary=1;;
 	K)   skip_updating_summary=1;;
-	x)   exclude="$OPTARG";;
-	X)   unexclude="$OPTARG";;
+	x)   exclude "$OPTARG";;
+	X)   unexclude "$OPTARG";;
 	r)   retry=1;;
 	s)   strict=1;;
 	i)   full_bb; pkgs=; pkgs_fn=; K_opt=; installed=1;;
