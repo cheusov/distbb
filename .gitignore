@@ -8,7 +8,7 @@ distbb.local.mk
 distbb.mk
 distbb_diff
 gen_queue
-get_weight
+gen_weights
 get_direct_pkgname_deps
 make-depends
 slave
