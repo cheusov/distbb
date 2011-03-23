@@ -1,10 +1,12 @@
 Plan0)
 
+ - -x and -X: check for stage correctness
+
+ - create final pkg_summary.txt in bulk-buld/META and then copy it
+
  - Add PLIST to pkg_summary.txt
 
  - WEIGH_PACKAGES_CMD - tools for assigning weights to packages
-
- - create final pkg_summary.txt in bulk-buld/META and then copy it
 
  - pkg_info -N
 
