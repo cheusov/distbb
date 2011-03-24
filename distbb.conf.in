@@ -31,11 +31,6 @@ UPLOAD_LOGS_DEST=you@your-domain.com:~/public_html/pkgsrc-distbb/logs/
      PACKAGES_URL="http://your-domain.com/~you/pkgsrc-distbb/packages/"
 REPORT_URL_PREFIX="http://your-domain.com/~you/pkgsrc-distbb/logs/"
 
-# define your post-build actions in this function
-post_build (){
-    :
-}
-
 ######################################################################
 I_AM_READY=4
 
