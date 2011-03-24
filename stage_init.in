@@ -174,20 +174,20 @@ awk '
 /^PKGNAME/ {pkgbase = substr($0, 9); sub(/-[^-]*$/, "", pkgbase)}
 /^PKGPATH/ {pkgpath = substr($0, 9); sub(/:.*$/, "", pkgpath)}
 NF == 0 {print pkgpath "," pkgbase}
-' "$pkg_src_summary_fn" > "$tmpdir/2"
+' "$pkg_src_summary_fn" > "$tmpdir/src_PABA.tmp"
 
 sed -n 's/^PKGPATH=//p' "$pkg_src_summary_fn" |
 sort -u > "$tmpdir/all_src_pkgpaths"
 
 grep -E '^(PKGNAME|PKGPATH|ASSIGNMENTS|DEPENDS|$)' "$PKG_ALL_SUMMARY" |
-pkg_grep_summary -S PKGPABA "$tmpdir/2" |
-pkg_refresh_summary > "$tmpdir/1"
+pkg_grep_summary -S PKGPABA "$tmpdir/src_PABA.tmp" |
+pkg_refresh_summary > "$tmpdir/bin_updated.tmp"
 
 pkg_summary2deps -Apnrsal -P $tmpdir/all_src_pkgpaths \
-    "$pkg_src_summary_fn" "$tmpdir/1" > "$tmpdir/3" 2>/dev/null
+    "$pkg_src_summary_fn" "$tmpdir/bin_updated.tmp" > "$tmpdir/all_deps.tmp" 2>/dev/null
 
 runawk -f xgetline.awk \
-       -v pkg_bin_summary_fn="$tmpdir/1" \
+       -v pkg_bin_summary_fn="$tmpdir/bin_updated.tmp" \
        -v tmpdir="$tmpdir" \
 -e '
 BEGIN {
@@ -241,7 +241,7 @@ NF == 2 {
    }
 
    if (older1)
-      print older1, $2 > (tmpdir "/5")
+      print older1, $2 > (tmpdir "/reqd_deps_pre.tmp")
 
    next
 }
@@ -251,10 +251,9 @@ NF == 1 {
    if (!(pkg in hash))
       print $1
 }
-# "$tmpdir/3" > "$reqd_deps_fn"
-' "$tmpdir/3" | sed 's/;[^ ]*//g' > "$rebuild_fn"
+' "$tmpdir/all_deps.tmp" | sed 's/;[^ ]*//g' > "$rebuild_fn"
 
-sed 's/[^ ]*;//g' "$tmpdir/5" > "$reqd_deps_fn"
+sed 's/[^ ]*;//g' "$tmpdir/reqd_deps_pre.tmp" > "$reqd_deps_fn"
 
 printf '' > "$build_deps_graph_log_fn"
 printf '' > "$summary_cmp_fn"

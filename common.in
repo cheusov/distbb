@@ -77,7 +77,6 @@ build_end_fn=$meta_dir/build_end.tmp
 
 queue_fn=$tmpdir/queue.tmp
 rebuild_fn=$tmpdir/rebuild.tmp
-#all_deps_fn=$tmpdir/all_deps.tmp
 
 aux_reqd_deps_fn=$MSCOMMONDIR/reqd_deps.txt
 
