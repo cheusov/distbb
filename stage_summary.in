@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Copyright (c) 2008-2010 Aleksey Cheusov <vle@gmx.net>
+# Copyright (c) 2008-2011 Aleksey Cheusov <vle@gmx.net>
 # All rights reserved.
 #
 # See LICENSE file
@@ -22,16 +22,30 @@ DISTBB_CONF=${DISTBB_CONF:-@sysconfdir@/distbb.conf}
 # main
 verbose_print "Generating total pkg_summary..."
 
-total_pkgs=$REPORT1_DIR/META/packages_built_total.txt
+summary_pkgs_fn=$tmpdir/summary_pkgs.tmp
+awk 'NF == 2 {hash [$1] = hash [$2] = ""}
+     NF == 1 {hash [$1] = ""}
+     END {for (p in hash) print p }' "$reqd_deps_fn" |
+sort > "$summary_pkgs_fn"
+
+runawk -f xgetline.awk -v summary_pkgs_fn="$summary_pkgs_fn" -e '
+BEGIN {
+   while(xgetline0(summary_pkgs_fn)){
+      all_pkgs [$1] = 0
+   }
+}
+{ failed_pkgs [$2] = 0 }
+END {
+   for (p in all_pkgs)
+      if (!(p in failed_pkgs))
+         print p
+}
+' $REPORT1_DIR/META/packages_failed_*.txt > "$tmpdir/7"
+
 cd "$PACKAGES/All"
 
-if test -s "$total_pkgs"; then
-    awk -v sufx="$PKG_SUFX" 'NF == 3 {print "./" $2 sufx}' "$total_pkgs" |
-    sort |
-    xargs "$PKGSRC_PREFIX/sbin/pkg_info" -X > "$PKG_SUMMARY"
-else
-    printf '' > "$PKG_SUMMARY"
-fi
+awk -v sufx="$PKG_SUFX" '{print "./" $1 sufx}' "$tmpdir/7" |
+xargs "$PKGSRC_PREFIX/sbin/pkg_info" -X > "$PKG_SUMMARY"
 
 "$GZIP" < "$PKG_SUMMARY" > "${PKG_SUMMARY%.txt}.gz"
 "$BZIP2" < "$PKG_SUMMARY" > "${PKG_SUMMARY%.txt}.bz2"

@@ -22,6 +22,6 @@ if test -z "$tmpdir"; then
     exit 1
 fi
 
-awk -v pkgpath="$1" '$2 == pkgpath {print $1}' "$2" > $tmpdir/pkgpaths.txt
-pkg_grep_summary -S PKGPATHe $tmpdir/pkgpaths.txt < "$3" |
-sed -n 's/^PKGNAME=//p'
+awk -v pkgname="$1" '$2 == pkgname {print $1}' "$2" #> $tmpdir/pkgpaths.txt
+#pkg_grep_summary -S PKGPATHe $tmpdir/pkgpaths.txt < "$3" |
+#sed -n 's/^PKGNAME=//p'

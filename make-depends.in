@@ -33,20 +33,13 @@ if test -z "$aux_reqd_deps_fn"; then
 	exit 1
 fi
 
-if test -z "$aux_pkg_src_summary_fn"; then
-	echo '$aux_pkg_src_summary_fn must be set' 1>&2
-	exit 1
-fi
-
 test $# -eq 1
 
 get_deps (){
-    @libexecdir@/get_direct_pkgname_deps "$1" \
-	"$aux_reqd_deps_fn" \
-	"$aux_pkg_src_summary_fn"
+    pkg_subgraph_deps -rxt -p "$1" "$aux_reqd_deps_fn" | tsort
 }
 
-export PKG_PATH="${PACKAGES}/All"
+unset PKG_PATH || true
 
 pkgs_deps=`get_deps $1`
 echo 'Packages to install:'

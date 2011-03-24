@@ -472,13 +472,11 @@ report_html (){
 
 ######################################################################
 
-list_inspected_pkgs (){
-    awk 'NF==2 {print $1; print $2; next}
-         NF==1 {print $1}' "$reqd_deps_fn" |
-    sort -u
+count_inspected_pkgs (){
+    awk 'NF == 0 {++cnt} END {print cnt}' "$pkg_src_summary_fn"
 }
 
-packages_inspected_cnt=$(list_inspected_pkgs | count_lines)
+packages_inspected_cnt=$(count_inspected_pkgs)
 
 packages_failed_notavail_cnt=$(count_lines "$packages_failed_notavail_fn.tmp")
 packages_failed_scan_cnt=$(count_lines "$packages_failed_scan_fn")
