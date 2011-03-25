@@ -44,8 +44,11 @@ END {
 
 cd "$PACKAGES/All"
 
+pkg_summary_tmp_fn="$REPORT1_DIR/META/pkg_summary.txt"
+
 awk -v sufx="$PKG_SUFX" '{print "./" $1 sufx}' "$tmpdir/7" |
-xargs "$PKGSRC_PREFIX/sbin/pkg_info" -X > "$PKG_SUMMARY"
+xargs "$PKGSRC_PREFIX/sbin/pkg_info" -X > "$pkg_summary_tmp_fn"
+cp "$pkg_summary_tmp_fn" "$PKG_SUMMARY"
 
 "$GZIP" < "$PKG_SUMMARY" > "${PKG_SUMMARY%.txt}.gz"
 "$BZIP2" < "$PKG_SUMMARY" > "${PKG_SUMMARY%.txt}.bz2"
