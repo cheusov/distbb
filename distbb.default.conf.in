@@ -49,6 +49,10 @@ assign LIST_ALL_PKGS_CMD '@bindir@/pkg_list_all_pkgs'
 #
 assign EXTRACT_BOOTSTRAP_CMD "/bin/tar -xf $BOOTSTRAP -C /"
 
+# Tool for weighing packages, the higher weight of a package, the
+# sooner it is built. See gen_weight for usage.
+assign WEIGH_PACKAGES_CMD @libexecdir@/gen_weights
+
 # set it to non-empty string if you want "distributed" bulk build
 # also see SLAVES variable
 #assign MASTER_MODE 'yes'

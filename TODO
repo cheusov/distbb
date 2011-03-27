@@ -4,8 +4,6 @@ Plan0)
 
  - Add PLIST to pkg_summary.txt
 
- - WEIGH_PACKAGES_CMD - tools for assigning weights to packages
-
  - pkg_info -N
 
  - Red "sanity checks" in report.html
