@@ -40,13 +40,13 @@ END {
       if (!(p in failed_pkgs))
          print p
 }
-' $REPORT1_DIR/META/packages_failed_*.txt > "$tmpdir/7"
+' $REPORT1_DIR/META/packages_failed_*.txt > "$tmpdir/pkgs2summary.tmp"
 
 cd "$PACKAGES/All"
 
 pkg_summary_tmp_fn="$REPORT1_DIR/META/pkg_summary.txt"
 
-awk -v sufx="$PKG_SUFX" '{print "./" $1 sufx}' "$tmpdir/7" |
+awk -v sufx="$PKG_SUFX" '{print "./" $1 sufx}' "$tmpdir/pkgs2summary.tmp" |
 xargs "$PKGSRC_PREFIX/sbin/pkg_info" -X > "$pkg_summary_tmp_fn"
 cp "$pkg_summary_tmp_fn" "$PKG_SUMMARY"
 
