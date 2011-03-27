@@ -274,6 +274,23 @@ awk '$1 == 1 {print $2}' > "$packages_built_prev_fn.tmp"
 verbose_print "done\n"
 
 ######################################################################
+### comparison binaries against pkgsrc tree
+verbose_print "  pkg_src_summary vs. pkg_summary comparison..."
+eval @libexecdir@/wrapper \
+    $PKG_CMP_SUMMARY_CMD "$pkg_src_summary_fn" "$PKG_ALL_SUMMARY" \
+    > "$summary_cmp_fn" || true
+verbose_print "done\n"
+
+if grep '^<' "$summary_cmp_fn" > /dev/null; then
+    cat >> "$build_src_summary_log_fn" <<'EOF'
+ ------------------
+Versions of some packages go backward
+
+EOF
+    grep '^<' $summary_cmp_fn >> "$build_src_summary_log_fn"
+fi
+
+######################################################################
 ### list of already built packages
 
 verbose_print "  copying auxiliary files..."

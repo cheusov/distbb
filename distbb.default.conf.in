@@ -117,7 +117,7 @@ assign PKG_UPDATE_SRC_SUMMARY_CMD "@bindir@/pkg_src_summary -b -A > \"$PKG_SRC_S
 
 # program for comparing pkg_summary(5) for available binaries and
 # pkg_src_summary collected from pkgsrc source tree
-assign PKG_CMP_SUMMARY_CMD '@bindir@/pkg_cmp_summary -pe2'
+assign PKG_CMP_SUMMARY_CMD '@bindir@/pkg_cmp_summary -p'
 
 # if you want to build src_summary using several processes or several
 # machines in a network, set PSS_SLAVES.
