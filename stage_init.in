@@ -259,7 +259,7 @@ NF == 1 {
 printf '' >> "$tmpdir/reqd_deps_pre.tmp"
 sed 's/[^ ]*;//g' "$tmpdir/reqd_deps_pre.tmp" > "$reqd_deps_fn"
 
-printf '' > "$build_deps_graph_log_fn"
+printf '' > "$errors_fn"
 printf '' > "$summary_cmp_fn"
 
 # rebuilt previously
@@ -282,12 +282,12 @@ eval @libexecdir@/wrapper \
     > "$summary_cmp_fn" || true
 
 if grep '^<' "$summary_cmp_fn" > /dev/null; then
-    cat >> "$build_src_summary_log_fn" <<'EOF'
+    cat >> "$errors_fn" <<'EOF'
  ------------------
 Versions of some packages go backward
 
 EOF
-    grep '^<' $summary_cmp_fn >> "$build_src_summary_log_fn"
+    grep '^<' $summary_cmp_fn >> "$errors_fn"
 fi
 
 verbose_print "done\n"

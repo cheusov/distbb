@@ -67,7 +67,7 @@ packages_built_total_fn=$meta_dir/packages_built_total.txt
 progress_fn=$meta_dir/progress.txt
 
 build_src_summary_log_fn=$meta_dir/build_src_summary_log.txt
-build_deps_graph_log_fn=$meta_dir/build_deps_graph_log.txt
+errors_fn=$meta_dir/errors.txt
 
 pkg_src_summary_fn=$meta_dir/pkg_src_summary.txt
 summary_cmp_fn=$meta_dir/summary_cmp.txt

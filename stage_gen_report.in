@@ -285,10 +285,10 @@ EOF
 EOF
     fi
 
-    if test -s "$build_deps_graph_log_fn"
+    if test -s "$errors_fn"
     then
 	cat <<EOF
-  <tr class="pkg-failed"><td>$(left_align 40 "Building dependency graph failed")</td><td align="right"></td><td></td> <td>&nbsp;&nbsp;<a href="$(basename $build_deps_graph_log_fn)" title="pkg_summary2build_graph logs">logs</a></td></tr>
+  <tr class="pkg-failed"><td>$(left_align 40 "Error messages")</td><td align="right"></td><td></td> <td>&nbsp;&nbsp;<a href="$(basename $errors_fn)" title="pkg_summary2build_graph logs">logs</a></td></tr>
 EOF
     fi
 
