@@ -183,8 +183,7 @@ sed -n 's/^PKGPATH=//p' "$pkg_src_summary_fn" |
 sort -u > "$tmpdir/all_src_pkgpaths"
 
 grep -E '^(PKGNAME|PKGPATH|ASSIGNMENTS|DEPENDS|$)' "$PKG_ALL_SUMMARY" |
-pkg_grep_summary -S PKGPABA "$tmpdir/src_PABA.tmp" |
-pkg_refresh_summary > "$tmpdir/bin_updated.tmp"
+pkg_grep_summary -S PKGPABA "$tmpdir/src_PABA.tmp" > "$tmpdir/bin_updated.tmp"
 
 pkg_summary2deps -Apnrsal -P $tmpdir/all_src_pkgpaths \
     "$pkg_src_summary_fn" "$tmpdir/bin_updated.tmp" > "$tmpdir/all_deps.tmp" 2>/dev/null
@@ -276,10 +275,10 @@ verbose_print "done\n"
 ######################################################################
 ### comparison binaries against pkgsrc tree
 verbose_print "  pkg_src_summary vs. pkg_summary comparison..."
+
 eval @libexecdir@/wrapper \
     $PKG_CMP_SUMMARY_CMD "$pkg_src_summary_fn" "$PKG_ALL_SUMMARY" \
     > "$summary_cmp_fn" || true
-verbose_print "done\n"
 
 if grep '^<' "$summary_cmp_fn" > /dev/null; then
     cat >> "$build_src_summary_log_fn" <<'EOF'
@@ -289,6 +288,8 @@ Versions of some packages go backward
 EOF
     grep '^<' $summary_cmp_fn >> "$build_src_summary_log_fn"
 fi
+
+verbose_print "done\n"
 
 ######################################################################
 ### list of already built packages
