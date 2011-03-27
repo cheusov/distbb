@@ -166,9 +166,12 @@ END {
 }' $packages_fn.tmp $pkg_src_summary_fn
 #rm $packages_fn.tmp
 touch $packages_fn
+
 verbose_print "done\n"
 
 ######################################################################
+### dependency graph of packages to rebuild
+verbose_print "  dependency graph of packages to rebuild..."
 
 awk '
 /^PKGNAME/ {pkgbase = substr($0, 9); sub(/-[^-]*$/, "", pkgbase)}
@@ -253,6 +256,7 @@ NF == 1 {
 }
 ' "$tmpdir/all_deps.tmp" | sed 's/;[^ ]*//g' > "$rebuild_fn"
 
+printf '' >> "$tmpdir/reqd_deps_pre.tmp"
 sed 's/[^ ]*;//g' "$tmpdir/reqd_deps_pre.tmp" > "$reqd_deps_fn"
 
 printf '' > "$build_deps_graph_log_fn"
@@ -266,6 +270,8 @@ sort -u > "$changed_pkgs_fn"
 sort "$changed_pkgs_fn" "$changed_pkgs_fn" "$tmpdir/all_src_pkgpaths" |
 uniq -c |
 awk '$1 == 1 {print $2}' > "$packages_built_prev_fn.tmp"
+
+verbose_print "done\n"
 
 ######################################################################
 ### list of already built packages
