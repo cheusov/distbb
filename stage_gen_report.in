@@ -472,12 +472,6 @@ report_html (){
 
 ######################################################################
 
-count_inspected_pkgs (){
-    awk 'NF == 0 {++cnt} END {print cnt}' "$pkg_src_summary_fn"
-}
-
-packages_inspected_cnt=$(count_inspected_pkgs)
-
 packages_failed_notavail_cnt=$(count_lines "$packages_failed_notavail_fn.tmp")
 packages_failed_scan_cnt=$(count_lines "$packages_failed_scan_fn")
 packages_failed_deps_cnt=$(count_lines "$packages_failed_deps_fn.tmp")
@@ -487,6 +481,8 @@ packages_failed_total=$(($packages_failed_cnt+$packages_failed_deps_cnt+$package
 packages_built_cnt=$(count_lines "$packages_built_fn.tmp")
 packages_built_prev_cnt=$(count_lines "$packages_built_prev_fn.tmp")
 packages_built_total=$(($packages_built_cnt+$packages_built_prev_cnt))
+
+packages_inspected_cnt=$(($packages_failed_total+$packages_built_total))
 
 ######################################################################
 
