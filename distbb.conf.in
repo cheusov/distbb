@@ -1,6 +1,6 @@
 #-*-mode:  sh -*-
 
-# Copyright (c) 2008-2010 Aleksey Cheusov <vle@gmx.net>
+# Copyright (c) 2008-2011 Aleksey Cheusov <vle@gmx.net>
 # All rights reserved.
 #
 # See LICENSE file
@@ -21,7 +21,7 @@ PAEXEC_EXTRA_OPTS='-Z300'
 
 TARGETS='Init clean Available Excluded Vars Depends'
 TARGETS="$TARGETS fetch checksum extract patch configure"
-TARGETS="$TARGETS build install package deinstall"
+TARGETS="$TARGETS build package"
 
 USER_MAIL=you@your-domain.com
 
