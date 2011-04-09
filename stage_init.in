@@ -258,10 +258,11 @@ NF == 1 {
 }
 ' "$tmpdir/all_deps.tmp" | sed 's/;[^ ]*//g' > "$rebuild_fn"
 
-sed 's/[^ ]*;//g' "$tmpdir/reqd_deps_pre.tmp" > "$reqd_deps_fn"
-
 printf '' > "$build_deps_graph_log_fn"
 printf '' > "$summary_cmp_fn"
+printf '' >> "$tmpdir/reqd_deps_pre.tmp"
+
+sed 's/[^ ]*;//g' "$tmpdir/reqd_deps_pre.tmp" > "$reqd_deps_fn"
 
 # rebuilt previously
 changed_pkgs_fn=$tmpdir/changed.tmp
