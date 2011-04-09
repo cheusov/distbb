@@ -739,7 +739,7 @@ bars (){
 quote_bad_symbols (){
     runawk -f multisub.awk -e \
       '{ print multisub($0,
-         "<:&lt;   >:&gt;   &:&amp;   \":&quote;   '"'"':&apos;") }' "$@"
+         "<:&lt;   >:&gt;   &:&amp;") }' "$@"
 }
 
 stage2html (){
