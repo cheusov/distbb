@@ -167,9 +167,9 @@ assign EXTRA_DEPS ''
 #assign EXTRA_DEPS 'pkgtools/digest sysutils/checkperms pkgtools/pkg_install devel/popt devel/distcc'
 
 # Target for clean-ups after package building.
-# If you want to keep working directories, set this variable to dbb_none
+# If you want to keep working directories, set this variable to None
 assign CLEAN_TARGET 'clean'
-#assign CLEAN_TARGET 'dbb_none'
+#assign CLEAN_TARGET 'None'
 
 # Packages can be built in unprivileged mode with a help of DESTDIR
 # support.  Instead of specifying SU_CMD and givin an ordinary user
@@ -180,8 +180,7 @@ if test -n "$UNPRIV_USER"; then
     export UNPRIV_USER
     assign SU_UNPRIV_CMD '@libexecdir@/wrapper_unpriv'
     export SU_UNPRIV_CMD
-    for t in dbb_canbebuilt dbb_excluded dbb_vars fetch checksum \
-	Available Excluded Vars \
+    for t in Available Excluded Vars fetch checksum \
 	extract patch configure build
     do
 	assign SU_UNPRIV_CMD_$t "$SU_UNPRIV_CMD"
@@ -189,14 +188,14 @@ if test -n "$UNPRIV_USER"; then
 fi
 
 # the following targets will be run in order.
-# The target "Init" (dbb_init) is special. It makes the following:
+# The target "Init" is special. It makes the following:
 #    remove /usr/pkg directory (see RMDIRS_CMD)
 #    unpack bootstrap (see EXTRACT_BOOTSTRAP_CMD)
-# Available (dbb_canbebuilt) target checks PKG_FAIL_REASON...
+# Available target checks PKG_FAIL_REASON...
 #    It is recommended to include it to TARGETS,
 #    otherwise counters in "Failures per maintainer" will
 #    be not fully correct
-# Vars (dbb_vars) lists bmake's variables for easier debugging
+# Vars lists bmake's variables for easier debugging
 if test -n "$UNPRIV_USER"; then
     assign TARGETS "Init Clean Available Excluded Vars Depends fetch checksum extract patch configure build Package"
 else

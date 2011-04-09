@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Copyright (c) 2008-2010 Aleksey Cheusov <vle@gmx.net>
+# Copyright (c) 2008-2011 Aleksey Cheusov <vle@gmx.net>
 # All rights reserved.
 #
 # See LICENSE file
@@ -48,7 +48,6 @@ runawk \
    -v report1_dir=$REPORT1_DIR \
    -v packages_failed_fn=$packages_failed_fn.tmp \
    -v packages_failed_notavail_fn=$packages_failed_notavail_fn.tmp \
-   -v packages_built_fn=$packages_built_fn.tmp \
    -v progress_fn=$progress_fn \
    -v pkg_src_summary=$pkg_src_summary_fn \
    -e '
@@ -153,10 +152,6 @@ status [$2] == "success" {
    # succeeded
    print "    succeeded:", pkgpath, "on", run_on [$2]
 
-   #
-   print pkgpath >> packages_built_fn
-   xclose(packages_built_fn)
-
    # removing log directory
    xsystem("rm -rf " log_dir)
 
@@ -173,7 +168,7 @@ status [$2] == "success" {
 
 status [$2] == "failure" {
    # failed
-   if (stage [$2] ~ /^(dbb_canbebuilt|dbb_available|dbb_excluded|Available|Excluded)$/){
+   if (stage [$2] ~ /^(Available|Excluded)$/){
       print "    Not Available:", pkgpath, "on", run_on [$2]
       print pkgpath >> packages_failed_notavail_fn
       xclose(packages_failed_notavail_fn)

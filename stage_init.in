@@ -50,7 +50,6 @@ printf '' > $packages_failed_scan_fn
 printf '' > $packages_failed_deps_fn
 printf '' > $packages_failed_fn.tmp
 printf '' > $packages_built_prev_fn
-printf '' > $packages_built_fn.tmp
 
 printf '' > $progress_fn
 
@@ -116,6 +115,8 @@ fi
 ######################################################################
 ### updating PKG_SRC_SUMMARY
 
+printf '' >> "$build_src_summary_log_fn"
+
 if test -z "$skip_updating_src_summary"; then
     if test -z "$MASTER_MODE"; then
 	unset PSS_SLAVES || true
@@ -127,7 +128,7 @@ if test -z "$skip_updating_src_summary"; then
     if ! eval "@libexecdir@/wrapper $PKG_UPDATE_SRC_SUMMARY_CMD \
 	< $packages_fn.tmp 2> $build_src_summary_log_fn"
     then
-	cat $build_src_summary_log_fn 1>&2
+	cat "$build_src_summary_log_fn" 1>&2
 	exit 1
     fi
     set -e
@@ -245,6 +246,10 @@ NF == 2 {
 
    if (older1)
       print older1, $2 > (tmpdir "/reqd_deps_pre.tmp")
+   else if (newer1)
+      print newer1, $2 > (tmpdir "/reqd_deps_pre.tmp")
+   else
+      abort("Neither older1 nor newer1 are set")
 
    next
 }

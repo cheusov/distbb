@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Copyright (c) 2008-2010 Aleksey Cheusov <vle@gmx.net>
+# Copyright (c) 2008-2011 Aleksey Cheusov <vle@gmx.net>
 # All rights reserved.
 #
 # See LICENSE file
@@ -62,7 +62,7 @@ if test $# -ne 0; then
 fi
 
 ######################################################################
-# exporting for dbb_init special target
+# exporting for special target Init
 export EXTRACT_BOOTSTRAP_CMD
 export RMDIRS_CMD
 
@@ -138,7 +138,7 @@ do_build_package (){
     for t in $TARGETS; do
 	header $t
 	case "$t" in
-	    dbb_init|Init)
+	    Init)
 		# remove /usr/pkg and unpack bootstrap
 		eval $RMDIRS_CMD
 		eval $EXTRACT_BOOTSTRAP_CMD
@@ -184,7 +184,7 @@ build_package (){
     ex=$?
 
     # clean even if it fails
-    if test "_$CLEAN_TARGET" != "_dbb_none"; then
+    if test "_$CLEAN_TARGET" != "_None"; then
 	eval $BMAKE "$CLEAN_TARGET" $multivar_opts $stdin_from_dev_null > /dev/null 2>&1
     fi
 

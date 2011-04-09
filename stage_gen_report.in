@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Copyright (c) 2008-2010 Aleksey Cheusov <vle@gmx.net>
+# Copyright (c) 2008-2011 Aleksey Cheusov <vle@gmx.net>
 # All rights reserved.
 #
 # See LICENSE file
@@ -27,9 +27,17 @@ verbose_print "Logs generation...\n"
 
 verbose_print "  sort_uniq META/packages_{build,failed{,_notavail}}.tmp ... "
 
-sort_uniq_inplace $packages_built_fn.tmp
-sort_uniq_inplace $packages_failed_fn.tmp
-sort_uniq_inplace $packages_failed_notavail_fn.tmp
+packages_built_fn=$meta_dir/packages_built.txt
+awk '$1 == "success" {print $2}' "$progress_fn" |
+sort -u > "$packages_built_fn.tmp"
+
+filter_out "$packages_built_fn.tmp" "$packages_failed_fn.tmp" |
+sort -u > "$packages_failed_fn.tmp2"
+mv "$packages_failed_fn.tmp2" "$packages_failed_fn.tmp"
+
+filter_out "$packages_built_fn.tmp" "$packages_failed_notavail_fn.tmp" |
+sort -u > "$packages_failed_notavail_fn.tmp2"
+mv "$packages_failed_notavail_fn.tmp2" "$packages_failed_notavail_fn.tmp"
 
 verbose_print "done\n"
 
@@ -472,12 +480,6 @@ report_html (){
 
 ######################################################################
 
-count_inspected_pkgs (){
-    awk 'NF == 0 {++cnt} END {print cnt}' "$pkg_src_summary_fn"
-}
-
-packages_inspected_cnt=$(count_inspected_pkgs)
-
 packages_failed_notavail_cnt=$(count_lines "$packages_failed_notavail_fn.tmp")
 packages_failed_scan_cnt=$(count_lines "$packages_failed_scan_fn")
 packages_failed_deps_cnt=$(count_lines "$packages_failed_deps_fn.tmp")
@@ -487,6 +489,8 @@ packages_failed_total=$(($packages_failed_cnt+$packages_failed_deps_cnt+$package
 packages_built_cnt=$(count_lines "$packages_built_fn.tmp")
 packages_built_prev_cnt=$(count_lines "$packages_built_prev_fn.tmp")
 packages_built_total=$(($packages_built_cnt+$packages_built_prev_cnt))
+
+packages_inspected_cnt=$(($packages_failed_total+$packages_built_total))
 
 ######################################################################
 
