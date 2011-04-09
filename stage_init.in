@@ -242,6 +242,10 @@ NF == 2 {
 
    if (older1)
       print older1, $2 > (tmpdir "/reqd_deps_pre.tmp")
+   else if (newer1)
+      print newer1, $2 > (tmpdir "/reqd_deps_pre.tmp")
+   else
+      abort("Neither older1 nor newer1 are set")
 
    next
 }
