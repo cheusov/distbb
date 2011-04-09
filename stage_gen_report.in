@@ -31,8 +31,13 @@ packages_built_fn=$meta_dir/packages_built.txt
 awk '$1 == "success" {print $2}' "$progress_fn" |
 sort -u > "$packages_built_fn.tmp"
 
-sort_uniq_inplace $packages_failed_fn.tmp
-sort_uniq_inplace $packages_failed_notavail_fn.tmp
+filter_out "$packages_built_fn.tmp" "$packages_failed_fn.tmp" |
+sort -u > "$packages_failed_fn.tmp2"
+mv "$packages_failed_fn.tmp2" "$packages_failed_fn.tmp"
+
+filter_out "$packages_built_fn.tmp" "$packages_failed_notavail_fn.tmp" |
+sort -u > "$packages_failed_notavail_fn.tmp2"
+mv "$packages_failed_notavail_fn.tmp2" "$packages_failed_notavail_fn.tmp"
 
 verbose_print "done\n"
 

@@ -34,6 +34,17 @@ print_binrep_spec_files (){
     echo SHA512.gz
 }
 
+filter_out (){
+    # $1 - filename containing lines to filter out
+    # $@ - input
+    runawk -f xgetline.awk -e '
+	BEGIN {
+	    while (xgetline0(ARGV [1])) filter_out [$0]=0;
+	    ARGV [1] = ""
+	}
+	!($0 in filter_out)' "$@"
+}
+
 export LC_ALL=C # for sort and uniq
 
 ######################################################################
