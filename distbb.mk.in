@@ -5,47 +5,43 @@
 
 ############################################################
 ############################################################
-# dbb_available target:
+# Available target:
 # failes if NOT_FOR_PLATFORM, ONLY_FOR_PLATFORM etc. fail
-.PHONY: dbb_canbebuilt dbb_available Available
+.PHONY: Available
 
 .if "${_CBBH}" == "yes"
-dbb_canbebuilt:
+Available:
 	@true
 .else
-dbb_canbebuilt:
+Available:
 	@${_CBBH_MSGS:@m@${ECHO} ${m};@} \
 	false
 .endif
 
-dbb_available Available: dbb_canbebuilt
-
 ############################################################
 ############################################################
-# dbb_excluded target:
+# Excluded target:
 # fails if the person that runs bulk build (you) manually excluded
 # this particular package. There are a number of reasons for this:
 # "bad" packages may hangs up eating CPU, stuck somewhere else (ping...)
-# or you may want to dbb_exclude something just because it is too heavy
+# or you may want to exclude something just because it is too heavy
 # for your machine
 
-.PHONY: dbb_excluded Excluded
+.PHONY: Excluded
 
 .if empty(DBB_EXCL_REASON)
-dbb_excluded:
+Excluded:
 	@true
 .else
-dbb_excluded:
+Excluded:
 	@echo "Manually excluded by person who runs the bulk build" 1>&2; \
 	${DBB_EXCL_REASON:@m@${ECHO} ${m};@} \
 	false
 .endif
 
-Excluded: dbb_excluded
-
 ############################################################
 ############################################################
-# dbb_vars target:
+# Vars target:
 # outputs MAKE_FLAGS, MAKE_ENV, CONFIGURE_ENV etc.
 .if !defined(DBB_VARS) # override it in distbb.local.mk
 DBB_VARS=	${DBB_VARS_ADD}   # user's additions
@@ -80,9 +76,9 @@ DBB_QVARS.USE_LANGUAGES=		1
 DBB_QVARS.CONFIGURE_SCRIPT=		1
 .endif
 
-.PHONY: dbb_vars Vars
+.PHONY: Vars
 
-dbb_vars:
+Vars:
 .for v in ${DBB_VARS}
 .if !empty(${v})
 	@echo ${v}:
@@ -97,30 +93,26 @@ dbb_vars:
 .endif
 .endfor
 
-Vars: dbb_vars
-
 ############################################################
 ############################################################
-# dbb_depends target:
+# Depends target:
 # install all required dependencies, removing {al,ter}:../native/dependencies
-.PHONY: dbb_depends Depends
-dbb_depends:
+.PHONY: Depends
+Depends:
 	${SU_CMD} 'env PACKAGES="${PACKAGES}" PKG_ADD="${PKG_ADD}" \
 	    aux_reqd_deps_fn=${aux_reqd_deps_fn} \
 	    PKG_SUFX=${PKG_SUFX} \
 	    @libexecdir@/make-depends "${PKGNAME}"'
 	${MAKE} ${MAKEFLAGS} depends DEPENDS_TARGET=do-bin-install
 
-Depends: dbb_depends
-
 ############################################################
 ############################################################
-# dbb_package target:
+# Package target:
 PACKAGES.tmp=${WRKDIR}/packages
 PKGFILE.tmp=${PACKAGES.tmp}/All/package${PKG_SUFX}
 
-.PHONY: dbb_package Package
-dbb_package:
+.PHONY: Package
+Package:
 .if defined(UNPRIV_USER) && ${PKG_DESTDIR_SUPPORT} == "user-destdir" \
 		&& ${USE_DESTDIR} == "yes"
 	${SU_UNPRIV_CMD} ${MAKE} ${bmake_opts} package
@@ -135,16 +127,12 @@ dbb_package:
 	${SU_UNPRIV_CMD} ${MAKE} ${MAKEFLAGS} package-links
 .endif
 
-Package: dbb_package
-
 ############################################################
 ############################################################
-# dbb_clean target:
+# Clean target:
 .PHONY: clean Clean
-dbb_clean: clean
+Clean: clean
 	mkdir -p ${WRKDIR}
 .if defined(UNPRIV_USER)
 	chown -R '${UNPRIV_USER}' '${WRKDIR}'
 .endif
-
-Clean: dbb_clean

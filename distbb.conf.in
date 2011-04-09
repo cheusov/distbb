@@ -19,7 +19,7 @@ REPORTS_DIR=$HOME/bulk-logs
 
 PAEXEC_EXTRA_OPTS='-Z300'
 
-TARGETS='dbb_init clean dbb_canbebuilt dbb_excluded dbb_vars dbb_depends'
+TARGETS='Init clean Available Excluded Vars Depends'
 TARGETS="$TARGETS fetch checksum extract patch configure"
 TARGETS="$TARGETS build install package deinstall"
 
