@@ -50,7 +50,6 @@ printf '' > $packages_failed_scan_fn
 printf '' > $packages_failed_deps_fn
 printf '' > $packages_failed_fn.tmp
 printf '' > $packages_built_prev_fn
-printf '' > $packages_built_fn.tmp
 
 printf '' > $progress_fn
 

@@ -27,7 +27,10 @@ verbose_print "Logs generation...\n"
 
 verbose_print "  sort_uniq META/packages_{build,failed{,_notavail}}.tmp ... "
 
-sort_uniq_inplace $packages_built_fn.tmp
+packages_built_fn=$meta_dir/packages_built.txt
+awk '$1 == "success" {print $2}' "$progress_fn" |
+sort -u > "$packages_built_fn.tmp"
+
 sort_uniq_inplace $packages_failed_fn.tmp
 sort_uniq_inplace $packages_failed_notavail_fn.tmp
 
