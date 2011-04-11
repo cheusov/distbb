@@ -190,23 +190,29 @@ pkg_summary2deps -Apnrsal -P $tmpdir/all_src_pkgpaths \
     "$pkg_src_summary_fn" "$tmpdir/bin_updated.tmp" \
     > "$tmpdir/all_deps.tmp" 2>/dev/null
 
-runawk -f xgetline.awk \
+runawk -f xgetline.awk -f psu_funcs.awk \
        -v pkg_bin_summary_fn="$tmpdir/bin_updated.tmp" \
+       -v pkg_src_summary_fn="$pkg_src_summary_fn" \
        -v tmpdir="$tmpdir" \
 -e '
 BEGIN {
+   while (xgetline0(pkg_src_summary_fn)){
+      if ($0 ~ /^PKGNAME=/){
+         src_PKGNAMEs [substr($0, 9)] = 0
+      }
+   }
+   close(pkg_src_summary_fn)
    while (xgetline0(pkg_bin_summary_fn)){
-      if ($0 ~ /^PKGPATH/)
+      if ($0 ~ /^PKGPATH=/)
          pkgpath = substr($0, 9)
-      else if ($0 ~ /^PKGNAME/)
+      else if ($0 ~ /^PKGNAME=/)
          pkgname = substr($0, 9)
       else if (NF == 0){
-#         print "!", pkgpath, pkgname
          hash [pkgpath ";" pkgname] = 0
          pkgname = pkgpath = ""
       }
    }
-   close(pkg_src_summary_fn)
+   close(pkg_bin_summary_fn)
 }
 
 function print_dep (dep, pkg){
@@ -221,13 +227,23 @@ function print_dep (dep, pkg){
 
 NF == 2 {
    cnt = split($1, arr, /[|]/)
-   older1 = newer1 = ""
+   older1_pkgname = older1 = newer1 = ""
    for (i=1; i <= cnt; ++i){
       pkg = arr [i]
       sub(/:[^;]*/, "", pkg)
 
       if (pkg in hash){
-         older1 = arr [i]
+         if (older1_pkgname in src_PKGNAMEs)
+            continue
+
+         pkg_pkgname = substr(pkg, index(pkg, ";")+1)
+
+         if (!older1 || (pkg_pkgname in src_PKGNAMEs) ||
+            pkgname_gt_pkgname(pkg, older1))
+         {
+            older1 = arr [i]
+            older1_pkgname = substr(older1, index(older1, ";")+1)
+         }
       }else{
          newer1 = arr [i]
          print_dep(newer1)
