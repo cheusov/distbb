@@ -120,7 +120,11 @@ print_failed_deps_pkg (){
     # $5 - depname
     failed_stage=''
     if test "$1" != Package -a -n "$4"; then
-	failed_stage=$(get_failed_stage "$4" "$5")
+	failed_stage=$(get_failed_stage "$4" "$5" 2>/dev/null || true)
+	if test -z "$failed_stage"; then
+	    # progress.txt was manually edited and stage "build" was rerun?
+	    return
+	fi
     fi
     short_pkgpath="$(echo $1 | cut -f1 -d:)"
     if test "$short_pkgpath" != "$1"; then
@@ -797,10 +801,11 @@ failed_because_txt2html (){
     depX="$(cat ${REPORT1_DIR}/$(get_log_dir $pkgpath $pkgname)/failed_because.txt)"
     for deppath in $depX; do
 	depname=$(pkgpath2pkgname "$deppath")
-	stage_fn="${REPORT1_DIR}/$(get_log_dir $deppath $depname)/curr_stage.tmp"
-	stage="$(cat $stage_fn)"
-	printf '&nbsp;&nbsp;&nbsp;<a href="../%s/stage_%s.html" title="summary for package">%s</a><br>' \
-	    "$(get_log_dir $deppath $depname)" "$stage" "$deppath"
+	stage="$(get_failed_stage $deppath $depname 2>/dev/null || true)"
+	if test -n "$stage"; then
+	    printf '&nbsp;&nbsp;&nbsp;<a href="../%s/stage_%s.html" title="summary for package">%s</a><br>' \
+		"$(get_log_dir $deppath $depname)" "$stage" "$deppath"
+	fi
     done
 
     printf '</p>\n'
