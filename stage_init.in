@@ -183,26 +183,17 @@ NF == 0 {print pkgpath "," pkgbase}
 sed -n 's/^PKGPATH=//p' "$pkg_src_summary_fn" |
 sort -u > "$tmpdir/all_src_pkgpaths"
 
-grep -E '^(PKGNAME|PKGPATH|ASSIGNMENTS|DEPENDS|$)' "$PKG_ALL_SUMMARY" |
-pkg_grep_summary -S PKGPABA "$tmpdir/src_PABA.tmp" > "$tmpdir/bin_updated.tmp"
-
 pkg_summary2deps -Apnrsal -P $tmpdir/all_src_pkgpaths \
-    "$pkg_src_summary_fn" "$tmpdir/bin_updated.tmp" \
+    "$pkg_src_summary_fn" "$PKG_ALL_SUMMARY" \
     > "$tmpdir/all_deps.tmp" 2>/dev/null
 
 runawk -f xgetline.awk -f psu_funcs.awk \
-       -v pkg_bin_summary_fn="$tmpdir/bin_updated.tmp" \
+       -v pkg_bin_summary_fn="$PKG_ALL_SUMMARY" \
        -v pkg_src_summary_fn="$pkg_src_summary_fn" \
        -v tmpdir="$tmpdir" \
 -e '
-BEGIN {
-   while (xgetline0(pkg_src_summary_fn)){
-      if ($0 ~ /^PKGNAME=/){
-         src_PKGNAMEs [substr($0, 9)] = 0
-      }
-   }
-   close(pkg_src_summary_fn)
-   while (xgetline0(pkg_bin_summary_fn)){
+function read_summary (fn, hash){
+   while (xgetline0(fn)){
       if ($0 ~ /^PKGPATH=/)
          pkgpath = substr($0, 9)
       else if ($0 ~ /^PKGNAME=/)
@@ -212,7 +203,12 @@ BEGIN {
          pkgname = pkgpath = ""
       }
    }
-   close(pkg_bin_summary_fn)
+   close(fn)
+}
+
+BEGIN {
+   read_summary(pkg_src_summary_fn, src_PAeNA)
+   read_summary(pkg_bin_summary_fn, bin_PANA)
 }
 
 function print_dep (dep, pkg){
@@ -225,60 +221,64 @@ function print_dep (dep, pkg){
    }
 }
 
+function PAeNA2PANA (pkg){
+   sub(/:[^;]*/, "", pkg)
+   return pkg
+}
+
 NF == 2 {
    cnt = split($1, arr, /[|]/)
-   older1_pkgname = older1 = newer1 = ""
+   older1 = newer1 = ""
    for (i=1; i <= cnt; ++i){
-      pkg = arr [i]
-      sub(/:[^;]*/, "", pkg)
+      dep = arr [i]
 
-      if (pkg in hash){
-         if (older1_pkgname in src_PKGNAMEs)
+      if (dep in bin_PANA){
+         if (older1 in src_PAeNA)
             continue
 
-         pkg_pkgname = substr(pkg, index(pkg, ";")+1)
-
-         if (!older1 || (pkg_pkgname in src_PKGNAMEs) ||
-            pkgname_gt_pkgname(pkg, older1))
+         if (!older1 || (dep in src_PAeNA) ||
+            pkgname_gt_pkgname(dep, older1))
          {
-            older1 = arr [i]
-            older1_pkgname = substr(older1, index(older1, ";")+1)
+            older1 = dep
          }
       }else{
-         newer1 = arr [i]
+         newer1 = dep
          print_dep(newer1)
       }
    }
 
-   pkg = $2
-   sub(/:[^;]*/, "", pkg)
-   ok2 = !(pkg in hash) # pkgpair for updated package?
+   if (($2 in src_PAeNA) && !(PAeNA2PANA($2) in bin_PANA))
+      rebuild_pkgs [$2] = 1
 
-   if (ok2 && !older1){
-      print_dep(newer1, $2)
-   }else if (ok2){
-      print_dep($2)
-   }
+   if (!older1 && (newer1 in src_PAeNA))
+      rebuild_pkgs [newer1] = 2
 
    if (older1)
-      print older1, $2 > (tmpdir "/reqd_deps_pre.tmp")
+      print_dep(older1, $2)
    else if (newer1)
-      print newer1, $2 > (tmpdir "/reqd_deps_pre.tmp")
+      print_dep(newer1, $2)
    else
       abort("Neither older1 nor newer1 are set")
 
    next
 }
 NF == 1 {
-   pkg = $1
-   sub(/:[^;]*/, "", pkg)
-   if (!(pkg in hash))
-      print $1
+   if (($1 in src_PAeNA) && !(PAeNA2PANA($1) in bin_PANA))
+      rebuild_pkgs [$1] = 3
 }
-' "$tmpdir/all_deps.tmp" | sed 's/;[^ ]*//g' > "$rebuild_fn"
+END {
+   for (i in rebuild_pkgs){
+      print_dep(i)
+      print i > (tmpdir "/rebuild_pkgs.tmp")
+   }
+}
+' "$tmpdir/all_deps.tmp" > "$tmpdir/reqd_deps_pre.tmp"
 
 printf '' >> "$tmpdir/reqd_deps_pre.tmp"
 sed 's/[^ ]*;//g' "$tmpdir/reqd_deps_pre.tmp" > "$reqd_deps_fn"
+
+pkg_subgraph_deps -f "$tmpdir/rebuild_pkgs.tmp" \
+    "$tmpdir/reqd_deps_pre.tmp" | sed 's/;[^ ]*//g'  > "$tmpdir/rebuild.tmp"
 
 printf '' > "$errors_fn"
 printf '' > "$summary_cmp_fn"
