@@ -278,8 +278,12 @@ END {
 ' "$tmpdir/all_deps.tmp" > "$tmpdir/reqd_deps_pre.tmp"
 
 printf '' >> "$tmpdir/reqd_deps_pre.tmp"
-pkg_subgraph_deps -f "$tmpdir/src_PAeNA.tmp" "$tmpdir/reqd_deps_pre.tmp" |
-sed 's/[^ ]*;//g' > "$reqd_deps_fn"
+
+pkg_subgraph_deps -r -f "$tmpdir/src_PAeNA.tmp" "$tmpdir/reqd_deps_pre.tmp" \
+	> "$tmpdir/reqd_deps_pre.tmp_"
+mv "$tmpdir/reqd_deps_pre.tmp_" "$tmpdir/reqd_deps_pre.tmp"
+
+sed 's/[^ ]*;//g' "$tmpdir/reqd_deps_pre.tmp" > "$reqd_deps_fn"
 
 pkg_subgraph_deps -f "$tmpdir/rebuild_PAeNA.tmp" \
     "$tmpdir/reqd_deps_pre.tmp" | sed 's/;[^ ]*//g'  > "$tmpdir/rebuild.tmp"
