@@ -34,4 +34,7 @@ REPORT_URL_PREFIX="http://your-domain.com/~you/pkgsrc/logs/"
 ######################################################################
 I_AM_READY=4
 
+#
+# Read distbb.default.conf file for full list of configuration variables!
+#
 . @datadir@/distbb.default.conf
