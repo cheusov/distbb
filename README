@@ -105,24 +105,30 @@ distbb - distributed bulk builds framework for pkgsrc (www.pkgsrc.org).
 CONFIGURATION/TUTORIAL:
 
 1) bootstrap your working pkgsrc (to /usr/pkg, for example)
-   - edit /usr/pkg/etc/mk.conf
 
      Example:
-
+       # cd /usr/pkgsrc/bootstrap/
+       # ./bootstrap
        ...
-       _ACCEPTABLE=                    yes
-       PKG_DEVELOPER=                  yes
+       # edit /usr/pkg/etc/mk.conf
+       # cd /
+       # tar -czf /usr/pkgsrc/packages/bootstrap.tgz /usr/pkg /var/db/pkg
+       #
+
+     Example for mk.conf:
+       ...
+       SKIP_LICENSE_CHECK=             yes
+       # PKG_DEVELOPER=                  yes
        ALLOW_VULNERABLE_PACKAGES=      yes
 
-       # it is recommended to use local directory for building
+       # I'd strongly recommend to use local directory for building
        WRKOBJDIR=                      /tmp/pkgsrc_obj
 
-       X11_TYPE=                       modular
-       PKG_SUFX=                      .tbz
+       # The following line makes future changes in setting easier
+       .sinclude "/usr/pkg_distbb/etc/distbb.local.mk"
 
-   - create bootstrap.tar.gz
-
-2) bootstrap pkgsrc for distbb (to /usr/pkg_distbb, for example)
+2) Prepare distbb
+   - bootstrap pkgsrc for distbb (to /usr/pkg_distbb, for example)
    - install wip/distbb in it
    - install other software you may need
    - cp /usr/pkg_distbb/share/examples/distbb/distbb.conf \
@@ -152,7 +158,7 @@ For "distributed" builds (example - different hosts plus NFS):
 
     Make sure PATH environment variable includes /usr/pkg/bin
 
-6d) On master host:
+6d) On the master host:
     /usr/pkg_distbb/bin/distbb -h
     /usr/pkg_distbb/bin/distbb                 # for full bulk build
       or
@@ -166,14 +172,12 @@ For "distributed" builds (example - different hosts plus NFS):
       from master host
     - Everything under ~/bulk_log directory ($REPORTS_DIR)
       is created and read from master host
-    - Uplading logs (UPLOAD_LOGS_CMD) and packages (UPLOAD_PKGS_CMD)
+    - Uploading logs (UPLOAD_LOGS_CMD) and packages (UPLOAD_PKGS_CMD)
       and sending a report (REPORT_CMD) is run on master host.
-    - /usr/pkg (and PKGDBDIR) will be removed and recreated
-      from bootstrap tarball on ALL slave nodes.
+    - On ALL slave hosts PREFIX (/usr/pkg) and PKGDBDIR (/var/db/pkg)
+      will be removed and recreated from bootstrap tarball .
     - distbb can be run on master host by unprivileged user
       even if packages are built using root privileges
-    - in order to correctly build pkg_src_summary, master's
-      /usr/pkg/etc/mk.conf must be equal to that from bootstrap tarball.
 
 For single-node bulk build:
 
