@@ -280,6 +280,7 @@ END {
 ' "$tmpdir/all_deps.tmp" > "$tmpdir/reqd_deps_pre.tmp"
 
 printf '' >> "$tmpdir/reqd_deps_pre.tmp"
+printf '' >> "$tmpdir/src_PAeNA.tmp"
 
 pkg_subgraph_deps -r -f "$tmpdir/src_PAeNA.tmp" "$tmpdir/reqd_deps_pre.tmp" \
 	> "$tmpdir/reqd_deps_pre.tmp_"
