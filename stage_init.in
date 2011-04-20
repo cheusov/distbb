@@ -25,6 +25,8 @@ DISTBB_CONF=${DISTBB_CONF:-@sysconfdir@/distbb.conf}
 . "$DISTBB_CONF"
 . @libexecdir@/common
 
+mkdir -p "$MSCOMMONDIR"
+
 if touch "$MSCOMMONDIR/check"; then
     rm "$MSCOMMONDIR/check"
 else
