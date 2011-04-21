@@ -17,4 +17,4 @@ for i in "$@"; do
     shift
 done
 
-su -c "$cmd" "$UNPRIV_USER"
+printf '%s\n' "$cmd" | su "$UNPRIV_USER"
