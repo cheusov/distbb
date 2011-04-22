@@ -1,4 +1,44 @@
 ===================================================================
+Version 0.40, by Aleksey Cheusov, Sat, 23 Apr 2011 00:17:49 +0300
+
+  As of this release completely new algorithm of building a dependency
+  graph is used. By default old available binary packages
+  (dependencies) are used for building dependent packages unless
+  DEPENDS or BUILD_DEPENDS forbid this. As a result significantly less
+  packages are rebuilt by bulk builds. Another effect is that
+  incompatible changes in ABI overlooked by pkgsrc package maintainers
+  may cause package breakages at run time. Also, incompatible changes
+  in API may cause package failures at build time if bl3.mk was not
+  updated properly.
+
+  Error messages are saved to $meta_dir/errors.txt
+
+  pkg_summary.txt is created under $meta_dir/
+  and then is copied to final destination.
+
+  Stage "post_build" was removed
+
+  New configuration variable WEIGH_PACKAGES_CMD was added.
+  It contains path to a program that weighs packages.
+  It defaults to libexec/distbb/gen_weights.
+
+  'paexec -W2' is used for selecting package to build first.
+
+  Minor fixes in stage_gen_report.
+
+  'distbb -r' after manual editing progress.txt doesn't cause failures
+  in stage_gen_report anymore.
+
+  dbb_* targets was removed.
+  Available, Excluded, Vars etc. are used instead.
+
+  Targets "install" and "deinstall" was removed from TARGETS.
+
+  Fix for UNPRIV_USER mode on BSD systems.
+
+  Clean-ups in default distbb.conf
+
+===================================================================
 Version 0.39.2, by Aleksey Cheusov, Wed, 15 Dec 2010 13:45:20 +0200
 
   Fix for bug introduced in 0.39.1
@@ -26,7 +66,7 @@ Version 0.38.2, by Aleksey Cheusov, Mon,  8 Nov 2010 23:52:31 +0200
   Long options were removed from distbb.
   Use standard short options!
 
-  -x creates .done files, so they permist between -r sessions
+  -x creates .done files, so they persist between -r sessions
 
   pkg_summary2build_graph was replaced with pkg_summary2deps -Ap.
        The former will be removed from pkg_summary-utils soon.
@@ -57,7 +97,7 @@ Version 0.37.0, by Aleksey Cheusov, Sun,  8 Aug 2010 21:35:42 +0300
      - Warning message about deprecated PKG_SUFX should not appear
        anymore.
      - Html text inside <pre></pre> is quoted (<, >, & , " and '
-       sumbols)
+       symbols)
      - Another fix in report.html (conformance to HTML 4.0.1 Strict)
 
   New stages have been added:
@@ -120,7 +160,7 @@ Version 0.36.0, by Aleksey Cheusov, Sun,  6 Jun 2010 15:01:56 +0300
   DEPENDS_TARGET=do-bin-install restored.
 
   target "dbb_depends" (and "Depends"):
-    - -I is added to pkg_add for installing dependencioes.
+    - -I is added to pkg_add for installing dependencies.
 
   fixed: sometimes "Inspected packages" count may show wrong number.
 
@@ -162,7 +202,7 @@ Version 0.34.0, by Aleksey Cheusov, Sat,  1 May 2010 21:03:58 +0300
   ${MSCOMMONDIR} directory visible on master and slave hosts is needed
   for running bulk builds. It defaults to ${PACKAGES}/.distbb.
 
-  FIX: some packages having alternatuive dependencies unexpectedly
+  FIX: some packages having alternative dependencies unexpectedly
   failed at "depends" phase. Now new target "dbb_depends" is used for
   installing dependencies. Make sure your locally modified TARGETS
   contains "dbb_depends", not "depends".
