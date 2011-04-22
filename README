@@ -102,6 +102,7 @@ distbb - distributed bulk builds framework for pkgsrc (www.pkgsrc.org).
           building the src_summary
           (see META/pkg_src_summary.txt and META/packages_failed_scan.txt)
 
+===========================================================================
 CONFIGURATION/TUTORIAL:
 
 1) bootstrap your working pkgsrc (to /usr/pkg, for example)
@@ -121,7 +122,8 @@ CONFIGURATION/TUTORIAL:
        # PKG_DEVELOPER=                  yes
        ALLOW_VULNERABLE_PACKAGES=      yes
 
-       # I'd strongly recommend to use local directory for building
+       # I'd strongly recommend to use local directory for building.
+       # Building packages on NFSed directories is slooooooooow.
        WRKOBJDIR=                      /tmp/pkgsrc_obj
 
        # The following line makes future changes in setting easier
@@ -129,56 +131,85 @@ CONFIGURATION/TUTORIAL:
 
 2) Prepare distbb
    - bootstrap pkgsrc for distbb (to /usr/pkg_distbb, for example)
+
+     Example:
+       # cd /usr/pkgsrc/bootstrap/
+       # ./bootstrap --prefix /usr/pkg_distbb
+
    - install wip/distbb in it
-   - install other software you may need
-   - cp /usr/pkg_distbb/share/examples/distbb/distbb.conf \
-        /usr/pkg_distbb/etc/distbb.conf
-   - cp /usr/pkg_distbb/share/examples/distbb/distbb.local.mk \
-        /usr/pkg_distbb/etc/distbb.local.mk
+
+     Example:
+       # cd /usr/pkgsrc/wip/distbb
+       # /usr/pkg_distbb/bin/bmake install
+
+   - install other software you may need (rsync, nbpatch etc.)
+
    - edit /usr/pkg_distbb/etc/distbb.conf configuration file
 
-For "distributed" builds (example - different hosts plus NFS):
+========================================
+For "distributed" bulk builds:
 
 3d) On master host:
-    make /usr/pkg_distbb and /usr/pkgsrc directories NFS mountable
-    for all your slave hosts.
+    - make /usr/pkg_distbb and /usr/pkgsrc directories NFS mountable
+      for all your slave hosts.
 
 4d) On all slave hosts:
-    mount -t nfs -o ro master:/usr/pkg_distbb /usr/pkg_distbb
-    mount -t nfs -o rw master:/usr/pkgsrc     /usr/pkgsrc
+    - mount -t nfs -o ro master:/usr/pkg_distbb /usr/pkg_distbb
+      mount -t nfs -o rw master:/usr/pkgsrc     /usr/pkgsrc
 
-    /usr/pkg and PKGDBDIR need to be per slave (will be deleted)
+    All slave hosts need they own PREFIX (e.g. /usr/pkg)
+    and PKGDBDIR (e.g. /var/db/pkg). These dirs will be deleted
+    on slaves.
 
     NOTE:
        Only /usr/pkgsrc/packages and /usr/pkgsrc/distfiles
        subdirectories need to be writeable and therefore can be
-       mounted separately.
+       mounted separately. /usr/pkgsrc can be mounted read-only.
 
 5d) On all slave hosts:
 
     Make sure PATH environment variable includes /usr/pkg/bin
+    (edit .profile or .login files for this).
 
 6d) On the master host:
-    /usr/pkg_distbb/bin/distbb -h
-    /usr/pkg_distbb/bin/distbb                 # for full bulk build
-      or
-    /usr/pkg_distbb/bin/distbb -f packages.txt # for partial bulk build
+    - /usr/pkg_distbb/bin/distbb -h
+
+      # for full bulk build
+      /usr/pkg_distbb/bin/distbb
+
+      # for partial bulk builds
+      /usr/pkg_distbb/bin/distbb -f packages.txt # for partial bulk build
+
+      # for building individual packages
+      /usr/pkg_distbb/bin/distbb -p 'meta-pkgs/xfce4 multimedia/mplayer'
+
+      # for (re)building installed packages
+      /usr/pkg_distbb/bin/distbb -i
 
   NOTE:
     - in "distributed" mode master's /usr/pkg is NOT changed.
       Neither pkg_add nor pkg_delete is called on master host.
-    - /usr/pkgsrc/packages/pkg_summary.txt and
-      /usr/pkgsrc/pkg_src_summary.txt are created/updated
+    - /usr/pkgsrc/packages/All/pkg_summary.txt (PKG_SUMMARY),
+      /usr/pkgsrc/packages/All/pkg_all_summary.txt (PKG_ALL_SUMMARY) and
+      /usr/pkgsrc/pkg_src_summary.txt (PKG_SRC_SUMMARY) are created/updated
       from master host
-    - Everything under ~/bulk_log directory ($REPORTS_DIR)
-      is created and read from master host
-    - Uploading logs (UPLOAD_LOGS_CMD) and packages (UPLOAD_PKGS_CMD)
+    - Everything under ~/bulk_log directory (REPORTS_DIR)
+      is managed by master host
+    - Uploading logs (UPLOAD_LOGS_CMD), packages (UPLOAD_PKGS_CMD)
       and sending a report (REPORT_CMD) is run on master host.
     - On ALL slave hosts PREFIX (/usr/pkg) and PKGDBDIR (/var/db/pkg)
-      will be removed and recreated from bootstrap tarball .
-    - distbb can be run on master host by unprivileged user
+      will be removed and recreated from bootstrap tarball.
+    - DistBB can be run on master host by unprivileged user
       even if packages are built using root privileges
+    - Master host and slave hosts don't have to run the same OS.
+      Slave hosts should run a target operating operating system.
+    - By default ssh is used a transport program (TRANSPORT)
+      between master and slaves. You can use any ssh-like program
+      for this purpose.
+    - chrooted environment (ideally read-only chroots)
+      can also be used as slave.
 
+========================================
 For single-node bulk build:
 
 3s) Make sure PATH environment variable includes
@@ -191,9 +222,6 @@ For single-node bulk build:
   NOTE:
     - /usr/pkg (and PKGDBDIR) will be removed and recreated from
       bootstrap tarball.
-    - in order to correctly build pkg_src_summary, master's
-      /usr/pkg/etc/mk.conf (at the time of distbb startup) must be
-      equal to that from bootstrap tarball.
 
 ===========================================================================
 
@@ -201,13 +229,15 @@ Notes.
 
 A)
 
-There are the following stages of the bulk build:
+There are the following stages of the bulk build (BUILD_STAGES):
    init        - initialization, including running
                  pkg_update_src_summary and pkg_update_summary
    build       - actual package building
-   post_build  - run user's actions (post_build function from distbb.conf) 
    gen_report  - report generation
    update_best - update information about "virtual best" bulk build
+                 ($REPORTS_DIR/.best_bb)
+   summary     - generating pkg_summary(5)
+   checksum    - generating SHA512.txt
    upload_logs - uploading bulk build logs
    upload_pkgs - uploading binary packages
    report      - sending email or other type of notification
@@ -220,7 +250,9 @@ All stages except 'init' are rerunable.  They can be rerun like this
 
 BUILD_ID is printed at the very beginning of bulk build process
 
-B) ?
+B) Full list of configuration variables is available
+   in share/distbb/distbb.default.conf
+
 C) ?
 
 ===========================================================================
