@@ -10,18 +10,12 @@
 PKGSRC_PREFIX=/usr/pkg
 BMAKE=/usr/bin/make
 PKGSRCDIR=/usr/pkgsrc
-RMDIRS_CMD="/bin/rm -rf $PKGSRC_PREFIX /var/db/pkg"
+RMDIRS_CMD="rm -rf $PKGSRC_PREFIX /var/db/pkg"
 BOOTSTRAP="/usr/pkgsrc/packages/All/bootstrap.tar"
-EXTRACT_BOOTSTRAP_CMD="/bin/tar -xf $BOOTSTRAP -C /"
+EXTRACT_BOOTSTRAP_CMD="tar -xf $BOOTSTRAP -C /"
 MASTER_MODE=yes
 SLAVES='root@host1 root@host2 root@host3'
 REPORTS_DIR=$HOME/bulk-logs
-
-PAEXEC_EXTRA_OPTS='-Z300'
-
-TARGETS='Init clean Available Excluded Vars Depends'
-TARGETS="$TARGETS fetch checksum extract patch configure"
-TARGETS="$TARGETS build package"
 
 USER_MAIL=you@your-domain.com
 
