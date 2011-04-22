@@ -199,7 +199,7 @@ fi
 if test -n "$UNPRIV_USER"; then
     assign TARGETS "Init Clean Available Excluded Vars Depends fetch checksum extract patch configure build Package"
 else
-    assign TARGETS "Init Clean Available Excluded Vars Depends fetch checksum extract patch configure build install package"
+    assign TARGETS "Init Clean Available Excluded Vars Depends fetch checksum extract patch configure build package"
 fi
 #  the following is for USE_DESTDIR=yes
 #assign TARGETS "Init Clean Available Excluded Vars Depends fetch checksum extract patch configure build package"
@@ -346,7 +346,7 @@ assign UPLOAD_LOGS_PROG "$RSYNC_CMD -av --delete-excluded --exclude \"*.tmp\" -e
 assign BUILD_STAGES \
     'build gen_report update_best summary checksum upload_logs upload_pkgs report'
 
-# Extra options passed paexec(1)
+# Extra options passed to paexec(1)
 #assign PAEXEC_EXTRA_OPTS -z
 assign PAEXEC_EXTRA_OPTS '-Z300 -W2'
 
