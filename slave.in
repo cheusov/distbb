@@ -151,7 +151,7 @@ do_build_package (){
 	    *)
 		# < /dev/null - for building packages that require
 		# an interaction with user
-		set +e # workaround for buggy Korn Shell
+		set +e # workaround for buggy shells (FreeBSD, DragonFly, Interix)
 		       # ('set -e' + if + eval + false)
 		if ! eval "\$SU_UNPRIV_CMD_$t" \
 		    env PKGPATHe="$1" $BMAKE -f Makefile \
