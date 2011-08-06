@@ -243,7 +243,7 @@ NF == 2 {
          {
             older1 = dep
          }
-      }else{
+      }else if (dep in src_PAeNA){
          newer1 = dep
          print_dep(newer1)
       }
@@ -252,7 +252,7 @@ NF == 2 {
    if (($2 in src_PAeNA) && !(PAeNA2PANA($2) in bin_PANA))
       rebuild_PAeNA [$2] = 1
 
-   if (!older1 && (newer1 in src_PAeNA))
+   if (newer1 && !(PAeNA2PANA(newer1) in bin_PANA))
       rebuild_PAeNA [newer1] = 2
 
    if (older1)
