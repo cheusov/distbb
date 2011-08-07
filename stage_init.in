@@ -83,25 +83,26 @@ cleanup_package_list (){
     }' "$packages"
 }
 
+raw_packages_fn="$tmpdir/raw_packages.tmp"
 if test "$packages"; then
     # remove comments and empty lines
-    cleanup_package_list > $packages_fn.tmp
+    cleanup_package_list > "$raw_packages_fn"
 else
     if test -n "$MASTER_MODE" -a -n "$TRANSPORT" -a -n "$SLAVES"; then
 	slave1="$(echo $SLAVES | sed 's, .*$,,')"
 	environ="BMAKE=$BMAKE PKGSRCDIR=$PKGSRCDIR CKSUM=$CKSUM"
-	eval $TRANSPORT $slave1 "env $environ @libexecdir@/wrapper $LIST_ALL_PKGS_CMD" > $packages_fn.tmp
+	eval $TRANSPORT $slave1 "env $environ @libexecdir@/wrapper $LIST_ALL_PKGS_CMD" > "$raw_packages_fn"
     else
-	eval @libexecdir@/wrapper $LIST_ALL_PKGS_CMD > $packages_fn.tmp
+	eval @libexecdir@/wrapper $LIST_ALL_PKGS_CMD > "$raw_packages_fn"
     fi
 fi
 
 # add extra packages to the list of packages requested by user
 for p in $EXTRA_DEPS; do
-    echo $p >> $packages_fn.tmp
+    echo $p >> "$raw_packages_fn"
 done
 
-sort_uniq_inplace $packages_fn.tmp
+sort_uniq_inplace "$raw_packages_fn"
 
 verbose_print "done\n"
 
@@ -128,7 +129,7 @@ if test -z "$skip_updating_src_summary"; then
     set +e # workaround for buggy Korn Shell
            # ('set -e' + if + eval + false)
     if ! eval "@libexecdir@/wrapper $PKG_UPDATE_SRC_SUMMARY_CMD \
-	< $packages_fn.tmp 2> $build_src_summary_log_fn"
+	< $raw_packages_fn 2> $build_src_summary_log_fn"
     then
 	cat "$build_src_summary_log_fn" 1>&2
 	exit 1
@@ -140,14 +141,18 @@ fi
 pkg_assignments2pkgpath "$PKG_SRC_SUMMARY" > "$pkg_src_summary_fn.tmp"
 pkg_summary2bb_pkgs "$pkg_src_summary_fn.tmp" > "$pkg_src_summary_fn"
 rm "$pkg_src_summary_fn.tmp"
+#pkg_summary2bb_pkgs "$PKG_SRC_SUMMARY" > "$pkg_src_summary_fn.tmp"
+#pkg_assignments2pkgpath "$pkg_src_summary_fn.tmp" > "$pkg_src_summary_fn"
+#rm "$pkg_src_summary_fn.tmp"
 
 ######################################################################
 ### packages for which pkg_src_summary failed.
 verbose_print "  is there packages for which pkg_src_summary failed?..."
 
-awk -v packages_fn=$packages_fn \
-    -v packages_failed_scan_fn=$packages_failed_scan_fn '
-FILENAME == (packages_fn ".tmp") {
+awk -v raw_packages_fn="$raw_packages_fn" \
+    -v packages_fn="$packages_fn" \
+    -v packages_failed_scan_fn="$packages_failed_scan_fn" '
+FILENAME == raw_packages_fn {
    if (NF == 1) pkgs [$1] = 1
    next
 }
@@ -166,8 +171,8 @@ END {
       if (! (pkgpath in printed))
          print pkgpath > packages_failed_scan_fn
    }
-}' $packages_fn.tmp $pkg_src_summary_fn
-#rm $packages_fn.tmp
+}' "$raw_packages_fn" $pkg_src_summary_fn
+#rm "$raw_packages_fn"
 touch $packages_fn
 
 verbose_print "done\n"
@@ -185,9 +190,10 @@ NF == 0 {print pkgpath "," pkgbase}
 sed -n 's/^PKGPATH=//p' "$pkg_src_summary_fn" |
 sort -u > "$tmpdir/all_src_pkgpaths"
 
+all_deps_PAeNA_fn=$tmpdir/all_deps_PAeNA.tmp
 pkg_summary2deps -Apnrsal -P $tmpdir/all_src_pkgpaths \
     "$pkg_src_summary_fn" "$PKG_ALL_SUMMARY" \
-    > "$tmpdir/all_deps.tmp" 2>/dev/null
+    > "$all_deps_PAeNA_fn" 2>/dev/null
 
 runawk -f xgetline.awk -f psu_funcs.awk \
        -v pkg_bin_summary_fn="$PKG_ALL_SUMMARY" \
@@ -231,16 +237,22 @@ function PAeNA2PANA (pkg){
 NF == 2 {
    cnt = split($1, arr, /[|]/)
    older1 = newer1 = ""
+   # older1 - PAeNA present in bin_summary that satisfies dependency
+   # newer1 - PAeNA absent  in bin_summary that satisfies dependency
    for (i=1; i <= cnt; ++i){
       dep = arr [i]
 
       if (dep in bin_PANA){
-         if (older1 in src_PAeNA)
+         if (older1 in src_PAeNA){
+            # even if version goes backward,
+            # pkgsrc tree version is always preferred
             continue
+         }
 
-         if (!older1 || (dep in src_PAeNA) ||
-            pkgname_gt_pkgname(dep, older1))
-         {
+         if (!older1 || (dep in src_PAeNA) || pkgname_gt_pkgname(dep, older1)){
+            # 1) we find first suitable package
+            # 3) new suitable package comes from pkgsrc tree
+            # 2) new suitable package has greater version
             older1 = dep
          }
       }else{
@@ -250,10 +262,10 @@ NF == 2 {
    }
 
    if (($2 in src_PAeNA) && !(PAeNA2PANA($2) in bin_PANA))
-      rebuild_PAeNA [$2] = 1
+      updated_PAeNA [$2] = 1
 
    if (!older1 && (newer1 in src_PAeNA))
-      rebuild_PAeNA [newer1] = 2
+      updated_PAeNA [newer1] = 2
 
    if (older1)
       print_dep(older1, $2)
@@ -266,38 +278,53 @@ NF == 2 {
 }
 NF == 1 {
    if (($1 in src_PAeNA) && !(PAeNA2PANA($1) in bin_PANA))
-      rebuild_PAeNA [$1] = 3
+      updated_PAeNA [$1] = 3
 }
 END {
-   for (i in rebuild_PAeNA){
+   for (i in updated_PAeNA){
       print_dep(i)
-      print i > (tmpdir "/rebuild_PAeNA.tmp")
+      print i > (tmpdir "/updated_PAeNA.tmp")
    }
    for (i in src_PAeNA){
       print i > (tmpdir "/src_PAeNA.tmp")
    }
 }
-' "$tmpdir/all_deps.tmp" > "$tmpdir/reqd_deps_pre.tmp"
+' "$all_deps_PAeNA_fn" > "$tmpdir/reqd_deps_PAeNA.tmp"
 
-printf '' >> "$tmpdir/reqd_deps_pre.tmp"
+printf '' >> "$tmpdir/reqd_deps_PAeNA.tmp"
 printf '' >> "$tmpdir/src_PAeNA.tmp"
-printf '' >> "$tmpdir/rebuild_PAeNA.tmp"
+printf '' >> "$tmpdir/updated_PAeNA.tmp"
 
-pkg_subgraph_deps -r -f "$tmpdir/src_PAeNA.tmp" "$tmpdir/reqd_deps_pre.tmp" \
-	> "$tmpdir/reqd_deps_pre.tmp_"
-mv "$tmpdir/reqd_deps_pre.tmp_" "$tmpdir/reqd_deps_pre.tmp"
+pkg_subgraph_deps -r -f "$tmpdir/src_PAeNA.tmp" "$tmpdir/reqd_deps_PAeNA.tmp" \
+	> "$tmpdir/reqd_deps_PAeNA.tmp_"
+mv "$tmpdir/reqd_deps_PAeNA.tmp_" "$tmpdir/reqd_deps_PAeNA.tmp"
 
-sed 's/[^ ]*;//g' "$tmpdir/reqd_deps_pre.tmp" > "$reqd_deps_fn"
+PAeNA2NA ()  { sed 's/[^ ]*;//g' "$@"; }
+PAeNA2PAe () { sed 's/;[^ ]*//g' "$@"; } 
 
-pkg_subgraph_deps -f "$tmpdir/rebuild_PAeNA.tmp" \
-    "$tmpdir/reqd_deps_pre.tmp" | sed 's/;[^ ]*//g'  > "$tmpdir/rebuild.tmp"
+PAeNA2NA  "$tmpdir/reqd_deps_PAeNA.tmp" > "$reqd_deps_NA_fn"
+PAeNA2PAe "$tmpdir/reqd_deps_PAeNA.tmp" > "$tmpdir/reqd_deps_PAe.tmp"
+PAeNA2PAe "$tmpdir/updated_PAeNA.tmp" > "$tmpdir/updated_PAe.tmp"
+
+# if test "$packages"; then
+#     pkg_subgraph_deps -r -f "$packages_fn" \
+# 	"$tmpdir/reqd_deps_PAe.tmp" > "$tmpdir/needed_deps_PAe.tmp"
+# else
+#     ln -s "$tmpdir/reqd_deps_PAe.tmp" "$tmpdir/needed_deps_PAe.tmp"
+# fi
+
+pkg_subgraph_deps -f "$tmpdir/updated_PAe.tmp" \
+    "$tmpdir/reqd_deps_PAe.tmp" > "$rebuild_PAe_fn"
+#pkg_subgraph_deps -r -f "$packages_fn" \
+#    "$tmpdir/rebuild.tmp_" > "$tmpdir/rebuild.tmp"
+#rm "$tmpdir/rebuild.tmp_"
 
 printf '' > "$errors_fn"
 printf '' > "$summary_cmp_fn"
 
 # rebuilt previously
 changed_pkgs_fn=$tmpdir/changed.tmp
-awk 'NF == 2 {print $1 "\n" $2; next} {print}' "$rebuild_fn" |
+awk 'NF == 2 {print $1 "\n" $2; next} {print}' "$rebuild_PAe_fn" |
 sort -u > "$changed_pkgs_fn"
 
 sort "$changed_pkgs_fn" "$changed_pkgs_fn" "$tmpdir/all_src_pkgpaths" |
@@ -330,7 +357,7 @@ verbose_print "done\n"
 
 verbose_print "  copying auxiliary files..."
 
-cp "$reqd_deps_fn"           "$aux_reqd_deps_fn"
+cp "$reqd_deps_NA_fn" "$aux_reqd_deps_fn"
 
 verbose_print "done\n"
 
