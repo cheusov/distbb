@@ -1,5 +1,15 @@
 Plan0)
 
+ - Ensure that dependencies activated using bl3 PROVIDEs something
+   REQUIRED by the package.
+
+ - Analyse CONFLICTs (pkg_conflicts) for the whole repository.
+ - Analyse PLIST entries vs. CONFLICTS.
+ - Analyse ability of the package to be installed (PLIST, CONFLICTS).
+ - Analyse symbols of executables and libraries
+
+ - Update README!!!
+
  - -x and -X: check for stage correctness
 
  - Add PLIST to pkg_summary.txt
