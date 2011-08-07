@@ -195,109 +195,11 @@ pkg_summary2deps -Apnrsal -P $tmpdir/all_src_pkgpaths \
     "$pkg_src_summary_fn" "$PKG_ALL_SUMMARY" \
     > "$all_deps_PAeNA_fn" 2>/dev/null
 
-runawk -f xgetline.awk -f psu_funcs.awk \
-       -v pkg_bin_summary_fn="$PKG_ALL_SUMMARY" \
-       -v pkg_src_summary_fn="$pkg_src_summary_fn" \
-       -v tmpdir="$tmpdir" \
--e '
-function read_summary (fn, hash){
-   while (xgetline0(fn)){
-      if ($0 ~ /^PKGPATH=/)
-         pkgpath = substr($0, 9)
-      else if ($0 ~ /^PKGNAME=/)
-         pkgname = substr($0, 9)
-      else if (NF == 0){
-         hash [pkgpath ";" pkgname] = 0
-         pkgname = pkgpath = ""
-      }
-   }
-   close(fn)
-}
-
-BEGIN {
-   read_summary(pkg_src_summary_fn, src_PAeNA)
-   read_summary(pkg_bin_summary_fn, bin_PANA)
-}
-
-function print_dep (dep, pkg){
-   if (pkg != ""){
-      print dep, pkg
-      already_printer [dep] = already_printer [pkg] = 0
-   }else if (! (dep in already_printer)){
-      print dep
-      already_printer [dep] = 0
-   }
-}
-
-function PAeNA2PANA (pkg){
-   sub(/:[^;]*/, "", pkg)
-   return pkg
-}
-
-NF == 2 {
-   cnt = split($1, arr, /[|]/)
-   older1 = newer1 = ""
-   # older1 - PAeNA present in bin_summary that satisfies dependency
-   # newer1 - PAeNA absent  in bin_summary that satisfies dependency
-   for (i=1; i <= cnt; ++i){
-      dep = arr [i]
-
-      if (dep in bin_PANA){
-         if (older1 in src_PAeNA){
-            # even if version goes backward,
-            # pkgsrc tree version is always preferred
-            continue
-         }
-
-         if (!older1 || (dep in src_PAeNA) || pkgname_gt_pkgname(dep, older1)){
-            # 1) we find first suitable package
-            # 3) new suitable package comes from pkgsrc tree
-            # 2) new suitable package has greater version
-            older1 = dep
-         }
-      }else if (dep in src_PAeNA){
-         newer1 = dep
-         print_dep(newer1)
-      }
-   }
-
-   if (($2 in src_PAeNA) && !(PAeNA2PANA($2) in bin_PANA))
-      updated_PAeNA [$2] = 1
-
-   if (newer1 && !(PAeNA2PANA(newer1) in bin_PANA))
-      rebuild_PAeNA [newer1] = 2
-
-   if (older1)
-      print_dep(older1, $2)
-   else if (newer1)
-      print_dep(newer1, $2)
-   else
-      abort("Neither older1 nor newer1 are set")
-
-   next
-}
-NF == 1 {
-   if (($1 in src_PAeNA) && !(PAeNA2PANA($1) in bin_PANA))
-      updated_PAeNA [$1] = 3
-}
-END {
-   for (i in updated_PAeNA){
-      print_dep(i)
-      print i > (tmpdir "/updated_PAeNA.tmp")
-   }
-   for (i in src_PAeNA){
-      print i > (tmpdir "/src_PAeNA.tmp")
-   }
-}
-' "$all_deps_PAeNA_fn" > "$tmpdir/reqd_deps_PAeNA.tmp"
-
-printf '' >> "$tmpdir/reqd_deps_PAeNA.tmp"
-printf '' >> "$tmpdir/src_PAeNA.tmp"
-printf '' >> "$tmpdir/updated_PAeNA.tmp"
-
-pkg_subgraph_deps -r -f "$tmpdir/src_PAeNA.tmp" "$tmpdir/reqd_deps_PAeNA.tmp" \
-	> "$tmpdir/reqd_deps_PAeNA.tmp_"
-mv "$tmpdir/reqd_deps_PAeNA.tmp_" "$tmpdir/reqd_deps_PAeNA.tmp"
+@libexecdir@/pkg_summary2build_deps \
+    -s "$pkg_src_summary_fn" \
+    -b "$PKG_ALL_SUMMARY" \
+    -r "$tmpdir/updated_PAeNA.tmp" \
+    "$all_deps_PAeNA_fn" > "$tmpdir/reqd_deps_PAeNA.tmp"
 
 PAeNA2NA ()  { sed 's/[^ ]*;//g' "$@"; }
 PAeNA2PAe () { sed 's/;[^ ]*//g' "$@"; } 

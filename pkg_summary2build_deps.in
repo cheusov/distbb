@@ -1,0 +1,167 @@
+#!/usr/bin/env runawk
+
+# Copyright (c) 2011 Aleksey Cheusov <vle@gmx.net>
+# All rights reserved.
+#
+# See LICENSE file
+
+#.begin-str help
+# pkg_summary2build_deps - takes src_summary (-s), bin_summary (-b) and
+# PAeNA (PKGPATH enriched + PKGNAME) dependency graph built on ALL
+# packages from src_summary and bin_summary using
+# 'pkg_summary2deps -Apnrsal'.
+# As a result it outputs PAeNA dependency graph in which leaf packages
+# are packages from src_summary that need to be rebuild,
+# dependencies -- either binary packages listed in bin_summary
+# or source packages from src_summary.
+#
+# usage: pkg_summary2build_deps [OPTIONS] [PAeNA_deps_files...]
+# OPTIONS:
+#   -h                     display this screen
+#   =s <src_summary>       filename for source summary
+#   =b <bin_summary>       filename for binary summary
+#   =r <rebuild>           filename for packages to be built (result)
+#.end-str
+
+#env "LC_ALL=C"
+
+#use "exitnow.awk"
+#use "power_getopt.awk"
+#use "xgetline.awk"
+#use "psu_funcs.awk"
+#use "tmpfile.awk"
+#use "shquote.awk"
+#use "xsystem.awk"
+#use "xclose.awk"
+
+BEGIN {
+	if (getarg("h")){
+		print_help()
+		exitnow(0)
+	}
+
+	pkg_bin_summary_fn = getarg("b")
+	if (!pkg_bin_summary_fn){
+		print "-b option is mandatory!" > "/dev/stderr"
+		exitnow(1)
+	}
+
+	pkg_src_summary_fn = getarg("s")
+	if (!pkg_src_summary_fn){
+		print "-s option is mandatory!" > "/dev/stderr"
+		exitnow(1)
+	}
+
+	rebuild_fn = getarg("r")
+	if (!rebuild_fn){
+		print "-r option is mandatory!" > "/dev/stderr"
+		exitnow(1)
+	}
+
+	printf "" > rebuild_fn
+
+	src_PAeNA_fn = tmpfile()
+	printf "" > src_PAeNA_fn
+
+	alldeps_fn = tmpfile()
+	printf "" > alldeps_fn
+}
+
+function read_summary (fn, hash){
+	while (xgetline0(fn)){
+		if ($0 ~ /^PKGPATH=/)
+			pkgpath = substr($0, 9)
+		else if ($0 ~ /^PKGNAME=/)
+			pkgname = substr($0, 9)
+		else if (NF == 0){
+			hash [pkgpath ";" pkgname] = 0
+			pkgname = pkgpath = ""
+		}
+	}
+	close(fn)
+}
+
+BEGIN {
+	read_summary(pkg_src_summary_fn, src_PAeNA)
+	read_summary(pkg_bin_summary_fn, bin_PANA)
+}
+
+function print_dep (dep, pkg){
+	if (pkg != ""){
+		print dep, pkg > alldeps_fn
+		already_printer [dep] = already_printer [pkg] = 0
+	}else if (! (dep in already_printer)){
+		print dep > alldeps_fn
+		already_printer [dep] = 0
+	}
+}
+
+function PAeNA2PANA (pkg){
+	sub(/:[^;]*/, "", pkg)
+	return pkg
+}
+
+NF == 2 {
+	cnt = split($1, arr, /[|]/)
+	older1 = newer1 = ""
+	# older1 - PAeNA present in bin_summary that satisfies dependency
+	# newer1 - PAeNA absent  in bin_summary that satisfies dependency
+	for (i=1; i <= cnt; ++i){
+		dep = arr [i]
+
+		if (dep in bin_PANA){
+			if (older1 in src_PAeNA){
+				# even if version goes backward,
+				# pkgsrc tree version is always preferred
+				continue
+			}
+
+			if (!older1 || (dep in src_PAeNA) || pkgname_gt_pkgname(dep, older1)){
+				# 1) we find first suitable package
+				# 3) new suitable package comes from pkgsrc tree
+				# 2) new suitable package has greater version
+				older1 = dep
+			}
+		}else if (dep in src_PAeNA){
+			newer1 = dep
+			print_dep(newer1)
+		}
+	}
+
+	if (($2 in src_PAeNA) && !(PAeNA2PANA($2) in bin_PANA))
+		updated_PAeNA [$2] = 1
+
+	if (newer1 && !(PAeNA2PANA(newer1) in bin_PANA))
+		rebuild_PAeNA [newer1] = 2
+
+	if (older1)
+		print_dep(older1, $2)
+	else if (newer1)
+		print_dep(newer1, $2)
+	else
+		abort("Neither older1 nor newer1 are set")
+
+	next
+}
+
+NF == 1 {
+	if (($1 in src_PAeNA) && !(PAeNA2PANA($1) in bin_PANA))
+		updated_PAeNA [$1] = 3
+}
+
+END {
+	for (i in updated_PAeNA){
+		print_dep(i)
+		print i > rebuild_fn
+	}
+	for (i in src_PAeNA){
+		print i > src_PAeNA_fn
+	}
+
+	xclose(rebuild_fn)
+	xclose(src_PAeNA_fn)
+	xclose(alldeps_fn)
+
+	cmd = "pkg_subgraph_deps -r -f " shquote(src_PAeNA_fn) " " shquote(alldeps_fn)
+	xsystem(cmd)
+}
