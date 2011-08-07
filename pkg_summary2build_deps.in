@@ -40,25 +40,22 @@ BEGIN {
 		exitnow(0)
 	}
 
-	pkg_bin_summary_fn = getarg("b")
-	if (!pkg_bin_summary_fn){
+	bin_summary_fn = getarg("b")
+	if (!bin_summary_fn){
 		print "-b option is mandatory!" > "/dev/stderr"
 		exitnow(1)
 	}
 
-	pkg_src_summary_fn = getarg("s")
-	if (!pkg_src_summary_fn){
+	src_summary_fn = getarg("s")
+	if (!src_summary_fn){
 		print "-s option is mandatory!" > "/dev/stderr"
 		exitnow(1)
 	}
 
 	rebuild_fn = getarg("r")
-	if (!rebuild_fn){
-		print "-r option is mandatory!" > "/dev/stderr"
-		exitnow(1)
-	}
 
-	printf "" > rebuild_fn
+	if (rebuild_fn)
+		printf "" > rebuild_fn
 
 	src_PAeNA_fn = tmpfile()
 	printf "" > src_PAeNA_fn
@@ -82,8 +79,8 @@ function read_summary (fn, hash){
 }
 
 BEGIN {
-	read_summary(pkg_src_summary_fn, src_PAeNA)
-	read_summary(pkg_bin_summary_fn, bin_PANA)
+	read_summary(src_summary_fn, src_PAeNA)
+	read_summary(bin_summary_fn, bin_PANA)
 }
 
 function print_dep (dep, pkg){
@@ -152,15 +149,17 @@ NF == 1 {
 END {
 	for (i in updated_PAeNA){
 		print_dep(i)
-		print i > rebuild_fn
+		if (rebuild_fn)
+			print i > rebuild_fn
 	}
 	for (i in src_PAeNA){
 		print i > src_PAeNA_fn
 	}
 
-	xclose(rebuild_fn)
 	xclose(src_PAeNA_fn)
 	xclose(alldeps_fn)
+	if (rebuild_fn)
+		xclose(rebuild_fn)
 
 	cmd = "pkg_subgraph_deps -r -f " shquote(src_PAeNA_fn) " " shquote(alldeps_fn)
 	xsystem(cmd)
