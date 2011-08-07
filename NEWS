@@ -1,5 +1,11 @@
 ===================================================================
-Version 0.40, by Aleksey Cheusov, Sat, 23 Apr 2011 00:17:49 +0300
+Version 0.40.1, by Aleksey Cheusov, Sun,  7 Aug 2011 18:25:25 +0300
+
+  FIX: distbb may fail at stage_summary because not all packages
+  that need to be rebuilt are marked as such.
+
+===================================================================
+Version 0.40.0, by Aleksey Cheusov, Sat, 23 Apr 2011 00:17:49 +0300
 
   As of this release completely new algorithm of building a dependency
   graph is used. By default old available binary packages
