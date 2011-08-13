@@ -20,7 +20,7 @@ DISTBB_CONF=${DISTBB_CONF:-@sysconfdir@/distbb.conf}
 . @libexecdir@/common
 
 # main
-verbose_print "Generating total pkg_summary..."
+verbose_print "Generating package summaries..."
 
 summary_pkgs_fn=$tmpdir/summary_pkgs.tmp
 awk 'NF == 2 {hash [$1] = hash [$2] = ""}
@@ -44,11 +44,20 @@ END {
 
 cd "$PACKAGES/All"
 
-pkg_summary_tmp_fn="$REPORT1_DIR/META/pkg_summary.txt"
+NA2filename () {
+    awk -v sufx="$PKG_SUFX" '{print "./" $1 sufx}' "$@"
+}
 
-awk -v sufx="$PKG_SUFX" '{print "./" $1 sufx}' "$tmpdir/pkgs2summary.tmp" |
-xargs "$PKGSRC_PREFIX/sbin/pkg_info" -X > "$pkg_summary_tmp_fn"
+pkg_summary_tmp_fn="$REPORT1_DIR/META/pkg_summary.txt"
+NA2filename "$tmpdir/pkgs2summary.tmp" |
+xargs pkg_bin_summary \
+    > "$pkg_summary_tmp_fn"
 cp "$pkg_summary_tmp_fn" "$PKG_SUMMARY"
+
+pkg_enriched_summary_tmp_fn="$REPORT1_DIR/META/pkg_enriched_summary.txt"
+NA2filename  "$tmpdir/pkgs2summary.tmp" |
+xargs pkg_bin_summary -f PKGNAME,PKGPATH,COMMENT,PLIST \
+    > "$pkg_enriched_summary_tmp_fn"
 
 "$GZIP" < "$PKG_SUMMARY" > "${PKG_SUMMARY%.txt}.gz"
 "$BZIP2" < "$PKG_SUMMARY" > "${PKG_SUMMARY%.txt}.bz2"
