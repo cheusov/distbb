@@ -25,7 +25,7 @@ verbose_print "Generating package summaries..."
 summary_pkgs_fn=$tmpdir/summary_pkgs.tmp
 awk 'NF == 2 {hash [$1] = hash [$2] = ""}
      NF == 1 {hash [$1] = ""}
-     END {for (p in hash) print p }' "$reqd_deps_fn" |
+     END {for (p in hash) print p }' "$reqd_deps_NA_fn" |
 sort > "$summary_pkgs_fn"
 
 runawk -f xgetline.awk -v summary_pkgs_fn="$summary_pkgs_fn" -e '
