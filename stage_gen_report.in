@@ -21,7 +21,7 @@ DISTBB_CONF=${DISTBB_CONF:-@sysconfdir@/distbb.conf}
 . @libexecdir@/common
 
 # main
-verbose_print "Logs generation...\n"
+verbose_print "Report generation...\n"
 
 ######################################################################
 

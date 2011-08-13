@@ -48,17 +48,15 @@ NA2filename () {
     awk -v sufx="$PKG_SUFX" '{print "./" $1 sufx}' "$@"
 }
 
-pkg_summary_tmp_fn="$REPORT1_DIR/META/pkg_summary.txt"
 NA2filename "$tmpdir/pkgs2summary.tmp" |
 xargs pkg_bin_summary \
-    > "$pkg_summary_tmp_fn"
-cp "$pkg_summary_tmp_fn" "$PKG_SUMMARY"
+    > "$bin_summary_fn"
 
-pkg_enriched_summary_tmp_fn="$REPORT1_DIR/META/pkg_enriched_summary.txt"
 NA2filename  "$tmpdir/pkgs2summary.tmp" |
 xargs pkg_bin_summary -f PKGNAME,PKGPATH,COMMENT,PLIST \
-    > "$pkg_enriched_summary_tmp_fn"
+    > "$enriched_summary_fn"
 
+cp "$pkg_summary_tmp_fn" "$PKG_SUMMARY"
 "$GZIP" < "$PKG_SUMMARY" > "${PKG_SUMMARY%.txt}.gz"
 "$BZIP2" < "$PKG_SUMMARY" > "${PKG_SUMMARY%.txt}.bz2"
 
