@@ -3,10 +3,15 @@ Plan0)
  - Ensure that dependencies activated using bl3 PROVIDEs something
    REQUIRED by the package.
 
- - Analyse CONFLICTs (pkg_conflicts) for the whole repository.
- - Analyse PLIST entries vs. CONFLICTS.
- - Analyse ability of the package to be installed (PLIST, CONFLICTS).
- - Analyse symbols of executables and libraries
+ - Analyser:
+   - missing CONFLICTS
+   - extra CONFLICTS
+   - possibility of installation ALL packages in repo
+   - config.log and stage_build.tmp may help to recognize
+     bad DEPENDS and BUILD_DEPENDS
+   - PROVIDES/REQUIRES consistency
+   - recognize previous bulk build and packages failed at that time
+     which succeeded in new bulk build. Compare {BUILD_,}DEPENDS then
 
  - Update README!!!
 
