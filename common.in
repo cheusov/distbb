@@ -82,11 +82,12 @@ errors_fn=$meta_dir/errors.txt
 pkg_src_summary_fn=$meta_dir/pkg_src_summary.txt
 summary_cmp_fn=$meta_dir/summary_cmp.txt
 bin_summary_fn=$meta_dir/pkg_summary.txt
-enriched_summary_fn=$meta_dir/pkg_enriched_summary.tmp
+enriched_summary_fn=$meta_dir/pkg_enriched_summary.txt
 
-check_miss_conflicts_fn=$meta_dir/check_missing_conflicts.txt
+check_missing_conflicts_fn=$meta_dir/check_missing_conflicts.txt # done
+check_missing_progs_fn=$meta_dir/check_missing_progs.txt         # done
 check_extra_conflicts_fn=$meta_dir/check_extra_conflicts.txt
-check_reqd_prov_fn=$meta_dir/check_reqd_prov.txt
+check_reqd_prov_fn=$meta_dir/check_reqd_prov.txt                 # done
 check_uninstallable_fn=$meta_dir/check_uninstallable.txt
 check_not_found_tool_fn=$meta_dir/check_not_found_tool.txt
 check_version_fn=$meta_dir/check_version.txt

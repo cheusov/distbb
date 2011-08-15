@@ -1,0 +1,82 @@
+#!/bin/sh
+
+# Copyright (c) 2008-2011 Aleksey Cheusov <vle@gmx.net>
+# All rights reserved.
+#
+# See LICENSE file
+
+######################################################################
+
+set -e
+. @bindir@/pipestatus
+
+# usage: stage_gen_report BUILD_ID
+test $# -eq 1
+
+# init
+BUILD_ID="$1"
+
+DISTBB_CONF=${DISTBB_CONF:-@sysconfdir@/distbb.conf}
+. "$DISTBB_CONF"
+. @libexecdir@/common
+
+# main
+verbose_print "Generation of report data...\n"
+
+######################################################################
+
+verbose_print "Additional checks for bulk build results...\n"
+
+reqd_prov (){
+    if test -f "$bin_summary_fn"; then
+	verbose_print "  PROVIDES/REQUIRES consistency ... "
+	pkg_lint_summary -p"$PKGSRC_PREFIX" -l "$bin_summary_fn" \
+	    > "$check_reqd_prov_fn" || true
+	verbose_print '\n'
+    fi
+}
+
+missing_conflicts (){
+    if test -f "$enriched_summary_fn"; then
+	verbose_print "  Missing CONFLICTS ... "
+	pkg_lint_summary -n "$enriched_summary_fn" \
+	    > "$check_missing_conflicts_fn" || true
+	verbose_print '\n'
+    fi
+}
+
+missing_progs (){
+    verbose_print "  Missing programs ... "
+    find "$REPORT1_DIR" -name curr_stage.tmp |
+    runawk -f xgetline.awk -f dirname.awk -e '
+    {
+	getline stage < $0
+	close($0)
+
+	fn = dirname($0) "/stage_" stage ".tmp"
+	pkg_printed = 0
+	while (xgetline0(fn)){
+	    line [FNR] = $0
+	    delete line [FNR-3]
+	    if (/command not found/){
+		if (!pkg_printed) print fn
+		pkg_printed = 1
+		print " * " line [FNR-2]
+		print "   " line [FNR-1]
+		print "   " $0
+		getline < fn
+		print "   " $0
+		getline < fn
+		print "   " $0
+		print ""
+		delete line
+	    }
+	}
+	close(fn)
+    }
+    ' > "$check_missing_progs_fn"
+}
+
+#reqd_prov
+#missing_conflicts
+missing_progs

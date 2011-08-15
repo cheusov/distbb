@@ -53,7 +53,7 @@ xargs pkg_bin_summary \
     > "$bin_summary_fn"
 
 NA2filename  "$tmpdir/pkgs2summary.tmp" |
-xargs pkg_bin_summary -f PKGNAME,PKGPATH,COMMENT,PLIST \
+xargs pkg_bin_summary -f PKGNAME,PKGPATH,COMMENT,PLIST,CONFLICTS \
     > "$enriched_summary_fn"
 
 cp "$pkg_summary_tmp_fn" "$PKG_SUMMARY"
