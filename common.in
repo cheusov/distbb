@@ -81,12 +81,23 @@ errors_fn=$meta_dir/errors.txt
 
 pkg_src_summary_fn=$meta_dir/pkg_src_summary.txt
 summary_cmp_fn=$meta_dir/summary_cmp.txt
+bin_summary_fn=$meta_dir/pkg_summary.txt
+enriched_summary_fn=$meta_dir/pkg_enriched_summary.txt
+
+check_missing_conflicts_fn=$meta_dir/check_missing_conflicts.txt # done
+check_missing_progs_fn=$meta_dir/check_missing_progs.txt         # done
+check_extra_conflicts_fn=$meta_dir/check_extra_conflicts.txt
+check_reqd_prov_fn=$meta_dir/check_reqd_prov.txt                 # done
+check_uninstallable_fn=$meta_dir/check_uninstallable.txt
+check_not_found_tool_fn=$meta_dir/check_not_found_tool.txt
+check_version_fn=$meta_dir/check_version.txt
+check_bad_build_deps_fn=$meta_dir/check_bad_build_deps.txt
 
 build_start_fn=$meta_dir/build_start.tmp
 build_end_fn=$meta_dir/build_end.tmp
 
-queue_fn=$tmpdir/queue.tmp
-rebuild_fn=$tmpdir/rebuild.tmp
+queue_fn=$tmpdir/queue_PAe.tmp
+rebuild_PAe_fn=$tmpdir/rebuild_PAe.tmp
 
 aux_reqd_deps_fn=$MSCOMMONDIR/reqd_deps.txt
 
@@ -94,8 +105,7 @@ aux_reqd_deps_fn=$MSCOMMONDIR/reqd_deps.txt
 packages_fn=$tmpdir/packages.tmp
 # multi-variant packages, that is raw packages enriched with
 # build option, like www/ap2-python:PYTHON_VERSION_REQD=25,PKG_APACHE=apache22
-packages_fn=$tmpdir/packages.tmp
-reqd_deps_fn=$tmpdir/reqd_deps.tmp
+reqd_deps_NA_fn=$tmpdir/reqd_deps_NA.tmp
 
 bb_history_fn=$REPORTS_DIR/bulk_builds_history.txt
 

@@ -20,12 +20,12 @@ DISTBB_CONF=${DISTBB_CONF:-@sysconfdir@/distbb.conf}
 . @libexecdir@/common
 
 # main
-verbose_print "Generating total pkg_summary..."
+verbose_print "Generating package summaries..."
 
 summary_pkgs_fn=$tmpdir/summary_pkgs.tmp
 awk 'NF == 2 {hash [$1] = hash [$2] = ""}
      NF == 1 {hash [$1] = ""}
-     END {for (p in hash) print p }' "$reqd_deps_fn" |
+     END {for (p in hash) print p }' "$reqd_deps_NA_fn" |
 sort > "$summary_pkgs_fn"
 
 runawk -f xgetline.awk -v summary_pkgs_fn="$summary_pkgs_fn" -e '
@@ -44,12 +44,19 @@ END {
 
 cd "$PACKAGES/All"
 
-pkg_summary_tmp_fn="$REPORT1_DIR/META/pkg_summary.txt"
+NA2filename () {
+    awk -v sufx="$PKG_SUFX" '{print "./" $1 sufx}' "$@"
+}
 
-awk -v sufx="$PKG_SUFX" '{print "./" $1 sufx}' "$tmpdir/pkgs2summary.tmp" |
-xargs "$PKGSRC_PREFIX/sbin/pkg_info" -X > "$pkg_summary_tmp_fn"
+NA2filename "$tmpdir/pkgs2summary.tmp" |
+xargs pkg_bin_summary \
+    > "$bin_summary_fn"
+
+NA2filename  "$tmpdir/pkgs2summary.tmp" |
+xargs pkg_bin_summary -f PKGNAME,PKGPATH,COMMENT,PLIST,CONFLICTS \
+    > "$enriched_summary_fn"
+
 cp "$pkg_summary_tmp_fn" "$PKG_SUMMARY"
-
 "$GZIP" < "$PKG_SUMMARY" > "${PKG_SUMMARY%.txt}.gz"
 "$BZIP2" < "$PKG_SUMMARY" > "${PKG_SUMMARY%.txt}.bz2"
 

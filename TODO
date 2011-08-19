@@ -1,5 +1,20 @@
 Plan0)
 
+ - Ensure that dependencies activated using bl3 PROVIDEs something
+   REQUIRED by the package.
+
+ - Analyser:
+   - missing CONFLICTS
+   - extra CONFLICTS
+   - possibility of installation ALL packages in repo
+   - config.log and stage_build.tmp may help to recognize
+     bad DEPENDS and BUILD_DEPENDS
+   - PROVIDES/REQUIRES consistency
+   - recognize previous bulk build and packages failed at that time
+     which succeeded in new bulk build. Compare {BUILD_,}DEPENDS then
+
+ - Update README!!!
+
  - -x and -X: check for stage correctness
 
  - Add PLIST to pkg_summary.txt
