@@ -3,7 +3,11 @@ Plan0)
  - Ensure that dependencies activated using bl3 PROVIDEs something
    REQUIRED by the package.
 
+ -  Explicitely set SU_CMD to something noisy.
+
  - Analyser:
+   - permission denied
+
    - missing CONFLICTS
    - extra CONFLICTS
    - possibility of installation ALL packages in repo
