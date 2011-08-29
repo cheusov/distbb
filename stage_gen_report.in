@@ -260,6 +260,7 @@ report_html_jumpto (){
     <li><a href="#failed depends">Failed due to deps</a></li>
     <li><a href="#old vs new">Progress: prev. vs. curr.</a></li>
     <li><a href="#best vs new">Progress: best vs. curr.</a></li>
+    <li><a href="#checks">Sanity checks and tips</a></li>
 </ul>
 </div>
 
@@ -462,6 +463,27 @@ EOF
     fi
 }
 
+report_html_checks (){
+    # failed packages
+    cat <<EOF
+<hr>
+<h3><a name="checks"></a>Sanity checks and tips</h3>
+
+EOF
+    printf '<table width="40%%">'
+#    printf '<tr><td>%-30s</td> <td align="right">%4s</td></tr>\n' '<b>Description</b>' '<b></b>'
+    echo ''
+
+    for i in $meta_dir/check_*.txt; do
+	if test -f "$i"; then
+	    fn=`basename $i`
+	    msg=`echo "$fn" | awk '{sub(/^check_/, ""); sub(/[.]txt$/, ""); gsub(/_/, " "); print toupper(substr($0, 1, 1)) substr($0, 2)}'`
+	    printf '<tr><td>%-30s</td> <td align="left"><a href="%s" title="link">list</a></td></tr>\n' "$msg" "$fn"
+	fi
+    done
+    printf '%s\n' "</table>"
+}
+
 report_html_footer (){
     # the end
     printf '<hr>\n'
@@ -478,6 +500,7 @@ report_html (){
     report_html_prev_vs_curr
     report_html_best_vs_curr
     report_html_fails_per_maintainer
+    report_html_checks
 
     report_html_footer
 }
@@ -771,17 +794,21 @@ stage2html (){
     html_footer
 }
 
-verbose_print "  creating PKGNAMEs/stage_xxx.html ... "
+gen_stage_xxx (){
+    verbose_print "  creating PKGNAMEs/stage_xxx.html ... "
 
-find "$REPORT1_DIR" -name 'stage_*.tmp' |
-while read stage_fn; do
-    if test -s $stage_fn; then
-	html_fn=${stage_fn%%.tmp}.html
-	stage2html "$stage_fn" >"$html_fn"
-    fi
-done
+    find "$REPORT1_DIR" -name 'stage_*.tmp' |
+    while read stage_fn; do
+	if test -s $stage_fn; then
+	    html_fn=${stage_fn%%.tmp}.html
+	    stage2html "$stage_fn" >"$html_fn"
+	fi
+    done
 
-verbose_print "done\n"
+    verbose_print "done\n"
+}
+
+#gen_stage_xxx
 
 ######################################################################
 failed_because_txt2html (){

@@ -27,56 +27,171 @@ verbose_print "Generation of report data...\n"
 
 verbose_print "Additional checks for bulk build results...\n"
 
-reqd_prov (){
+required_vs_provides (){
     if test -f "$bin_summary_fn"; then
 	verbose_print "  PROVIDES/REQUIRES consistency ... "
-	pkg_lint_summary -p"$PKGSRC_PREFIX" -l "$bin_summary_fn" \
-	    > "$check_reqd_prov_fn" || true
+	pkg_lint_summary -p"$PKGSRC_PREFIX" -l "$bin_summary_fn" |
+	awk '{$1=$2=""; print substr($0, 3)}' > "$check_required_vs_provides_fn"
 	verbose_print '\n'
     fi
 }
 
-missing_conflicts (){
+unregistered_conflicts (){
     if test -f "$enriched_summary_fn"; then
 	verbose_print "  Missing CONFLICTS ... "
-	pkg_lint_summary -n "$enriched_summary_fn" \
-	    > "$check_missing_conflicts_fn" || true
+	pkg_lint_summary -n "$enriched_summary_fn" |
+	awk '{$1=$2=""; print substr($0, 3)}' > "$check_unregistered_conflicts_fn"
 	verbose_print '\n'
     fi
 }
 
 missing_progs (){
     verbose_print "  Missing programs ... "
+
+    cat "$failed_files".tmp |
+    xargs -n200 runawk -f dirname.awk -f basename.awk -e '
+    {
+	if (FNR == 1){
+	   pkg_printed = 0
+	   delete line
+	}
+
+	line [FNR] = $0
+	delete line [FNR-3]
+	if (/command not found/){
+	    fn = FILENAME
+	    if (!pkg_printed)
+		print basename(dirname(FILENAME)) "/" basename(FILENAME)
+	    pkg_printed = 1
+	    print " * " line [FNR-2]
+	    print "   " line [FNR-1]
+	    print "   " $0
+	    getline
+	    if (fn == FILENAME) print "   " $0
+	    getline
+	    if (fn == FILENAME) print "   " $0
+	    print ""
+	    delete line
+	}
+    }' > "$check_missing_progs_fn"
+
+    verbose_print '\n'
+}
+
+failed_files=$tmpdir/failed_files
+
+gen_failed_files (){
+    verbose_print "  Generating failed target file list ... "
+
     find "$REPORT1_DIR" -name curr_stage.tmp |
-    runawk -f xgetline.awk -f dirname.awk -e '
+    runawk -f xgetline.awk -f dirname.awk -f basename.awk -e '
     {
 	getline stage < $0
 	close($0)
 
-	fn = dirname($0) "/stage_" stage ".tmp"
-	pkg_printed = 0
-	while (xgetline0(fn)){
-	    line [FNR] = $0
-	    delete line [FNR-3]
-	    if (/command not found/){
-		if (!pkg_printed) print fn
-		pkg_printed = 1
-		print " * " line [FNR-2]
-		print "   " line [FNR-1]
-		print "   " $0
-		getline < fn
-		print "   " $0
-		getline < fn
-		print "   " $0
-		print ""
-		delete line
-	    }
-	}
-	close(fn)
-    }
-    ' > "$check_missing_progs_fn"
+	print dirname($0) "/stage_" stage ".tmp"
+    }' > "$failed_files".tmp
+
+    for i in package build configure; do
+	grep -iE "/stage_$i.tmp"'$' "$failed_files".tmp > "$failed_files.$i".tmp;
+    done
+
+    verbose_print '\n'
 }
 
-#reqd_prov
-#missing_conflicts
+gen_configure_errors (){
+    verbose_print "  Collecting configure errors ... "
+
+    cat "$failed_files".configure.tmp |
+    xargs -n200 runawk -f dirname.awk -f basename.awk -e '
+    {
+	if (FNR == 1){
+	   delete line
+	}
+
+	line [FNR] = $0
+	delete line [FNR-3]
+	if (/configure: error:/){
+	    print basename(dirname(FILENAME)) "/" basename(FILENAME)
+	    print " * " line [FNR-2]
+	    print "   " line [FNR-1]
+	    print "   " $0
+	    getline
+	    print "   " $0
+	    getline
+	    print "   " $0
+	    print ""
+	}
+    }' > "$check_configure_errors_fn"
+
+    verbose_print '\n'
+}
+
+gen_PLIST_errors (){
+    verbose_print "  Collecting PLIST problems ... "
+
+    cat "$failed_files".package.tmp |
+    xargs -n200 runawk -f dirname.awk -f basename.awk -e '
+    /The following files are in the PLIST/, /Error/{
+	if (/The following files are in the PLIST/)
+	    print basename(dirname(FILENAME)) "/" basename(FILENAME)
+	print "   " $0
+	if (/Error/)
+	    print "\n"
+    }' > "$check_PLIST_errors_fn"
+
+    verbose_print '\n'
+}
+
+gen_missing_headers (){
+    verbose_print "  Collecting missing headers ... "
+
+    cat "$failed_files".build.tmp |
+    xargs -n200 runawk -f dirname.awk -f basename.awk -e '
+    {
+	if (FNR == 1)
+	   pkg_printed = 0
+
+	if (/[.](c|cpp|C|CC|cxx|c++):.*No such file or directory/){
+	    fn = FILENAME
+	    if (!pkg_printed)
+		print basename(dirname(FILENAME)) "/" basename(FILENAME)
+	    pkg_printed = 1
+	    print " * " $0
+	    print ""
+	}
+    }' > "$check_missing_headers_fn"
+
+    verbose_print '\n'
+}
+
+gen_missing_libraries (){
+    verbose_print "  Collecting missing libraries ... "
+
+    cat "$failed_files".build.tmp |
+    xargs -n200 runawk -f dirname.awk -f basename.awk -e '
+    {
+	if (FNR == 1)
+	   pkg_printed = 0
+
+	if (/ld: cannot find -l/){
+	    fn = FILENAME
+	    if (!pkg_printed)
+		print basename(dirname(FILENAME)) "/" basename(FILENAME)
+	    pkg_printed = 1
+	    print " * " $0
+	    print ""
+	}
+    }' > "$check_missing_libraries_fn"
+
+    verbose_print '\n'
+}
+
+gen_failed_files
+#required_vs_provides
+unregistered_conflicts
 missing_progs
+gen_configure_errors
+gen_PLIST_errors
+gen_missing_headers
+gen_missing_libraries
