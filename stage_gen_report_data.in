@@ -61,7 +61,8 @@ missing_progs (){
 	if (/command not found/){
 	    fn = FILENAME
 	    if (!pkg_printed)
-		print basename(dirname(FILENAME)) "/" basename(FILENAME)
+		print prefix basename(dirname(FILENAME)) "/" basename(FILENAME)
+	    prefix = ".\n"
 	    pkg_printed = 1
 	    print " * " line [FNR-2]
 	    print "   " line [FNR-1]
@@ -73,7 +74,9 @@ missing_progs (){
 	    print ""
 	    delete line
 	}
-    }' > "$check_missing_progs_fn"
+    }
+    END {  if (prefix) print "."  }
+    ' > "$check_missing_progs_fn"
 
     verbose_print '\n'
 }
@@ -105,14 +108,14 @@ gen_configure_errors (){
     cat "$failed_files".configure.tmp |
     xargs -n200 runawk -f dirname.awk -f basename.awk -e '
     {
-	if (FNR == 1){
+	if (NR == 1)
 	   delete line
-	}
 
 	line [FNR] = $0
 	delete line [FNR-3]
 	if (/configure: error:/){
-	    print basename(dirname(FILENAME)) "/" basename(FILENAME)
+	    print prefix basename(dirname(FILENAME)) "/" basename(FILENAME)
+	    prefix = ".\n"
 	    print " * " line [FNR-2]
 	    print "   " line [FNR-1]
 	    print "   " $0
@@ -122,7 +125,9 @@ gen_configure_errors (){
 	    print "   " $0
 	    print ""
 	}
-    }' > "$check_configure_errors_fn"
+    }
+    END {  if (prefix) print "."  }
+    ' > "$check_configure_errors_fn"
 
     verbose_print '\n'
 }
@@ -134,11 +139,14 @@ gen_PLIST_errors (){
     xargs -n200 runawk -f dirname.awk -f basename.awk -e '
     /The following files are in the PLIST/, /Error/{
 	if (/The following files are in the PLIST/)
-	    print basename(dirname(FILENAME)) "/" basename(FILENAME)
+	    print prefix basename(dirname(FILENAME)) "/" basename(FILENAME)
+	prefix = ".\n"
 	print "   " $0
 	if (/Error/)
 	    print "\n"
-    }' > "$check_PLIST_errors_fn"
+    }
+    END {  if (prefix) print "."  }
+    ' > "$check_PLIST_errors_fn"
 
     verbose_print '\n'
 }
@@ -155,12 +163,15 @@ gen_missing_headers (){
 	if (/[.](c|cpp|C|CC|cxx|c++):.*No such file or directory/){
 	    fn = FILENAME
 	    if (!pkg_printed)
-		print basename(dirname(FILENAME)) "/" basename(FILENAME)
+		print prefix basename(dirname(FILENAME)) "/" basename(FILENAME)
+	    prefix = ".\n"
 	    pkg_printed = 1
 	    print " * " $0
 	    print ""
 	}
-    }' > "$check_missing_headers_fn"
+    }
+    END {  if (prefix) print "."  }
+    ' > "$check_missing_headers_fn"
 
     verbose_print '\n'
 }
@@ -177,12 +188,15 @@ gen_missing_libraries (){
 	if (/ld: cannot find -l/){
 	    fn = FILENAME
 	    if (!pkg_printed)
-		print basename(dirname(FILENAME)) "/" basename(FILENAME)
+		print prefix basename(dirname(FILENAME)) "/" basename(FILENAME)
+	    prefix = ".\n"
 	    pkg_printed = 1
 	    print " * " $0
 	    print ""
 	}
-    }' > "$check_missing_libraries_fn"
+    }
+    END {  if (prefix) print "."  }
+    ' > "$check_missing_libraries_fn"
 
     verbose_print '\n'
 }

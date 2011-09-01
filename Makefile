@@ -3,6 +3,7 @@
 LIBEXECDIR ?=			${PREFIX}/libexec/distbb
 DATADIR ?=			${PREFIX}/share/distbb
 EGDIR ?=			${PREFIX}/share/distbb
+AWKMODDIR ?=			${PREFIX}/share/runawk
 ICONDIR ?=			${DATADIR}
 CSSDIR ?=			${DATADIR}
 
@@ -28,13 +29,14 @@ SCRIPTSDIR =			${LIBEXECDIR}
 SCRIPTSDIR_distbb =		${BINDIR}
 SCRIPTSDIR_distbb_diff =	${BINDIR}
 
-FILES =				${INFILES} distbb.css distbb.ico
+FILES =				${INFILES} distbb.css distbb.ico distbb.awk
 
 FILESDIR =			${EGDIR}
 FILESDIR_distbb.mk =		${DATADIR}
 FILESDIR_distbb.default.conf =	${DATADIR}
 FILESDIR_distbb.ico =		${ICONDIR}
 FILESDIR_distbb.css =		${CSSDIR}
+FILESDIR_distbb.awk =		${AWKMODDIR}
 FILESDIR_common =		${LIBEXECDIR}
 
 BIRTHDATE =			2008-03-03

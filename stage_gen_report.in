@@ -477,10 +477,54 @@ EOF
     for i in $meta_dir/check_*.txt; do
 	if test -f "$i"; then
 	    fn=`basename $i`
+	    html_fn=${fn%.txt}.html
+	    html_i=${i%.txt}.html
+
+	    # report.html
 	    msg=`echo "$fn" | awk '{sub(/^check_/, ""); sub(/[.]txt$/, ""); gsub(/_/, " "); print toupper(substr($0, 1, 1)) substr($0, 2)}'`
-	    printf '<tr><td>%-30s</td> <td align="left"><a href="%s" title="link">list</a></td></tr>\n' "$msg" "$fn"
+	    printf '<tr><td>%-30s</td> <td align="left"><a href="%s" title="link">list</a></td></tr>\n' "$msg" "$html_fn"
+
+	    # check_*.html
+	    {
+		html_header
+
+		runawk -f distbb.awk -e '
+		/^[^ ]*\/stage_/, $0 == "." {
+		    log_analysis = 1
+		    if (/^[^ ]*\/stage_/){
+			title = $0
+			sub(/^.*\/stage_/, "", title)
+			sub(/[.]tmp/, "", title)
+
+			link = "../" $0
+			sub(/[.]tmp/, ".html", link)
+
+			pkg = $0
+			sub(/\/.*/, "", pkg)
+			sub(/_/, "/", pkg)
+			sub(/_/, " ", pkg)
+
+			printf "<div><a href=\"%s\" title=\"%s\">%s</a></div>\n", link, title, pkg
+			print "<pre>"
+		    }else if ($0 == "."){
+			print "</pre>"
+		    }else{
+			print quote_html_symbols($0)
+		    }
+		    next
+		}
+		{
+		    if (NR == 1) print "<pre>"
+		    print quote_html_symbols($0)
+		}
+		END { if (!log_analysis) print "</pre>" }
+		' "$i"
+
+		html_footer
+	    } > $html_i
 	fi
     done
+
     printf '%s\n' "</table>"
 }
 
@@ -767,10 +811,8 @@ bars (){
     if test $1 = d; then link_to_top; fi
 }
 
-quote_bad_symbols (){
-    runawk -f multisub.awk -e \
-      '{ print multisub($0,
-         "<:&lt;   >:&gt;   &:&amp;") }' "$@"
+quote_html_symbols (){
+    runawk -f distbb.awk -e '{ print quote_html_symbols($0) }' "$@"
 }
 
 stage2html (){
@@ -784,7 +826,7 @@ stage2html (){
 
     # log itself
     printf "<pre>"
-    quote_bad_symbols "$1"
+    quote_html_symbols "$1"
     printf "</pre>"
 
     if test "$(count_lines $1)" -gt 20; then
