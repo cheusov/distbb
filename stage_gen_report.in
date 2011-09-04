@@ -475,7 +475,7 @@ EOF
     echo ''
 
     for i in $meta_dir/check_*.txt; do
-	if test -f "$i"; then
+	if test -f "$i" -o -s "$i"; then
 	    fn=`basename $i`
 	    html_fn=${fn%.txt}.html
 	    html_i=${i%.txt}.html
