@@ -206,9 +206,7 @@ fi
 
 # extra options passed to bmake
 # BATCH is mandatory for bulk builds!
-assign EXTRA_OPTS 'DEPENDS_TARGET=do-bin-install BATCH=yes PKG_VERBOSE=1'
-# the following is for USE_DESTDIR=yes bulk builds
-#assign EXTRA_OPTS 'USE_DESTDIR=yes DEPENDS_TARGET=do-bin-install BATCH=yes PKG_VERBOSE=1 CHECK_SHLIBS=no'
+assign EXTRA_OPTS 'DEPENDS_TARGET=nonexistant BATCH=yes PKG_VERBOSE=1'
 
 # do not change the following unless you know what you are doing
 assign DISTBB_SLAVE @libexecdir@/slave

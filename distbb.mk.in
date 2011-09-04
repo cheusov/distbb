@@ -103,7 +103,6 @@ Depends:
 	    aux_reqd_deps_fn=${aux_reqd_deps_fn} \
 	    PKG_SUFX=${PKG_SUFX} \
 	    @libexecdir@/make-depends "${PKGNAME}"'
-	${MAKE} ${MAKEFLAGS} depends DEPENDS_TARGET=do-bin-install
 
 ############################################################
 ############################################################
