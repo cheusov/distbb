@@ -149,10 +149,9 @@ rm "$pkg_src_summary_fn.tmp"
 ### packages for which pkg_src_summary failed.
 verbose_print "  is there packages for which pkg_src_summary failed?..."
 
-awk -v raw_packages_fn="$raw_packages_fn" \
-    -v packages_fn="$packages_fn" \
+awk -v packages_fn="$packages_fn" \
     -v packages_failed_scan_fn="$packages_failed_scan_fn" '
-FILENAME == raw_packages_fn {
+FILENAME != "-" {
    if (NF == 1) pkgs [$1] = 1
    next
 }
@@ -171,7 +170,7 @@ END {
       if (! (pkgpath in printed))
          print pkgpath > packages_failed_scan_fn
    }
-}' "$raw_packages_fn" $pkg_src_summary_fn
+}' "$raw_packages_fn" - < $pkg_src_summary_fn
 #rm "$raw_packages_fn"
 touch $packages_fn
 
