@@ -199,14 +199,13 @@ pkg_summary2deps -Apnrsal -P $tmpdir/all_src_pkgpaths \
     -s "$pkg_src_summary_fn" \
     -b "$PKG_ALL_SUMMARY" \
     -r "$tmpdir/updated_PAeNA.tmp" \
+    -m ${deps_graph_mode} \
     "$all_deps_PAeNA_fn" > "$tmpdir/reqd_deps_PAeNA.tmp"
 
 PAeNA2NA ()  { sed 's/[^ ]*;//g' "$@"; }
 PAeNA2PAe () { sed 's/;[^ ]*//g' "$@"; } 
 
 PAeNA2NA  "$tmpdir/reqd_deps_PAeNA.tmp" > "$reqd_deps_NA_fn"
-PAeNA2PAe "$tmpdir/reqd_deps_PAeNA.tmp" > "$tmpdir/reqd_deps_PAe.tmp"
-PAeNA2PAe "$tmpdir/updated_PAeNA.tmp" > "$tmpdir/updated_PAe.tmp"
 
 # if test "$packages"; then
 #     pkg_subgraph_deps -r -f "$packages_fn" \
@@ -215,11 +214,9 @@ PAeNA2PAe "$tmpdir/updated_PAeNA.tmp" > "$tmpdir/updated_PAe.tmp"
 #     ln -s "$tmpdir/reqd_deps_PAe.tmp" "$tmpdir/needed_deps_PAe.tmp"
 # fi
 
-pkg_subgraph_deps -f "$tmpdir/updated_PAe.tmp" \
-    "$tmpdir/reqd_deps_PAe.tmp" > "$rebuild_PAe_fn"
-#pkg_subgraph_deps -r -f "$packages_fn" \
-#    "$tmpdir/rebuild.tmp_" > "$tmpdir/rebuild.tmp"
-#rm "$tmpdir/rebuild.tmp_"
+pkg_subgraph_deps -f "$tmpdir/updated_PAeNA.tmp" \
+    "$tmpdir/reqd_deps_PAeNA.tmp" |
+PAeNA2PAe > "$rebuild_PAe_fn"
 
 printf '' > "$errors_fn"
 printf '' > "$summary_cmp_fn"
@@ -264,3 +261,4 @@ cp "$reqd_deps_NA_fn" "$aux_reqd_deps_fn"
 verbose_print "done\n"
 
 ######################################################################
+

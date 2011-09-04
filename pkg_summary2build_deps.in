@@ -17,10 +17,14 @@
 #
 # usage: pkg_summary2build_deps [OPTIONS] [PAeNA_deps_files...]
 # OPTIONS:
-#   -h                     display this screen
-#   =s <src_summary>       filename for source summary
-#   =b <bin_summary>       filename for binary summary
-#   =r <rebuild>           filename for packages to be built (result)
+#   -h                display this screen
+#   =s <src_summary>  filename for source summary
+#   =b <bin_summary>  filename for binary summary
+#   =r <rebuild>      filename for packages to be built (result)
+#   =m <mode>         mode of dependency graph generation
+#                     0 - use package from pkgsrc tree (the default)
+#                     1 - use latest available binary if it satisfies
+#                     DEPENDS and BUILD_DEPENDS
 #.end-str
 
 #env "LC_ALL=C"
@@ -53,6 +57,8 @@ BEGIN {
 	}
 
 	rebuild_fn = getarg("r")
+
+	mode = getarg("m", 0) + 0
 
 	if (rebuild_fn)
 		printf "" > rebuild_fn
@@ -129,7 +135,9 @@ NF == 2 {
 	if (($2 in src_PAeNA) && !(PAeNA2PANA($2) in bin_PANA))
 		updated_PAeNA [$2] = 1
 
-	if (bin_dep)
+	if (mode == 0 && src_dep)
+		print_dep(src_dep, $2)
+	else if (bin_dep)
 		print_dep(bin_dep, $2)
 	else if (src_dep)
 		print_dep(src_dep, $2)
