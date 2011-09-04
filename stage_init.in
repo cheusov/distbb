@@ -193,16 +193,18 @@ PAeNA2PAe () { sed 's/;[^ ]*//g' "$@"; }
 
 PAeNA2NA  "$tmpdir/reqd_deps_PAeNA.tmp" > "$reqd_deps_NA_fn"
 
-# if test "$packages"; then
-#     pkg_subgraph_deps -r -f "$packages_fn" \
-# 	"$tmpdir/reqd_deps_PAe.tmp" > "$tmpdir/needed_deps_PAe.tmp"
-# else
-#     ln -s "$tmpdir/reqd_deps_PAe.tmp" "$tmpdir/needed_deps_PAe.tmp"
-# fi
+rebuild_PAe_pre_fn=$tmpdir/rebuild_PAe_pre.tmp
 
 pkg_subgraph_deps -f "$tmpdir/updated_PAeNA.tmp" \
     "$tmpdir/reqd_deps_PAeNA.tmp" |
-PAeNA2PAe > "$rebuild_PAe_fn"
+PAeNA2PAe > "$rebuild_PAe_pre_fn"
+
+if test "$packages"; then
+    pkg_subgraph_deps -r -f "$packages_fn" \
+	"$rebuild_PAe_pre_fn" > "$rebuild_PAe_fn"
+else
+    ln -s "$rebuild_PAe_pre_fn" "$rebuild_PAe_fn"
+fi
 
 printf '' > "$errors_fn"
 printf '' > "$summary_cmp_fn"
