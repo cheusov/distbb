@@ -850,7 +850,7 @@ gen_stage_xxx (){
     verbose_print "done\n"
 }
 
-#gen_stage_xxx
+gen_stage_xxx
 
 ######################################################################
 failed_because_txt2html (){
