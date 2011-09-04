@@ -96,7 +96,7 @@ gen_failed_files (){
     }' > "$failed_files".tmp
 
     for i in package build configure; do
-	grep -iE "/stage_$i.tmp"'$' "$failed_files".tmp > "$failed_files.$i".tmp;
+	grep -iE "/stage_$i.tmp"'$' "$failed_files".tmp > "$failed_files.$i".tmp || :
     done
 
     verbose_print '\n'
@@ -201,11 +201,86 @@ gen_missing_libraries (){
     verbose_print '\n'
 }
 
+gen_permission_denied (){
+    verbose_print '  Collecting "permission denied" bugs ... '
+
+    cat "$failed_files".tmp |
+    xargs -n200 runawk -f dirname.awk -f basename.awk -e '
+    {
+	if (FNR == 1){
+	   pkg_printed = 0
+	   delete line
+	}
+
+	line [FNR] = $0
+	delete line [FNR-3]
+	if (tolower($0) ~ /permission denied/){
+	    fn = FILENAME
+	    if (!pkg_printed)
+		print prefix basename(dirname(FILENAME)) "/" basename(FILENAME)
+	    prefix = ".\n"
+	    pkg_printed = 1
+	    print " * " line [FNR-2]
+	    print "   " line [FNR-1]
+	    print "   " $0
+	    getline
+	    if (fn == FILENAME) print "   " $0
+	    getline
+	    if (fn == FILENAME) print "   " $0
+	    print ""
+	    delete line
+	}
+    }
+    END {  if (prefix) print "."  }
+    ' > "$check_permission_denied_fn"
+
+    verbose_print '\n'
+}
+
+gen_libtool_bugs (){
+    verbose_print '  Collecting libtool bugs ... '
+
+    cat "$failed_files".tmp |
+    xargs -n200 runawk -f dirname.awk -f basename.awk -e '
+    {
+	if (FNR == 1){
+	   pkg_printed = 0
+	   delete line
+	}
+
+	line [FNR] = $0
+	delete line [FNR-3]
+	if (tolower($0) ~ /^libtool: link: specify a tag/){
+	    fn = FILENAME
+	    if (!pkg_printed)
+		print prefix basename(dirname(FILENAME)) "/" basename(FILENAME)
+	    prefix = ".\n"
+	    pkg_printed = 1
+	    print " * " line [FNR-2]
+	    print "   " line [FNR-1]
+	    print "   " $0
+	    getline
+	    if (fn == FILENAME) print "   " $0
+	    getline
+	    if (fn == FILENAME) print "   " $0
+	    print ""
+	    delete line
+	}
+    }
+    END {  if (prefix) print "."  }
+    ' > "$check_libtool_bugs_fn"
+
+    verbose_print '\n'
+}
+
 gen_failed_files
-#required_vs_provides
+
+required_vs_provides
 unregistered_conflicts
 missing_progs
 gen_configure_errors
 gen_PLIST_errors
 gen_missing_headers
 gen_missing_libraries
+gen_permission_denied
+gen_libtool_bugs

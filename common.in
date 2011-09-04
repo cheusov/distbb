@@ -91,6 +91,8 @@ check_configure_errors_fn=$meta_dir/check_configure_errors.txt # done
 check_PLIST_errors_fn=$meta_dir/check_PLIST_errors.txt # done
 check_missing_headers_fn=$meta_dir/check_missing_headers.txt # done
 check_missing_libraries_fn=$meta_dir/check_missing_libraries.txt # done
+check_permission_denied_fn=$meta_dir/check_permission_denied.txt # done
+check_libtool_bugs_fn=$meta_dir/check_libtool_bugs.txt # done
 
 # check_extra_conflicts_fn=$meta_dir/check_extra_conflicts.txt
 # check_uninstallable_fn=$meta_dir/check_uninstallable.txt
