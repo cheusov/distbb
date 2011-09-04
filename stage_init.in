@@ -44,6 +44,10 @@ cp "$CSS_FILE" "$REPORT1_DIR/distbb.css"
 
 echo "$build_start" > $build_start_fn
 
+summary2PKGPATH (){
+    sed -n 's/^PKGPATH=//p' "$@"
+}
+
 # main
 verbose_print "Preparations\n"
 
@@ -149,30 +153,13 @@ rm "$pkg_src_summary_fn.tmp"
 ### packages for which pkg_src_summary failed.
 verbose_print "  is there packages for which pkg_src_summary failed?..."
 
-awk -v packages_fn="$packages_fn" \
-    -v packages_failed_scan_fn="$packages_failed_scan_fn" '
-FILENAME != "-" {
-   if (NF == 1) pkgs [$1] = 1
-   next
-}
-/^PKGPATH=/ {
-   gsub(/ +$/, "")
-   pkgpath = substr($0, 9)
-   short_pkgpath = pkgpath
-   sub(/:.*$/, "", short_pkgpath)
-   if ((pkgpath in pkgs) || (short_pkgpath in pkgs)){
-      print pkgpath > packages_fn
-      printed [pkgpath] = printed [short_pkgpath] = 1
-   }
-}
-END {
-   for (pkgpath in pkgs){
-      if (! (pkgpath in printed))
-         print pkgpath > packages_failed_scan_fn
-   }
-}' "$raw_packages_fn" - < $pkg_src_summary_fn
-#rm "$raw_packages_fn"
-touch $packages_fn
+pkg_grep_summary -f PKGPATH -t strfile PKGPATH  "$raw_packages_fn" \
+    < "$pkg_src_summary_fn" | summary2PKGPATH > "$packages_fn"
+pkg_grep_summary -f PKGPATH -t strfile PKGPATHe "$raw_packages_fn" \
+    < "$pkg_src_summary_fn" | summary2PKGPATH >> "$packages_fn"
+sort_uniq_inplace "$packages_fn"
+
+comm -23 "$raw_packages_fn" "$packages_fn" > "$packages_failed_scan_fn"
 
 verbose_print "done\n"
 
@@ -186,7 +173,7 @@ awk '
 NF == 0 {print pkgpath "," pkgbase}
 ' "$pkg_src_summary_fn" > "$tmpdir/src_PABA.tmp"
 
-sed -n 's/^PKGPATH=//p' "$pkg_src_summary_fn" |
+summary2PKGPATH "$pkg_src_summary_fn" |
 sort -u > "$tmpdir/all_src_pkgpaths"
 
 all_deps_PAeNA_fn=$tmpdir/all_deps_PAeNA.tmp
