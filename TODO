@@ -1,21 +1,14 @@
 Plan0)
 
- - check_broken_unprivileged_support.txt
-
  - Ensure that dependencies activated using bl3 PROVIDEs something
    REQUIRED by the package.
 
- -  Explicitely set SU_CMD to something noisy.
+ - Explicitely set SU_CMD to something noisy.
 
  - Analyser:
-   - permission denied
-
-   - missing CONFLICTS
-   - extra CONFLICTS
-   - possibility of installation ALL packages in repo
-   - config.log and stage_build.tmp may help to recognize
-     bad DEPENDS and BUILD_DEPENDS
-   - PROVIDES/REQUIRES consistency
+   - unnecessary CONFLICTS
+   - possibility of installation each package in the repository
+   - config.log may help to recognize bad DEPENDS and BUILD_DEPENDS
    - recognize previous bulk build and packages failed at that time
      which succeeded in new bulk build. Compare {BUILD_,}DEPENDS then
 
@@ -23,13 +16,7 @@ Plan0)
 
  - -x and -X: check for stage correctness
 
- - Add PLIST to pkg_summary.txt
-
  - pkg_info -N
-
- - Red "sanity checks" in report.html
-   *) analyse common files and CONFLICTS
-   *) analyse REQUIRES and PROVIDES (pkg_lint_summary -l)
 
  - use shlock for protection against running several instances of distbb
 
