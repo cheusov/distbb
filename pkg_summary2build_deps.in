@@ -17,10 +17,14 @@
 #
 # usage: pkg_summary2build_deps [OPTIONS] [PAeNA_deps_files...]
 # OPTIONS:
-#   -h                     display this screen
-#   =s <src_summary>       filename for source summary
-#   =b <bin_summary>       filename for binary summary
-#   =r <rebuild>           filename for packages to be built (result)
+#   -h                display this screen
+#   =s <src_summary>  filename for source summary
+#   =b <bin_summary>  filename for binary summary
+#   =r <rebuild>      filename for packages to be built (result)
+#   =m <mode>         mode of dependency graph generation
+#                     0 - use package from pkgsrc tree (the default)
+#                     1 - use latest available binary if it satisfies
+#                     DEPENDS and BUILD_DEPENDS
 #.end-str
 
 #env "LC_ALL=C"
@@ -54,6 +58,8 @@ BEGIN {
 
 	rebuild_fn = getarg("r")
 
+	mode = getarg("m", 0) + 0
+
 	if (rebuild_fn)
 		printf "" > rebuild_fn
 
@@ -86,10 +92,10 @@ BEGIN {
 function print_dep (dep, pkg){
 	if (pkg != ""){
 		print dep, pkg > alldeps_fn
-		already_printer [dep] = already_printer [pkg] = 0
-	}else if (! (dep in already_printer)){
+		already_printed [dep] = already_printed [pkg] = 0
+	}else if (! (dep in already_printed)){
 		print dep > alldeps_fn
-		already_printer [dep] = 0
+		already_printed [dep] = 0
 	}
 }
 
@@ -100,43 +106,43 @@ function PAeNA2PANA (pkg){
 
 NF == 2 {
 	cnt = split($1, arr, /[|]/)
-	older1 = newer1 = ""
-	# older1 - PAeNA present in bin_summary that satisfies dependency
-	# newer1 - PAeNA absent  in bin_summary that satisfies dependency
+	bin_dep = src_dep = ""
+	# bin_dep - PAeNA present in bin_summary that satisfies dependency
+	# src_dep - PAeNA absent  in bin_summary that satisfies dependency
 	for (i=1; i <= cnt; ++i){
 		dep = arr [i]
 
-		if (dep in bin_PANA){
-			if (older1 in src_PAeNA){
+		if (PAeNA2PANA(dep) in bin_PANA){
+			if (bin_dep in src_PAeNA){
 				# even if version goes backward,
 				# pkgsrc tree version is always preferred
 				continue
 			}
 
-			if (!older1 || (dep in src_PAeNA) || pkgname_gt_pkgname(dep, older1)){
+			if (!bin_dep || (dep in src_PAeNA) || pkgname_gt_pkgname(dep, bin_dep)){
 				# 1) we find first suitable package
 				# 3) new suitable package comes from pkgsrc tree
-				# 2) new suitable package has greater version
-				older1 = dep
+				# 2) new suitable package has greater version than older one
+				bin_dep = dep
 			}
 		}else if (dep in src_PAeNA){
-			newer1 = dep
-			print_dep(newer1)
+			src_dep = dep
+			print_dep(dep)
+			updated_PAeNA [dep] = 2
 		}
 	}
 
 	if (($2 in src_PAeNA) && !(PAeNA2PANA($2) in bin_PANA))
 		updated_PAeNA [$2] = 1
 
-	if (newer1 && !(PAeNA2PANA(newer1) in bin_PANA))
-		rebuild_PAeNA [newer1] = 2
-
-	if (older1)
-		print_dep(older1, $2)
-	else if (newer1)
-		print_dep(newer1, $2)
+	if (mode == 0 && src_dep)
+		print_dep(src_dep, $2)
+	else if (bin_dep)
+		print_dep(bin_dep, $2)
+	else if (src_dep)
+		print_dep(src_dep, $2)
 	else
-		abort("Neither older1 nor newer1 are set")
+		abort("Neither bin_dep nor src_dep are set")
 
 	next
 }

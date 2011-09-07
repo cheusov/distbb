@@ -84,14 +84,21 @@ summary_cmp_fn=$meta_dir/summary_cmp.txt
 bin_summary_fn=$meta_dir/pkg_summary.txt
 enriched_summary_fn=$meta_dir/pkg_enriched_summary.txt
 
-check_missing_conflicts_fn=$meta_dir/check_missing_conflicts.txt # done
-check_missing_progs_fn=$meta_dir/check_missing_progs.txt         # done
-check_extra_conflicts_fn=$meta_dir/check_extra_conflicts.txt
-check_reqd_prov_fn=$meta_dir/check_reqd_prov.txt                 # done
-check_uninstallable_fn=$meta_dir/check_uninstallable.txt
-check_not_found_tool_fn=$meta_dir/check_not_found_tool.txt
-check_version_fn=$meta_dir/check_version.txt
-check_bad_build_deps_fn=$meta_dir/check_bad_build_deps.txt
+check_unregistered_conflicts_fn=$meta_dir/check_unregistered_conflicts.txt # done
+check_missing_progs_fn=$meta_dir/check_missing_programs.txt # done
+check_required_vs_provides_fn=$meta_dir/check_required_vs._provides.txt # done
+check_configure_errors_fn=$meta_dir/check_configure_errors.txt # done
+check_PLIST_errors_fn=$meta_dir/check_PLIST_errors.txt # done
+check_missing_headers_fn=$meta_dir/check_missing_headers.txt # done
+check_missing_libraries_fn=$meta_dir/check_missing_libraries.txt # done
+check_permission_denied_fn=$meta_dir/check_permission_denied.txt # done
+check_libtool_bugs_fn=$meta_dir/check_libtool_bugs.txt # done
+
+# check_extra_conflicts_fn=$meta_dir/check_extra_conflicts.txt
+# check_uninstallable_fn=$meta_dir/check_uninstallable.txt
+# check_not_found_tool_fn=$meta_dir/check_not_found_tool.txt
+# check_version_fn=$meta_dir/check_version.txt
+# check_bad_build_deps_fn=$meta_dir/check_bad_build_deps.txt
 
 build_start_fn=$meta_dir/build_start.tmp
 build_end_fn=$meta_dir/build_end.tmp

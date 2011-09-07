@@ -50,6 +50,10 @@ OPTIONS:
   -i                build all installed packages and generate pkg_summary.txt
   -I <pkg_db>       the same as -i but installed packages
                     are obtained from <pkg_db>
+  -m <mode>         mode of dependency graph generation
+                    0 - use package from pkgsrc tree (the default)
+                    1 - use latest available binary if it satisfies
+                    DEPENDS and BUILD_DEPENDS
 EOF
 }
 
@@ -73,7 +77,9 @@ unexclude (){
     unset "exclude_stage_$1" || true
 }
 
-while getopts hVf:p:C:DB:l:kKx:X:rsiI: f; do
+export deps_graph_mode=0
+
+while getopts hVf:p:C:DB:l:kKx:X:rsiI:m: f; do
     case $f in
 	h)   usage; exit 0;;
 	V)   echo distbb-@version@; exit 0;;
@@ -91,6 +97,7 @@ while getopts hVf:p:C:DB:l:kKx:X:rsiI: f; do
 	s)   strict=1;;
 	i)   full_bb; pkgs=; pkgs_fn=; K_opt=; installed=1;;
 	I)   full_bb; pkgs=; pkgs_fn=; K_opt="-K $OPTARG"; installed=1;;
+	m)   export deps_graph_mode="$OPTARG";;
 	'?') printf '%s\n' "$USAGE"; exit 1;;
     esac
 done

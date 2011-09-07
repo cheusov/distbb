@@ -44,6 +44,10 @@ cp "$CSS_FILE" "$REPORT1_DIR/distbb.css"
 
 echo "$build_start" > $build_start_fn
 
+summary2PKGPATH (){
+    sed -n 's/^PKGPATH=//p' "$@"
+}
+
 # main
 verbose_print "Preparations\n"
 
@@ -149,31 +153,13 @@ rm "$pkg_src_summary_fn.tmp"
 ### packages for which pkg_src_summary failed.
 verbose_print "  is there packages for which pkg_src_summary failed?..."
 
-awk -v raw_packages_fn="$raw_packages_fn" \
-    -v packages_fn="$packages_fn" \
-    -v packages_failed_scan_fn="$packages_failed_scan_fn" '
-FILENAME == raw_packages_fn {
-   if (NF == 1) pkgs [$1] = 1
-   next
-}
-/^PKGPATH=/ {
-   gsub(/ +$/, "")
-   pkgpath = substr($0, 9)
-   short_pkgpath = pkgpath
-   sub(/:.*$/, "", short_pkgpath)
-   if ((pkgpath in pkgs) || (short_pkgpath in pkgs)){
-      print pkgpath > packages_fn
-      printed [pkgpath] = printed [short_pkgpath] = 1
-   }
-}
-END {
-   for (pkgpath in pkgs){
-      if (! (pkgpath in printed))
-         print pkgpath > packages_failed_scan_fn
-   }
-}' "$raw_packages_fn" $pkg_src_summary_fn
-#rm "$raw_packages_fn"
-touch $packages_fn
+pkg_grep_summary -f PKGPATH -t strfile PKGPATH  "$raw_packages_fn" \
+    < "$pkg_src_summary_fn" | summary2PKGPATH > "$packages_fn"
+pkg_grep_summary -f PKGPATH -t strfile PKGPATHe "$raw_packages_fn" \
+    < "$pkg_src_summary_fn" | summary2PKGPATH >> "$packages_fn"
+sort_uniq_inplace "$packages_fn"
+
+comm -23 "$raw_packages_fn" "$packages_fn" > "$packages_failed_scan_fn"
 
 verbose_print "done\n"
 
@@ -187,7 +173,7 @@ awk '
 NF == 0 {print pkgpath "," pkgbase}
 ' "$pkg_src_summary_fn" > "$tmpdir/src_PABA.tmp"
 
-sed -n 's/^PKGPATH=//p' "$pkg_src_summary_fn" |
+summary2PKGPATH "$pkg_src_summary_fn" |
 sort -u > "$tmpdir/all_src_pkgpaths"
 
 all_deps_PAeNA_fn=$tmpdir/all_deps_PAeNA.tmp
@@ -199,27 +185,26 @@ pkg_summary2deps -Apnrsal -P $tmpdir/all_src_pkgpaths \
     -s "$pkg_src_summary_fn" \
     -b "$PKG_ALL_SUMMARY" \
     -r "$tmpdir/updated_PAeNA.tmp" \
+    -m ${deps_graph_mode} \
     "$all_deps_PAeNA_fn" > "$tmpdir/reqd_deps_PAeNA.tmp"
 
 PAeNA2NA ()  { sed 's/[^ ]*;//g' "$@"; }
 PAeNA2PAe () { sed 's/;[^ ]*//g' "$@"; } 
 
 PAeNA2NA  "$tmpdir/reqd_deps_PAeNA.tmp" > "$reqd_deps_NA_fn"
-PAeNA2PAe "$tmpdir/reqd_deps_PAeNA.tmp" > "$tmpdir/reqd_deps_PAe.tmp"
-PAeNA2PAe "$tmpdir/updated_PAeNA.tmp" > "$tmpdir/updated_PAe.tmp"
 
-# if test "$packages"; then
-#     pkg_subgraph_deps -r -f "$packages_fn" \
-# 	"$tmpdir/reqd_deps_PAe.tmp" > "$tmpdir/needed_deps_PAe.tmp"
-# else
-#     ln -s "$tmpdir/reqd_deps_PAe.tmp" "$tmpdir/needed_deps_PAe.tmp"
-# fi
+rebuild_PAe_pre_fn=$tmpdir/rebuild_PAe_pre.tmp
 
-pkg_subgraph_deps -f "$tmpdir/updated_PAe.tmp" \
-    "$tmpdir/reqd_deps_PAe.tmp" > "$rebuild_PAe_fn"
-#pkg_subgraph_deps -r -f "$packages_fn" \
-#    "$tmpdir/rebuild.tmp_" > "$tmpdir/rebuild.tmp"
-#rm "$tmpdir/rebuild.tmp_"
+pkg_subgraph_deps -f "$tmpdir/updated_PAeNA.tmp" \
+    "$tmpdir/reqd_deps_PAeNA.tmp" |
+PAeNA2PAe > "$rebuild_PAe_pre_fn"
+
+if test "$packages"; then
+    pkg_subgraph_deps -r -f "$packages_fn" \
+	"$rebuild_PAe_pre_fn" > "$rebuild_PAe_fn"
+else
+    ln -s "$rebuild_PAe_pre_fn" "$rebuild_PAe_fn"
+fi
 
 printf '' > "$errors_fn"
 printf '' > "$summary_cmp_fn"
@@ -264,3 +249,4 @@ cp "$reqd_deps_NA_fn" "$aux_reqd_deps_fn"
 verbose_print "done\n"
 
 ######################################################################
+

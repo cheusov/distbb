@@ -1,1 +1,1 @@
-VERSION=	0.40.1
+VERSION=	0.41alpha1
