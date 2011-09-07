@@ -99,11 +99,10 @@ Vars:
 # install all required dependencies, removing {al,ter}:../native/dependencies
 .PHONY: Depends
 Depends:
-	${SU_CMD} 'env PACKAGES="${PACKAGES}" PKG_ADD="${PKG_ADD}" \
+	env PACKAGES="${PACKAGES}" PKG_ADD="${PKG_ADD}" \
 	    aux_reqd_deps_fn=${aux_reqd_deps_fn} \
 	    PKG_SUFX=${PKG_SUFX} \
-	    @libexecdir@/make-depends "${PKGNAME}"'
-	${MAKE} ${MAKEFLAGS} depends DEPENDS_TARGET=do-bin-install
+	    @libexecdir@/make-depends "${PKGNAME}"
 
 ############################################################
 ############################################################
