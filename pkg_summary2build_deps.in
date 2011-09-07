@@ -70,15 +70,19 @@ BEGIN {
 	printf "" > alldeps_fn
 }
 
-function read_summary (fn, hash){
+function read_summary (fn, hash,          fail){
+	fail = 0
 	while (xgetline0(fn)){
 		if ($0 ~ /^PKGPATH=/)
 			pkgpath = substr($0, 9)
 		else if ($0 ~ /^PKGNAME=/)
 			pkgname = substr($0, 9)
+		else if ($0 ~ /^PKG_FAIL_REASON=/)
+			fail = 1
 		else if (NF == 0){
-			hash [pkgpath ";" pkgname] = 0
+			hash [pkgpath ";" pkgname] = fail
 			pkgname = pkgpath = ""
+			fail = 0
 		}
 	}
 	close(fn)
@@ -126,7 +130,9 @@ NF == 2 {
 				bin_dep = dep
 			}
 		}else if (dep in src_PAeNA){
-			src_dep = dep
+			if (!src_dep || !src_PAeNA [dep])
+				src_dep = dep
+
 			print_dep(dep)
 			updated_PAeNA [dep] = 2
 		}
