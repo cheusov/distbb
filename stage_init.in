@@ -159,7 +159,8 @@ pkg_grep_summary -f PKGPATH -t strfile PKGPATHe "$raw_packages_fn" \
     < "$pkg_src_summary_fn" | summary2PKGPATH >> "$packages_fn"
 sort_uniq_inplace "$packages_fn"
 
-comm -23 "$raw_packages_fn" "$packages_fn" > "$packages_failed_scan_fn"
+cut -f1 -d: "$packages_fn" | sort -u > "$packages_fn".PA
+comm -23 "$raw_packages_fn" "$packages_fn".PA > "$packages_failed_scan_fn"
 
 verbose_print "done\n"
 
