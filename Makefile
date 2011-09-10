@@ -15,7 +15,7 @@ INSCRIPTS =	distbb stage_init stage_build \
 		stage_gen_report_data stage_gen_report stage_update_best \
 		stage_summary stage_checksum \
 		stage_upload stage_upload_logs stage_upload_pkgs \
-		stage_report slave distbb_diff upload_pkgs_all_files \
+		stage_send_report slave distbb_diff upload_pkgs_all_files \
 		upload_pkgs_built_total upload_pkgs_no_bin_on_cdrom \
 		upload_pkgs_no_bin_on_ftp make-depends \
 		gen_queue gen_weights pkg_summary2build_deps \
