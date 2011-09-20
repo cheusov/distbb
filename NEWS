@@ -1,4 +1,10 @@
 ===================================================================
+Version 0.41.1 by Aleksey Cheusov, Tue, 20 Sep 2011 07:40:31 +0300
+
+  FIX: another problem with packages
+  having non-empty PKG_FAIL_REASON.
+
+===================================================================
 Version 0.41.0 by Aleksey Cheusov, Mon, 12 Sep 2011 16:59:59 +0300
 
   FIX: Do not use packages with non-empry PKG_FAIL_REASON for building
