@@ -7,6 +7,10 @@
 
 ######################################################################
 
+PAeNA2NA ()  { sed 's/[^ ]*;//g' "$@"; }
+PAeNA2PAe () { sed 's/;[^ ]*//g' "$@"; }
+PAeNA2PA ()  { sed 's/[;:][^ ]*//g' "$@"; }
+
 verbose_print (){
     printf "$1" 1>&2
 }
@@ -108,10 +112,6 @@ rebuild_PAe_fn=$tmpdir/rebuild_PAe.tmp
 
 aux_reqd_deps_fn=$MSCOMMONDIR/reqd_deps.txt
 
-# raw packages or packages requested by user
-packages_fn=$tmpdir/packages.tmp
-# multi-variant packages, that is raw packages enriched with
-# build option, like www/ap2-python:PYTHON_VERSION_REQD=25,PKG_APACHE=apache22
 reqd_deps_NA_fn=$tmpdir/reqd_deps_NA.tmp
 
 bb_history_fn=$REPORTS_DIR/bulk_builds_history.txt
