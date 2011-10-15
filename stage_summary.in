@@ -22,41 +22,17 @@ DISTBB_CONF=${DISTBB_CONF:-@sysconfdir@/distbb.conf}
 # main
 verbose_print "Generating package summaries..."
 
-summary_pkgs_fn=$tmpdir/summary_pkgs.tmp
-awk 'NF == 2 {hash [$1] = hash [$2] = ""}
-     NF == 1 {hash [$1] = ""}
-     END {for (p in hash) print p }' "$reqd_deps_NA_fn" |
-sort > "$summary_pkgs_fn"
+cd "$PACKAGES"
 
-runawk -f xgetline.awk -v summary_pkgs_fn="$summary_pkgs_fn" -e '
-BEGIN {
-   while(xgetline0(summary_pkgs_fn)){
-      all_pkgs [$1] = 0
-   }
-}
-{ failed_pkgs [$2] = 0 }
-END {
-   for (p in all_pkgs)
-      if (!(p in failed_pkgs))
-         print p
-}
-' $REPORT1_DIR/META/packages_failed_*.txt > "$tmpdir/pkgs2summary.tmp"
-
-cd "$PACKAGES/All"
-
-NA2filename () {
-    awk -v sufx="$PKG_SUFX" '{print "./" $1 sufx}' "$@"
+list_pkgs (){
+    awk -F'\t' '{ print $2 ".tgz" }' $REPORT1_DIR/META/packages_built_total.txt
 }
 
-NA2filename "$tmpdir/pkgs2summary.tmp" |
-xargs pkg_bin_summary -e -k 'sha512 rmd160' > "$bin_summary_fn"
+list_pkgs |
+xargs pkg_bin_summary -e -k 'sha512' > "$bin_summary_fn"
 
-NA2filename  "$tmpdir/pkgs2summary.tmp" |
+list_pkgs |
 xargs pkg_bin_summary -e -f PKGNAME,PKGPATH,COMMENT,PLIST,CONFLICTS \
     > "$enriched_summary_fn"
-
-cp "$bin_summary_fn" "$PKG_SUMMARY"
-"$GZIP" < "$PKG_SUMMARY" > "${PKG_SUMMARY%.txt}.gz"
-"$BZIP2" < "$PKG_SUMMARY" > "${PKG_SUMMARY%.txt}.bz2"
 
 verbose_print "done\n"
