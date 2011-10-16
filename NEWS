@@ -1,4 +1,12 @@
 ===================================================================
+Version 0.41.2 by Aleksey Cheusov, Sun, 16 Oct 2011 12:02:35 +0300
+
+  Fix partial bulk builds. Sometimes stage_summary fails when
+  multivariant packages are built.
+
+  stage_summary has been completely reimplemented.
+
+===================================================================
 Version 0.41.1 by Aleksey Cheusov, Tue, 20 Sep 2011 07:40:31 +0300
 
   FIX: another problem with packages
