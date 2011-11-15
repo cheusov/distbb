@@ -1,3 +1,7 @@
+checks:
+  - permission denied
+  - pkgsrc warnings (^WARNING:)
+
 Plan0)
 
  - Ensure that dependencies activated using bl3 PROVIDEs something
