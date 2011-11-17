@@ -85,7 +85,7 @@ assign PKG_UPDATE_ALL_SUMMARY_CMD '@bindir@/pkg_update_summary'
 #assign PKG_UPDATE_ALL_SUMMARY_CMD '@bindir@/pkg_update_summary -r'
 
 # pkg_src_summary (similar to pkg_summary(5) but for source packages)
-assign PKG_SRC_SUMMARY "$PKGSRCDIR/pkg_src_summary.txt"
+assign PKG_SRC_SUMMARY "$PACKAGES/All/pkg_src_summary.txt"
 
 # PKG_UPDATE_SRC_SUMMARY_CMD - receives a list of requested packages
 #                              from stdin
