@@ -234,9 +234,16 @@ build_package (){
     do_build_package "$long_pkgpath" "$real_pkgpath" 2>&1
     ex=$?
 
+    if test -n "${TH_pkg}"; then
+	bmake_env="MAKECONF=$TARGET_MAKECONF"
+    else
+	bmake_env=
+    fi
+
     # clean even if it fails
     if test "_$CLEAN_TARGET" != "_None"; then
-	eval $BMAKE "$CLEAN_TARGET" $multivar_opts $stdin_from_dev_null > /dev/null 2>&1
+	eval $bmake_env $BMAKE "$CLEAN_TARGET" $multivar_opts \
+	    $stdin_from_dev_null > /dev/null 2>&1
     fi
 
     unset MAKECONF || true # ksh, dash, pdksh
