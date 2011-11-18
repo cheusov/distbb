@@ -361,6 +361,10 @@ assign CSS_FILE @cssdir@/distbb.css
 assign GZIP gzip
 assign BZIP2 bzip2
 
+# Support for pkgtools/linkver
+#assign LD_PRELOAD @libexecdir@/libkver.so
+#assign LIBKVER_OSRELEASE 5.1
+
 ############################################################
 # variables for cross-builds
 
@@ -392,3 +396,10 @@ export PSS_PAEXEC_EXTRA_OPTS
 export PKG_SUFX
 export PKGSRCDIR
 export BMAKE
+
+if test -n "$LD_PRELOAD"; then
+    export LD_PRELOAD
+fi
+if test -n "$LIBKVER_OSRELEASE"; then
+    export LIBKVER_OSRELEASE
+fi
