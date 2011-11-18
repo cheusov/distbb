@@ -25,10 +25,16 @@ UPLOAD_LOGS_DEST=you@your-domain.com:~/public_html/pkgsrc/logs/
      PACKAGES_URL="http://your-domain.com/~you/pkgsrc/packages/"
 REPORT_URL_PREFIX="http://your-domain.com/~you/pkgsrc/logs/"
 
+# Edit and uncomment the following for cross-compilation
+#CROSS_COMPILE=1
+#TARGET_PACKAGES="$PKGSRCDIR/cross-packages"
+#TARGET_MAKECONF=/etc/mk.NetBSD-5.1-mipseb.conf
+
 ######################################################################
 I_AM_READY=4
 
 #
-# Read distbb.default.conf file for full list of configuration variables!
+# Read distbb.default.conf file for a list of configuration variables
+# and documentation!
 #
 . @datadir@/distbb.default.conf

@@ -23,14 +23,14 @@ DISTBB_CONF=${DISTBB_CONF:-@sysconfdir@/distbb.conf}
 verbose_print "Generating checksums for binary packages..."
 
 total_pkgs=$REPORT1_DIR/META/packages_built_total.txt
-cd "$PACKAGES"
+switch_to_target
+cd "$PACKAGES/All"
 
 {
     echo "All/pkg_summary.bz2"
     echo "All/pkg_summary.gz"
     echo "All/pkg_summary.txt"
-    awk -v sufx="$PKG_SUFX" 'NF == 3 {print "All/" $2 sufx}' "$total_pkgs" |
-    sort
+    list_pkgs | sort
 } | xargs "@bindir@/digest" SHA512 > SHA512.txt
 
 "$GZIP"  < SHA512.txt > SHA512.gz

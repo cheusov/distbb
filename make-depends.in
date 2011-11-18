@@ -18,16 +18,6 @@ set -e
 
 export PATH=@bindir@:$PATH
 
-if test -z "$PKG_ADD"; then
-	echo 'PKG_ADD must be set' 1>&2
-	exit 1
-fi
-
-if test -z "$PACKAGES"; then
-	echo 'PACKAGES must be set' 1>&2
-	exit 1
-fi
-
 if test -z "$aux_reqd_deps_fn"; then
 	echo '$aux_reqd_deps_fn must be set' 1>&2
 	exit 1
@@ -48,7 +38,13 @@ for p in $pkgs_deps; do
 done
 echo ''
 
-echo 'Installing'
 for p in $pkgs_deps; do
-    $PKG_ADD -u "$PACKAGES/All/$p$PKG_SUFX"
+    echo "Installing $p..."
+    if test -z "$CROSS_COMPILE" -o ${p##BH--} != ${p}; then
+	$PKG_ADD_CMD -K "${PKG_DBDIR}" \
+	    -u "$BH_PACKAGES/All/${p##BH--}$PKG_SUFX"
+    else
+	$PKG_ADD_CMD -m "$TARGET_ARCH" -I -P "${TARGET_SYSROOT}" \
+	    -u "$TARGET_PACKAGES/All/${p##BH--}$PKG_SUFX"
+    fi
 done

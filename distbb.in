@@ -191,6 +191,11 @@ test_var LIST_ALL_PKGS_CMD
 test_var DISTBB_LOCAL_MK
 test_var MSCOMMONDIR
 
+if test -n "$CROSS_COMPILE"; then
+    test_var TARGET_MAKECONF
+    test_var TARGET_PACKAGES
+fi
+
 if test "$MAIL_PROG" != ':'; then
     test_var USER_MAIL
 fi

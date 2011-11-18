@@ -362,6 +362,27 @@ assign GZIP gzip
 assign BZIP2 bzip2
 
 ############################################################
+# variables for cross-builds
+
+# uncomment the following for cross-compilation
+#assign CROSS_COMPILE 1
+
+# similar to PACKAGES but for target platform
+assign TARGET_PACKAGES "$PKGSRCDIR/cross-packages"
+
+# similar to PKG_ALL_SUMMARY but for target platform
+assign TARGET_PKG_ALL_SUMMARY "$TARGET_PACKAGES/All/pkg_all_summary.txt"
+
+# similar to PKG_SRC_SUMMARY but for target platform
+assign TARGET_PKG_SRC_SUMMARY "$TARGET_PACKAGES/All/pkg_src_summary.txt"
+
+# similar to PKG_SUMMARY but for target platform
+assign TARGET_PKG_SUMMARY "$TARGET_PACKAGES/All/pkg_summary.txt"
+
+# similar to PKG_UPDATE_SRC_SUMMARY_CMD but for target platform
+assign TARGET_PKG_UPDATE_SRC_SUMMARY_CMD "@bindir@/pkg_src_summary -bA > \"$TARGET_PKG_SRC_SUMMARY\""
+
+############################################################
 export PSS_SLAVES
 export PSS_OPTIONS
 export PSS_FIELDS
