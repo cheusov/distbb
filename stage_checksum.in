@@ -24,14 +24,14 @@ verbose_print "Generating checksums for binary packages..."
 
 total_pkgs=$REPORT1_DIR/META/packages_built_total.txt
 switch_to_target
-cd "$PACKAGES/All"
+cd "$PACKAGES"
 
 {
-    echo "All/pkg_summary.bz2"
-    echo "All/pkg_summary.gz"
-    echo "All/pkg_summary.txt"
+    echo "pkg_summary.bz2"
+    echo "pkg_summary.gz"
+    echo "pkg_summary.txt"
     list_pkgs | sort
-} | xargs "@bindir@/digest" SHA512 > SHA512.txt
+} | awk '{print "All/" $0}' | xargs "@bindir@/digest" SHA512 > SHA512.txt
 
 "$GZIP"  < SHA512.txt > SHA512.gz
 "$BZIP2" < SHA512.txt > SHA512.bz2
