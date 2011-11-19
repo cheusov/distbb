@@ -226,10 +226,12 @@ match($0, /^(BUILD_)?DEPENDS=/) {
 
 add_BH_prefix2 (){
     runawk -f distbb.awk -e '
-match($0, /^BUILD_DEPENDS=/) {
-   orig = substr($0, RLENGTH+1)
-   prepand_pkgpath("BH--")
-   $0 = $0 " " orig
+match($0, /^BUILD_DEPENDS=/) { prepand_pkgpath("BH--"); bdeps = $0; }
+/^TARGET_BUILD_DEPENDS=/ { tbdeps = substr($0, 22); }
+NF == 0 {
+   if (bdeps)
+      print bdeps, tbdeps
+   bdeps = tbdeps = ""
 }
 { print $0 }
 ' "$@"
