@@ -14,7 +14,10 @@ RMDIRS_CMD="rm -rf $PKGSRC_PREFIX /var/db/pkg"
 BOOTSTRAP="/usr/pkgsrc/packages/All/bootstrap.tar"
 EXTRACT_BOOTSTRAP_CMD="tar -xf $BOOTSTRAP -C /"
 MASTER_MODE=yes
-SLAVES='root@host1 root@host2 root@host3'
+#assign TRANSPORT '/usr/bin/ssh -x'
+#SLAVES='root@host1 root@host2 root@host3'
+TRANSPORT='@libexecdir@/distbb_chroot /var/chroot/'
+SLAVES='sandbox1 sandbox2 sandbox3'
 REPORTS_DIR=$HOME/bulk-logs
 
 USER_MAIL=you@your-domain.com

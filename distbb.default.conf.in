@@ -58,15 +58,15 @@ assign WEIGH_PACKAGES_CMD @libexecdir@/gen_weights
 #assign MASTER_MODE 'yes'
 #assign MASTER_MODE '' # for single-host building
 
+# transport to the slaves
+#assign TRANSPORT '/usr/bin/ssh -x'
+#assign TRANSPORT '/usr/bin/rsh'
+assign TRANSPORT '@libexecdir@/distbb_chroot /var/chroot/'
+
 # hosts|chroots where actual builds are done
 #assign SLAVES 'root@host1 root@host2 root@host3'
 #assign SLAVES 'pkgsrc@host1 pkgsrc@host2 pkgsrc@host3'
-#assign SLAVES 'chroot1 chroot2 chroot3'
-
-# transport to the slaves
-assign TRANSPORT '/usr/bin/ssh -x'
-#assign TRANSPORT '/usr/bin/rsh'
-#assign TRANSPORT "@libexecdir@/transport_chroot" # not implemented yet
+assign SLAVES 'sandbox1 sandbox2'
 
 # directory for binary packages
 assign PACKAGES "$PKGSRCDIR/packages"
@@ -148,7 +148,7 @@ assign PSS_SLAVES "$SLAVES" # reasonable default
 #assign PSS_TRANSPORT '' # (for SMP machine)
 #assign PSS_TRANSPORT '/usr/bin/ssh -x'
 #assign PSS_TRANSPORT '/usr/bin/rsh'
-#assign PSS_TRANSPORT "@libexecdir@/transport_chroot" # not implemented yet
+#assign PSS_TRANSPORT "@libexecdir@/distbb_chroot"
 assign PSS_TRANSPORT "$TRANSPORT" # reasonable default
 
 assign PSS_PPERS 3 # to process N packages per slave at once
@@ -402,4 +402,9 @@ if test -n "$LD_PRELOAD"; then
 fi
 if test -n "$LIBKVER_OSRELEASE"; then
     export LIBKVER_OSRELEASE
+fi
+
+if test -n "$CROSS_COMPILE"; then
+    export CROSS_COMPILE
+    export TARGET_MAKECONF
 fi
