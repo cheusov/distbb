@@ -72,18 +72,16 @@ my-show-var:
 EOF
 }
 
-export CROSS_COMPILE 
-export TARGET_MAKECONF
-
-export TARGET_PACKAGES=`get_var -f $TARGET_MAKECONF VARNAME=PACKAGES`
-export TARGET_PKG_DBDIR=`get_var -f $TARGET_MAKECONF VARNAME=PKG_DBDIR`
-export TARGET_PREFIX=`get_var -f $TARGET_MAKECONF VARNAME=LOCALBASE`
+if test -n "$TARGET_MAKECONF"; then
+    export TARGET_PACKAGES=`get_var -f $TARGET_MAKECONF VARNAME=PACKAGES`
+    export TARGET_PKG_DBDIR=`get_var -f $TARGET_MAKECONF VARNAME=PKG_DBDIR`
+    export TARGET_PREFIX=`get_var -f $TARGET_MAKECONF VARNAME=LOCALBASE`
+    export TARGET_SYSROOT=`get_var -f $TARGET_MAKECONF VARNAME=SYSROOT`
+    export TARGET_ARCH=`get_var -f $TARGET_MAKECONF VARNAME=TARGET_ARCH`
+fi
 
 export BH_PACKAGES="$PACKAGES"
 export BH_PKG_DBDIR="$PKG_DBDIR"
-
-export TARGET_SYSROOT=`get_var -f $TARGET_MAKECONF VARNAME=SYSROOT`
-export TARGET_ARCH=`get_var -f $TARGET_MAKECONF VARNAME=TARGET_ARCH`
 
 export EXTRACT_BOOTSTRAP_CMD
 export RMDIRS_CMD
@@ -165,12 +163,12 @@ do_build_package (){
 	case "$t" in
 	    Init)
 		# remove /usr/pkg and unpack bootstrap
-		if test -z "$TARGET_SYSROOT" -o -z "${TARGET_PREFIX}" -o -z "${TARGET_PKG_DBDIR}"; then
-		    echo 'TARGET_* variables must be non-empty!' 1>&2
-		    return 1
-		fi
-
 		if test -n "$TH_pkg"; then
+		    if test -z "$TARGET_SYSROOT" -o -z "${TARGET_PREFIX}" -o -z "${TARGET_PKG_DBDIR}"; then
+			echo 'TARGET_* variables must be non-empty!' 1>&2
+			return 1
+		    fi
+
 		    rm -rf "${TARGET_SYSROOT}${TARGET_PREFIX}"
 		    rm -rf "${TARGET_SYSROOT}${TARGET_PKG_DBDIR}"
 		else
