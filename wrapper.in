@@ -1,5 +1,8 @@
 #!/bin/sh
 
-export PATH=$PATH:@bindir@
+DISTBB_CONF=${DISTBB_CONF:-@sysconfdir@/distbb.conf}
+. "$DISTBB_CONF"
+
+export PATH=@bindir@:"$PATH"
 
 "$@"

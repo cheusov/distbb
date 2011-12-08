@@ -1,0 +1,35 @@
+#!/bin/sh
+
+# Copyright (c) 2008-2011 Aleksey Cheusov <vle@gmx.net>
+# All rights reserved.
+#
+# See LICENSE file
+
+######################################################################
+
+# distbb_chroot is a ssh/rsh-like transport programs used by distbb(1)
+# usage: distbb_chroot <chroot_rootdir> <chroot_id> <cmd> <args>
+# example:
+#     mkdir /var/chroot/box1
+#     mkdir /var/chroot/box2
+#     cp -Rp /bin /sbin ... /var/chroot/box1
+#     cp -Rp /bin /sbin ... /var/chroot/box2
+#     distbb_chroot /var/chroot/ box1 ls -la /
+#     distbb_chroot /var/chroot/ box2 ls -la /
+
+root="$1"
+shift
+
+id="$1"
+shift
+
+if test -n "$LD_PRELOAD"; then
+	env="LD_PRELOAD=$LD_PRELOAD"
+fi
+if test -n "$LIBKVER_OSRELEASE"; then
+	env="$env LIBKVER_OSRELEASE=$LIBKVER_OSRELEASE"
+fi
+
+env="$env DISTBB_CONF=$DISTBB_CONF"
+
+$SUDO chroot $root$id su - root -c "env $env $*"

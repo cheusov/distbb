@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Copyright (c) 2008-2010 Aleksey Cheusov <vle@gmx.net>
+# Copyright (c) 2008-2011 Aleksey Cheusov <vle@gmx.net>
 # All rights reserved.
 #
 # See LICENSE file
@@ -190,6 +190,11 @@ test_var UPLOAD_LOGS_PROG
 test_var LIST_ALL_PKGS_CMD
 test_var DISTBB_LOCAL_MK
 test_var MSCOMMONDIR
+
+if test -n "$CROSS_COMPILE"; then
+    test_var TARGET_MAKECONF
+    test_var TARGET_PACKAGES
+fi
 
 if test "$MAIL_PROG" != ':'; then
     test_var USER_MAIL

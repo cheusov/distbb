@@ -49,6 +49,18 @@ filter_out (){
 	!($0 in filter_out)' "$@"
 }
 
+list_pkgs (){
+    awk 'NF == 3 { print $2 ".tgz" }' $REPORT1_DIR/META/packages_built_total.txt |
+    grep -v ^BH--
+}
+
+switch_to_target (){
+    if test -n "$CROSS_COMPILE"; then
+	PACKAGES="$TARGET_PACKAGES"
+	PKG_SUMMARY="$TARGET_PKG_SUMMARY"
+    fi
+}
+
 export LC_ALL=C # for sort and uniq
 
 ######################################################################

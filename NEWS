@@ -1,4 +1,18 @@
 ===================================================================
+Version 0.42.0 by Aleksey Cheusov, Sat,  3 Dec 2011 20:49:51 +0300
+
+  Support for cross-compilation. Build host dependencies are built on
+  demand.  Patch for pkgsrc is needed.
+  http://mail-index.netbsd.org/tech-pkg/2011/11/19/msg008003.html
+
+  Support for libkver was added. In order to build packages for
+  different version of NetBSD you need to set LIBKVER_OSRELEASE and
+  LD_PRELOAD in distbb.conf.
+
+  New transport program distbb_chroot was added.
+  It is now the default for TRANSPORT.
+
+===================================================================
 Version 0.41.2 by Aleksey Cheusov, Sun, 16 Oct 2011 12:02:35 +0300
 
   Fix partial bulk builds. Sometimes stage_summary fails when

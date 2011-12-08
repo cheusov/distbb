@@ -22,11 +22,8 @@ DISTBB_CONF=${DISTBB_CONF:-@sysconfdir@/distbb.conf}
 # main
 verbose_print "Generating package summaries..."
 
-cd "$PACKAGES"/All
-
-list_pkgs (){
-    awk 'NF == 3 { print $2 ".tgz" }' $REPORT1_DIR/META/packages_built_total.txt
-}
+switch_to_target
+cd "$PACKAGES/All"
 
 list_pkgs |
 xargs pkg_bin_summary -e -k 'sha512' > "$bin_summary_fn"

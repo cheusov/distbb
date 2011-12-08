@@ -99,10 +99,11 @@ Vars:
 # install all required dependencies, removing {al,ter}:../native/dependencies
 .PHONY: Depends
 Depends:
-	env PACKAGES="${PACKAGES}" PKG_ADD="${PKG_ADD}" \
-	    aux_reqd_deps_fn=${aux_reqd_deps_fn} \
+	env PKG_ADD_CMD="${PKG_ADD_CMD}" \
+	    PKG_DBDIR="${PKG_DBDIR}" \
 	    PKG_SUFX=${PKG_SUFX} \
-	    @libexecdir@/make-depends "${PKGNAME}"
+	    aux_reqd_deps_fn=${aux_reqd_deps_fn} \
+	    @libexecdir@/make-depends "${BH_pkg}${PKGNAME}"
 
 ############################################################
 ############################################################

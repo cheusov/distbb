@@ -1,6 +1,6 @@
 #-*-mode:  sh -*-
 
-# Copyright (c) 2008-2010 Aleksey Cheusov <vle@gmx.net>
+# Copyright (c) 2008-2011 Aleksey Cheusov <vle@gmx.net>
 # All rights reserved.
 #
 # See LICENSE file
@@ -58,15 +58,15 @@ assign WEIGH_PACKAGES_CMD @libexecdir@/gen_weights
 #assign MASTER_MODE 'yes'
 #assign MASTER_MODE '' # for single-host building
 
+# transport to the slaves
+#assign TRANSPORT '/usr/bin/ssh -x'
+#assign TRANSPORT '/usr/bin/rsh'
+assign TRANSPORT '@libexecdir@/distbb_chroot /var/chroot/'
+
 # hosts|chroots where actual builds are done
 #assign SLAVES 'root@host1 root@host2 root@host3'
 #assign SLAVES 'pkgsrc@host1 pkgsrc@host2 pkgsrc@host3'
-#assign SLAVES 'chroot1 chroot2 chroot3'
-
-# transport to the slaves
-assign TRANSPORT '/usr/bin/ssh -x'
-#assign TRANSPORT '/usr/bin/rsh'
-#assign TRANSPORT "@libexecdir@/transport_chroot" # not implemented yet
+assign SLAVES 'sandbox1 sandbox2'
 
 # directory for binary packages
 assign PACKAGES "$PKGSRCDIR/packages"
@@ -85,14 +85,14 @@ assign PKG_UPDATE_ALL_SUMMARY_CMD '@bindir@/pkg_update_summary'
 #assign PKG_UPDATE_ALL_SUMMARY_CMD '@bindir@/pkg_update_summary -r'
 
 # pkg_src_summary (similar to pkg_summary(5) but for source packages)
-assign PKG_SRC_SUMMARY "$PKGSRCDIR/pkg_src_summary.txt"
+assign PKG_SRC_SUMMARY "$PACKAGES/All/pkg_src_summary.txt"
 
 # PKG_UPDATE_SRC_SUMMARY_CMD - receives a list of requested packages
 #                              from stdin
 #
 # If you want to build short version of src_summary, uncomment the following
 # (see pkg_src_summary(1))
-assign PSS_FIELDS 'PKGNAME PKGPATH DEPENDS BUILD_DEPENDS MAINTAINER HOMEPAGE DESCRIPTION NO_BIN_ON_FTP NO_BIN_ON_CDROM USE_LANGUAGES ALLDISTFILES PKG_FAIL_REASON'
+assign PSS_FIELDS 'PKGNAME PKGPATH DEPENDS TARGET_BUILD_DEPENDS BUILD_DEPENDS MAINTAINER HOMEPAGE DESCRIPTION NO_BIN_ON_FTP NO_BIN_ON_CDROM USE_LANGUAGES ALLDISTFILES PKG_FAIL_REASON'
 #
 # For generating an "expanded" PLIST.
 # It is useless for distbb but looks very nice ;-)
@@ -148,7 +148,7 @@ assign PSS_SLAVES "$SLAVES" # reasonable default
 #assign PSS_TRANSPORT '' # (for SMP machine)
 #assign PSS_TRANSPORT '/usr/bin/ssh -x'
 #assign PSS_TRANSPORT '/usr/bin/rsh'
-#assign PSS_TRANSPORT "@libexecdir@/transport_chroot" # not implemented yet
+#assign PSS_TRANSPORT "@libexecdir@/distbb_chroot"
 assign PSS_TRANSPORT "$TRANSPORT" # reasonable default
 
 assign PSS_PPERS 3 # to process N packages per slave at once
@@ -361,6 +361,31 @@ assign CSS_FILE @cssdir@/distbb.css
 assign GZIP gzip
 assign BZIP2 bzip2
 
+# Support for pkgtools/linkver
+#assign LD_PRELOAD @libexecdir@/libkver.so
+#assign LIBKVER_OSRELEASE 5.1
+
+############################################################
+# variables for cross-builds
+
+# uncomment the following for cross-compilation
+#assign CROSS_COMPILE 1
+
+# similar to PACKAGES but for target platform
+assign TARGET_PACKAGES "$PKGSRCDIR/cross-packages"
+
+# similar to PKG_ALL_SUMMARY but for target platform
+assign TARGET_PKG_ALL_SUMMARY "$TARGET_PACKAGES/All/pkg_all_summary.txt"
+
+# similar to PKG_SRC_SUMMARY but for target platform
+assign TARGET_PKG_SRC_SUMMARY "$TARGET_PACKAGES/All/pkg_src_summary.txt"
+
+# similar to PKG_SUMMARY but for target platform
+assign TARGET_PKG_SUMMARY "$TARGET_PACKAGES/All/pkg_summary.txt"
+
+# similar to PKG_UPDATE_SRC_SUMMARY_CMD but for target platform
+assign TARGET_PKG_UPDATE_SRC_SUMMARY_CMD "@bindir@/pkg_src_summary -bA > \"$TARGET_PKG_SRC_SUMMARY\""
+
 ############################################################
 export PSS_SLAVES
 export PSS_OPTIONS
@@ -371,3 +396,15 @@ export PSS_PAEXEC_EXTRA_OPTS
 export PKG_SUFX
 export PKGSRCDIR
 export BMAKE
+
+if test -n "$LD_PRELOAD"; then
+    export LD_PRELOAD
+fi
+if test -n "$LIBKVER_OSRELEASE"; then
+    export LIBKVER_OSRELEASE
+fi
+
+if test -n "$CROSS_COMPILE"; then
+    export CROSS_COMPILE
+    export TARGET_MAKECONF
+fi
