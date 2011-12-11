@@ -58,7 +58,7 @@ shift
 
 ######################################################################
 # temp directory
-. @libexecdir@/psu/sig_handler.sh
+. @root_libexecdir@/psu/sig_handler.sh
 on_exit () { rm -rf $tmp_dir; }
 
 tmp_dir=`mktemp -d /tmp/distbb_slave.XXXXXX`

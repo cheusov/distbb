@@ -45,6 +45,7 @@ PROJECTNAME =			distbb
 
 INTEXTS_REPLS +=    sysconfdir  ${SYSCONFDIR}
 INTEXTS_REPLS +=    libexecdir  ${LIBEXECDIR}
+INTEXTS_REPLS +=    root_libexecdir  ${PREFIX}/libexec
 INTEXTS_REPLS +=    prefix      ${PREFIX}
 INTEXTS_REPLS +=    bindir      ${BINDIR}
 INTEXTS_REPLS +=    sbindir     ${SBINDIR}
