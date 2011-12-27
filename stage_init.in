@@ -292,7 +292,7 @@ else
     all_bin_summary_fn="$PKG_ALL_SUMMARY"
 fi
 
-pkg_summary2deps -Apnrsal -P "$tmpdir/all_src_pkgpaths.tmp" \
+pkg_summary2deps -Apnrsal2 -P "$tmpdir/all_src_pkgpaths.tmp" \
     "$pkg_src_summary_fn" "$all_bin_summary_fn" \
     > "$all_deps_PAeNA_fn" 2>/dev/null
 

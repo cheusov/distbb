@@ -9,7 +9,7 @@
 # pkg_summary2build_deps - takes src_summary (-s), bin_summary (-b) and
 # PAeNA (PKGPATH enriched + PKGNAME) dependency graph built on ALL
 # packages from src_summary and bin_summary using
-# 'pkg_summary2deps -Apnrsal'.
+# 'pkg_summary2deps -Apnrsal2'.
 # As a result it outputs PAeNA dependency graph in which leaf packages
 # are packages from src_summary that need to be rebuild,
 # dependencies -- either binary packages listed in bin_summary
@@ -22,9 +22,10 @@
 #   =b <bin_summary>  filename for binary summary
 #   =r <rebuild>      filename for packages to be built (result)
 #   =m <mode>         mode of dependency graph generation
-#                     0 - use package from pkgsrc tree (the default)
-#                     1 - use latest available binary if it satisfies
-#                     DEPENDS and BUILD_DEPENDS
+#                     0 - use package from pkgsrc tree
+#                         if it was updated (the default)
+#                     1 - use latest available binary
+#                         if it satisfies DEPENDS and BUILD_DEPENDS
 #.end-str
 
 #env "LC_ALL=C"
@@ -108,8 +109,8 @@ function PAeNA2PANA (pkg){
 	return pkg
 }
 
-NF == 2 {
-	cnt = split($1, arr, /[|]/)
+NF == 3 {
+	cnt = split($2, arr, /[|]/)
 	bin_dep = src_dep = ""
 	# bin_dep - PAeNA present in bin_summary that satisfies dependency
 	# src_dep - PAeNA absent  in bin_summary that satisfies dependency
@@ -138,15 +139,20 @@ NF == 2 {
 		}
 	}
 
-	if (($2 in src_PAeNA) && !(PAeNA2PANA($2) in bin_PANA))
-		updated_PAeNA [$2] = 1
+	if (($3 in src_PAeNA) && !(PAeNA2PANA($3) in bin_PANA))
+		updated_PAeNA [$3] = 1
 
-	if (mode == 0 && src_dep && !src_PAeNA [src_dep])
-		print_dep(src_dep, $2)
+	# always use binary package if it satisfies dependency
+	# for BUILD_DEPENDS, use -m for DEPENDS only
+#	use_src = (mode == 0)
+	use_src = (mode == 0 && $1 == "DEPENDS")
+
+	if (use_src && src_dep && !src_PAeNA [src_dep])
+		print_dep(src_dep, $3)
 	else if (bin_dep)
-		print_dep(bin_dep, $2)
+		print_dep(bin_dep, $3)
 	else if (src_dep)
-		print_dep(src_dep, $2)
+		print_dep(src_dep, $3)
 	else
 		abort("Neither bin_dep nor src_dep are set")
 
