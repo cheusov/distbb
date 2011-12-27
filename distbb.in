@@ -150,7 +150,7 @@ fi
 
 echo "BUILD_ID: $BUILD_ID" 1>&2
 
-DISTBB_CONF=${DISTBB_CONF:-@sysconfdir@/distbb.conf}
+: ${DISTBB_CONF:=@sysconfdir@/distbb.conf}
 . "$DISTBB_CONF"
 . @libexecdir@/common
 

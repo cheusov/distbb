@@ -11,8 +11,11 @@ set -e
 
 . @bindir@/pipestatus
 
-DISTBB_CONF=${DISTBB_CONF:-@sysconfdir@/distbb.conf}
+: ${DISTBB_CONF:=@sysconfdir@/distbb.conf}
 . "$DISTBB_CONF"
+
+. @root_libexecdir@/psu/sig_handler.sh
+on_exit () { rm -rf $tmp_dir; }
 
 unset PKG_PATH || true
 unset PKG_SUFX || true
@@ -21,9 +24,8 @@ export BINPKG_SITES=$PACKAGES
 
 ######################################################################
 # temp directory
-tmp_dir="/tmp/distbb_slave.$$"
-trap "rm -rf $tmp_dir" 0 1 2 15
-mkdir -m 700 "$tmp_dir"
+tmp_dir=`mktemp -d /tmp/distbb_slave.XXXXXX`
+test -n "$tmp_dir"
 
 tmpfn=$tmp_dir/tmpfn.tmp
 logfn=$tmp_dir/log.tmp
