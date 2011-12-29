@@ -36,8 +36,6 @@ Plan1)
 
  - links to package's configure.log(s) from PKGNAME/stage_*.html?
 
- - separate DEPENDS and BUILD_DEPENDS (versions should be analysed)?
-
  - rebuilding packages changed in CVS (without version changes)?
 
 ANY IDEAS? LET ME KNOW. VLE@GMX.NET

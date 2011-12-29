@@ -94,9 +94,9 @@ BEGIN {
 	read_summary(bin_summary_fn, bin_PANA)
 }
 
-function print_dep (dep, pkg){
+function print_dep (dep_type, dep, pkg){
 	if (pkg != ""){
-		print dep, pkg > alldeps_fn
+		print dep_type, dep, pkg > alldeps_fn
 		already_printed [dep] = already_printed [pkg] = 0
 	}else if (! (dep in already_printed)){
 		print dep > alldeps_fn
@@ -112,6 +112,7 @@ function PAeNA2PANA (pkg){
 NF == 3 {
 	cnt = split($2, arr, /[|]/)
 	bin_dep = src_dep = ""
+
 	# bin_dep - PAeNA present in bin_summary that satisfies dependency
 	# src_dep - PAeNA absent  in bin_summary that satisfies dependency
 	for (i=1; i <= cnt; ++i){
@@ -134,7 +135,7 @@ NF == 3 {
 			if (!src_dep || !src_PAeNA [dep])
 				src_dep = dep
 
-			print_dep(dep)
+			print_dep("", dep)
 			updated_PAeNA [dep] = 2
 		}
 	}
@@ -148,11 +149,11 @@ NF == 3 {
 	use_src = (mode == 0 && $1 == "DEPENDS")
 
 	if (use_src && src_dep && !src_PAeNA [src_dep])
-		print_dep(src_dep, $3)
+		print_dep($1, src_dep, $3)
 	else if (bin_dep)
-		print_dep(bin_dep, $3)
+		print_dep($1, bin_dep, $3)
 	else if (src_dep)
-		print_dep(src_dep, $3)
+		print_dep($1, src_dep, $3)
 	else
 		abort("Neither bin_dep nor src_dep are set")
 
@@ -166,7 +167,7 @@ NF == 1 {
 
 END {
 	for (i in updated_PAeNA){
-		print_dep(i)
+		print_dep("", i)
 		if (rebuild_fn)
 			print i > rebuild_fn
 	}
