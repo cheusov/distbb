@@ -1,4 +1,15 @@
 ===================================================================
+Version 0.43.0 by Aleksey Cheusov, Mon,  9 Jan 2012 23:27:20 +0300
+
+  Fix for signal handlers (SIGINT, SIGTERM, SIGQUIT).
+
+  Fix in "Depends" stage.
+  Unnecessary dependencies are not install anymore.
+
+  Dependency graph. Latest available binary package is always used for
+  BUILD_DEPENDS if it satisfies dependencies.
+
+===================================================================
 Version 0.42.0 by Aleksey Cheusov, Sat,  3 Dec 2011 20:49:51 +0300
 
   Support for cross-compilation. Build host dependencies are built on
