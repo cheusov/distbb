@@ -100,15 +100,16 @@ summary_cmp_fn=$meta_dir/summary_cmp.txt
 bin_summary_fn=$meta_dir/pkg_summary.txt
 enriched_summary_fn=$meta_dir/pkg_enriched_summary.txt
 
-check_unregistered_conflicts_fn=$meta_dir/check_unregistered_conflicts.txt # done
-check_missing_progs_fn=$meta_dir/check_missing_programs.txt # done
-check_required_vs_provides_fn=$meta_dir/check_required_vs._provides.txt # done
-check_configure_errors_fn=$meta_dir/check_configure_errors.txt # done
-check_PLIST_errors_fn=$meta_dir/check_PLIST_errors.txt # done
-check_missing_headers_fn=$meta_dir/check_missing_headers.txt # done
-check_missing_libraries_fn=$meta_dir/check_missing_libraries.txt # done
-check_permission_denied_fn=$meta_dir/check_permission_denied.txt # done
-check_libtool_bugs_fn=$meta_dir/check_libtool_bugs.txt # done
+check_unregistered_conflicts_fn=$meta_dir/check_unregistered_conflicts.txt
+check_missing_progs_fn=$meta_dir/check_missing_programs.txt
+check_required_vs_provides_fn=$meta_dir/check_required_vs._provides.txt
+check_configure_errors_fn=$meta_dir/check_configure_errors.txt
+check_PLIST_errors_fn=$meta_dir/check_PLIST_errors.txt
+check_missing_headers_fn=$meta_dir/check_missing_headers.txt
+check_missing_libraries_fn=$meta_dir/check_missing_libraries.txt
+check_permission_denied_fn=$meta_dir/check_permission_denied.txt
+check_libtool_bugs_fn=$meta_dir/check_libtool_bugs.txt
+check_pkgsrc_warnings_fn=$meta_dir/check_pkgsrc_warnings.txt
 
 # check_extra_conflicts_fn=$meta_dir/check_extra_conflicts.txt
 # check_uninstallable_fn=$meta_dir/check_uninstallable.txt

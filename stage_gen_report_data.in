@@ -144,6 +144,16 @@ gen_libtool_bugs (){
     verbose_print '\n'
 }
 
+gen_pkgsrc_warnings (){
+    verbose_print '  Collecting pkgsrc warnings ... '
+
+    cat "$failed_files".tmp |
+    xargs @libexecdir@/distbb_grep '^WARNING:' \
+	> "$check_pkgsrc_warnings_fn"
+
+    verbose_print '\n'
+}
+
 gen_failed_files
 
 required_vs_provides
@@ -155,3 +165,4 @@ gen_missing_headers
 gen_missing_libraries
 gen_permission_denied
 gen_libtool_bugs
+gen_pkgsrc_warnings
