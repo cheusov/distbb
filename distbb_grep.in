@@ -1,0 +1,76 @@
+#!/usr/bin/env runawk
+
+#use "power_getopt.awk"
+#use "dirname.awk"
+#use "basename.awk"
+
+#.begin-str help
+# distbb_grep is analog to 'grep -E -An -Bm' with some goodies
+# usage: distbb_grep [options] <pattern> [files...]
+#   -h          display this help
+#   =A <num>    lines after matching line
+#   =B <num>    lines before matching line
+#   =C <num>    -A<num> -B<num>
+#.end-str
+
+BEGIN {
+	if (getarg("h")){
+		print_help()
+		exitnow(0)
+	}
+
+	pattern = ARGV [1]
+	ARGV [1] = ""
+
+	ac = getarg("A", 3)
+	bc = getarg("B", 3)
+	c  = getarg("C")
+	if (c)
+		ac = bc = c
+
+	matched_line = 0
+}
+
+{
+	if (FNR == 1){
+		if (printed_fn)
+			print "."
+
+		matched_line = 0
+		printed_fn = 0
+	}
+
+	line [FNR] = $0
+
+	if (matched_line && FNR <= matched_line+ac){
+		print "   " $0
+		if (matched_line+ac >= FNR){
+			print ""
+			matched_line = 0
+		}
+	}
+
+	if (!matched_line && $0 ~ pattern){
+		if (!printed_fn){
+			print basename(dirname(FILENAME)) "/" basename(FILENAME)
+			printed_fn = 1
+		}
+
+		matched_line = FNR
+		for (i=FNR-bc; i < FNR; ++i){
+			if (i > 0)
+				print "   " line [i]
+		}
+		print " * " line [i]
+	}
+
+	if (FNR-bc > 0)
+		delete line [FNR-bc]
+}
+
+END {
+	if (FNR == 1 && matched_line){
+		print "."
+		matched_line = 0
+	}
+}

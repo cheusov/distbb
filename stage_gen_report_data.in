@@ -49,34 +49,7 @@ missing_progs (){
     verbose_print "  Missing programs ... "
 
     cat "$failed_files".tmp |
-    xargs -n200 runawk -f dirname.awk -f basename.awk -e '
-    {
-	if (FNR == 1){
-	   pkg_printed = 0
-	   delete line
-	}
-
-	line [FNR] = $0
-	delete line [FNR-3]
-	if (/command not found/){
-	    fn = FILENAME
-	    if (!pkg_printed)
-		print prefix basename(dirname(FILENAME)) "/" basename(FILENAME)
-	    prefix = ".\n"
-	    pkg_printed = 1
-	    print " * " line [FNR-2]
-	    print "   " line [FNR-1]
-	    print "   " $0
-	    getline
-	    if (fn == FILENAME) print "   " $0
-	    getline
-	    if (fn == FILENAME) print "   " $0
-	    print ""
-	    delete line
-	}
-    }
-    END {  if (prefix) print "."  }
-    ' > "$check_missing_progs_fn"
+    xargs @libexecdir@/distbb_grep > "$check_missing_progs_fn"
 
     verbose_print '\n'
 }
@@ -106,28 +79,7 @@ gen_configure_errors (){
     verbose_print "  Collecting configure errors ... "
 
     cat "$failed_files".configure.tmp |
-    xargs -n200 runawk -f dirname.awk -f basename.awk -e '
-    {
-	if (NR == 1)
-	   delete line
-
-	line [FNR] = $0
-	delete line [FNR-3]
-	if (/configure: error:/){
-	    print prefix basename(dirname(FILENAME)) "/" basename(FILENAME)
-	    prefix = ".\n"
-	    print " * " line [FNR-2]
-	    print "   " line [FNR-1]
-	    print "   " $0
-	    getline
-	    print "   " $0
-	    getline
-	    print "   " $0
-	    print ""
-	}
-    }
-    END {  if (prefix) print "."  }
-    ' > "$check_configure_errors_fn"
+    xargs @libexecdir@/distbb_grep 'configure: error:' > "$check_configure_errors_fn"
 
     verbose_print '\n'
 }
@@ -155,23 +107,9 @@ gen_missing_headers (){
     verbose_print "  Collecting missing headers ... "
 
     cat "$failed_files".build.tmp |
-    xargs -n200 runawk -f dirname.awk -f basename.awk -e '
-    {
-	if (FNR == 1)
-	   pkg_printed = 0
-
-	if (/[.](c|cpp|C|CC|cxx|c++):.*No such file or directory/){
-	    fn = FILENAME
-	    if (!pkg_printed)
-		print prefix basename(dirname(FILENAME)) "/" basename(FILENAME)
-	    prefix = ".\n"
-	    pkg_printed = 1
-	    print " * " $0
-	    print ""
-	}
-    }
-    END {  if (prefix) print "."  }
-    ' > "$check_missing_headers_fn"
+    xargs @libexecdir@/distbb_grep -C0 \
+	'[.](c|cpp|C|CC|cxx|c[+][+]):.*No such file or directory' \
+	> "$check_missing_headers_fn"
 
     verbose_print '\n'
 }
@@ -180,23 +118,8 @@ gen_missing_libraries (){
     verbose_print "  Collecting missing libraries ... "
 
     cat "$failed_files".build.tmp |
-    xargs -n200 runawk -f dirname.awk -f basename.awk -e '
-    {
-	if (FNR == 1)
-	   pkg_printed = 0
-
-	if (/ld: cannot find -l/){
-	    fn = FILENAME
-	    if (!pkg_printed)
-		print prefix basename(dirname(FILENAME)) "/" basename(FILENAME)
-	    prefix = ".\n"
-	    pkg_printed = 1
-	    print " * " $0
-	    print ""
-	}
-    }
-    END {  if (prefix) print "."  }
-    ' > "$check_missing_libraries_fn"
+    xargs @libexecdir@/distbb_grep -C0 'ld: cannot find -l' \
+	> "$check_missing_libraries_fn"
 
     verbose_print '\n'
 }
@@ -205,34 +128,8 @@ gen_permission_denied (){
     verbose_print '  Collecting "permission denied" bugs ... '
 
     cat "$failed_files".tmp |
-    xargs -n200 runawk -f dirname.awk -f basename.awk -e '
-    {
-	if (FNR == 1){
-	   pkg_printed = 0
-	   delete line
-	}
-
-	line [FNR] = $0
-	delete line [FNR-3]
-	if (tolower($0) ~ /permission denied/){
-	    fn = FILENAME
-	    if (!pkg_printed)
-		print prefix basename(dirname(FILENAME)) "/" basename(FILENAME)
-	    prefix = ".\n"
-	    pkg_printed = 1
-	    print " * " line [FNR-2]
-	    print "   " line [FNR-1]
-	    print "   " $0
-	    getline
-	    if (fn == FILENAME) print "   " $0
-	    getline
-	    if (fn == FILENAME) print "   " $0
-	    print ""
-	    delete line
-	}
-    }
-    END {  if (prefix) print "."  }
-    ' > "$check_permission_denied_fn"
+    xargs @libexecdir@/distbb_grep 'Permission denied' \
+	> "$check_permission_denied_fn"
 
     verbose_print '\n'
 }
@@ -241,34 +138,8 @@ gen_libtool_bugs (){
     verbose_print '  Collecting libtool bugs ... '
 
     cat "$failed_files".tmp |
-    xargs -n200 runawk -f dirname.awk -f basename.awk -e '
-    {
-	if (FNR == 1){
-	   pkg_printed = 0
-	   delete line
-	}
-
-	line [FNR] = $0
-	delete line [FNR-3]
-	if (tolower($0) ~ /^libtool: link: specify a tag/){
-	    fn = FILENAME
-	    if (!pkg_printed)
-		print prefix basename(dirname(FILENAME)) "/" basename(FILENAME)
-	    prefix = ".\n"
-	    pkg_printed = 1
-	    print " * " line [FNR-2]
-	    print "   " line [FNR-1]
-	    print "   " $0
-	    getline
-	    if (fn == FILENAME) print "   " $0
-	    getline
-	    if (fn == FILENAME) print "   " $0
-	    print ""
-	    delete line
-	}
-    }
-    END {  if (prefix) print "."  }
-    ' > "$check_libtool_bugs_fn"
+    xargs @libexecdir@/distbb_grep 'libtool: link: specify a tag' \
+	> "$check_libtool_bugs_fn"
 
     verbose_print '\n'
 }

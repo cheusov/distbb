@@ -19,7 +19,7 @@ INSCRIPTS =	distbb stage_init stage_build \
 		upload_pkgs_built_total upload_pkgs_no_bin_on_cdrom \
 		upload_pkgs_no_bin_on_ftp make-depends \
 		gen_queue gen_weights pkg_summary2build_deps \
-		wrapper_unpriv wrapper distbb_chroot
+		wrapper_unpriv wrapper distbb_chroot distbb_grep
 
 INFILES =			distbb.conf distbb.local.mk distbb.mk \
 				common distbb.default.conf
