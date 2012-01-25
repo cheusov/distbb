@@ -110,6 +110,7 @@ check_missing_libraries_fn=$meta_dir/check_missing_libraries.txt
 check_permission_denied_fn=$meta_dir/check_permission_denied.txt
 check_libtool_bugs_fn=$meta_dir/check_libtool_bugs.txt
 check_pkgsrc_warnings_fn=$meta_dir/check_pkgsrc_warnings.txt
+check_segfault_fn=$meta_dir/check_segmentation_faults.txt
 
 # check_extra_conflicts_fn=$meta_dir/check_extra_conflicts.txt
 # check_uninstallable_fn=$meta_dir/check_uninstallable.txt

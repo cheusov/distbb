@@ -154,6 +154,16 @@ gen_pkgsrc_warnings (){
     verbose_print '\n'
 }
 
+gen_segfaults (){
+    verbose_print '  Collecting segmentation faults ... '
+
+    cat "$failed_files".tmp |
+    xargs @libexecdir@/distbb_grep 'Segmentation fault' \
+	> "$check_segfault_fn"
+
+    verbose_print '\n'
+}
+
 gen_failed_files
 
 required_vs_provides
@@ -166,3 +176,4 @@ gen_missing_libraries
 gen_permission_denied
 gen_libtool_bugs
 gen_pkgsrc_warnings
+gen_segfaults

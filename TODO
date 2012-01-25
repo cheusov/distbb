@@ -6,8 +6,6 @@ Plan0)
  - Explicitely set SU_CMD to something noisy.
 
  - Analyser:
-   - do not add empty files to the report
-   - segmentation faults during build
    - unnecessary CONFLICTS
    - possibility of installation each package in the repository
    - config.log may help to recognize bad DEPENDS and BUILD_DEPENDS
