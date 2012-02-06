@@ -140,13 +140,14 @@ NF == 3 {
 		}
 	}
 
-	if (($3 in src_PAeNA) && !(PAeNA2PANA($3) in bin_PANA))
-		updated_PAeNA [$3] = 1
-
 	# always use binary package if it satisfies dependency
 	# for BUILD_DEPENDS, use -m for DEPENDS only
-#	use_src = (mode == 0)
 	use_src = (mode == 0 && $1 == "DEPENDS")
+
+	if (($3 in src_PAeNA) && !(PAeNA2PANA($3) in bin_PANA))
+		updated_PAeNA [$3] = 1
+	else
+		$3 = ""
 
 	if (use_src && src_dep && !src_PAeNA [src_dep])
 		print_dep($1, src_dep, $3)
