@@ -305,10 +305,10 @@ assign OSVER "$(uname -r)/$(uname -m)"
 #assign PKGSRCVER '2039Q1' # ;-)
 
 #
-#assign PACKAGES_URL "http://mova.org/~cheusov/pub/pkgsrc-distbb/$OS/$PKGSRCVER/packages/"
+#assign PACKAGES_URL "ftp://ftp.netbsd.org/pub/pkgsrc/packages/NetBSD/amd64/5.1_$PKGSRCVER/"
 
 #
-#assign REPORT_URL_PREFIX "http://your-domain.com/~you/pkgsrc-distbb/logs/"
+#assign REPORT_URL_PREFIX "http://your-domain.com/~you/pkgsrc/logs/"
 if test -n "$BUILD_ID"; then
     assign REPORT_URL "$REPORT_URL_PREFIX/`basename $BUILD_ID`/META/report.html"
 fi
@@ -334,7 +334,7 @@ assign UPLOAD_PKGS_FILES "@libexecdir@/upload_pkgs_all_files"
 #assign UPLOAD_PKGS_FILES "@libexecdir@/upload_pkgs_built_total"
 #assign UPLOAD_PKGS_FILES "@libexecdir@/upload_pkgs_no_bin_on_cdrom"
 #assign UPLOAD_PKGS_FILES "@libexecdir@/upload_pkgs_no_bin_on_ftp"
-assign UPLOAD_PKGS_PROG "$RSYNC_CMD -a --delete-excluded --include-from=- --exclude \"*\" -e ssh ."
+assign UPLOAD_PKGS_PROG "$RSYNC_CMD -a --delete-excluded --files-from=- -e ssh ."
 
 #
 #assign UPLOAD_LOGS_DEST you@your-domain.com:~/public_html/pkgsrc-distbb/logs/

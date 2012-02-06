@@ -26,7 +26,8 @@ switch_to_target
 cd "$PACKAGES/All"
 
 list_pkgs |
-xargs pkg_bin_summary -e -k 'sha512' > "$bin_summary_fn"
+xargs pkg_bin_summary -e -a NO_BIN_ON_CDROM,NO_BIN_ON_FTP -k 'sha512' \
+    > "$bin_summary_fn"
 
 list_pkgs |
 xargs pkg_bin_summary -e -f PKGNAME,PKGPATH,COMMENT,PLIST,CONFLICTS \

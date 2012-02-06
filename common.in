@@ -32,10 +32,11 @@ get_log_dir (){
 }
 
 print_binrep_spec_files (){
-    echo pkg_summary.bz2
-    echo pkg_summary.gz
-    echo pkg_summary.txt
+    echo All/pkg_summary.bz2
+    echo All/pkg_summary.gz
+    echo All/pkg_summary.txt
     echo SHA512.gz
+    echo SHA512.bz2
 }
 
 filter_out (){

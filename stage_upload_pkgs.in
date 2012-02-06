@@ -24,7 +24,7 @@ BUILD_ID="$1"
 verbose_print "Uploading packages..."
 
 switch_to_target
-cd "$PACKAGES/All"
+cd "$PACKAGES"
 
 export REPORT1_DIR REPORTS_DIR BUILD_ID
 eval "$UPLOAD_PKGS_FILES | $UPLOAD_PKGS_PROG $UPLOAD_PKGS_DEST"
