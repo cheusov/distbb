@@ -312,26 +312,24 @@ fi
 
 PAeNA2NA  "$tmpdir/reqd_deps_PAeNA.tmp" > "$reqd_deps_NA_fn"
 
-PAeNA2PAe "$tmpdir/reqd_deps_PAeNA.tmp" |
-awk '
-NF == 1 {hash [$1] = 0}
-NF == 3 {hash [$2] = hash [$3] = 0}
-END {for (p in hash) {print p}}' > "$tmpdir/packages_reqd_PAe.tmp"
-
-pkg_subgraph_deps -f "$tmpdir/updated_PAeNA.tmp" \
-    "$tmpdir/reqd_deps_PAeNA.tmp" |
-PAeNA2PAe > "$rebuild_PAe_fn"
+PAeNA2PAe "$tmpdir/reqd_deps_PAeNA.tmp" > "$tmpdir/reqd_deps_PAe.tmp"
 
 printf '' > "$errors_fn"
 printf '' > "$summary_cmp_fn"
 
+PAeNA2PAe "$tmpdir/updated_PAeNA.tmp" > "$tmpdir/updated_PAe.tmp"
+pkg_subgraph_deps -f "$tmpdir/updated_PAe.tmp" \
+    "$tmpdir/reqd_deps_PAe.tmp" > "$rebuild_PAe_fn"
+
 # rebuilt previously
+PAeNA2PAe "$tmpdir/packages_PAeNA.tmp" | sort -u > "$tmpdir/packages_PAe.tmp"
+
 changed_pkgs_fn=$tmpdir/changed.tmp
 awk 'NF == 3 {print $2 "\n" $3; next}
      NF == 1 {print}' "$rebuild_PAe_fn" |
 sort -u > "$changed_pkgs_fn"
 
-sort "$changed_pkgs_fn" "$changed_pkgs_fn" "$tmpdir/packages_reqd_PAe.tmp" |
+sort "$changed_pkgs_fn" "$changed_pkgs_fn" "$tmpdir/packages_PAe.tmp" |
 uniq -c |
 awk '$1 == 1 {print $2}' > "$packages_built_prev_fn.tmp"
 
