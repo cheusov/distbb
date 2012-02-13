@@ -312,14 +312,12 @@ fi
 
 PAeNA2NA  "$tmpdir/reqd_deps_PAeNA.tmp" > "$reqd_deps_NA_fn"
 
-PAeNA2PAe "$tmpdir/reqd_deps_PAeNA.tmp" > "$tmpdir/reqd_deps_PAe.tmp"
+pkg_subgraph_deps -f "$tmpdir/updated_PAeNA.tmp" \
+    "$tmpdir/reqd_deps_PAeNA.tmp" |
+PAeNA2PAe > "$rebuild_PAe_fn"
 
 printf '' > "$errors_fn"
 printf '' > "$summary_cmp_fn"
-
-PAeNA2PAe "$tmpdir/updated_PAeNA.tmp" > "$tmpdir/updated_PAe.tmp"
-pkg_subgraph_deps -f "$tmpdir/updated_PAe.tmp" \
-    "$tmpdir/reqd_deps_PAe.tmp" > "$rebuild_PAe_fn"
 
 # rebuilt previously
 PAeNA2PAe "$tmpdir/packages_PAeNA.tmp" | sort -u > "$tmpdir/packages_PAe.tmp"
