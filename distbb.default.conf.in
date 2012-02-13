@@ -181,7 +181,7 @@ if test -n "$UNPRIV_USER"; then
     assign SU_UNPRIV_CMD '@libexecdir@/wrapper_unpriv'
     export SU_UNPRIV_CMD
     for t in Available Excluded Vars fetch checksum \
-	extract patch configure build
+	extract patch tools wrapper configure build test
     do
 	assign SU_UNPRIV_CMD_$t "$SU_UNPRIV_CMD"
     done
