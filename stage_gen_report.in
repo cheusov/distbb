@@ -719,6 +719,12 @@ BEGIN {
 /Failed due to dependencies/, /------/ {
    next
 }
+/Sanity checks and tips/, /------/ {
+   next
+}
+/Progress:/, /------/ {
+   next
+}
 {
    sz += length($0)+1
    if (sz+cutoff_msg_sz > size_limit){
