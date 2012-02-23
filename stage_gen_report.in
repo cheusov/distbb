@@ -660,6 +660,9 @@ report_html2txt (){
       printf "%-4s %-24s %-20s %5s %24s\n\n", "", $1, $2, $3, $4
       next
    }
+   /Sanity checks and tips/, /------------/ {
+      next
+   }
    /Progress:/, /------------/ {
       if ($1 !~ /^[nN]?[-+][dc]?$/ && $1 != "R"){
          print
@@ -722,9 +725,6 @@ BEGIN {
    next
 }
 /Failed due to dependencies/, /------/ {
-   next
-}
-/Sanity checks and tips/, /------/ {
    next
 }
 /Progress:/, /------/ {
