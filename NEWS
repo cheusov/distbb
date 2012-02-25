@@ -1,4 +1,14 @@
 ===================================================================
+Version 0.44.0 by Aleksey Cheusov, Sat, 25 Feb 2012 11:43:56 +0300
+
+  Improvements for report:
+    - "^WARNING:" messages are logged
+    - Segmentation faults are logged
+    - Clean-ups in report_mini.txt and report.txt
+
+  Packages are rebuilt recursively only if it necessary
+
+===================================================================
 Version 0.43.0 by Aleksey Cheusov, Mon,  9 Jan 2012 23:27:20 +0300
 
   Fix for signal handlers (SIGINT, SIGTERM, SIGQUIT).
