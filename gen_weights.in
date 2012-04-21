@@ -38,7 +38,7 @@ BEGIN {
 
 	xclose(fn)
 	mult = 1
-	cxx_mult = 30
+	cxx_mult = 10
 }
 
 NF == 0 {
@@ -50,7 +50,7 @@ NF == 0 {
 			idx = index($i, ":")
 			sum_sz += substr($i, idx+1)
 		}
-		print "weight:", pkgpath, int((sum_sz / 1048576 + 1) * mult)
+		print "weight:", pkgpath, int((sum_sz / 10240 + 1) * mult)
 	}
 	mult = 1
 	pkgpath = alldistfiles = ""
