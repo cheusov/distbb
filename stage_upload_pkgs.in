@@ -27,5 +27,20 @@ switch_to_target
 cd "$PACKAGES"
 
 export REPORT1_DIR REPORTS_DIR BUILD_ID
-eval "$UPLOAD_PKGS_FILES | $UPLOAD_PKGS_PROG $UPLOAD_PKGS_DEST"
+
+a=1
+while true; do
+    ex=0
+    if eval "$UPLOAD_PKGS_FILES | $UPLOAD_PKGS_PROG $UPLOAD_PKGS_DEST"; then
+	break
+    else
+	ex=$?
+    fi
+    if test "$a" -eq "$UPLOAD_PKGS_ATTEMPTS"; then
+	break
+    fi
+    a=$(($a+1))
+    sleep "$UPLOAD_PKGS_PAUSE"
+done
+
 verbose_print "done\n"
