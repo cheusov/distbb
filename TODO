@@ -6,6 +6,7 @@ Plan0)
  - Explicitely set SU_CMD to something noisy.
 
  - Analyser:
+   - 'make checksum' failures
    - "Gray" text if no warnings
    - unnecessary CONFLICTS
    - possibility of installation each package in the repository

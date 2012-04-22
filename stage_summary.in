@@ -25,16 +25,20 @@ verbose_print "Generating package summaries..."
 switch_to_target
 cd "$PACKAGES/All"
 
-list_pkgs |
+list_built_pkgs |
 xargs pkg_bin_summary -e -a NO_BIN_ON_CDROM,NO_BIN_ON_FTP -k 'sha512' \
     > "$bin_summary_fn"
 
-list_pkgs |
+if test -n "$add_new_summaries"; then
+    pkg_uniq_summary -Fn "$bin_summary_fn" "$PKG_SUMMARY" > "$PKG_SUMMARY".tmp
+else
+    cp "$bin_summary_fn" "$PKG_SUMMARY".tmp
+fi
+mv "$PKG_SUMMARY".tmp "$PKG_SUMMARY"
+
+list_all_built_pkgs |
 xargs pkg_bin_summary -e -f PKGNAME,PKGPATH,COMMENT,PLIST,CONFLICTS \
     > "$enriched_summary_fn"
-
-cp "$bin_summary_fn" "$PKG_SUMMARY".tmp
-mv "$PKG_SUMMARY".tmp "$PKG_SUMMARY"
 
 "$GZIP" < "$PKG_SUMMARY" > "${PKG_SUMMARY%.txt}.gz"
 "$BZIP2" < "$PKG_SUMMARY" > "${PKG_SUMMARY%.txt}.bz2"

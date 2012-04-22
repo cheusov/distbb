@@ -54,6 +54,8 @@ OPTIONS:
                     0 - use package from pkgsrc tree (the default)
                     1 - use latest available binary if it satisfies
                     DEPENDS and BUILD_DEPENDS
+  -a                build packages specified by -f or -p and
+                    add new summaries to pkg_summary(5)
 EOF
 }
 
@@ -79,7 +81,7 @@ unexclude (){
 
 export deps_graph_mode=0
 
-while getopts hVf:p:C:DB:l:kKx:X:rsiI:m: f; do
+while getopts hVf:p:C:DB:l:kKx:X:rsiI:m:a f; do
     case $f in
 	h)   usage; exit 0;;
 	V)   echo distbb-@version@; exit 0;;
@@ -98,6 +100,7 @@ while getopts hVf:p:C:DB:l:kKx:X:rsiI:m: f; do
 	i)   full_bb; pkgs=; pkgs_fn=; K_opt=; installed=1;;
 	I)   full_bb; pkgs=; pkgs_fn=; K_opt="-K $OPTARG"; installed=1;;
 	m)   export deps_graph_mode="$OPTARG";;
+	a)   export add_new_summaries=1;;
 	'?') printf '%s\n' "$USAGE"; exit 1;;
     esac
 done
