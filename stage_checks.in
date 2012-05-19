@@ -21,11 +21,7 @@ BUILD_ID="$1"
 . @libexecdir@/common
 
 # main
-verbose_print "Generation of report data...\n"
-
 ######################################################################
-
-verbose_print "Additional checks for bulk build results...\n"
 
 gen_required_vs_provides (){
     if test -f "$bin_summary_fn"; then
@@ -38,7 +34,7 @@ gen_required_vs_provides (){
 
 gen_unregistered_conflicts (){
     if test -f "$enriched_summary_fn"; then
-	verbose_print "  Unregistered CONFLICTS ... "
+	verbose_print "  unregistered CONFLICTS ... "
 	pkg_lint_summary -n "$enriched_summary_fn" |
 	awk '{$1=$2=""; print substr($0, 3)}' > "$check_unregistered_conflicts_fn"
 	verbose_print '\n'
@@ -46,7 +42,7 @@ gen_unregistered_conflicts (){
 }
 
 gen_missing_progs (){
-    verbose_print "  Missing programs ... "
+    verbose_print "  missing programs ... "
 
     cat "$failed_files".tmp |
     xargs @libexecdir@/distbb_grep > "$check_missing_progs_fn"
@@ -57,7 +53,7 @@ gen_missing_progs (){
 failed_files=$tmpdir/failed_files
 
 gen_failed_files (){
-    verbose_print "  Generating failed target file list ... "
+    verbose_print "  failed targets file list ... "
 
     find "$REPORT1_DIR" -name curr_stage.tmp |
     runawk -f xgetline.awk -f dirname.awk -f basename.awk -e '
@@ -76,7 +72,7 @@ gen_failed_files (){
 }
 
 gen_configure_errors (){
-    verbose_print "  Collecting configure errors ... "
+    verbose_print "  configure errors ... "
 
     cat "$failed_files".configure.tmp |
     xargs @libexecdir@/distbb_grep 'configure: error:' > "$check_configure_errors_fn"
@@ -85,7 +81,7 @@ gen_configure_errors (){
 }
 
 gen_PLIST_errors (){
-    verbose_print "  Collecting PLIST problems ... "
+    verbose_print "  PLIST problems ... "
 
     cat "$failed_files".package.tmp |
     xargs -n200 runawk -f dirname.awk -f basename.awk -e '
@@ -104,7 +100,7 @@ gen_PLIST_errors (){
 }
 
 gen_missing_headers (){
-    verbose_print "  Collecting missing headers ... "
+    verbose_print "  missing headers ... "
 
     cat "$failed_files".build.tmp |
     xargs @libexecdir@/distbb_grep -C0 \
@@ -115,7 +111,7 @@ gen_missing_headers (){
 }
 
 gen_missing_libraries (){
-    verbose_print "  Collecting missing libraries ... "
+    verbose_print "  missing libraries ... "
 
     cat "$failed_files".build.tmp |
     xargs @libexecdir@/distbb_grep -C0 'ld: cannot find -l' \
@@ -125,7 +121,7 @@ gen_missing_libraries (){
 }
 
 gen_permission_denied (){
-    verbose_print '  Collecting "permission denied" bugs ... '
+    verbose_print '  "permission denied" bugs ... '
 
     cat "$failed_files".tmp |
     xargs @libexecdir@/distbb_grep 'Permission denied' \
@@ -135,7 +131,7 @@ gen_permission_denied (){
 }
 
 gen_libtool_bugs (){
-    verbose_print '  Collecting libtool bugs ... '
+    verbose_print '  libtool bugs ... '
 
     cat "$failed_files".tmp |
     xargs @libexecdir@/distbb_grep 'libtool: link: specify a tag' \
@@ -145,7 +141,7 @@ gen_libtool_bugs (){
 }
 
 gen_pkgsrc_warnings (){
-    verbose_print '  Collecting pkgsrc warnings ... '
+    verbose_print '  pkgsrc warnings ... '
 
     cat "$failed_files".tmp |
     xargs @libexecdir@/distbb_grep '^WARNING:' \
@@ -155,7 +151,7 @@ gen_pkgsrc_warnings (){
 }
 
 gen_segfaults (){
-    verbose_print '  Collecting segmentation faults ... '
+    verbose_print '  segmentation faults ... '
 
     cat "$failed_files".tmp |
     xargs @libexecdir@/distbb_grep 'Segmentation fault' \

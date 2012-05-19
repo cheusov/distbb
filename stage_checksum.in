@@ -20,7 +20,7 @@ BUILD_ID="$1"
 . @libexecdir@/common
 
 # main
-verbose_print "Generating checksums for binary packages..."
+verbose_print "  checksums for binary packages..."
 
 switch_to_target
 cd "$PACKAGES"

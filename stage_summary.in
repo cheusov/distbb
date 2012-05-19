@@ -20,11 +20,11 @@ BUILD_ID="$1"
 . @libexecdir@/common
 
 # main
-verbose_print "Generating package summaries..."
-
 switch_to_target
 cd "$PACKAGES/All"
 
+# pkg_summary.txt
+verbose_print "  $(basename $bin_summary_fn)... "
 list_built_pkgs |
 xargs pkg_bin_summary -e -a NO_BIN_ON_CDROM,NO_BIN_ON_FTP -k 'sha512' \
     > "$bin_summary_fn"
@@ -35,12 +35,20 @@ else
     cp "$bin_summary_fn" "$PKG_SUMMARY".tmp
 fi
 mv "$PKG_SUMMARY".tmp "$PKG_SUMMARY"
+verbose_print "done\n"
 
+# pkg_enriched_summary.txt
+verbose_print "  $(basename $enriched_summary_fn)... "
 list_all_built_pkgs |
 xargs pkg_bin_summary -e -f PKGNAME,PKGPATH,COMMENT,PLIST,CONFLICTS \
     > "$enriched_summary_fn"
+verbose_print "done\n"
 
+# gzip + bzip2
+verbose_print "  $(basename ${PKG_SUMMARY%.txt}.gz)... "
 "$GZIP" < "$PKG_SUMMARY" > "${PKG_SUMMARY%.txt}.gz"
-"$BZIP2" < "$PKG_SUMMARY" > "${PKG_SUMMARY%.txt}.bz2"
+verbose_print "done\n"
 
+verbose_print "  $(basename ${PKG_SUMMARY%.txt}.bz2)... "
+"$BZIP2" < "$PKG_SUMMARY" > "${PKG_SUMMARY%.txt}.bz2"
 verbose_print "done\n"

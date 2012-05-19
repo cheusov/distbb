@@ -21,8 +21,6 @@ BUILD_ID="$1"
 . @libexecdir@/common
 
 # main
-verbose_print "Report generation...\n"
-
 ######################################################################
 
 build_start=$(cat "$build_start_fn")
@@ -568,7 +566,7 @@ report_full_html (){
 
 ######################################################################
 
-verbose_print "  creating META/report.html ... "
+verbose_print "  META/report.html ... "
 
 report_full_html > "$meta_dir/report.html"
 
@@ -639,7 +637,7 @@ report_html2txt (){
 
 ######################################################################
 
-verbose_print "  creating META/report{_mini,}.txt ... "
+verbose_print "  META/report{_mini,}.txt ... "
 
 report_txt_fn="$meta_dir/report.txt"
 report_html2txt $REPORT1_DIR/META/tmp/report_body.html |
@@ -678,7 +676,7 @@ verbose_print 'done\n'
 
 ######################################################################
 
-verbose_print "  creating PKGNAMEs/summary.txt ... "
+verbose_print "  PKGNAMEs/summary.txt ... "
 
 runawk -v report1="$REPORT1_DIR" -e '
 #use "xclose.awk"
@@ -782,7 +780,7 @@ stage2html (){
 }
 
 gen_stage_xxx (){
-    verbose_print "  creating PKGNAMEs/stage_xxx.html ... "
+    verbose_print "  PKGNAMEs/stage_xxx.html ... "
 
     find "$REPORT1_DIR" -name 'stage_*.tmp' |
     while read stage_fn; do
@@ -827,7 +825,7 @@ failed_because_txt2html (){
     html_footer
 }
 
-verbose_print "  creating PKGNAMEs/info.html ... "
+verbose_print "  PKGNAMEs/info.html ... "
 
 while read pkgpath pkgname maintainer; do
     fn="${REPORT1_DIR}/$(get_log_dir $pkgpath $pkgname)/info.html"
@@ -861,7 +859,7 @@ failed_deps_txt2html (){
     html_footer
 }
 
-verbose_print "  creating PKGNAMEs/failed_deps.html ... "
+verbose_print "  PKGNAMEs/failed_deps.html ... "
 
 cat "$packages_failed_fn" "$packages_failed_notavail_fn" |
 while read pkgpath pkgname maintainer; do

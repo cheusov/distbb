@@ -21,6 +21,6 @@ BUILD_ID="$1"
 . @libexecdir@/common
 
 # main
-verbose_print "Uploading logs..."
+verbose_print "  uploading logs... "
 eval $UPLOAD_LOGS_PROG $REPORT1_DIR $UPLOAD_LOGS_DEST
 verbose_print "done\n"

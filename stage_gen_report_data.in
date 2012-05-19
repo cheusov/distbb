@@ -21,11 +21,9 @@ BUILD_ID="$1"
 . @libexecdir@/common
 
 # main
-verbose_print "Build various files...\n"
-
 ######################################################################
 
-verbose_print "  generating META/packages_{build,failed{,_notavail}}.tmp ... "
+verbose_print "  META/packages_{build,failed{,_notavail}}.tmp ... "
 
 awk '$1 == "success" {print $2}' "$progress_fn" |
 sort -u > "$packages_built_fn.tmp"
@@ -42,7 +40,7 @@ verbose_print "done\n"
 
 ######################################################################
 
-verbose_print "  generating META/packages_failed_deps.txt.tmp ... "
+verbose_print "  META/packages_failed_deps.txt.tmp ... "
 
 find_failed_deps_packages (){
     runpipe0 \
@@ -56,7 +54,7 @@ verbose_print "done\n"
 
 ######################################################################
 
-verbose_print "  generating META/packages_*.txt ... "
+verbose_print "  META/packages_*.txt ... "
 
 runpipe0 \
     enrich_pkgpath 'PKGNAME MAINTAINER' $packages_built_prev_fn.tmp '|' \
@@ -78,7 +76,7 @@ verbose_print "done\n"
 
 ######################################################################
 
-verbose_print "  generating META/packages_{built,failed}_total.txt..."
+verbose_print "  META/packages_{built,failed}_total.txt..."
 
 sort_uniq "$packages_built_fn" "$packages_built_prev_fn" \
     > "$packages_built_total_fn"

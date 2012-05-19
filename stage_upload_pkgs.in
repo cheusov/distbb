@@ -21,7 +21,7 @@ BUILD_ID="$1"
 . @libexecdir@/common
 
 # main
-verbose_print "Uploading packages..."
+verbose_print "  uploading packages... "
 
 switch_to_target
 cd "$PACKAGES"

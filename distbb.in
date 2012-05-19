@@ -246,15 +246,14 @@ run_stage (){
 	stage_fn="@libexecdir@/stage_$stage"
     fi
 
+    printf '==== %s ====\n' "$stage"
     done_fn=$tmpdir/done_stage_${stage}.tmp
     if test -f "${done_fn}"; then
-	echo "$stage skipped"
-	return
+	echo "  skipped"
+    else
+	eval ${stage_fn} "$REPORT1_DIR"
+	touch ${done_fn}
     fi
-
-    eval ${stage_fn} "$REPORT1_DIR"
-
-    touch ${done_fn}
 }
 
 #
