@@ -163,7 +163,7 @@ gen_segfaults (){
 gen_failed_files
 
 gen_required_vs_provides
-#gen_unregistered_CONFLICTS
+gen_unregistered_CONFLICTS
 gen_missing_progs
 gen_configure_errors
 gen_PLIST_errors
