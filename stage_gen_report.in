@@ -429,6 +429,18 @@ EOF
     fi
 }
 
+check_filename_to_text (){
+    awk -v fn="$1" '
+    BEGIN {
+        sub(/^check_/, "", fn)
+        sub(/[.]txt$/, "", fn)
+        gsub(/__/, "\034", fn)
+        gsub(/_/, " ",     fn)
+        gsub(/\034/, "_",  fn)
+        print fn
+    }'
+}
+
 report_html_checks (){
     # failed packages
     cat <<EOF
@@ -447,7 +459,7 @@ EOF
 	    html_i=${i%.txt}.html
 
 	    # report.html
-	    msg=`echo "$fn" | awk '{sub(/^check_/, ""); sub(/[.]txt$/, ""); gsub(/_/, " "); print toupper(substr($0, 1, 1)) substr($0, 2)}'`
+	    msg=`check_filename_to_text "$fn"`
 	    printf '<tr><td>%-30s</td> <td align="left"><a href="%s" title="link">list</a></td></tr>\n' "$msg" "$html_fn"
 
 	    # check_*.html
