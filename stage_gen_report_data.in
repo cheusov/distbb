@@ -21,8 +21,72 @@ BUILD_ID="$1"
 . @libexecdir@/common
 
 # main
-verbose_print "Generation of report data...\n"
+verbose_print "Build various files...\n"
 
 ######################################################################
 
-#verbose_print "Additional checks for bulk build results...\n"
+verbose_print "  generating META/packages_{build,failed{,_notavail}}.tmp ... "
+
+awk '$1 == "success" {print $2}' "$progress_fn" |
+sort -u > "$packages_built_fn.tmp"
+
+filter_out "$packages_built_fn.tmp" "$packages_failed_fn.tmp" |
+sort -u > "$packages_failed_fn.tmp2"
+mv "$packages_failed_fn.tmp2" "$packages_failed_fn.tmp"
+
+filter_out "$packages_built_fn.tmp" "$packages_failed_notavail_fn.tmp" |
+sort -u > "$packages_failed_notavail_fn.tmp2"
+mv "$packages_failed_notavail_fn.tmp2" "$packages_failed_notavail_fn.tmp"
+
+verbose_print "done\n"
+
+######################################################################
+
+verbose_print "  generating META/packages_failed_deps.txt.tmp ... "
+
+find_failed_deps_packages (){
+    runpipe0 \
+	find "$REPORT1_DIR" -name failed_deps.txt '|' \
+	xargs cat '|' sort_uniq
+}
+
+find_failed_deps_packages > "$packages_failed_deps_fn.tmp"
+
+verbose_print "done\n"
+
+######################################################################
+
+verbose_print "  generating META/packages_*.txt ... "
+
+runpipe0 \
+    enrich_pkgpath 'PKGNAME MAINTAINER' $packages_built_prev_fn.tmp '|' \
+    sort_uniq > $packages_built_prev_fn
+runpipe0 \
+    enrich_pkgpath 'PKGNAME MAINTAINER' $packages_built_fn.tmp '|' \
+    sort_uniq > $packages_built_fn
+runpipe0 \
+    enrich_pkgpath 'PKGNAME MAINTAINER' $packages_failed_fn.tmp '|' \
+    sort_uniq > $packages_failed_fn
+runpipe0 \
+    enrich_pkgpath 'PKGNAME MAINTAINER' $packages_failed_deps_fn.tmp '|' \
+    sort_uniq > $packages_failed_deps_fn
+runpipe0 \
+    enrich_pkgpath 'PKGNAME MAINTAINER' $packages_failed_notavail_fn.tmp '|' \
+    sort_uniq > $packages_failed_notavail_fn
+
+verbose_print "done\n"
+
+######################################################################
+
+verbose_print "  generating META/packages_{built,failed}_total.txt..."
+
+sort_uniq "$packages_built_fn" "$packages_built_prev_fn" \
+    > "$packages_built_total_fn"
+
+sort_uniq "$packages_failed_fn" "$packages_failed_deps_fn" \
+    "$packages_failed_scan_fn" "$packages_failed_notavail_fn" \
+    > "$packages_failed_total_fn"
+
+verbose_print "done\n"
+
+######################################################################

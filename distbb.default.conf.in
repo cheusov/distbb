@@ -344,7 +344,7 @@ assign UPLOAD_LOGS_PROG "$RSYNC_CMD -a --delete-excluded --exclude \"*.tmp\" -e 
 
 # list of building stages, except 'init'
 assign BUILD_STAGES \
-    'build gen_report_data checks gen_report update_best summary checksum upload_logs upload_pkgs send_report'
+    'build gen_report_data summary checks gen_report update_best checksum upload_logs upload_pkgs send_report'
 
 # Extra options passed to paexec(1)
 #assign PAEXEC_EXTRA_OPTS -z

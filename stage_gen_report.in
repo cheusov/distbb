@@ -25,40 +25,8 @@ verbose_print "Report generation...\n"
 
 ######################################################################
 
-verbose_print "  sort_uniq META/packages_{build,failed{,_notavail}}.tmp ... "
-
-packages_built_fn=$meta_dir/packages_built.txt
-awk '$1 == "success" {print $2}' "$progress_fn" |
-sort -u > "$packages_built_fn.tmp"
-
-filter_out "$packages_built_fn.tmp" "$packages_failed_fn.tmp" |
-sort -u > "$packages_failed_fn.tmp2"
-mv "$packages_failed_fn.tmp2" "$packages_failed_fn.tmp"
-
-filter_out "$packages_built_fn.tmp" "$packages_failed_notavail_fn.tmp" |
-sort -u > "$packages_failed_notavail_fn.tmp2"
-mv "$packages_failed_notavail_fn.tmp2" "$packages_failed_notavail_fn.tmp"
-
-verbose_print "done\n"
-
-######################################################################
-
 build_start=$(cat "$build_start_fn")
 build_end=$(cat "$build_end_fn")
-
-######################################################################
-
-verbose_print "  creating META/packages_failed_deps.txt.tmp ... "
-
-find_failed_deps_packages (){
-    runpipe0 \
-	find "$REPORT1_DIR" -name failed_deps.txt '|' \
-	xargs cat '|' sort_uniq
-}
-
-find_failed_deps_packages > "$packages_failed_deps_fn.tmp"
-
-verbose_print "done\n"
 
 ######################################################################
 
@@ -552,6 +520,7 @@ report_html (){
 ######################################################################
 
 packages_failed_notavail_cnt=$(count_lines "$packages_failed_notavail_fn.tmp")
+
 packages_failed_scan_cnt=$(count_lines "$packages_failed_scan_fn")
 packages_failed_deps_cnt=$(count_lines "$packages_failed_deps_fn.tmp")
 packages_failed_cnt=$(count_lines "$packages_failed_fn.tmp")
@@ -562,41 +531,6 @@ packages_built_prev_cnt=$(count_lines "$packages_built_prev_fn.tmp")
 packages_built_total=$(($packages_built_cnt+$packages_built_prev_cnt))
 
 packages_inspected_cnt=$(($packages_failed_total+$packages_built_total))
-
-######################################################################
-
-verbose_print "  enriching META/packages_*.txt ... "
-
-runpipe0 \
-    enrich_pkgpath 'PKGNAME MAINTAINER' $packages_built_prev_fn.tmp '|' \
-    sort_uniq > $packages_built_prev_fn
-runpipe0 \
-    enrich_pkgpath 'PKGNAME MAINTAINER' $packages_built_fn.tmp '|' \
-    sort_uniq > $packages_built_fn
-runpipe0 \
-    enrich_pkgpath 'PKGNAME MAINTAINER' $packages_failed_fn.tmp '|' \
-    sort_uniq > $packages_failed_fn
-runpipe0 \
-    enrich_pkgpath 'PKGNAME MAINTAINER' $packages_failed_deps_fn.tmp '|' \
-    sort_uniq > $packages_failed_deps_fn
-runpipe0 \
-    enrich_pkgpath 'PKGNAME MAINTAINER' $packages_failed_notavail_fn.tmp '|' \
-    sort_uniq > $packages_failed_notavail_fn
-
-verbose_print "done\n"
-
-######################################################################
-
-verbose_print "  creating META/packages_{built,failed}_total.txt..."
-
-sort_uniq "$packages_built_fn" "$packages_built_prev_fn" \
-    > "$packages_built_total_fn"
-
-sort_uniq "$packages_failed_fn" "$packages_failed_deps_fn" \
-    "$packages_failed_scan_fn" "$packages_failed_notavail_fn" \
-    > "$packages_failed_total_fn"
-
-verbose_print "done\n"
 
 ######################################################################
 
