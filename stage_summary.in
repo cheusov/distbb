@@ -37,7 +37,7 @@ fi
 mv "$PKG_SUMMARY".tmp "$PKG_SUMMARY"
 verbose_print "done\n"
 
-# pkg_enriched_summary.txt
+# pkg_enriched_summary.tmp
 verbose_print "  $(basename $enriched_summary_fn)... "
 list_all_built_pkgs |
 xargs pkg_bin_summary -e -f PKGNAME,PKGPATH,COMMENT,PLIST,CONFLICTS \

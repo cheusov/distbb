@@ -104,7 +104,7 @@ errors_fn=$meta_dir/errors.txt
 pkg_src_summary_fn=$meta_dir/pkg_src_summary.txt
 summary_cmp_fn=$meta_dir/summary_cmp.txt
 bin_summary_fn=$meta_dir/pkg_summary.txt
-enriched_summary_fn=$meta_dir/pkg_enriched_summary.txt
+enriched_summary_fn=$meta_dir/pkg_enriched_summary.tmp
 
 check_unregistered_conflicts_fn=$meta_dir/check_unregistered_CONFLICTS.txt
 check_missing_progs_fn=$meta_dir/check_missing_programs.txt
