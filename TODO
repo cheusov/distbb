@@ -1,5 +1,9 @@
 Plan0)
 
+ - upload binaries first and then pkg_summary
+ - compare with previous branch results
+ - temporary directories in REQUIRES
+
  - Ensure that dependencies activated using bl3 PROVIDEs something
    REQUIRED by the package.
 
