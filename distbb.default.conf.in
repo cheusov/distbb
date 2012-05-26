@@ -191,18 +191,16 @@ fi
 # The target "Init" is special. It makes the following:
 #    remove /usr/pkg directory (see RMDIRS_CMD)
 #    unpack bootstrap (see EXTRACT_BOOTSTRAP_CMD)
-# Available target checks PKG_FAIL_REASON...
+# The target "Available" checks PKG_FAIL_REASON...
 #    It is recommended to include it to TARGETS,
 #    otherwise counters in "Failures per maintainer" will
 #    be not fully correct
-# Vars lists bmake's variables for easier debugging
+# The "Vars" lists bmake's variables for easier debugging
 if test -n "$UNPRIV_USER"; then
     assign TARGETS "Init Clean Available Excluded Vars Depends fetch checksum extract patch configure build Package"
 else
     assign TARGETS "Init Clean Available Excluded Vars Depends fetch checksum extract patch configure build package"
 fi
-#  the following is for USE_DESTDIR=yes
-#assign TARGETS "Init Clean Available Excluded Vars Depends fetch checksum extract patch configure build package"
 
 # extra options passed to bmake
 # BATCH is mandatory for bulk builds!
