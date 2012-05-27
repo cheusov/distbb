@@ -9,7 +9,5 @@
 
 . @libexecdir@/common
 
-print_binrep_spec_files
-
 pkg_grep_summary -e NO_BIN_ON_CDROM < "$bin_summary_fn" |
 awk -F= "\$1 == \"PKGNAME\" {print \"All/\" \$2 \"$PKG_SUFX\"}"

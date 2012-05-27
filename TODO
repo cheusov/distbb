@@ -1,6 +1,5 @@
 Plan0)
 
- - upload binaries first and then pkg_summary
  - compare with previous branch results
  - temporary directories in REQUIRES
 
