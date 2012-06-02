@@ -109,6 +109,7 @@ enriched_summary_fn=$meta_dir/pkg_enriched_summary.tmp
 check_unregistered_conflicts_fn=$meta_dir/check_unregistered_CONFLICTS.txt
 check_missing_progs_fn=$meta_dir/check_missing_programs.txt
 check_required_vs_provides_fn=$meta_dir/check_REQUIRES_vs._PROVIDES.txt
+check_broken_REQUIRES_fn=$meta_dir/check_broken_REQUIRES.txt
 check_configure_errors_fn=$meta_dir/check_configure_errors.txt
 check_PLIST_errors_fn=$meta_dir/check_PLIST_errors.txt
 check_missing_headers_fn=$meta_dir/check_missing_headers.txt
