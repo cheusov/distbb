@@ -80,7 +80,7 @@ DBB_QVARS.CONFIGURE_SCRIPT=		1
 
 Vars:
 .for v in ${DBB_VARS}
-.if !empty(${v})
+.if !empty(${v}:U)
 	@echo ${v}:
 .if empty(DBB_QVARS.${v})
 	@printf '    '; \
