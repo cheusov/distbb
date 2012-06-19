@@ -60,7 +60,7 @@ EOF
 }
 
 partial_bb (){
-    exclude_stage_summary=1
+    export exclude_stage_summary=1 # see stage_checks
     exclude_stage_checksum=1
     exclude_stage_upload_pkgs=1
 }
