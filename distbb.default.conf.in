@@ -332,8 +332,7 @@ assign UPLOAD_PKGS_FILES "@libexecdir@/upload_pkgs_all_files"
 #assign UPLOAD_PKGS_FILES "@libexecdir@/upload_pkgs_built_total"
 #assign UPLOAD_PKGS_FILES "@libexecdir@/upload_pkgs_no_bin_on_cdrom"
 #assign UPLOAD_PKGS_FILES "@libexecdir@/upload_pkgs_no_bin_on_ftp"
-# Do not add --delete-excluded to UPLOAD_PKGS_PROG!!!
-assign UPLOAD_PKGS_PROG "$RSYNC_CMD -a --files-from=- -e ssh ."
+assign UPLOAD_PKGS_PROG "$RSYNC_CMD -a --delete-excluded --files-from=- -e ssh ."
 assign UPLOAD_PKGS_ATTEMPTS 1 # 0 - means no limit
 assign UPLOAD_PKGS_PAUSE 60 # seconds between attempts
 
