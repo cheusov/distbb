@@ -24,19 +24,23 @@ BUILD_ID="$1"
 ######################################################################
 
 gen_required_vs_provides (){
-    verbose_print "  PROVIDES/REQUIRES consistency ... "
-    pkg_lint_summary -p "$PKGSRC_PREFIX" -l "$PKG_SUMMARY" |
-    awk '{$1=$2=""; print substr($0, 3)}' > "$check_required_vs_provides_fn"
-    verbose_print '\n'
+    if test -z "$exclude_stage_summary"; then
+	verbose_print "  PROVIDES/REQUIRES consistency ... "
+	pkg_lint_summary -p "$PKGSRC_PREFIX" -l "$PKG_SUMMARY" |
+	awk '{$1=$2=""; print substr($0, 3)}' > "$check_required_vs_provides_fn"
+	verbose_print '\n'
+    fi
 }
 
 gen_broken_REQUIRES (){
-    verbose_print "  broken REQUIRES ... "
-    re='/home|/srv|/work|/tmp'
-    pkg_grep_summary -f PKGNAME,PKGPATH,REQUIRES,PKG_OPTIONS \
-	-t re REQUIRES "^($re)" < "$PKG_SUMMARY" |
-    grep -E "^REQUIRES=($re)|^PKGNAME=|^PKGPATH=|^PKG_OPTIONS=|^$" > "$check_broken_REQUIRES_fn"
-    verbose_print '\n'
+    if test -z "$exclude_stage_summary"; then
+	verbose_print "  broken REQUIRES ... "
+	re='/home|/srv|/work|/tmp'
+	pkg_grep_summary -f PKGNAME,PKGPATH,REQUIRES,PKG_OPTIONS \
+	    -t re REQUIRES "^($re)" < "$PKG_SUMMARY" |
+	grep -E "^REQUIRES=($re)|^PKGNAME=|^PKGPATH=|^PKG_OPTIONS=|^$" > "$check_broken_REQUIRES_fn" || true
+	verbose_print '\n'
+    fi
 }
 
 gen_unregistered_CONFLICTS (){
