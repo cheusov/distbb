@@ -17,12 +17,12 @@ distbb - distributed bulk builds framework for pkgsrc (www.pkgsrc.org).
        (pkg_src_summary stage) is also distributed.
        Different packages are analysed in parallel .
      - DISTBB is _really_ modular. Tool for running things in parallel
-       is completely independent from DISTBB. It is a separate (wip/paexec)
+       is completely independent from DISTBB. It is a separate (parallel/paexec)
        universal tool which is developped and packaged separatedly.
        Another thing separated from DISTBB is a collection of tools
        for manipulating so called packages summary. See pkg_summary(5)
-       and wip/pkg_summary-utils package for more information.
-       Other helper tools are wip/pipestatus and wip/runawk.
+       and pkgtools/pkg_summary-utils package for more information.
+       Other helper tools are devel/pipestatus and lang/runawk.
      - DISTBB is small. It is as small as Hubert Feyrer's
        bulk build framework and is more than 30% smaller than
        Joerg Sonnenberger's pbulk. At the same time
@@ -65,7 +65,7 @@ distbb - distributed bulk builds framework for pkgsrc (www.pkgsrc.org).
        and distbb continuos to work with the rest clients
        moving broken package (if any) to other alive client.
      - Normally DISTBB receives packages in PKGPATH form, e.g. archivers/gzip,
-       wip/distbb etc. One can also use so called enriched PKGPATHs.
+       pkgtools/distbb etc. One can also use so called enriched PKGPATHs.
        Enriching here means additional building options in the following form
          category/package[:var1=value1[,var2=value2[,...]]]
        For example,
@@ -136,10 +136,10 @@ CONFIGURATION/TUTORIAL:
        # cd /usr/pkgsrc/bootstrap/
        # ./bootstrap --prefix /usr/pkg_distbb
 
-   - install wip/distbb in it
+   - install pkgtools/distbb in it
 
      Example:
-       # cd /usr/pkgsrc/wip/distbb
+       # cd /usr/pkgsrc/pkgtools/distbb
        # /usr/pkg_distbb/bin/bmake install
 
    - install other software you may need (rsync, nbpatch etc.)

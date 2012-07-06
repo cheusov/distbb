@@ -1,7 +1,5 @@
 Plan0)
 
- - remove wip/ from README
-
  - compare with previous branch results
 
  - Ensure that dependencies activated using bl3 PROVIDEs something
