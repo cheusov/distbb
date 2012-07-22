@@ -11,3 +11,5 @@
 
 cat "$bin_summary_fn" |
 awk -F= "\$1 == \"PKGNAME\" {print \"All/\" \$2 \"$PKG_SUFX\"}"
+
+print_binrep_spec_files

@@ -31,8 +31,7 @@ export REPORT1_DIR REPORTS_DIR BUILD_ID
 a=1
 while true; do
     ex=0
-    if eval "$UPLOAD_PKGS_FILES | $UPLOAD_PKGS_PROG $UPLOAD_PKGS_DEST" &&
-	print_binrep_spec_files  | $UPLOAD_PKGS_PROG $UPLOAD_PKGS_DEST; then
+    if eval "$UPLOAD_PKGS_FILES | $UPLOAD_PKGS_PROG $UPLOAD_PKGS_DEST"; then
 	break
     else
 	ex=$?
