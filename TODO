@@ -1,5 +1,7 @@
 Plan0)
 
+ - Fix assign (problem with SLAVE=' ' and PSS_SLAVES='')
+
  - compare with previous branch results
 
  - Ensure that dependencies activated using bl3 PROVIDEs something
