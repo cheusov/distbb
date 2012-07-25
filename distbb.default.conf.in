@@ -340,9 +340,17 @@ assign UPLOAD_PKGS_PAUSE 60 # seconds between attempts
 #assign UPLOAD_LOGS_DEST you@your-domain.com:~/public_html/pkgsrc-distbb/logs/
 assign UPLOAD_LOGS_PROG "$RSYNC_CMD -a --delete-excluded --exclude \"*.tmp\" -e ssh"
 
+# Uncomment the following if you want to send_report before upload_pkgs
+#SEND_REPORT_FIRST=yes
+
 # list of building stages, except 'init'
+if test -n "$SEND_REPORT_FIRST"; then
+    pkgs_n_report='send_report upload_pkgs'
+else
+    pkgs_n_report='upload_pkgs send_report'
+fi
 assign BUILD_STAGES \
-    'build gen_report_data summary checks gen_report update_best checksum upload_logs upload_pkgs send_report'
+    "build gen_report_data summary checks gen_report update_best checksum upload_logs $pkgs_n_report"
 
 # Extra options passed to paexec(1)
 #assign PAEXEC_EXTRA_OPTS -z
