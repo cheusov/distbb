@@ -76,7 +76,7 @@ printf '' > $progress_fn
 ######################################################################
 ### unpacking bootstrap
 verbose_print "  removing PREFIX and unpacking bootstrap..."
-if test -n "$MASTER_MODE"; then
+if is_true "$MASTER_MODE"; then
     for s in $SLAVES; do
 	eval $TRANSPORT "$s" @libexecdir@/wrapper $RMDIRS_CMD
 	eval $TRANSPORT "$s" @libexecdir@/wrapper $EXTRACT_BOOTSTRAP_CMD
@@ -106,7 +106,7 @@ if test "$packages"; then
     # remove comments and empty lines
     cleanup_package_list > "$raw_packages_fn"
 else
-    if test -n "$MASTER_MODE" -a -n "$TRANSPORT" -a -n "$SLAVES"; then
+    if is_true "$MASTER_MODE" -a -n "$TRANSPORT" -a -n "$SLAVES"; then
 	slave1="$(echo $SLAVES | sed 's, .*$,,')"
 	environ="BMAKE=$BMAKE PKGSRCDIR=$PKGSRCDIR CKSUM=$CKSUM"
 	eval $TRANSPORT $slave1 "env $environ @libexecdir@/wrapper $LIST_ALL_PKGS_CMD" > "$raw_packages_fn"
@@ -128,7 +128,7 @@ verbose_print "done\n"
 ### updating PKG_ALL_SUMMARY
 
 if test -z "$skip_updating_summary"; then
-    if test -n "$CROSS_COMPILE"; then
+    if is_true "$CROSS_COMPILE"; then
 	verbose_print "  updating target pkg_all_summary..."
 	eval @libexecdir@/wrapper $PKG_UPDATE_ALL_SUMMARY_CMD \
 	    "$TARGET_PKG_ALL_SUMMARY" "$TARGET_PACKAGES/All"
@@ -147,12 +147,12 @@ fi
 printf '' >> "$build_src_summary_log_fn"
 
 if test -z "$skip_updating_src_summary"; then
-    if test -z "$MASTER_MODE"; then
+    if ! is_true "$MASTER_MODE"; then
 	unset PSS_SLAVES || true
     fi
 
     # target host
-    if test -n "$CROSS_COMPILE"; then
+    if is_true "$CROSS_COMPILE"; then
 	raw_target_packages_fn="$tmpdir/raw_target_packages.tmp"
 	mv "$raw_packages_fn" "$raw_target_packages_fn"
 
@@ -200,7 +200,7 @@ if test -z "$skip_updating_src_summary"; then
     set -e
     verbose_print "done\n"
 
-    if test -n "$CROSS_COMPILE"; then
+    if is_true "$CROSS_COMPILE"; then
 	raw_packages_fn="$raw_target_packages_fn"
     fi
 fi
@@ -240,7 +240,7 @@ NF == 0 {
 pkg_assignments2pkgpath "$PKG_SRC_SUMMARY" > "$pkg_src_summary_fn.tmp"
 pkg_summary2bb_pkgs "$pkg_src_summary_fn.tmp" > "$pkg_src_summary_fn"
 rm "$pkg_src_summary_fn.tmp"
-if test -n "$CROSS_COMPILE"; then
+if is_true "$CROSS_COMPILE"; then
     # build host summary
     add_BH_prefix1 "$pkg_src_summary_fn" > "$pkg_src_summary_fn.tmp"
 
@@ -285,7 +285,7 @@ sort -u > "$tmpdir/all_src_pkgpaths.tmp"
 
 all_deps_PAeNA_fn=$tmpdir/all_deps_PAeNA.tmp
 all_bin_summary_fn=$tmpdir/all_bin_summary.tmp
-if test -n "$CROSS_COMPILE"; then
+if is_true "$CROSS_COMPILE"; then
     add_BH_prefix1 "$PKG_ALL_SUMMARY" > "$all_bin_summary_fn"
     add_BH_prefix2 "$TARGET_PKG_ALL_SUMMARY" >> "$all_bin_summary_fn"
 else

@@ -60,7 +60,7 @@ list_all_built_pkgs (){
 }
 
 switch_to_target (){
-    if test -n "$CROSS_COMPILE"; then
+    if is_true "$CROSS_COMPILE"; then
 	PACKAGES="$TARGET_PACKAGES"
 	PKG_SUMMARY="$TARGET_PKG_SUMMARY"
     fi

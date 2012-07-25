@@ -194,7 +194,7 @@ test_var LIST_ALL_PKGS_CMD
 test_var DISTBB_LOCAL_MK
 test_var MSCOMMONDIR
 
-if test -n "$CROSS_COMPILE"; then
+if is_true "$CROSS_COMPILE"; then
     test_var TARGET_MAKECONF
     test_var TARGET_PACKAGES
 fi
@@ -202,7 +202,7 @@ fi
 if test "$MAIL_PROG" != ':'; then
     test_var USER_MAIL
 fi
-if test -n "$MASTER_MODE"; then
+if is_true "$MASTER_MODE"; then
     test_var SLAVES
     test_var PSS_SLAVES
 fi

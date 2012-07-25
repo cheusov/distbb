@@ -50,7 +50,7 @@ echo ''
 
 for p in $pkgs_deps; do
     echo "Installing $p..."
-    if test -z "$CROSS_COMPILE" -o ${p##BH--} != ${p}; then
+    if ! is_true "$CROSS_COMPILE" -o ${p##BH--} != ${p}; then
 	$PKG_ADD_CMD -K "${PKG_DBDIR}" \
 	    -u "$BH_PACKAGES/All/${p##BH--}$PKG_SUFX"
     else

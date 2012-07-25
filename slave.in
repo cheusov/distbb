@@ -216,7 +216,7 @@ build_package (){
 
     BH_pkg=
     TH_pkg=
-    if test -z "$CROSS_COMPILE"; then
+    if ! is_true "$CROSS_COMPILE"; then
 	long_pkgpath="$1"
     elif echo "$1" | grep ^BH-- > /dev/null; then
 	BH_pkg='BH--'

@@ -1,11 +1,22 @@
 #-*-mode:  sh -*-
 
-# Copyright (c) 2008-2011 Aleksey Cheusov <vle@gmx.net>
+# Copyright (c) 2008-2012 Aleksey Cheusov <vle@gmx.net>
 # All rights reserved.
 #
 # See LICENSE file
 
 ######################################################################
+
+is_true (){
+    case "$1" in
+	true|yes|1)
+	    return 0;;
+	false|no|0|'')
+	    return 1;;
+	*)
+	    echo "Bad value $1. Bolean value is expected" 1>&2;;
+    esac
+}
 
 assign (){
     # $1 - varname
@@ -56,7 +67,7 @@ assign WEIGH_PACKAGES_CMD @libexecdir@/gen_weights
 # set it to non-empty string if you want "distributed" bulk build
 # also see SLAVES variable
 #assign MASTER_MODE 'yes'
-#assign MASTER_MODE '' # for single-host building
+assign MASTER_MODE 'no' # for building "inplace", i.e. destroying $PREFIX
 
 # transport to the slaves
 #assign TRANSPORT '/usr/bin/ssh -x'
@@ -300,7 +311,7 @@ assign OSVER "$(uname -r)/$(uname -m)"
 
 #
 #assign PKGSRCVER 'current'
-#assign PKGSRCVER '2039Q1' # ;-)
+#assign PKGSRCVER '2012Q2'
 
 #
 #assign PACKAGES_URL "ftp://ftp.netbsd.org/pub/pkgsrc/packages/NetBSD/amd64/5.1_$PKGSRCVER/"
@@ -344,7 +355,7 @@ assign UPLOAD_LOGS_PROG "$RSYNC_CMD -a --delete-excluded --exclude \"*.tmp\" -e 
 #SEND_REPORT_FIRST=yes
 
 # list of building stages, except 'init'
-if test -n "$SEND_REPORT_FIRST"; then
+if is_true "$SEND_REPORT_FIRST"; then
     pkgs_n_report='send_report upload_pkgs'
 else
     pkgs_n_report='upload_pkgs send_report'
@@ -376,8 +387,8 @@ assign BZIP2 bzip2
 ############################################################
 # variables for cross-builds
 
-# uncomment the following for cross-compilation
-#assign CROSS_COMPILE 1
+# set the following to 1|yes|true for cross-compiling packages
+assign CROSS_COMPILE 0
 
 # similar to PACKAGES but for target platform
 assign TARGET_PACKAGES "$PKGSRCDIR/cross-packages"
@@ -412,7 +423,7 @@ if test -n "$LIBKVER_OSRELEASE"; then
     export LIBKVER_OSRELEASE
 fi
 
-if test -n "$CROSS_COMPILE"; then
+if is_true "$CROSS_COMPILE"; then
     export CROSS_COMPILE
     export TARGET_MAKECONF
 fi

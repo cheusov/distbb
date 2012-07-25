@@ -211,7 +211,7 @@ status [$2] == "failure" {
 '
 }
 
-if test "$MASTER_MODE"; then
+if is_true "$MASTER_MODE"; then
     SLAVES="-n '$SLAVES'"
     TRANSPORT="-t '$TRANSPORT'"
 else
