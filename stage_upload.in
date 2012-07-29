@@ -1,4 +1,0 @@
-#!/bin/sh
-
-@libexecdir@/stage_upload_logs "$@"
-@libexecdir@/stage_upload_pkgs "$@"
