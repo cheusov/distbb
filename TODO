@@ -1,6 +1,8 @@
 Plan0)
 
  - Fix assign (problem with SLAVE=' ' and PSS_SLAVES='')
+ - save options like -a and -l to META/tmp/somewhere
+   and restore it when -r
 
  - compare with previous branch results
 
