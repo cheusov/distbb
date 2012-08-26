@@ -344,12 +344,14 @@ assign UPLOAD_PKGS_FILES "@libexecdir@/upload_pkgs_all_files"
 #assign UPLOAD_PKGS_FILES "@libexecdir@/upload_pkgs_no_bin_on_cdrom"
 #assign UPLOAD_PKGS_FILES "@libexecdir@/upload_pkgs_no_bin_on_ftp"
 assign UPLOAD_PKGS_PROG "$RSYNC_CMD -a --delete-excluded --files-from=- -e ssh ."
-assign UPLOAD_PKGS_ATTEMPTS 1 # 0 - means no limit
+assign UPLOAD_PKGS_ATTEMPTS 5 # 0 - means no limit
 assign UPLOAD_PKGS_PAUSE 60 # seconds between attempts
 
 #
 #assign UPLOAD_LOGS_DEST you@your-domain.com:~/public_html/pkgsrc-distbb/logs/
 assign UPLOAD_LOGS_PROG "$RSYNC_CMD -a --delete-excluded --exclude \"*.tmp\" -e ssh"
+assign UPLOAD_LOGS_ATTEMPTS 5 # 0 - means no limit
+assign UPLOAD_LOGS_PAUSE 60 # seconds between attempts
 
 # Uncomment the following if you want to send_report before upload_pkgs
 #SEND_REPORT_FIRST=yes

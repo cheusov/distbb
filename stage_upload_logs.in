@@ -22,5 +22,20 @@ BUILD_ID="$1"
 
 # main
 verbose_print "  uploading logs... "
-eval $UPLOAD_LOGS_PROG $REPORT1_DIR $UPLOAD_LOGS_DEST
+
+a=1
+while true; do
+    ex=0
+    if eval $UPLOAD_LOGS_PROG $REPORT1_DIR $UPLOAD_LOGS_DEST; then
+	break
+    else
+	ex=$?
+    fi
+    if test "$a" -eq "$UPLOAD_LOGS_ATTEMPTS"; then
+	break
+    fi
+    a=$(($a+1))
+    sleep "$UPLOAD_LOGS_PAUSE"
+done
+
 verbose_print "done\n"
