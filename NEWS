@@ -1,4 +1,41 @@
 ===================================================================
+Version 0.45.0 by Aleksey Cheusov, Sat, 25 Feb 2012 11:43:56 +0300
+
+  Fix rare failures in "Clean" target. Thanks to David Holland!
+
+  New configuration variable SEND_REPORT_FIRST was introduced.
+
+  Boolean variables MASTER_MODE, CROSS_COMPILE, SEND_REPORT_FIRST
+  accepts values true|yes|1 for logical TRUE and false|no|0 for
+  logical FALSE. This may fix some hacks in single node setups.
+
+  During upload rsync may unexpectedly fail due to connection
+  failure. In order to resolve this problem, upload may be repeated
+  several times. The following variables were introduced for this
+  purpose: UPLOAD_PKGS_ATTEMPTS, UPLOAD_PKGS_PAUSE,
+  UPLOAD_LOGS_ATTEMPTS, UPLOAD_LOGS_PAUSE.
+
+  Progress messages now better illustrates internal structure of
+  the build process.
+
+  Option -a was added to distbb(1) in order to build updates for
+  quarter releases more efficiently.
+
+  stage_checks:
+    - double underline in "checks" filename means _ in the report
+      text, single underline means space.
+    - one more check for broken pkg_summary (REQUIRES field).  It
+      checks for libraries under /tmp, /home, /srv and /work
+      directories.
+
+  stage_upload_logs:
+    - huge pkg_enriched_summary.txt is not uploaded
+
+  README was updated
+
+  Minor clean-ups
+
+===================================================================
 Version 0.44.0 by Aleksey Cheusov, Sat, 25 Feb 2012 11:43:56 +0300
 
   Improvements for report:
