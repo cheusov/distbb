@@ -1,5 +1,11 @@
 ===================================================================
-Version 0.45.0 by Aleksey Cheusov, Sat, 25 Feb 2012 11:43:56 +0300
+Version 0.45.1 by Aleksey Cheusov, Sun,  2 Sep 2012 22:19:40 +0300
+
+  On slave hosts run distbb_wrapper with
+  "env DISTBB_CONF=$DISTBB_CONF". Fix may fix some setups.
+
+===================================================================
+Version 0.45.0 by Aleksey Cheusov, Sun,  26 Aug 2012 19:52:18 +0300
 
   Fix rare failures in "Clean" target. Thanks to David Holland!
 
