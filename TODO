@@ -1,5 +1,6 @@
 Plan0)
 
+ - Do not upload pkg_all_summary.txt
  - Fix assign (problem with SLAVE=' ' and PSS_SLAVES='')
  - save options like -a and -l to META/tmp/somewhere
    and restore it when -r
