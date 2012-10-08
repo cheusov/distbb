@@ -32,4 +32,4 @@ fi
 
 env="$env DISTBB_CONF=$DISTBB_CONF"
 
-$SUDO chroot $root$id su - root -c "env $env $*"
+$DISTBB_SUDO chroot $root$id su - root -c "env $env $*"
