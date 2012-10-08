@@ -23,13 +23,6 @@ shift
 id="$1"
 shift
 
-if test -n "$LD_PRELOAD"; then
-	env="LD_PRELOAD=$LD_PRELOAD"
-fi
-if test -n "$LIBKVER_OSRELEASE"; then
-	env="$env LIBKVER_OSRELEASE=$LIBKVER_OSRELEASE"
-fi
-
 env="$env DISTBB_CONF=$DISTBB_CONF"
 
 $SUDO chroot $root$id su - root -c "env $env $*"
