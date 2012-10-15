@@ -35,8 +35,9 @@ print_binrep_spec_files (){
     echo All/pkg_summary.bz2
     echo All/pkg_summary.gz
     echo All/pkg_summary.txt
-    echo SHA512.gz
     echo SHA512.bz2
+    echo SHA512.gz
+    echo SHA512.txt
 }
 
 filter_out (){
