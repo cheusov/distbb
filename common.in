@@ -70,7 +70,7 @@ switch_to_target (){
 rsync_upload (){
     # upload files from stdin and remove the rest
     awk 'BEGIN {print "+ All"} {print "+", $0} END {print "- *"}' |
-    $RSYNC_CMD -av --exclude-from=- --delete-excluded --delete-delay -e ssh . "$@"
+    $RSYNC_CMD -a --exclude-from=- --delete-excluded --delete-delay -e ssh . "$@"
 }
 
 export LC_ALL=C # for sort and uniq
