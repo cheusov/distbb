@@ -71,11 +71,24 @@ full_bb (){
     unset exclude_stage_upload_pkgs || true
 }
 
+is_stage_valid (){
+    # $1 - stage name
+    for s in $BUILD_STAGES; do
+	if test "$1" = "$s"; then
+	    return 0
+	fi
+    done
+    echo "Bad stage $1" 1>&2
+    exit 1
+}
+
 exclude (){
+    excluded_stages="$excluded_stages $1"
     eval "exclude_stage_$1=1"
 }
 
 unexclude (){
+    unexcluded_stages="$unexcluded_stages $1"
     unset "exclude_stage_$1" || true
 }
 
@@ -156,6 +169,11 @@ echo "BUILD_ID: $BUILD_ID" 1>&2
 : ${DISTBB_CONF:=@sysconfdir@/distbb.conf}
 . "$DISTBB_CONF"
 . @libexecdir@/common
+
+# -x|-X sanity checks
+for s in $excluded_stages $unexcluded_stages; do
+    is_stage_valid "$s"
+done
 
 export DISTBB_CONF
 ######################################################################

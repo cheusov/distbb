@@ -21,8 +21,6 @@ Plan0)
 
  - Update README!!!
 
- - -x and -X: check for stage correctness
-
  - pkg_info -N
 
  - use shlock for protection against running several instances of distbb
