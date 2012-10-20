@@ -23,6 +23,14 @@ shift
 id="$1"
 shift
 
+if test -z "$DISTBB_CONF"; then
+    echo 'distbb_chroot: DISTBB_CONF cannot be empty' 1>&2
+    exit 1
+fi
+
+. "$DISTBB_CONF"
+
+# Wee need LD_PRELOAD and LIBKVER_OSRELEASE for pkg_src_summary
 if test -n "$LD_PRELOAD"; then
 	env="LD_PRELOAD=$LD_PRELOAD"
 fi
@@ -30,6 +38,7 @@ if test -n "$LIBKVER_OSRELEASE"; then
 	env="$env LIBKVER_OSRELEASE=$LIBKVER_OSRELEASE"
 fi
 
+# and DISTBB_CONF for "slave" script
 env="$env DISTBB_CONF=$DISTBB_CONF"
 
 $DISTBB_SUDO chroot $root$id su - root -c "env $env $*"
