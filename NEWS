@@ -2,7 +2,7 @@
 Version 0.45.1 by Aleksey Cheusov, Sun,  2 Sep 2012 22:19:40 +0300
 
   On slave hosts run distbb_wrapper with
-  "env DISTBB_CONF=$DISTBB_CONF". Fix may fix some setups.
+  "env DISTBB_CONF=$DISTBB_CONF". This may fix some setups.
 
 ===================================================================
 Version 0.45.0 by Aleksey Cheusov, Sun,  26 Aug 2012 19:52:18 +0300
