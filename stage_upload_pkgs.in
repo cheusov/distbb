@@ -17,6 +17,8 @@ test $# -eq 1
 BUILD_ID="$1"
 
 : ${DISTBB_CONF:=@sysconfdir@/distbb.conf}
+export DISTBB_CONF
+
 . "$DISTBB_CONF"
 . @libexecdir@/common
 
