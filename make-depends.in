@@ -39,7 +39,7 @@ get_deps (){
     tsort | awk -v p="$1" '$1 != p'
 }
 
-unset PKG_PATH || true
+export PKG_PATH=/nonexistent
 
 pkgs_deps=`get_deps $1`
 echo 'Packages to install:'
@@ -49,6 +49,7 @@ done
 echo ''
 
 for p in $pkgs_deps; do
+    echo ' -------------'
     echo "Installing $p..."
     if ! is_true "$CROSS_COMPILE" -o ${p##BH--} != ${p}; then
 	$PKG_ADD_CMD -K "${PKG_DBDIR}" \
