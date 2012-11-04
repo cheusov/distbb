@@ -143,8 +143,6 @@ NF == 3 {
 	# if $3 in pkg_src_summary but not in pkg_all_summary...
 	if (($3 in src_PAeNA) && !(PAeNA2PANA($3) in bin_PANA))
 		updated_PAeNA [$3] = 1
-	else
-		$3 = ""
 
 	if (src_dep && !src_PAeNA [src_dep])
 		print_dep($1, src_dep, $3)
