@@ -28,16 +28,16 @@ fi
 test $# -eq 1
 
 get_deps (){
-    {
-	pkgs=`awk '$1 == "BUILD_DEPENDS"' "$aux_reqd_deps_fn" |
-	pkg_subgraph_deps -rx1 -p "$1" | awk '{print $NF}'`
-	pkgs=`echo $pkgs`
+    pkgs=`grep '^BUILD_DEPENDS ' "$aux_reqd_deps_fn" |
+	pkg_subgraph_deps -r1n -p "$1"`
+    pkgs_=`echo $pkgs`
 
-	awk '$1 == "BUILD_DEPENDS" {print $2 "\n" $3; next} {print}' \
-	    "$aux_reqd_deps_fn" |
-	pkg_subgraph_deps -rt -p "$1 $pkgs"
+    {
+	printf '%s\n' "$pkgs"
+
+	awk 'NF == 1 || /^DEPENDS / {print $2, $3}' "$aux_reqd_deps_fn"
     } |
-    awk 'NF == 3 {print $2, $3; next} {print}' |
+    pkg_subgraph_deps -rt -p "$pkgs_" |
     tsort | awk -v p="$1" '$1 != p'
 }
 
