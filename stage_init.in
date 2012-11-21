@@ -326,10 +326,18 @@ fi
 
 PAeNA2NA  "$tmpdir/reqd_deps_PAeNA.tmp" > "$reqd_deps_NA_fn"
 
-pkg_subgraph_deps -f "$tmpdir/updated_PAeNA.tmp" \
-    "$tmpdir/reqd_deps_PAeNA.tmp" |
-PAeNA2PAe > "$rebuild_PAe_fn"
+# Rebuild dependency tree for DEPENDS
+awk 'NF==1 || /^DEPENDS /' "$tmpdir/reqd_deps_PAeNA.tmp" |
+pkg_subgraph_deps -f "$tmpdir/updated_PAeNA.tmp" > "$rebuild_PAe_fn"
+# Add one-package-size deps for BUILD_DEPENDS
+grep '^BUILD_DEPENDS ' "$tmpdir/reqd_deps_PAeNA.tmp" |
+pkg_subgraph_deps -1f "$tmpdir/updated_PAeNA.tmp" >> "$rebuild_PAe_fn"
 
+# PAeNA2PAe
+PAeNA2PAe "$rebuild_PAe_fn" > "$rebuild_PAe_fn".tmp
+mv "$rebuild_PAe_fn".tmp "$rebuild_PAe_fn"
+
+#
 printf '' > "$summary_cmp_fn"
 
 # rebuilt previously
