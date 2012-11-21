@@ -129,10 +129,12 @@ fi
 exclude_stage_upload_pkgs="${exclude_stage_upload_pkgs}${exclude_stage_upload}"
 exclude_stage_upload_logs="${exclude_stage_upload_logs}${exclude_stage_upload}"
 
+on_exit () { rm -f $pkgs_fn; }
+. @prefix@/libexec/psu/sig_handler.sh
+
 if test -n "$pkgs$installed"; then
     export pkgs_fn=`mktemp /tmp/distbb.XXXXXX`
     test -n "$pkgs_fn"
-    trap "rm -f $pkgs_fn" 0 1 2 15
 
     if test -n "$pkgs"; then
 	for p in $pkgs; do
