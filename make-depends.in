@@ -16,6 +16,8 @@
 
 set -e
 
+. "$DISTBB_CONF"
+
 export PATH=@bindir@:$PATH
 
 if test -z "$aux_reqd_deps_fn"; then

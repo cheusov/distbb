@@ -21,6 +21,7 @@ unset PKG_PATH || true
 unset PKG_SUFX || true
 
 export BINPKG_SITES=$PACKAGES
+export DISTBB_CONF
 
 ######################################################################
 # temp directory
