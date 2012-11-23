@@ -29,7 +29,7 @@ list_built_pkgs |
 xargs pkg_bin_summary -e -a NO_BIN_ON_CDROM,NO_BIN_ON_FTP -k 'sha512' \
     > "$bin_summary_fn"
 
-if test -n "$add_new_summaries"; then
+if test -n "$add_new_summaries" -a -f "$PKG_SUMMARY"; then
     pkg_uniq_summary -Fn "$bin_summary_fn" "$PKG_SUMMARY" > "$PKG_SUMMARY".tmp
 else
     cp "$bin_summary_fn" "$PKG_SUMMARY".tmp
