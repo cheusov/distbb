@@ -29,7 +29,7 @@ test $# -eq 1
 
 get_deps (){
     pkgs=`grep '^BUILD_DEPENDS ' "$aux_reqd_deps_fn" |
-	pkg_subgraph_deps -r1n -p "$1"`
+	pkg_subgraph_deps -r1nx -p "$1"`
     pkgs_=`echo $pkgs`
 
     {
@@ -37,7 +37,7 @@ get_deps (){
 
 	awk 'NF == 1 || /^DEPENDS / {print $2, $3}' "$aux_reqd_deps_fn"
     } |
-    pkg_subgraph_deps -rt -p "$pkgs_" |
+    pkg_subgraph_deps -rt -p "$1 $pkgs_" |
     tsort | awk -v p="$1" '$1 != p'
 }
 
