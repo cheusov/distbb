@@ -1,4 +1,33 @@
 ===================================================================
+Version 0.46.0 by Aleksey Cheusov, Sat,  2 Feb 2013 13:56:38 +0300
+
+  stage_upload_pkgs:
+    - delete outdated packages after uploading
+    - extra files are removed from remote repo
+    - no verbose flag for rsync
+
+  Serious fixes in stage_init
+    - PKG_UPDATE_SRC_SUMMARY_CMD: -m is passed to pkg_src_summary by default
+
+  Fix in signals handling
+
+  Fix in "make-depends" (unknown function is_true)
+
+  Fix: distbb -a option works correctly if pkg_summary.txt doesn't exist
+
+  upload_pkgs_all_files:
+    - directories and links are also output in addition to files
+
+  distbb checks arguments passed to -x|-X for correctness.
+
+  Configuraton variable SUDO was renamed to to DISTBB_SUDO.
+  This fixed build failure of ruby193-base
+
+  Configuraton variable OS was renamed to OPSYS
+
+  Stderr of pkg_summary2deps is now a part of the final report
+
+===================================================================
 Version 0.45.1 by Aleksey Cheusov, Sun,  2 Sep 2012 22:19:40 +0300
 
   On slave hosts run distbb_wrapper with
