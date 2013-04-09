@@ -304,7 +304,7 @@ assign LOG_SIZE_LIMIT 50000000 # ~50Mb seems good enough
 #assign LOG_SIZE_LIMIT 0 # no limit! Are you sure?
 
 #
-assign OS "$(uname -s)"
+assign OPSYS "$(uname -s)"
 
 #
 assign OSVER "$(uname -r)/$(uname -m)"
