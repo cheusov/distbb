@@ -180,9 +180,9 @@ if test -z "$skip_updating_src_summary"; then
 	    echo '-----------------' >> "$build_src_summary_log_fn"
 	fi
 
-	# getting BUILD_DEPENDS from target src_summary
+	# getting TOOL_DEPENDS from target src_summary
 	runawk -f braceexpand.awk -e '
-	    match($0, /^BUILD_DEPENDS=/) {
+	    match($0, /^TOOLS_DEPENDS=/) {
 		$0 = substr($0, RLENGTH+1)
 		for (i=1; i <= NF; ++i){
 		    if ($i ~ /[{]/) $i = braceexpand($i)
@@ -222,6 +222,9 @@ add_BH_prefix1 (){
    print $0
    next
 }
+{
+  sub(/^TOOL_DEPENDS=/, "BUILD_DEPENDS=")
+}
 match($0, /^(BUILD_)?DEPENDS=/) {
    prepand_pkgpath("BH--")
 }
@@ -231,11 +234,11 @@ match($0, /^(BUILD_)?DEPENDS=/) {
 
 add_BH_prefix2 (){
     runawk -f distbb.awk -e '
-match($0, /^BUILD_DEPENDS=/) { prepand_pkgpath("BH--"); bdeps = $0; }
-/^TARGET_BUILD_DEPENDS=/ { tbdeps = substr($0, 22); }
+match($0, /^TOOL_DEPENDS=/) { prepand_pkgpath("BH--"); bdeps = substr($0, RLENGTH+1); }
+match($0, /^(BUILD_)?DEPENDS=/) { tbdeps = substr($0, RLENGTH+1); }
 NF == 0 {
    if (bdeps)
-      print bdeps, tbdeps
+      print "BUILD_DEPENDS=" bdeps, tbdeps
    bdeps = tbdeps = ""
 }
 { print $0 }
