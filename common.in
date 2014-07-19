@@ -73,6 +73,18 @@ rsync_upload (){
     $RSYNC_CMD -a --exclude-from=- --delete-excluded --delete-delay -e ssh . "$@"
 }
 
+shquote (){
+    __cmd=`printf '%s\n' "$1" | sed "s|'|'\\\\\''|g"`
+    printf "%s\n" "'$__cmd'"
+}
+
+shquote_all (){
+    for i in "$@"; do
+	shquote "$i"
+	printf ' '
+    done
+}
+
 export LC_ALL=C # for sort and uniq
 
 ######################################################################

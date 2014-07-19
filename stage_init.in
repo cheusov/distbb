@@ -84,8 +84,8 @@ printf '' > $progress_fn
 verbose_print "  removing PREFIX and unpacking bootstrap..."
 if is_true "$MASTER_MODE"; then
     for s in $SLAVES; do
-	$TRANSPORT "$s" "env DISTBB_CONF=$DISTBB_CONF @libexecdir@/wrapper $RMDIRS_CMD"
-	$TRANSPORT "$s" "env DISTBB_CONF=$DISTBB_CONF @libexecdir@/wrapper $EXTRACT_BOOTSTRAP_CMD"
+	eval "$TRANSPORT '$s' 'env DISTBB_CONF=$DISTBB_CONF @libexecdir@/wrapper $RMDIRS_CMD'"
+	eval "$TRANSPORT '$s' 'env DISTBB_CONF=$DISTBB_CONF @libexecdir@/wrapper $EXTRACT_BOOTSTRAP_CMD'"
     done
 else
     eval @libexecdir@/wrapper $RMDIRS_CMD
@@ -114,7 +114,7 @@ if test "$packages"; then
 else
     if is_true "$MASTER_MODE" -a -n "$TRANSPORT" -a -n "$SLAVES"; then
 	slave1="$(echo $SLAVES | sed 's, .*$,,')"
-	$TRANSPORT "$slave1" "env DISTBB_CONF=$DISTBB_CONF @libexecdir@/wrapper $LIST_ALL_PKGS_CMD" > "$raw_packages_fn"
+	eval "$TRANSPORT '$slave1' 'env DISTBB_CONF=$DISTBB_CONF @libexecdir@/wrapper $LIST_ALL_PKGS_CMD'"
     else
 	eval @libexecdir@/wrapper $LIST_ALL_PKGS_CMD > "$raw_packages_fn"
     fi

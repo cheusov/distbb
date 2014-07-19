@@ -7,15 +7,35 @@
 
 ######################################################################
 
-# distbb_chroot is a ssh/rsh-like transport programs used by distbb(1)
-# usage: distbb_chroot <chroot_rootdir> <chroot_id> <cmd> <args>
-# example:
-#     mkdir /var/chroot/box1
-#     mkdir /var/chroot/box2
-#     cp -Rp /bin /sbin ... /var/chroot/box1
-#     cp -Rp /bin /sbin ... /var/chroot/box2
-#     distbb_chroot /var/chroot/ box1 ls -la /
-#     distbb_chroot /var/chroot/ box2 ls -la /
+usage (){
+    cat <<'EOF'
+distbb_chroot is a ssh/rsh-like transport programs used by distbb(1)
+Usage: distbb_chroot <chroot_rootdir> <chroot_id> <cmd> <args>
+Example:
+     mkdir /var/chroot/box1
+     mkdir /var/chroot/box2
+     cp -Rp /bin /sbin ... /var/chroot/box1
+     cp -Rp /bin /sbin ... /var/chroot/box2
+     distbb_chroot /var/chroot/ box1 ls -la /
+     distbb_chroot /var/chroot/ box2 ls -la /
+Example:
+     distbb_chroot -p 'ssh root@remotehost' /var/chroot/ box2 ls -la /
+EOF
+}
+
+while getopts hp: f; do
+    case "$f" in
+        h)  usage; exit 0;;
+        p)  prefixcmd="$OPTARG";;
+        \?) usage; exit 1;;
+    esac
+done
+shift `expr $OPTIND - 1`
+
+if test $# -lt 3; then
+    usage
+    exit 1
+fi
 
 root="$1"
 shift
@@ -28,24 +48,18 @@ if test -z "$DISTBB_CONF"; then
     exit 1
 fi
 
-shquote (){
-    __cmd=`printf '%s\n' "$1" | sed "s|'|'\\\\\''|g"`
-    printf "%s\n" "'$__cmd'"
-}
-
-shquote_all (){
-    for i in "$@"; do
-	shquote "$i"
-	printf ' '
-    done
-}
+. "$DISTBB_CONF"
+BUILD_ID=fake
+. @libexecdir@/common
 
 cmd=`shquote_all "$@"`
 
 # and DISTBB_CONF for "slave" script
 env="$env DISTBB_CONF='$DISTBB_CONF'"
 
-#echo cmd="$cmd" 1>&2
-#echo '$root$id='$root$id 1>&2
-
-$DISTBB_SUDO chroot $root$id sh -c "eval env $env $cmd"
+full_cmd="$DISTBB_SUDO chroot $root$id sh -c \"eval env $env $cmd\""
+if test -n "$prefixcmd"; then
+    $prefixcmd "$full_cmd"
+else
+    $full_cmd
+fi
