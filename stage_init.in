@@ -116,8 +116,8 @@ else
 	slave1="$(echo $SLAVES | sed 's, .*$,,')"
 	eval "$TRANSPORT '$slave1' 'env DISTBB_CONF=$DISTBB_CONF @libexecdir@/wrapper $LIST_ALL_PKGS_CMD'"
     else
-	eval @libexecdir@/wrapper $LIST_ALL_PKGS_CMD > "$raw_packages_fn"
-    fi
+	eval "@libexecdir@/wrapper $LIST_ALL_PKGS_CMD"
+    fi > "$raw_packages_fn"
 fi
 
 # add extra packages to the list of packages requested by user
