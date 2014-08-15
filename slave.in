@@ -193,17 +193,11 @@ do_build_package (){
 		    eval "$ULIMIT_CMD"
 		    # workaround for buggy shells (FreeBSD, DragonFly,
 		    # Interix) ('set -e' + if + eval + false)
-		    set +e
-		    if ! eval "\$SU_UNPRIV_CMD_$t" \
+		    eval "\$SU_UNPRIV_CMD_$t" \
 			env $bmake_env $BMAKE -f Makefile \
 			-f "$DISTBB_LOCAL_MK" \
 			-f @datadir@/distbb.mk \
 			$bmake_opts $t $stdin_from_dev_null
-		    then
-			set -e
-			return 1
-		    fi
-		    set -e
 		)
 		;;
 	esac
