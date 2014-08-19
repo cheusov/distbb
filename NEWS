@@ -1,4 +1,29 @@
 ===================================================================
+Version 0.47.0 by Aleksey Cheusov, Sun,  3 Aug 2014 16:07:19 +0300
+
+  TOOL_DEPENDS is supported by default (pkg_src_summary stage)
+
+  Support for cross-builds (not tested yet)
+
+  stage_checks:
+    - gen_unregistered_CONFLICTS was disabled, it is too slow.
+    - additional section for memory allocation failures was added.
+    - improvements for "missing progs", "missign header" and "library
+      not found sections".
+
+  distbb_chroot:
+    - Option -p was added and other improvements.
+
+  distbb.conf and distbb.default.conf:
+    - Variable OS was renamed to OPSYS
+    - home-made function "assign" was replaced with :=
+    - New config variable ULIMIT_CMD was introduced.
+      It defaults to "ulimit -t 1800"
+
+  upload_pkgs_all_files: fix find(1) arguments.
+  Thanks to Andrey Oktyabrski for the report.
+
+===================================================================
 Version 0.46.0 by Aleksey Cheusov, Sat,  2 Feb 2013 13:56:38 +0300
 
   stage_upload_pkgs:

@@ -1,5 +1,7 @@
 Plan0)
 
+ - checks: internal compiler error
+
  - Run pkg_info once for pkg_summary and pkg_enriched_summary
 
  - save options like -a and -l to META/tmp/somewhere
