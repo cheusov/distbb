@@ -1,4 +1,12 @@
 ===================================================================
+Version 0.47.1 by Aleksey Cheusov, Sat, 30 Aug 2014 13:55:30 +0300
+
+  Fixes:
+    - exit status of bmake invocation was not checked
+    - dirty hacks with PSS_SLAVES when MASTER_MODE=no are no longer
+      necessary
+
+===================================================================
 Version 0.47.0 by Aleksey Cheusov, Sun,  3 Aug 2014 16:07:19 +0300
 
   TOOL_DEPENDS is supported by default (pkg_src_summary stage)
