@@ -151,16 +151,18 @@ assign (){
 #: ${PSS_SLAVES:=+6}
 #: ${PSS_SLAVES:=} # dangerous for the same reason
 
-# Gnerating pkg_src_summary on slave hosts (recomended)
-#: ${PSS_SLAVES:=$SLAVES $SLAVES} # 2 processes per slave machine
+if test yes = "$MASTER_MODE"; then
+    # Gnerating pkg_src_summary on slave hosts (recomended)
+    #: ${PSS_SLAVES:=$SLAVES $SLAVES} # 2 processes per slave machine
 
-: ${PSS_SLAVES:=$SLAVES} # reasonable default
+    : ${PSS_SLAVES:=$SLAVES} # reasonable default
 
-#: ${PSS_TRANSPORT:=} # (for SMP machine)
-#: ${PSS_TRANSPORT:=/usr/bin/ssh -x}
-#: ${PSS_TRANSPORT:=/usr/bin/rsh}
-#: ${PSS_TRANSPORT:=@libexecdir@/distbb_chroot}
-: ${PSS_TRANSPORT:=$TRANSPORT} # reasonable default
+    #: ${PSS_TRANSPORT:=} # (for SMP machine)
+    #: ${PSS_TRANSPORT:=/usr/bin/ssh -x}
+    #: ${PSS_TRANSPORT:=/usr/bin/rsh}
+    #: ${PSS_TRANSPORT:=@libexecdir@/distbb_chroot}
+    : ${PSS_TRANSPORT:=$TRANSPORT} # reasonable default
+fi
 
 : ${PSS_PPERS:=3} # to process N packages per slave at once
 
@@ -430,3 +432,4 @@ if is_true "$CROSS_COMPILE"; then
     export CROSS_COMPILE
     export TARGET_MAKECONF
 fi
+
