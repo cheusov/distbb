@@ -113,8 +113,7 @@ PKGFILE.tmp=${PACKAGES.tmp}/All/package${PKG_SUFX}
 
 .PHONY: Package
 Package:
-.if defined(UNPRIV_USER) && ${PKG_DESTDIR_SUPPORT} == "user-destdir" \
-		&& ${USE_DESTDIR} == "yes"
+.if defined(UNPRIV_USER) && ${PKG_DESTDIR_SUPPORT:U} == "user-destdir"
 	${SU_UNPRIV_CMD} ${MAKE} ${bmake_opts} package
 .else
 	set -e; \
