@@ -17,7 +17,8 @@ distbb - distributed bulk builds framework for pkgsrc (www.pkgsrc.org).
        (pkg_src_summary stage) is also distributed.
        Different packages are analysed in parallel .
      - DISTBB is _really_ modular. Tool for running things in parallel
-       is completely independent from DISTBB. It is a separate (parallel/paexec)
+       is completely independent from DISTBB.
+       It is a separate (parallel/paexec)
        universal tool which is developped and packaged separatedly.
        Another thing separated from DISTBB is a collection of tools
        for manipulating so called packages summary. See pkg_summary(5)
@@ -30,7 +31,6 @@ distbb - distributed bulk builds framework for pkgsrc (www.pkgsrc.org).
      - DISTBB is written completely in SHELL and AWK. "C" language is
        not used at all. This is just wrong tool for things like DISTBB.
        PERL is not used too. It is too big and I don't like it :-)
-     - DISTBB is ready for DESTDIR=full bulk builds.
      - DISTBB is very flexible. There are two very important things
        about how distbb works. The first is building options
        (options passed to bmake). The second is a list of targets
@@ -61,8 +61,8 @@ distbb - distributed bulk builds framework for pkgsrc (www.pkgsrc.org).
        Command like tool for comparing results of two bulk builds
        is also available.
      - In distributed mode distbb is immune to client hosts' failures.
-       In case client host failes, this host is marked as broken
-       and distbb continuos to work with the rest clients
+       In case client host fails, this host is marked as broken
+       and distbb continue to work with the rest clients
        moving broken package (if any) to other alive client.
      - Normally DISTBB receives packages in PKGPATH form, e.g. archivers/gzip,
        pkgtools/distbb etc. One can also use so called enriched PKGPATHs.
