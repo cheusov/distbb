@@ -1,3 +1,7 @@
+Version 0.47.2 by Aleksey Cheusov, Sun, 12 Jun 2016 18:59:15 +0300
+
+  Fix: variable USE_DESTDIR disappeared from pkgsrc
+
 ===================================================================
 Version 0.47.1 by Aleksey Cheusov, Sat, 30 Aug 2014 13:55:30 +0300
 
