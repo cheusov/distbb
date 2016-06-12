@@ -1,5 +1,8 @@
 Plan0)
 
+ - FAILURE -- failed stage, # of recursive brokenness
+ - succeeds -- a number of packages to build
+
  - checks: internal compiler error
 
  - Run pkg_info once for pkg_summary and pkg_enriched_summary
