@@ -49,7 +49,7 @@ assign (){
 #: ${UMASK:=022}
 
 # Commands to run on slave hosts
-#: ${SLAVE_CMD:='renice 10 $$'}
+#: ${SLAVE_CMD:='renice 10 $$ > /dev/null'}
 
 # bootstrap
 #: ${BOOTSTRAP:=/path/to/bootstrap.tar}
