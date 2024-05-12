@@ -315,7 +315,8 @@ fi
 : ${MACHINE_ARCH:=`uname -m`}
 : ${OSVER:=$OS_VERSION/$MACHINE_ARCH}
 
-#
+# You have to set PKGSRCVER variable, e.g., 2012Q2
+: ${PKGSRCVER:=unknown}
 #: ${PKGSRCVER:=current}
 #: ${PKGSRCVER:=2012Q2}
 
