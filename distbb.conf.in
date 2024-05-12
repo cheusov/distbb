@@ -1,37 +1,81 @@
 #-*-mode:  sh -*-
 
-# Copyright (c) 2008-2011 Aleksey Cheusov <vle@gmx.net>
+# Copyright (c) 2008-2011,2024 Aleksey Cheusov <vle@gmx.net>
 # All rights reserved.
 #
 # See LICENSE file
 
 ######################################################################
+#
+# This example configuration file assumes we build pkgsrc-2024Q1
+# packages for NetBSD-10 using NetBSD-current host system.  We also
+# assume we build packages in chroots running sshd on ports 2201, 2202
+# and 2203. Also, $PKGSRCDIR, $PACKAGES and distbb installed to
+# non-standard location should be accessible. See README for details.
+#
+######################################################################
 
+# Default root for installed packages.
 PKGSRC_PREFIX=/usr/pkg
+
+# On NetBSD we can use native make.
 BMAKE=/usr/bin/make
-PKGSRCDIR=/usr/pkgsrc
-RMDIRS_CMD="rm -rf $PKGSRC_PREFIX /var/db/pkg"
-BOOTSTRAP="/usr/pkgsrc/packages/All/bootstrap.tar"
-EXTRACT_BOOTSTRAP_CMD="tar -xf $BOOTSTRAP -C /"
+#BMAKE=/usr/pkg/bin/make
+
+# pkgsrc source tree directory and pkgsrc version
+PKGSRCDIR=/usr/pkgsrc/2024Q1
+PKGSRCVER=2024Q1
+
+# Our sandboxes run NetBSD-10.0. So, Let's cheat the system uname(1).
+# It is assumed that pkgtools/libkver package is installed in sandboxes.
+OS_VERSION=10.0
+LD_PRELOAD=/usr/pkg/lib/libkver.so
+LIBKVER_OSRELEASE="$OS_VERSION"
+
+# On NetBSD we don't need bootstrap tarball.
+# So, there is nothing to unpack before bulk build starts.
+RMDIRS_CMD=true
+#RMDIRS_CMD="rm -rf $PKGSRC_PREFIX"
+#BOOTSTRAP="/usr/pkgsrc/$PKGSRCVER/packages/NetBSD/amd64/10/current/bootstrap.tar"
+EXTRACT_BOOTSTRAP_CMD=true
+#EXTRACT_BOOTSTRAP_CMD="tar -xf $BOOTSTRAP -C /"
+
+# In chrooted environment we run sshd daemon listerning on lo0.
+# So, we need neither distbb_chroot executable nor root privileges.
+TRANSPORT='ssh '
+SLAVES='ssh://root@localhost:2201 ssh://root@localhost:2202 ssh://root@localhost:2203'
+#TRANSPORT="$HOME/pkg_distbb/libexec/distbb/distbb_chroot /var/chroot/sandboxes"
+#SLAVES='NetBSD10-$$PKGSRCVER-1 NetBSD10-$$PKGSRCVER-2 NetBSD10-$$PKGSRCVER-3'
+
+# Default local directory for bulk build logs
+REPORTS_DIR="$HOME/bulk-logs"
+
+# Directory for binary packages for NetBSD-10
+PACKAGES="/usr/pkgsrc/$PKGSRCVER/packages/NetBSD/amd64/10"
+
+# We use unprivileged bulk builds. This is user for this.
+# $PKGSRCDIR and $PACKAGES directories must have appropriate permissions.
+# It is assumed that this user exists in chroots.
+UNPRIV_USER=builder
+
+# Email to send report.
+USER_MAIL="$USER"
+#USER_MAIL=you@example.org
+
+# Uncomment and edit the following if you want to publish results of
+# your bulk builds.
+#UPLOAD_PKGS_DEST='you@example.org:/pub/pkgsrc/packages/NetBSD/amd64/10.0-current/'
+#UPLOAD_LOGS_DEST='you@example.org:~/public_html/bulk_logs/'
+
+#     PACKAGES_URL="https://example.org:/pub/pkgsrc/packages/NetBSD/amd64/10.0-current/"
+#REPORT_URL_PREFIX="https://example.org:~you/bulk_logs/"
+
+# Uncomment the following if you want to make binary packages writable by
+# builder's group
+#UMASK=002
+
+# We use multiple chroots for bulk builds
 MASTER_MODE=yes
-#assign TRANSPORT '/usr/bin/ssh -x'
-#SLAVES='root@host1 root@host2 root@host3'
-TRANSPORT='@libexecdir@/distbb_chroot /var/chroot/'
-SLAVES='sandbox1 sandbox2 sandbox3'
-REPORTS_DIR=$HOME/bulk-logs
-
-USER_MAIL=you@your-domain.com
-
-UPLOAD_PKGS_DEST=you@your-domain.com:~/public_html/pkgsrc/packages/
-UPLOAD_LOGS_DEST=you@your-domain.com:~/public_html/pkgsrc/logs/
-
-     PACKAGES_URL="http://your-domain.com/~you/pkgsrc/packages/"
-REPORT_URL_PREFIX="http://your-domain.com/~you/pkgsrc/logs/"
-
-# Edit and uncomment the following for cross-compilation
-#CROSS_COMPILE=1
-#TARGET_PACKAGES="$PKGSRCDIR/cross-packages"
-#TARGET_MAKECONF=/etc/mk.NetBSD-5.1-mipseb.conf
 
 ######################################################################
 I_AM_READY=4
