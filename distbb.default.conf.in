@@ -44,10 +44,6 @@ assign (){
 : ${RMDIRS_CMD:=/bin/rm -rf $PKGSRC_PREFIX /var/db/pkg}
 #: ${RMDIRS_CMD:=/bin/rm -rf $PKGSRC_PREFIX} # PKGDB is under PREFIX
 
-# if you want to make built package file with different permission,
-# change UMASK variable
-#: ${UMASK:=022}
-
 # Commands to run on slave hosts
 #: ${SLAVE_CMD:='renice 10 $$ > /dev/null'}
 

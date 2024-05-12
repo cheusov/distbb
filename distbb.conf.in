@@ -70,10 +70,6 @@ USER_MAIL="$USER"
 #     PACKAGES_URL="https://example.org:/pub/pkgsrc/packages/NetBSD/amd64/10.0-current/"
 #REPORT_URL_PREFIX="https://example.org:~you/bulk_logs/"
 
-# Uncomment the following if you want to make binary packages writable by
-# builder's group
-#UMASK=002
-
 # We use multiple chroots for bulk builds
 MASTER_MODE=yes
 
