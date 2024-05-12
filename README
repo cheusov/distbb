@@ -150,16 +150,16 @@ CONFIGURATION/TUTORIAL:
 For "distributed" bulk builds:
 
 3d) On master host:
-    - make /usr/pkg_distbb and /usr/pkgsrc directories NFS mountable
-      for all your slave hosts.
+    - make /usr/pkg_distbb and /usr/pkgsrc directories NFS/null-mountable
+      for all your slave hosts/chroots.
 
 4d) On all slave hosts:
     - mount -t nfs -o ro master:/usr/pkg_distbb /usr/pkg_distbb
       mount -t nfs -o rw master:/usr/pkgsrc     /usr/pkgsrc
 
-    All slave hosts need they own PREFIX (e.g. /usr/pkg)
-    and PKGDBDIR (e.g. /var/db/pkg). These dirs will be deleted
-    on slaves.
+    All slave hosts need they local PREFIX directory (e.g., /usr/pkg)
+    and PKGDBDIR (e.g., /var/db/pkg). These dirs will be deleted on
+    slaves.
 
     NOTE:
        Only /usr/pkgsrc/packages and /usr/pkgsrc/distfiles
@@ -199,8 +199,8 @@ For "distributed" bulk builds:
       and sending a report (REPORT_CMD) is run on master host.
     - On ALL slave hosts PREFIX (/usr/pkg) and PKGDBDIR (/var/db/pkg)
       will be removed and recreated from bootstrap tarball.
-    - DistBB can be run on master host by unprivileged user
-      even if packages are built using root privileges
+    - distbb can be run on master host by unprivileged user.
+      Packages can also be built by unprivileged user.
     - Master host and slave hosts don't have to run the same OS.
       Slave hosts should run a target operating operating system.
     - By default ssh is used a transport program (TRANSPORT)
