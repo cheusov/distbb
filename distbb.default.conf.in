@@ -311,7 +311,9 @@ fi
 : ${OPSYS:=$(uname -s)}
 
 #
-: ${OSVER:=$(uname -r)/$(uname -m)}
+: ${OS_VERSION:=`uname -r`}
+: ${MACHINE_ARCH:=`uname -m`}
+: ${OSVER:=$OS_VERSION/$MACHINE_ARCH}
 
 #
 #: ${PKGSRCVER:=current}
