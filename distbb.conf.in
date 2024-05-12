@@ -26,6 +26,9 @@ BMAKE=/usr/bin/make
 PKGSRCDIR=/usr/pkgsrc/2024Q1
 PKGSRCVER=2024Q1
 
+# Directory for binary packages for NetBSD-10
+PACKAGES="/usr/pkgsrc/$PKGSRCVER/packages/NetBSD/amd64/10"
+
 # Our sandboxes run NetBSD-10.0. So, Let's cheat the system uname(1).
 # It is assumed that pkgtools/libkver package is installed in sandboxes.
 OS_VERSION=10.0
@@ -42,16 +45,13 @@ EXTRACT_BOOTSTRAP_CMD=true
 
 # In chrooted environment we run sshd daemon listerning on lo0.
 # So, we need neither distbb_chroot executable nor root privileges.
-TRANSPORT='ssh '
+TRANSPORT='ssh'
 SLAVES='ssh://root@localhost:2201 ssh://root@localhost:2202 ssh://root@localhost:2203'
 #TRANSPORT="$HOME/pkg_distbb/libexec/distbb/distbb_chroot /var/chroot/sandboxes"
 #SLAVES='NetBSD10-$$PKGSRCVER-1 NetBSD10-$$PKGSRCVER-2 NetBSD10-$$PKGSRCVER-3'
 
 # Default local directory for bulk build logs
 REPORTS_DIR="$HOME/bulk-logs"
-
-# Directory for binary packages for NetBSD-10
-PACKAGES="/usr/pkgsrc/$PKGSRCVER/packages/NetBSD/amd64/10"
 
 # We use unprivileged bulk builds. This is user for this.
 # $PKGSRCDIR and $PACKAGES directories must have appropriate permissions.
