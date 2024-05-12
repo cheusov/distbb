@@ -129,9 +129,6 @@ Package:
 ############################################################
 ############################################################
 # Clean target:
-.PHONY: clean Clean
-Clean: clean
-	mkdir -p ${WRKDIR}
-.if defined(UNPRIV_USER)
-	chown -R '${UNPRIV_USER}' '${WRKDIR}'
-.endif
+.PHONY: Clean
+Clean:
+	${SU_UNPRIV_CMD} ${MAKE} ${bmake_opts} clean
