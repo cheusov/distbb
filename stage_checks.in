@@ -196,3 +196,10 @@ gen_libtool_bugs
 gen_pkgsrc_warnings
 gen_segfaults
 gen_memory_allocation
+
+find "$meta_dir" -name 'check_*.txt' |
+    while read f; do
+	if ! test -s "$f"; then
+	    rm "$f"
+	fi
+    done
