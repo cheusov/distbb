@@ -98,46 +98,46 @@ if test -z "$REPORTS_DIR"; then
 fi
 
 if echo "$BUILD_ID" | grep ^/ > /dev/null; then
-    REPORT1_DIR=$BUILD_ID
-    BUILD_ID=$(basename $BUILD_ID)
+    REPORT1_DIR="$BUILD_ID"
+    BUILD_ID=$(basename "$BUILD_ID")
 else
-    REPORT1_DIR=$REPORTS_DIR/$BUILD_ID
+    REPORT1_DIR="$REPORTS_DIR/$BUILD_ID"
 fi
 
-meta_dir=$REPORT1_DIR/META
-tmpdir=$meta_dir/tmp
+meta_dir="$REPORT1_DIR/META"
+tmpdir="$meta_dir/tmp"
 
-packages_failed_notavail_fn=$meta_dir/packages_failed_notavail.txt
-packages_failed_scan_fn=$meta_dir/packages_failed_scan.txt
-packages_failed_deps_fn=$meta_dir/packages_failed_deps.txt
-packages_failed_fn=$meta_dir/packages_failed.txt
-packages_failed_total_fn=$meta_dir/packages_failed_total.txt
-packages_built_fn=$meta_dir/packages_built.txt
-packages_built_prev_fn=$meta_dir/packages_built_prev.txt
-packages_built_total_fn=$meta_dir/packages_built_total.txt
-progress_fn=$meta_dir/progress.txt
+packages_failed_notavail_fn="$meta_dir/packages_failed_notavail.txt"
+packages_failed_scan_fn="$meta_dir/packages_failed_scan.txt"
+packages_failed_deps_fn="$meta_dir/packages_failed_deps.txt"
+packages_failed_fn="$meta_dir/packages_failed.txt"
+packages_failed_total_fn="$meta_dir/packages_failed_total.txt"
+packages_built_fn="$meta_dir/packages_built.txt"
+packages_built_prev_fn="$meta_dir/packages_built_prev.txt"
+packages_built_total_fn="$meta_dir/packages_built_total.txt"
+progress_fn="$meta_dir/progress.txt"
 
-build_src_summary_log_fn=$meta_dir/build_src_summary_log.txt
-errors_fn=$meta_dir/errors.txt
+build_src_summary_log_fn="$meta_dir/build_src_summary_log.txt"
+errors_fn="$meta_dir/errors.txt"
 
-pkg_src_summary_fn=$meta_dir/pkg_src_summary.txt
-summary_cmp_fn=$meta_dir/summary_cmp.txt
-bin_summary_fn=$meta_dir/pkg_summary.txt
-enriched_summary_fn=$meta_dir/pkg_enriched_summary.tmp
+pkg_src_summary_fn="$meta_dir/pkg_src_summary.txt"
+summary_cmp_fn="$meta_dir/summary_cmp.txt"
+bin_summary_fn="$meta_dir/pkg_summary.txt"
+enriched_summary_fn="$meta_dir/pkg_enriched_summary.tmp"
 
-check_unregistered_conflicts_fn=$meta_dir/check_unregistered_CONFLICTS.txt
-check_missing_progs_fn=$meta_dir/check_missing_programs.txt
-check_required_vs_provides_fn=$meta_dir/check_REQUIRES_vs._PROVIDES.txt
-check_broken_REQUIRES_fn=$meta_dir/check_broken_REQUIRES.txt
-check_configure_errors_fn=$meta_dir/check_configure_errors.txt
-check_PLIST_errors_fn=$meta_dir/check_PLIST_errors.txt
-check_missing_headers_fn=$meta_dir/check_missing_headers.txt
-check_missing_libraries_fn=$meta_dir/check_missing_libraries.txt
-check_permission_denied_fn=$meta_dir/check_permission_denied.txt
-check_libtool_bugs_fn=$meta_dir/check_libtool_bugs.txt
-check_pkgsrc_warnings_fn=$meta_dir/check_pkgsrc_warnings.txt
-check_segfault_fn=$meta_dir/check_segmentation_faults.txt
-check_memalloc_fn=$meta_dir/check_memory_allocation_failures.txt
+check_unregistered_conflicts_fn="$meta_dir/check_unregistered_CONFLICTS.txt"
+check_missing_progs_fn="$meta_dir/check_missing_programs.txt"
+check_required_vs_provides_fn="$meta_dir/check_REQUIRES_vs._PROVIDES.txt"
+check_broken_REQUIRES_fn="$meta_dir/check_broken_REQUIRES.txt"
+check_configure_errors_fn="$meta_dir/check_configure_errors.txt"
+check_PLIST_errors_fn="$meta_dir/check_PLIST_errors.txt"
+check_missing_headers_fn="$meta_dir/check_missing_headers.txt"
+check_missing_libraries_fn="$meta_dir/check_missing_libraries.txt"
+check_permission_denied_fn="$meta_dir/check_permission_denied.txt"
+check_libtool_bugs_fn="$meta_dir/check_libtool_bugs.txt"
+check_pkgsrc_warnings_fn="$meta_dir/check_pkgsrc_warnings.txt"
+check_segfault_fn="$meta_dir/check_segmentation_faults.txt"
+check_memalloc_fn="$meta_dir/check_memory_allocation_failures.txt"
 
 # check_extra_conflicts_fn=$meta_dir/check_extra_conflicts.txt
 # check_uninstallable_fn=$meta_dir/check_uninstallable.txt
@@ -145,19 +145,19 @@ check_memalloc_fn=$meta_dir/check_memory_allocation_failures.txt
 # check_version_fn=$meta_dir/check_version.txt
 # check_bad_build_deps_fn=$meta_dir/check_bad_build_deps.txt
 
-build_start_fn=$meta_dir/build_start.tmp
-build_end_fn=$meta_dir/build_end.tmp
+build_start_fn="$meta_dir/build_start.tmp"
+build_end_fn="$meta_dir/build_end.tmp"
 
-queue_fn=$tmpdir/queue_PAe.tmp
-rebuild_PAe_fn=$tmpdir/rebuild_PAe.tmp
+queue_fn="$tmpdir/queue_PAe.tmp"
+rebuild_PAe_fn="$tmpdir/rebuild_PAe.tmp"
 
-aux_reqd_deps_fn=$MSCOMMONDIR/reqd_deps.txt
+aux_reqd_deps_fn="$MSCOMMONDIR/reqd_deps.txt"
 
-reqd_deps_NA_fn=$tmpdir/reqd_deps_NA.tmp
+reqd_deps_NA_fn="$tmpdir/reqd_deps_NA.tmp"
 
-bb_history_fn=$REPORTS_DIR/bulk_builds_history.txt
+bb_history_fn="$REPORTS_DIR/bulk_builds_history.txt"
 
-version=@version@
+version='@version@'
 
 ######################################################################
 enrich_pkgpath (){
@@ -211,5 +211,5 @@ fname in f2n {
 ######################################################################
 unset PKG_PATH || true
 
-export PATH=@bindir@:$PATH
-export PSS_POST_PATH=@bindir@
+export PATH="@bindir@:$PATH"
+export PSS_POST_PATH="@bindir@"
