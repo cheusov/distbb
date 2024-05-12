@@ -20,7 +20,7 @@ on_exit () { rm -rf $tmp_dir; }
 unset PKG_PATH || true
 unset PKG_SUFX || true
 
-export BINPKG_SITES=$PACKAGES
+export BINPKG_SITES="$PACKAGES"
 export DISTBB_CONF
 
 if test -n "$LD_PRELOAD"; then
@@ -39,8 +39,8 @@ fi
 tmp_dir=`mktemp -d /tmp/distbb_slave.XXXXXX`
 test -n "$tmp_dir"
 
-tmpfn=$tmp_dir/tmpfn.tmp
-logfn=$tmp_dir/log.tmp
+tmpfn="$tmp_dir/tmpfn.tmp"
+logfn="$tmp_dir/log.tmp"
 ######################################################################
 
 usage (){
@@ -163,7 +163,7 @@ do_build_package (){
     fi
 
     #
-    if ! cd $PKGSRCDIR/$2; then
+    if ! cd "$PKGSRCDIR/$2"; then
 	return 1
     fi
 
