@@ -213,7 +213,7 @@ fi
 #    otherwise counters in "Failures per maintainer" will
 #    be not fully correct
 # The "Vars" lists bmake's variables for easier debugging
-: ${TARGETS:=Init clean Available Excluded Vars Depends fetch checksum extract patch configure build package}
+: ${TARGETS:=Init clean CleanupPkgdb Available Excluded Vars Depends fetch checksum extract patch configure build package}
 
 # extra options passed to bmake
 # BATCH is mandatory for bulk builds!
