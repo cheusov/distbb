@@ -30,6 +30,10 @@ if test -n "$LIBKVER_OSRELEASE"; then
     export LIBKVER_OSRELEASE
 fi
 
+if test -n "$UMASK"; then
+    umask "$UMASK"
+fi
+
 ######################################################################
 # temp directory
 tmp_dir=`mktemp -d /tmp/distbb_slave.XXXXXX`
