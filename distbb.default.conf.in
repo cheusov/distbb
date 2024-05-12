@@ -194,7 +194,7 @@ if test -n "$UNPRIV_USER"; then
     : ${SU_UNPRIV_CMD:=@libexecdir@/wrapper_unpriv}
     export SU_UNPRIV_CMD
     for t in Available Excluded Vars clean fetch checksum \
-	extract patch tools wrapper configure build test
+	extract patch tools wrapper configure build package test
     do
 	assign SU_UNPRIV_CMD_$t "$SU_UNPRIV_CMD"
     done
@@ -209,11 +209,7 @@ fi
 #    otherwise counters in "Failures per maintainer" will
 #    be not fully correct
 # The "Vars" lists bmake's variables for easier debugging
-if test -n "$UNPRIV_USER"; then
-    : ${TARGETS:=Init clean Available Excluded Vars Depends fetch checksum extract patch configure build Package}
-else
-    : ${TARGETS:=Init clean Available Excluded Vars Depends fetch checksum extract patch configure build package}
-fi
+: ${TARGETS:=Init clean Available Excluded Vars Depends fetch checksum extract patch configure build package}
 
 # extra options passed to bmake
 # BATCH is mandatory for bulk builds!
