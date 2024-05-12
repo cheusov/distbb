@@ -192,7 +192,7 @@ EOF
 
 report_html_header (){
     cat <<EOF
-<h1>pkgsrc bulk build results (distbb-$version)</h1>
+<h1>pkgsrc-$PKGSRCVER bulk build results (distbb-$version)</h1>
 
 <h2>$OPSYS $OSVER</h2>
 
