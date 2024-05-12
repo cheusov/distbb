@@ -34,6 +34,8 @@ if test -n "$UMASK"; then
     umask "$UMASK"
 fi
 
+eval "$SLAVE_CMD" 1>&2
+
 ######################################################################
 # temp directory
 tmp_dir=`mktemp -d /tmp/distbb_slave.XXXXXX`

@@ -48,6 +48,9 @@ assign (){
 # change UMASK variable
 #: ${UMASK:=022}
 
+# Commands to run on slave hosts
+#: ${SLAVE_CMD:='renice 10 $$'}
+
 # bootstrap
 #: ${BOOTSTRAP:=/path/to/bootstrap.tar}
 
