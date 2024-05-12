@@ -61,5 +61,5 @@ full_cmd="$DISTBB_SUDO chroot $root$id sh -c \"eval env $env $cmd\""
 if test -n "$prefixcmd"; then
     $prefixcmd "$full_cmd"
 else
-    $full_cmd
+    eval $DISTBB_SUDO chroot $root$id env $env sh -c "$cmd"
 fi
