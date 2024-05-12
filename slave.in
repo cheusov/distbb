@@ -23,6 +23,13 @@ unset PKG_SUFX || true
 export BINPKG_SITES=$PACKAGES
 export DISTBB_CONF
 
+if test -n "$LD_PRELOAD"; then
+    export LD_PRELOAD
+fi
+if test -n "$LIBKVER_OSRELEASE"; then
+    export LIBKVER_OSRELEASE
+fi
+
 ######################################################################
 # temp directory
 tmp_dir=`mktemp -d /tmp/distbb_slave.XXXXXX`

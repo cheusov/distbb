@@ -417,13 +417,6 @@ export PKG_SUFX
 export PKGSRCDIR
 export BMAKE
 
-if test -n "$LD_PRELOAD"; then
-    export LD_PRELOAD
-fi
-if test -n "$LIBKVER_OSRELEASE"; then
-    export LIBKVER_OSRELEASE
-fi
-
 if is_true "$CROSS_COMPILE"; then
     export CROSS_COMPILE
     export TARGET_MAKECONF
