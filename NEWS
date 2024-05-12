@@ -1,3 +1,34 @@
+===================================================================
+Version 0.48.0 by Aleksey Cheusov, Sun, 12 May 2024 18:39:40 +0400
+
+  Fix distbb_chroot script.
+
+  Minor fix in stage_gen_report for better conformance to
+  HTML-4.01/strict
+
+  Update default config file distbb.conf.
+
+  Update README.
+
+  Use native targets "clean" and "package" in unprivileged mode (if
+  UNPRIV_USER is set) instead of home-made "Clean" and "Package".
+
+  Set LD_PRELOAD and LIBKVER_OSRELEASE only on slave hosts.
+
+  Introduce new configuration variables OS_VERSION and MACHINE_ARCH.
+
+  Add new target CleanupPkgdb to TARGETS.
+
+  Add new configuration variable SLAVE_CMD
+
+  Configuration variable PKGSRCVER defaults to unknown.
+
+  Add $PKGSRCVER to report.html.
+
+  Minor clean-ups in "distbb_chroot", "distbb.conf",
+  "distbb.default.conf", "slave" and "common" configs and scripts.
+
+===================================================================
 Version 0.47.2 by Aleksey Cheusov, Sun, 12 Jun 2016 18:59:15 +0300
 
   Fix: variable USE_DESTDIR disappeared from pkgsrc
