@@ -125,10 +125,3 @@ Package:
 	${SU_UNPRIV_CMD} mv ${PKGFILE}.tmp ${PKGFILE}; \
 	${SU_UNPRIV_CMD} ${MAKE} ${MAKEFLAGS} package-links
 .endif
-
-############################################################
-############################################################
-# Clean target:
-.PHONY: Clean
-Clean:
-	${SU_UNPRIV_CMD} ${MAKE} ${bmake_opts} clean

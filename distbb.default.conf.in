@@ -193,7 +193,7 @@ if test -n "$UNPRIV_USER"; then
     export UNPRIV_USER
     : ${SU_UNPRIV_CMD:=@libexecdir@/wrapper_unpriv}
     export SU_UNPRIV_CMD
-    for t in Available Excluded Vars fetch checksum \
+    for t in Available Excluded Vars clean fetch checksum \
 	extract patch tools wrapper configure build test
     do
 	assign SU_UNPRIV_CMD_$t "$SU_UNPRIV_CMD"
@@ -210,9 +210,9 @@ fi
 #    be not fully correct
 # The "Vars" lists bmake's variables for easier debugging
 if test -n "$UNPRIV_USER"; then
-    : ${TARGETS:=Init Clean Available Excluded Vars Depends fetch checksum extract patch configure build Package}
+    : ${TARGETS:=Init clean Available Excluded Vars Depends fetch checksum extract patch configure build Package}
 else
-    : ${TARGETS:=Init Clean Available Excluded Vars Depends fetch checksum extract patch configure build package}
+    : ${TARGETS:=Init clean Available Excluded Vars Depends fetch checksum extract patch configure build package}
 fi
 
 # extra options passed to bmake
@@ -243,27 +243,27 @@ fi
 
 #SPECIAL_PACKAGES="\
 #PKGPATH=pkgtools/digest
-#TARGETS=Init Clean Vars Depends fetch checksum extract patch configure build package
+#TARGETS=Init clean Vars Depends fetch checksum extract patch configure build package
 #EXTRA_OPTS=BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=yes CHECK_SHLIBS=no
 #
 #PKGPATH=pkgtools/bootstrap-mk-files
-#TARGETS=Init Clean Vars Depends fetch checksum extract patch configure build package
+#TARGETS=Init clean Vars Depends fetch checksum extract patch configure build package
 #EXTRA_OPTS=BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=yes CHECK_SHLIBS=no
 #
 #PKGPATH=net/tnftp
-#TARGETS=Init Clean Vars Depends fetch checksum extract patch configure build package
+#TARGETS=Init clean Vars Depends fetch checksum extract patch configure build package
 #EXTRA_OPTS=BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=yes CHECK_SHLIBS=no
 #
 #PKGPATH=sysutils/checkperms
-#TARGETS=Init Clean Vars Depends fetch checksum extract patch configure build package
+#TARGETS=Init clean Vars Depends fetch checksum extract patch configure build package
 #EXTRA_OPTS=BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=yes CHECK_SHLIBS=no
 #
 #PKGPATH=devel/bmake
-#TARGETS=Init Clean Vars Depends fetch checksum extract patch configure build package
+#TARGETS=Init clean Vars Depends fetch checksum extract patch configure build package
 #EXTRA_OPTS=BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=yes CHECK_SHLIBS=no
 #
 #PKGPATH=pkgtools/pkg_install
-#TARGETS=Init Clean Vars Depends fetch checksum extract patch configure build package
+#TARGETS=Init clean Vars Depends fetch checksum extract patch configure build package
 #EXTRA_OPTS=BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=yes CHECK_SHLIBS=no
 #
 #PKGPATH=audio/festival # TARGETS is not changed!
