@@ -151,6 +151,13 @@ fi
 
 printf '' >> "$build_src_summary_log_fn"
 
+if test -n "$LD_PRELOAD"; then
+    export PSS_ENVIRON="$PSS_ENVIRON LD_PRELOAD=$LD_PRELOAD"
+fi
+if test -n "$LIBKVER_OSRELEASE"; then
+    export PSS_ENVIRON="$PSS_ENVIRON LIBKVER_OSRELEASE=$LIBKVER_OSRELEASE"
+fi
+
 if test -z "$skip_updating_src_summary"; then
     if ! is_true "$MASTER_MODE"; then
 	unset PSS_SLAVES || true
