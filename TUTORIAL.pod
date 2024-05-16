@@ -1,0 +1,386 @@
+=head1 Tutorial for unprivileged pkgsrc bulk builds using pkgtools/distbb.
+
+Distbb is a distributed bulk build tool for pkgsrc. This tutorial
+helps to configure your system for running bulk builds. 
+In this tutorial I assume the following:
+
+=over 2
+
+=item *
+
+You are running NetBSD current and want to run bulk build for
+NetBSD-10 and pkgsrc current. You may easily adapt this instruction
+to your needs.
+
+=item *
+
+You may have multiple pkgsrc source trees in B</srv/pkgsrc> directory for running
+bulk builds for diverse versions of pkgsrc.
+
+=item *
+
+You may have multiple subdirectories for binary packages in
+B</srv/pkgsrc_bin> directory for diverse bulk builds.
+
+=item *
+
+Pkgsrc dist files will be in B</srv/pkgsrc_distfiles> directory.
+
+=item *
+
+Bulk build is started by your ordinary unprivileged user.
+Below I use I<you> for your user name and I<$HOME> is your home directory.
+
+=item *
+
+Packages are built in multiple NetBSD-10 chroots running on NetBSD
+current host. If you prefer fully isolated virtual machines, distbb
+configuration will be much easier.
+
+=item *
+
+Packages are built in chroots by unprivileged user. Its name is
+I<builder> and it belongs to special group I<builders>. So,
+B</srv/pkgsrc_bin> and B</srv/pkgsrc_distfiles> subdirectories and
+files should be writable by this user. Also, B</srv/pkgsrc>
+subdirectories should be readable.  For security reasons you may want
+to use different users in different chroots. You can easily do this.
+
+=item *
+
+Almost everything in chroots are actually a read-only null mounts.
+
+=item *
+
+Below I assume that on host system root's prompt is
+
+      #
+
+Your user's prompt is
+
+      you$
+
+=item *
+
+I also assume that your working pkgsrc tree is in I</usr/pkgsrc>.
+
+=item *
+
+Personally, I prefer I<jmacs> for editing config files. So, I<jmacs>
+below is the editor. You may use I<vi>, I<emacs>, I<nano> or whatever
+you prefer.
+
+=back
+
+=head1 Configuring distbb
+
+Let's start with distbb itself. Due to chiken and egg problem we'll
+need distbb outside pkgsrc root directory. So, we have to install it
+from sources outside I</usr/pkg> directory.
+
+      you$ cd /usr/pkgsrc
+      you$ ./bootstrap --unprivileged --prefix $HOME/pkg_distbb --workdir /tmp/distbb
+      you$ jmacs $HOME/pkg_distbb/etc/distbb.conf
+      you$ rm -rf /tmp/distbb
+
+For this tutorial the following configuration file (I<$HOME/pkg_distbb/etc/distbb.conf>)
+is fully workable.
+
+      PKGSRC_PREFIX=/usr/pkg
+      BMAKE=/usr/bin/make
+      PKGSRCVER=current
+      PKGSRCDIR="/srv/pkgsrc/$PKGSRCVER"
+      PACKAGES="/srv/pkgsrc_bin/NetBSD/$(uname -m)/10-$PKGSRCVER/"
+      OS_VERSION=10.0
+      LD_PRELOAD=/usr/pkg/lib/libkver.so
+      LIBKVER_OSRELEASE="$OS_VERSION"
+      RMDIRS_CMD=true
+      EXTRACT_BOOTSTRAP_CMD=true
+      TRANSPORT='ssh'
+      SLAVES='ssh://root@localhost:2201'
+      REPORTS_DIR="$HOME/bulk-logs"
+      UNPRIV_USER=builder
+      USER_MAIL="$USER"
+      UPLOAD_PKGS_DEST='you@example.org:/pub/pkgsrc/packages/NetBSD/amd64/10.0-current/'
+      UPLOAD_LOGS_DEST='you@example.org:~/public_html/bulk_logs/'
+      MASTER_MODE=yes
+      I_AM_READY=4
+      . /home/cheusov/pkg_distbb/share/distbb/distbb.default.conf
+
+
+=head1 Configuring host system
+
+=head2 Special user for build packages
+
+Let's create unprivileged user and group for building packages.
+I use hardcoded I<uid> and I<gid> for using them later in chrooted environment.
+
+      # groupadd -g 1100 builders
+      # useradd -u 1100 -g builders builder
+
+=head2 Tools required for distbb
+
+We'll need B<sets2rootfs(1)> (sysutils/sets2rootfs) for creating
+NetBSD-10 root file system, B<mksandbox(8)> (pkgtools/mksandbox) --
+for creating chroots and B<rsync(1)> (net/rsync) for uploading bulk
+build logs and binary packages.  I assume that you have
+B<pkg_install.conf(5)> configured, so, B<pkg_add(8)> works properly.
+
+      # pkg_add rsync sets2rootfs mksandbox
+
+=head2 Shared directories
+
+      # mkdir -p /srv/pkgsrc_bin/NetBSD/$(uname -m)/10-current/All /srv/pkgsrc /srv/pkgsrc_distfiles
+      # chown $USER:builders /srv/pkgsrc_distfiles
+      # chmod g+w /srv/pkgsrc_distfiles
+      # chown $USER /srv/pkgsrc
+      # chown -R $USER /srv/pkgsrc_bin
+
+=head2 Download and unpack current pkgsrc
+
+      # su - you
+      you$ ftp -o- http://cdn.netbsd.org/pub/pkgsrc/current/pkgsrc.tar.xz | \
+           tar -C /srv/pkgsrc/ -zxf-
+      you$ mv /srv/pkgsrc/pkgsrc /srv/pkgsrc/current
+      you$ exit
+
+Binary packages are created by user I<builder>. Let's make directory
+writable for its group.
+
+      # chgrp builders /srv/pkgsrc_bin/NetBSD/$(uname -m)/10-current/All
+      # chmod g+w /srv/pkgsrc_bin/NetBSD/$(uname -m)/10-current/All
+
+=head1 Configuring template chroot for NetBSD-10
+
+Before creating real sandboxes, let's start with configuring
+the template for future real sandboxes.
+
+=head2 Root file system for NetBSD-10
+
+As I said before I assume you are running NetBSD current and want to
+run bulk builds for NetBSD-10. So, let's create a rootfs for
+NetBSD-10. It is not chrooted sandbox yet :-) In this rootfs we don't
+need some sets, so, we exclude them. If you experience some problems
+in downloading NetBSD sets, delete incompletely downloaded file from
+I</tmp/cache-dir> directory and repeat I<sets2rootfs> command.
+
+      # mkdir -p /srv/sandboxes/nb10
+      # mkdir /tmp/cache-dir # temporary directory for downloaded sets
+      # sets2rootfs -c /tmp/cache-dir -d /srv/sandboxes/nb10 \
+        -r 10.0 -Xkern -xgames -xgpufw -xrescue -xmodules
+
+=head2 postinstall(8) in NetBSD-10 rootfs.
+
+      # cp /tmp/cache-dir/etc.* /tmp/cache-dir/xetc.* /srv/sandboxes/nb10/tmp/
+      # chroot /srv/sandboxes/nb10 /usr/sbin/postinstall \
+          -s /tmp/etc.* -s /tmp/cache-dir/xetc.* check
+      # chroot /srv/sandboxes/nb10 /usr/sbin/postinstall \
+          -s /tmp/etc.* -s /tmp/cache-dir/xetc.* fix
+      # cp /etc/resolv.conf /srv/sandboxes/nb10/etc/
+      # rm /srv/sandboxes/nb10/tmp/etc.*
+      # rm /srv/sandboxes/nb10/tmp/xetc.*
+      # rm -rf /tmp/cache-dir # we don't need cache directory anymore.
+
+=head2 mk.conf
+
+Good start for NetBSD mk.conf is the following.
+So, create I</srv/sandboxes/nb10/etc/mk.conf> file.
+
+    .ifdef BSD_PKG_MK       # begin pkgsrc settings
+    
+    PKG_DBDIR=              /usr/pkg/pkgdb
+    LOCALBASE=              /usr/pkg
+    VARBASE=                /var
+    PKG_TOOLS_BIN=          /usr/sbin
+    PKGMANDIR=              man
+
+    PKGSRC_ARCH !=          uname -m
+
+    DISTDIR=                /srv/pkgsrc_distfiles
+    PACKAGES=               /srv/pkgsrc_bin/NetBSD/${PKGSRC_ARCH}/10-current
+    PKGSRCDIR=              /srv/pkgsrc/current
+    WRKOBJDIR=              /tmp/obj_pkgsrc
+    
+    X11_TYPE=               modular
+    
+    PKG_DEVELOPER=          yes
+    
+    SKIP_LICENSE_CHECK=         yes
+    ALLOW_VULNERABLE_PACKAGES=  yes
+    
+    # PKG_DEFAULT_OPTIONS=      options you prefer
+    
+    .endif # end pkgsrc settings
+
+Of course, you can modify I<mk.conf> if needed.
+
+=head2 Home directory for I<root> user inside NetBSD-10 rootfs
+
+      # mkdir -m 0700 /srv/sandboxes/nb10/root
+      # echo 'export ENV=/root/.shrc' >> /srv/sandboxes/nb10/root/.profile
+      # touch /srv/sandboxes/nb10/root/.shrc
+
+Optionally modify I<root>'s .shrc. My personal preference is the following.
+
+      # printf 'case "$-" in\n  *i*)\n    PS1="sandbox # "\n    set -o emacs\n    set -o ignoreeof\n    set -o tabcomplete\n    set -o promptcmds\n    ;;\nesac\n' >> /srv/sandboxes/nb10/root/.shrc
+
+Let's add our ssh public to I<root>'s .ssh/authorized_keys. We'll use
+I<ssh(1)> for accessing chrooted sandboxes instead of chroot(8) in
+order to avoid using I<root> privileges.
+
+      # mkdir -m 0700 /srv/sandboxes/nb10/root/.ssh
+
+I assume you use ed25519 ssh
+key. If not, modify the following line accordingly.
+
+      # cat "$HOME/.ssh/id_ed25519.pub" > /srv/sandboxes/nb10/root/.ssh/authorized_keys
+
+=head2 Check point for NetBSD-10 rootfs
+
+At this moment I</srv/sandboxes/nb10> should be fully functional. So, you can play with it.
+
+      # chroot /srv/sandboxes/nb10 /bin/sh -li
+      sandbox # ...
+      sandbox # exit
+
+=head2 Configuration for pkg_add(8) inside NetBSD-10 rootfs
+
+      # echo "PKG_PATH=http://cdn.netbsd.org/pub/pkgsrc/packages/NetBSD/$(uname -m)/10.0/All" \
+         > /srv/sandboxes/nb10/etc/pkg_install.conf
+
+=head2 Installing linkver inside NetBSD-10 rootfs
+
+Since we run bulk builds for NetBSD-10 on NetBSD-current we have to cheat system's uname(1).
+For this to work we need libkver package inside chroot.
+
+      # chroot /srv/sandboxes/nb10 pkg_add libkver
+
+=head1 Configuring chroot-ed sandboxes
+
+=head2 Creating sandbox #1
+
+mksandbox(8) creates a special script I<sandbox> for mount/umount
+I<null mounts> and populates all requires read/write directories.
+
+      # mksandbox --without-pkgsrc --without-src --without-xsrc /srv/sandboxes/sandbox1-nb10
+      # mount | grep null # see what mksandbox(8) does
+
+Umount all null-mounted directories. First, we need to do some preparations.
+
+      # /srv/sandboxes/sandbox1-nb10/sandbox umount
+
+Now, let's create directories inside our future sandbox. They will be mount points.
+
+      # mkdir -p /srv/sandboxes/sandbox1-nb10/srv/pkgsrc
+      # mkdir -p /srv/sandboxes/sandbox1-nb10/srv/pkgsrc_bin
+      # mkdir -p /srv/sandboxes/sandbox1-nb10/srv/pkgsrc_distfiles
+      # mkdir -p /srv/sandboxes/sandbox1-nb10$HOME/pkg_distbb
+
+Recreate I<etc> directory for NetBSD-10.
+
+      # rm -rf /srv/sandboxes/sandbox1-nb10/etc
+      # cp -a /srv/sandboxes/nb10/etc /srv/sandboxes/sandbox1-nb10/
+      # cp -a /srv/sandboxes/nb10/root /srv/sandboxes/sandbox1-nb10/
+
+Now, let's modify I<sandbox> script and change I<fses> variable.
+Add prefix I</srv/sandboxes/nb10> to first tokens I</bin>, I</sbin> etc.
+Also, add the following lines to I<fses>
+
+      /srv/pkgsrc /srv/pkgsrc ro \
+      /srv/pkgsrc_bin /srv/pkgsrc_bin rw \
+      /srv/pkgsrc_distfiles /srv/pkgsrc_distfiles rw \
+      YOURHOME/pkg_distbb YOURHOME/pkg_distbb ro \
+
+      # jmacs /srv/sandboxes/sandbox1-nb10/sandbox
+
+In my case I<fses> variable looks like the following
+
+      fses="\
+      /srv/sandboxes/nb10/bin /bin ro \
+      /srv/sandboxes/nb10/sbin /sbin ro \
+      /srv/sandboxes/nb10/lib /lib ro \
+      /srv/sandboxes/nb10/libexec /libexec ro \
+      /srv/sandboxes/nb10/usr/X11R7 /usr/X11R7 ro \
+      /srv/sandboxes/nb10/usr/bin /usr/bin ro \
+      /srv/sandboxes/nb10/usr/games /usr/games ro \
+      /srv/sandboxes/nb10/usr/include /usr/include ro \
+      /srv/sandboxes/nb10/usr/lib /usr/lib ro \
+      /srv/sandboxes/nb10/usr/libdata /usr/libdata ro \
+      /srv/sandboxes/nb10/usr/libexec /usr/libexec ro \
+      /srv/sandboxes/nb10/usr/share /usr/share ro \
+      /srv/sandboxes/nb10/usr/sbin /usr/sbin ro \
+      /srv/sandboxes/nb10/var/mail /var/mail ro \
+      /srv/pkgsrc /srv/pkgsrc ro \
+      /srv/pkgsrc_bin /srv/pkgsrc_bin rw \
+      /srv/pkgsrc_distfiles /srv/pkgsrc_distfiles rw \
+      /home/cheusov/pkg_distbb /home/cheusov/pkg_distbb ro \
+      "
+
+=head2 Check point for sandbox #1
+
+At this point sandbox #1 should be workable. Make sure all required
+directories are mounted. That is, I</srv/pkgsrc>, I</srv/pkgsrc_bin>, I</srv/pkgsrc_distfiles>
+and I<$HOME/pkg_distbb>.
+
+      # /srv/sandboxes/sandbox1-nb10/sandbox mount
+      # /srv/sandboxes/sandbox1-nb10/sandbox
+      sandbox # ...
+
+=head2 User I<builder> inside sandbox #1
+
+Run the following commands from sandbox #1 chroot.
+Here we use the same I<uid> and I<gid> as on hosts system.
+For debugging purposes (who knows? :-) ) we create I<builder>'s home directory.
+
+      sandbox # groupadd -g 1100 builders
+      sandbox # useradd -m -u 1100 -g builders builder
+
+=head2 Configuring sshd(8) inside sandbox #1
+
+We'll run B<sshd(8)> on port 2201 on sandbox #1, on port 2202 on sandbox #2 etc.
+Add the following lines to I</etc/ssh/sshd_config>
+
+      Port 2201
+      ListenAddress 127.0.0.1
+
+Let's test sshd(8) inside sandbox #1
+
+      sandbox # /etc/rc.d/sshd onestart
+      sandbox # /etc/rc.d/sshd onestatus
+      sandbox # /etc/rc.d/sshd onestop
+      sandbox # exit
+
+If it works, let's start and stop sshd(8) daemon at the time of
+creating and destroying the sandbox. Add the following commands to
+I<mount> and I<umount> sections of "sandbox" script.
+
+      chroot $sandbox /etc/rc.d/sshd onestart
+
+and 
+
+      chroot $sandbox /etc/rc.d/sshd onestop
+
+Destroy sandbox and edit I<sandbox> file.
+
+      # /srv/sandboxes/sandbox1-nb10/sandbox umount
+      # jmacs /srv/sandboxes/sandbox1-nb10/sandbox
+
+At this moment
+
+      chrooted sandbox should be accessible via I<ssh(1)>.
+
+      # /srv/sandboxes/sandbox1-nb10/sandbox umount
+
+Switch to your regular user and test sshd inside sandbox #1.
+
+      you$ ssh -p 2201 root@localhost id
+
+=head1 Run distbb :-)
+
+Now we are ready for running bulk build with one sandbox. Let's start with building one package.
+
+    you$ $HOME/pkg_distbb/bin/bmake -p lang/gawk -x upload_pkgs
+
+See B<distbb> options for details.
+
+L<https://github.com/cheusov/distbb/>
