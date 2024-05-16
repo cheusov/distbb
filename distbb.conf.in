@@ -27,7 +27,7 @@ PKGSRCDIR=/usr/pkgsrc/2024Q1
 PKGSRCVER=2024Q1
 
 # Directory for binary packages for NetBSD-10
-PACKAGES="/usr/pkgsrc/$PKGSRCVER/packages/NetBSD/amd64/10"
+PACKAGES="/usr/pkgsrc/$PKGSRCVER/packages/NetBSD/$(uname -m)/10"
 
 # Our sandboxes run NetBSD-10.0. So, Let's cheat the system uname(1).
 # It is assumed that pkgtools/libkver package is installed in sandboxes.
