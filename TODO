@@ -1,3 +1,6 @@
+REPORT_EMAIL instead of USER_MAIL
+BUILD_USER instead of UNPRIV_USER
+
 Plan0)
 
  - FAILURE -- failed stage, # of recursive brokenness
