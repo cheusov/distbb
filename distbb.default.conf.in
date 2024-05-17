@@ -158,7 +158,7 @@ if test yes = "$MASTER_MODE"; then
     # Gnerating pkg_src_summary on slave hosts (recomended)
     #: ${PSS_SLAVES:=$SLAVES $SLAVES} # 2 processes per slave machine
 
-    : ${PSS_SLAVES:=$SLAVES} # reasonable default
+    : ${PSS_SLAVES:=$(echo $SLAVES)} # reasonable default; with spaces triming
 
     #: ${PSS_TRANSPORT:=} # (for SMP machine)
     #: ${PSS_TRANSPORT:=/usr/bin/ssh -x}
