@@ -78,8 +78,10 @@ Let's start with distbb itself. Due to chiken and egg problem we'll
 need distbb outside pkgsrc root directory. So, we have to install it
 from sources outside I</usr/pkg> directory.
 
-      you$ cd /usr/pkgsrc
+      you$ cd /usr/pkgsrc/bootstrap
       you$ ./bootstrap --unprivileged --prefix $HOME/pkg_distbb --workdir /tmp/distbb
+      you$ cd ../pkgtools/distbb
+      you$ $HOME/pkg_distbb/bin/bmake install
       you$ jmacs $HOME/pkg_distbb/etc/distbb.conf
       you$ rm -rf /tmp/distbb
 
@@ -375,12 +377,40 @@ Switch to your regular user and test sshd inside sandbox #1.
 
       you$ ssh -p 2201 root@localhost id
 
-=head1 Run distbb :-)
+=head2 Sandbox #2, #3 etc.
 
-Now we are ready for running bulk build with one sandbox. Let's start with building one package.
+You can easily create multiple sandboxes based on sandbox #1.
+
+      # /srv/sandboxes/sandbox1-nb10/sandbox umount
+      # cp -a /srv/sandboxes/sandbox1-nb10 /srv/sandboxes/sandbox2-nb10
+
+Edit variable I<sandbox> in sandbox script.
+
+      # jmacs /srv/sandboxes/sandbox2-nb10/sandbox
+
+Change port number for B<sshd(8)>.
+
+      # jmacs /srv/sandboxes/sandbox2-nb10/etc/ssh/sshd_config
+
+New B<sshd(8)> host keys are needed.
+
+      # rm /srv/sandboxes/sandbox2-nb10/etc/ssh/ssh_host*
+
+Update variable I<SLAVES> in distbb config file.
+
+      you$ jmacs $HOME/pkg_distbb/etc/distbb.conf
+
+Start all sandboxes.
+
+      # /srv/sandboxes/sandbox1-nb10/sandbox mount
+      # /srv/sandboxes/sandbox2-nb10/sandbox mount
+
+=head1 Run distbb
+
+Now we are ready for running bulk builds. Let's start with building one package.
 
     you$ $HOME/pkg_distbb/bin/bmake -p lang/gawk -x upload_pkgs
 
-See B<distbb> options for details.
+See B<distbb> options for more details.
 
 L<https://github.com/cheusov/distbb/>
