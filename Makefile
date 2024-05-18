@@ -1,11 +1,12 @@
 ##################################################
 
 LIBEXECDIR ?=			${PREFIX}/libexec/distbb
-DATADIR ?=			${PREFIX}/share/distbb
-EGDIR ?=			${PREFIX}/share/distbb
-AWKMODDIR ?=			${PREFIX}/share/runawk
-ICONDIR ?=			${DATADIR}
-CSSDIR ?=			${DATADIR}
+DATADIR    ?=			${PREFIX}/share/distbb
+EGDIR      ?=			${PREFIX}/share/distbb
+AWKMODDIR  ?=			${PREFIX}/share/runawk
+ICONDIR    ?=			${DATADIR}
+CSSDIR     ?=			${DATADIR}
+DOCDIR     ?=			${PREFIX}/share/doc/distbb
 
 ##################################################
 
@@ -30,15 +31,19 @@ SCRIPTSDIR =			${LIBEXECDIR}
 SCRIPTSDIR_distbb =		${BINDIR}
 SCRIPTSDIR_distbb_diff =	${BINDIR}
 
-FILES =				${INFILES} distbb.css distbb.ico distbb.awk
+DOC_FILES ?=			TUTORIAL.html README LICENSE NEWS TODO
+FILES =			${INFILES} ${DOC_FILES} distbb.css distbb.ico distbb.awk
 
-FILESDIR =			${EGDIR}
-FILESDIR_distbb.mk =		${DATADIR}
+FILESDIR               =	${EGDIR}
+FILESDIR_distbb.mk     =	${DATADIR}
 FILESDIR_distbb.default.conf =	${DATADIR}
-FILESDIR_distbb.ico =		${ICONDIR}
-FILESDIR_distbb.css =		${CSSDIR}
-FILESDIR_distbb.awk =		${AWKMODDIR}
-FILESDIR_common =		${LIBEXECDIR}
+FILESDIR_distbb.ico    =	${ICONDIR}
+FILESDIR_distbb.css    =	${CSSDIR}
+FILESDIR_distbb.awk    =	${AWKMODDIR}
+FILESDIR_common        =	${LIBEXECDIR}
+.for doc in ${DOC_FILES}
+FILESDIR_${doc}        =	${DOCDIR}
+.endfor
 
 BIRTHDATE =			2008-03-03
 
