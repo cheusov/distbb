@@ -285,6 +285,9 @@ Recreate I<etc> directory for NetBSD-10.
       # cp -a /srv/sandboxes/nb10/root /srv/sandboxes/sandbox1-nb10/
 
 Now, let's modify I<sandbox> script and change I<fses> variable.
+
+      # jmacs /srv/sandboxes/sandbox1-nb10/sandbox
+
 Add prefix I</srv/sandboxes/nb10> to first tokens I</bin>, I</sbin> etc.
 Also, add the following lines to I<fses>
 
@@ -292,8 +295,6 @@ Also, add the following lines to I<fses>
       /srv/pkgsrc_bin /srv/pkgsrc_bin rw \
       /srv/pkgsrc_distfiles /srv/pkgsrc_distfiles rw \
       YOURHOME/pkg_distbb YOURHOME/pkg_distbb ro \
-
-      # jmacs /srv/sandboxes/sandbox1-nb10/sandbox
 
 In my case I<fses> variable looks like the following
 
@@ -368,10 +369,9 @@ Destroy sandbox and edit I<sandbox> file.
       # jmacs /srv/sandboxes/sandbox1-nb10/sandbox
 
 At this moment
+chrooted sandbox should be accessible via I<ssh(1)>.
 
-      chrooted sandbox should be accessible via I<ssh(1)>.
-
-      # /srv/sandboxes/sandbox1-nb10/sandbox umount
+      # /srv/sandboxes/sandbox1-nb10/sandbox mount
 
 Switch to your regular user and test sshd inside sandbox #1.
 
