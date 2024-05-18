@@ -63,6 +63,8 @@ INTEXTS_REPLS +=    version     ${VERSION}
 CLEANFILES += *~ core* distbb.1 distbb.cat1 ChangeLog
 CLEANFILES += ${INSCRIPTS} ${INFILES} distbb.html
 
+DIST_TARGETS =	TUTORIAL.html
+
 ##################################################
 
 .include <mkc.prog.mk>
