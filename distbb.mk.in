@@ -109,4 +109,4 @@ Depends:
 .PHONY: CleanupPkgdb
 CleanupPkgdb:
 	${PKG_INFO} -a | awk '!/^libkver-|^pkg_install/ {print $$1}' | \
-	xargs ${PKG_DELETE}
+	xargs ${PKG_DELETE} -f
