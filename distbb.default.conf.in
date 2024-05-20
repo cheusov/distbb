@@ -194,9 +194,9 @@ fi
 # support.  Instead of specifying SU_CMD and givin an ordinary user
 # privileges to become root you can login as root on slave hosts and
 # then become ordinary user without sudo, fakeroot etc.
-# For this, set UNPRIV_USER variable.
-if test -n "$UNPRIV_USER"; then
-    export UNPRIV_USER
+# For this, set BUILDER_USER variable.
+if test -n "$BUILDER_USER"; then
+    export BUILDER_USER
     : ${SU_UNPRIV_CMD:=@libexecdir@/wrapper_unpriv}
     export SU_UNPRIV_CMD
     for t in Available Excluded Vars clean fetch checksum \
@@ -332,14 +332,14 @@ if test -n "$BUILD_ID"; then
 fi
 
 #
-#: ${USER_MAIL:=you@your-domain.com}
+#: ${REPORT_EMAIL:=you@your-domain.com}
 
 # other possible values: report.txt
 : ${REPORT_FILE:=report_mini.txt}
 
 : ${MAIL_PROG:=/usr/bin/mail}
 if test -n "$BUILD_ID"; then
-    : ${REPORT_CMD:=$MAIL_PROG -s \"pkgsrc-$PKGSRCVER $OPSYS $OSVER `basename $BUILD_ID`\" \"$USER_MAIL\"}
+    : ${REPORT_CMD:=$MAIL_PROG -s \"pkgsrc-$PKGSRCVER $OPSYS $OSVER `basename $BUILD_ID`\" \"$REPORT_EMAIL\"}
 fi
 : ${REPORT_MINI_SIZE_LIMIT:=65000}
 

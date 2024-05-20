@@ -101,8 +101,8 @@ is fully workable.
       TRANSPORT='ssh'
       SLAVES='ssh://root@localhost:2201'
       REPORTS_DIR="$HOME/bulk-logs"
-      UNPRIV_USER=builder
-      USER_MAIL="$USER"
+      BUILDER_USER=builder
+      REPORT_EMAIL="$USER"
       UPLOAD_PKGS_DEST='you@example.org:/pub/pkgsrc/packages/NetBSD/amd64/10.0-current/'
       UPLOAD_LOGS_DEST='you@example.org:~/public_html/bulk_logs/'
       MASTER_MODE=yes

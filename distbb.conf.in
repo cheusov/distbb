@@ -56,11 +56,11 @@ REPORTS_DIR="$HOME/bulk-logs"
 # We use unprivileged bulk builds. This is user for this.
 # $PKGSRCDIR and $PACKAGES directories must have appropriate permissions.
 # It is assumed that this user exists in chroots.
-UNPRIV_USER=builder
+BUILDER_USER=builder
 
 # Email to send report.
-USER_MAIL="$USER"
-#USER_MAIL=you@example.org
+REPORT_EMAIL="$USER"
+#REPORT_EMAIL=you@example.org
 
 # Uncomment and edit the following if you want to publish results of
 # your bulk builds.

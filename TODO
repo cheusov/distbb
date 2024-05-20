@@ -1,7 +1,3 @@
-REPORT_EMAIL instead of USER_MAIL
-
-BUILD_USER instead of UNPRIV_USER
-
 different log directory for pkgpath:PKG_OPTIONS.pkgbase=lalalala
 different package file name for pkgpath:PKG_OPTIONS.pkgbase=lalalala
 
