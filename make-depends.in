@@ -55,9 +55,9 @@ for p in $pkgs_deps; do
     echo "Installing $p..."
     if ! is_true "$CROSS_COMPILE" -o ${p##BH--} != ${p}; then
 	$PKG_ADD_CMD -K "${PKG_DBDIR}" \
-	    -u "$BH_PACKAGES/All/${p##BH--}$PKG_SUFX"
+	    "$BH_PACKAGES/All/${p##BH--}$PKG_SUFX"
     else
 	$PKG_ADD_CMD -m "$TARGET_ARCH" -I -P "${TARGET_SYSROOT}" \
-	    -u "$TARGET_PACKAGES/All/${p##BH--}$PKG_SUFX"
+	    "$TARGET_PACKAGES/All/${p##BH--}$PKG_SUFX"
     fi
 done

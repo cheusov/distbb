@@ -245,7 +245,7 @@ fi
 #       (this is not shell! ;-) )
 # NOTE: An empty string after EACH package section is mandatory
 # NOTE: Do not forget that you can define your own Makefile targets
-#       in distbb.local.mk. This new target can run, for example, pkg_add -u
+#       in distbb.local.mk. This new target can run, for example, pkg_add
 
 #SPECIAL_PACKAGES="\
 #PKGPATH=pkgtools/digest
