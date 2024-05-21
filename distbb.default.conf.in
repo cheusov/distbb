@@ -134,7 +134,7 @@ assign (){
 if test -n "$partial_bb_flag"; then
     : ${PKG_UPDATE_SRC_SUMMARY_CMD:=@bindir@/pkg_src_summary -btm -A > \"$PKG_SRC_SUMMARY\"}
 else
-    : ${PKG_UPDATE_SRC_SUMMARY_CMD:=@bindir@/pkg_src_summary -mu > \"$PKG_SRC_SUMMARY\"}
+    : ${PKG_UPDATE_SRC_SUMMARY_CMD:=@bindir@/pkg_src_summary -btmu > \"$PKG_SRC_SUMMARY\"}
 fi
 
 # program for comparing pkg_summary(5) for available binaries and
