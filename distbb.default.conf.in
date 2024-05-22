@@ -131,10 +131,11 @@ assign (){
 # (-m option is for building multi-variant packages, see pkg_src_summary(1),
 # NOTE: -m currently doesn't work when entire pkgsrc tree is built,
 # because lots of multi-variant packages have constant PKGBASE )
+_pss_fields='-a BOOTSTRAP_DEPENDS -r DESCRIPTION,PLIST'
 if test -n "$partial_bb_flag"; then
-    : ${PKG_UPDATE_SRC_SUMMARY_CMD:=@bindir@/pkg_src_summary -btm -A > \"$PKG_SRC_SUMMARY\"}
+    : ${PKG_UPDATE_SRC_SUMMARY_CMD:=@bindir@/pkg_src_summary $_pss_fields -muA > \"$PKG_SRC_SUMMARY\"}
 else
-    : ${PKG_UPDATE_SRC_SUMMARY_CMD:=@bindir@/pkg_src_summary -btmu > \"$PKG_SRC_SUMMARY\"}
+    : ${PKG_UPDATE_SRC_SUMMARY_CMD:=@bindir@/pkg_src_summary $_pss_fields -mu > \"$PKG_SRC_SUMMARY\"}
 fi
 
 # program for comparing pkg_summary(5) for available binaries and

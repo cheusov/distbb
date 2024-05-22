@@ -63,7 +63,7 @@ partial_bb (){
     export exclude_stage_summary=1 # see stage_checks
     exclude_stage_checksum=1
     exclude_stage_upload_pkgs=1
-    partial_bb_flag=1
+    export partial_bb_flag=1
 }
 
 full_bb (){

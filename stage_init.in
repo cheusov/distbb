@@ -252,9 +252,9 @@ NF == 0 {
 ' "$@"
 }
 
-pkg_assignments2pkgpath "$PKG_SRC_SUMMARY" > "$pkg_src_summary_fn.tmp"
+pkg_assignments2pkgpath "$PKG_SRC_SUMMARY" |
+pkg_enrich_summary > "$pkg_src_summary_fn.tmp"
 pkg_summary2bb_pkgs "$pkg_src_summary_fn.tmp" > "$pkg_src_summary_fn"
-rm "$pkg_src_summary_fn.tmp"
 if is_true "$CROSS_COMPILE"; then
     # build host summary
     add_BH_prefix1 "$pkg_src_summary_fn" > "$pkg_src_summary_fn.tmp"
