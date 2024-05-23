@@ -106,7 +106,10 @@ Depends:
 	    @libexecdir@/make-depends "${BH_pkg}${PKGNAME}"
 
 # Remove almost all packages in order to have clean system for build
-.PHONY: CleanupPkgdb
-CleanupPkgdb:
+.PHONY: clean-pkgdb
+clean-pkgdb:
 	${PKG_INFO} -a | awk '!/^libkver-|^pkg_install/ {print $$1}' | \
 	xargs ${PKG_DELETE} -f
+
+.PHONY: Clean
+Clean: clean clean-pkgdb

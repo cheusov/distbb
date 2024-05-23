@@ -192,7 +192,7 @@ fi
 # Target for clean-ups after package building.
 # If you want to keep working directories, set this variable to None
 # This may be helpfull for debugging
-: ${CLEAN_TARGET:=clean}
+: ${CLEAN_TARGET:=Clean}
 #: ${CLEAN_TARGET:=None}
 
 # Packages can be built in unprivileged mode with a help of DESTDIR
@@ -220,7 +220,7 @@ fi
 #    otherwise counters in "Failures per maintainer" will
 #    be not fully correct
 # The "Vars" lists bmake's variables for easier debugging
-: ${TARGETS:=Init clean CleanupPkgdb Available Excluded Vars Depends fetch checksum extract patch configure build package}
+: ${TARGETS:=Init Clean Available Excluded Vars Depends fetch checksum extract patch configure build package}
 
 # extra options passed to bmake
 # BATCH is mandatory for bulk builds!

@@ -250,8 +250,11 @@ build_package (){
 
     # clean even if it fails
     if test "_$CLEAN_TARGET" != "_None"; then
-	eval $bmake_env $BMAKE "$CLEAN_TARGET" $multivar_opts \
-	    $stdin_from_dev_null > /dev/null 2>&1
+	eval $bmake_env $BMAKE -f Makefile \
+	     -f "$DISTBB_LOCAL_MK" \
+	     -f @datadir@/distbb.mk \
+	     "$CLEAN_TARGET" \
+	     $bmake_opts $stdin_from_dev_null
     fi
 
     unset MAKECONF || true # ksh, dash, pdksh
