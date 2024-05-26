@@ -107,7 +107,7 @@ assign (){
 #
 # If you want to build short version of src_summary, uncomment the following
 # (see pkg_src_summary(1))
-: ${PSS_FIELDS:=PKGNAME PKGPATH DEPENDS TOOL_DEPENDS BUILD_DEPENDS MAINTAINER HOMEPAGE DESCRIPTION NO_BIN_ON_FTP NO_BIN_ON_CDROM USE_LANGUAGES ALLDISTFILES PKG_FAIL_REASON}
+: ${PSS_FIELDS:=PKGNAME,PKGPATH,DEPENDS,BUILD_DEPENDS,MAINTAINER,NO_BIN_ON_FTP,NO_BIN_ON_CDROM,USE_LANGUAGES,PKG_FAIL_REASON} # ALLDISTFILES
 #
 # For generating an "expanded" PLIST.
 # It is useless for distbb but looks very nice ;-)
@@ -132,11 +132,10 @@ assign (){
 # (-m option is for building multi-variant packages, see pkg_src_summary(1),
 # NOTE: -m currently doesn't work when entire pkgsrc tree is built,
 # because lots of multi-variant packages have constant PKGBASE )
-_pss_fields='-a BOOTSTRAP_DEPENDS -r DESCRIPTION,PLIST'
 if test -n "$partial_bb_flag"; then
-    : ${PKG_UPDATE_SRC_SUMMARY_CMD:=@bindir@/pkg_src_summary $_pss_fields -muA > \"$PKG_SRC_SUMMARY\"}
+    : ${PKG_UPDATE_SRC_SUMMARY_CMD:=@bindir@/pkg_src_summary -f $PSS_FIELDS -btmuA > \"$PKG_SRC_SUMMARY\"}
 else
-    : ${PKG_UPDATE_SRC_SUMMARY_CMD:=@bindir@/pkg_src_summary $_pss_fields -mu > \"$PKG_SRC_SUMMARY\"}
+    : ${PKG_UPDATE_SRC_SUMMARY_CMD:=@bindir@/pkg_src_summary -f $PSS_FIELDS -btmu > \"$PKG_SRC_SUMMARY\"}
 fi
 
 # program for comparing pkg_summary(5) for available binaries and
