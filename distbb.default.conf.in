@@ -312,7 +312,7 @@ fi
 : ${LOG_SIZE_LIMIT:=262144000} # ~250Mb seems good enough
 #: ${LOG_SIZE_LIMIT:=0} # no limit! Are you sure?
 
-: ${ULIMIT_CMD:=ulimit -t 1800}
+: ${ULIMIT_CMD:=ulimit -t 6000}
 
 #
 : ${OPSYS:=$(uname -s)}
