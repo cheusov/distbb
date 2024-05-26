@@ -342,7 +342,7 @@ fi
 # other possible values: report.txt
 : ${REPORT_FILE:=report_mini.txt}
 
-: ${MAIL_PROG:=/usr/bin/mail}
+: ${MAIL_PROG:=mail}
 if test -n "$BUILD_ID"; then
     : ${REPORT_CMD:=$MAIL_PROG -s \"pkgsrc-$PKGSRCVER $OPSYS $OSVER `basename $BUILD_ID`\" \"$REPORT_EMAIL\"}
 fi
