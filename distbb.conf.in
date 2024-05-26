@@ -26,7 +26,8 @@ BMAKE=/usr/bin/make
 PKGSRCDIR=/usr/pkgsrc/2024Q1
 PKGSRCVER=2024Q1
 
-# Directory for binary packages for NetBSD-10
+# Directory for NetBSD-10 binary packages.
+# You can remove variable PACKAGES from mk.conf.
 PACKAGES="/usr/pkgsrc/$PKGSRCVER/packages/NetBSD/$(uname -m)/10"
 
 # Our sandboxes run NetBSD-10.0. So, Let's cheat the system uname(1).

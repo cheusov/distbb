@@ -82,7 +82,8 @@ assign (){
 #: ${SLAVES:=pkgsrc@host1 pkgsrc@host2 pkgsrc@host3}
 : ${SLAVES:=sandbox1 sandbox2}
 
-# directory for binary packages
+# Directory for binary packages.
+# You can remove variable PACKAGES from mk.conf
 : ${PACKAGES:=$PKGSRCDIR/packages}
 
 # directory shared between master and slave hosts where common files
