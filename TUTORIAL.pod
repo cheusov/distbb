@@ -92,7 +92,7 @@ is fully workable.
       BMAKE=/usr/bin/make
       PKGSRCVER=current
       PKGSRCDIR="/srv/pkgsrc/$PKGSRCVER"
-      PACKAGES="/srv/pkgsrc_bin/NetBSD/$(uname -m)/10-$PKGSRCVER/"
+      PACKAGES="/srv/pkgsrc_bin/NetBSD/$(uname -m)/10-$PKGSRCVER"
       DISTDIR=/srv/pkgsrc_distfiles
       OS_VERSION=10.0
       LD_PRELOAD=/usr/pkg/lib/libkver.so
