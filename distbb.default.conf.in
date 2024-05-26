@@ -288,6 +288,10 @@ fi
 #
 #"
 
+# Before starting a package build and at the end of build, keep the
+# following packages.  Do not try to pkg_delete them.
+: ${KEEP_PACKAGES:=pkg_install bmake digest bootstrap-mk-files tnftp checkperms mktools}
+
 # Person running bulk build (in html format, of course in utf-8 charset).
 # If empty string, it is not included to the report.
 #: ${RESPONSIBLE:=}

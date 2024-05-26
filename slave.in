@@ -31,6 +31,15 @@ if test -n "$LIBKVER_OSRELEASE"; then
     export LIBKVER_OSRELEASE
 fi
 
+KEEP_PACKAGES_RE=''
+for p in $KEEP_PACKAGES; do
+    if test -n "$KEEP_PACKAGES_RE"; then
+	KEEP_PACKAGES_RE="$KEEP_PACKAGES_RE|"
+    fi
+    KEEP_PACKAGES_RE="$KEEP_PACKAGES_RE(^$p-[^-]* )"
+done
+export KEEP_PACKAGES_RE
+
 eval "$SLAVE_CMD" 1>&2
 
 ######################################################################

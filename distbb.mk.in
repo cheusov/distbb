@@ -108,7 +108,7 @@ Depends:
 # Remove almost all packages in order to have clean system for build
 .PHONY: clean-pkgdb
 clean-pkgdb:
-	${PKG_INFO} -a | awk '!/^libkver-|^pkg_install/ {print $$1}' | \
+	${PKG_INFO} -a | awk "! /${KEEP_PACKAGES_RE}/"'{print $$1}' | \
 	xargs ${PKG_DELETE} -f
 
 .PHONY: Clean
