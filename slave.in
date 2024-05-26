@@ -24,6 +24,9 @@ export PACKAGES="$PACKAGES"
 export BINPKG_SITES="$PACKAGES"
 export DISTBB_CONF
 
+if test -n "$DISTDIR"; then
+    export DISTDIR
+fi
 if test -n "$LD_PRELOAD"; then
     export LD_PRELOAD
 fi

@@ -86,6 +86,10 @@ assign (){
 # You can remove variable PACKAGES from mk.conf
 : ${PACKAGES:=$PKGSRCDIR/packages}
 
+# Directory for dist files. If you set DISTDIR in distbb.conf,
+# you won't need it in mk.conf.
+# : ${DISTDIR:=$PKGSRCDIR/distfiles}
+
 # directory shared between master and slave hosts where common files
 # are stored. This directory have to be writable by user running
 # distbb command and readable from slave hosts.

@@ -93,6 +93,7 @@ is fully workable.
       PKGSRCVER=current
       PKGSRCDIR="/srv/pkgsrc/$PKGSRCVER"
       PACKAGES="/srv/pkgsrc_bin/NetBSD/$(uname -m)/10-$PKGSRCVER/"
+      DISTDIR=/srv/pkgsrc_distfiles
       OS_VERSION=10.0
       LD_PRELOAD=/usr/pkg/lib/libkver.so
       LIBKVER_OSRELEASE="$OS_VERSION"
@@ -196,9 +197,6 @@ So, create I</srv/sandboxes/nb10/etc/mk.conf> file.
     PKG_TOOLS_BIN=          /usr/sbin
     PKGMANDIR=              man
 
-    PKGSRC_ARCH !=          uname -m
-
-    DISTDIR=                /srv/pkgsrc_distfiles
     PKGSRCDIR=              /srv/pkgsrc/current
     WRKOBJDIR=              /tmp/obj_pkgsrc
     
@@ -213,9 +211,9 @@ So, create I</srv/sandboxes/nb10/etc/mk.conf> file.
     
     .endif # end pkgsrc settings
 
-We don't set variable PACKAGES here because it is passed to B<bmake>'s environment
-from I<distbb.conf> file.
-Of course, you can modify I<mk.conf> if needed.
+We don't set variables PACKAGES and DISTDIR here because they is passed to
+B<bmake>'s environment from I<distbb.conf> file.  Of course, you can
+modify I<mk.conf> if needed.
 
 =head2 Home directory for I<root> user inside NetBSD-10 rootfs
 
