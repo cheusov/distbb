@@ -29,7 +29,7 @@ assign (){
     set -e # workaround for buggy FreeBSD /bin/sh
 }
 
-# 
+#
 : ${PKGSRC_PREFIX:=/usr/pkg}
 
 # pkgsrc friendly make
