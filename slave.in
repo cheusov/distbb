@@ -20,7 +20,8 @@ on_exit () { rm -rf $tmp_dir; }
 unset PKG_PATH || true
 unset PKG_SUFX || true
 
-export PACKAGES="$PACKAGES"
+export PKGSRCDIR
+export PACKAGES
 export BINPKG_SITES="$PACKAGES"
 export DISTBB_CONF
 

@@ -197,7 +197,6 @@ So, create I</srv/sandboxes/nb10/etc/mk.conf> file.
     PKG_TOOLS_BIN=          /usr/sbin
     PKGMANDIR=              man
 
-    PKGSRCDIR=              /srv/pkgsrc/current
     WRKOBJDIR=              /tmp/obj_pkgsrc
     
     X11_TYPE=               modular
@@ -211,7 +210,7 @@ So, create I</srv/sandboxes/nb10/etc/mk.conf> file.
     
     .endif # end pkgsrc settings
 
-We don't set variables PACKAGES and DISTDIR here because they is passed to
+We don't set variables PKGSRCDIR, PACKAGES and DISTDIR here because they is passed to
 B<bmake>'s environment from I<distbb.conf> file.  Of course, you can
 modify I<mk.conf> if needed.
 

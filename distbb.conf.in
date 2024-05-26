@@ -23,8 +23,8 @@ BMAKE=/usr/bin/make
 #BMAKE=/usr/pkg/bin/make
 
 # pkgsrc source tree directory and pkgsrc version
-PKGSRCDIR=/usr/pkgsrc/2024Q1
 PKGSRCVER=2024Q1
+PKGSRCDIR=/usr/pkgsrc/"$PKGSRCVER"
 
 # Directory for NetBSD-10 binary packages.
 # You can remove variable PACKAGES from mk.conf.
