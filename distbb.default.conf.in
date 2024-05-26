@@ -403,7 +403,7 @@ fi
 # variables for cross-builds
 
 # set the following to 1|yes|true for cross-compiling packages
-: ${CROSS_COMPILE:=0}
+: ${CROSS_COMPILE:=0} # !!! NOT IMPLEMENTED YET !!!
 
 # similar to PACKAGES but for target platform
 : ${TARGET_PACKAGES:=$PKGSRCDIR/cross-packages}
