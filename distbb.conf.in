@@ -36,12 +36,12 @@ OS_VERSION=10.0
 LD_PRELOAD=/usr/pkg/lib/libkver.so
 LIBKVER_OSRELEASE="$OS_VERSION"
 
+RMDIRS_CMD="rm -rf $PKGSRC_PREFIX"
+#BOOTSTRAP="/usr/pkgsrc/$PKGSRCVER/packages/NetBSD/amd64/10/current/bootstrap.tar"
+
 # On NetBSD we don't need bootstrap tarball.
 # So, there is nothing to unpack before bulk build starts.
-RMDIRS_CMD=true
-#RMDIRS_CMD="rm -rf $PKGSRC_PREFIX"
-#BOOTSTRAP="/usr/pkgsrc/$PKGSRCVER/packages/NetBSD/amd64/10/current/bootstrap.tar"
-EXTRACT_BOOTSTRAP_CMD=true
+EXTRACT_BOOTSTRAP_CMD=:
 #EXTRACT_BOOTSTRAP_CMD="tar -xf $BOOTSTRAP -C /"
 
 # In chrooted environment we run sshd daemon listerning on lo0.
