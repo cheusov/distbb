@@ -28,21 +28,6 @@ export DISTBB_CONF
 if test -n "$DISTDIR"; then
     export DISTDIR
 fi
-if test -n "$LD_PRELOAD"; then
-    export LD_PRELOAD
-fi
-if test -n "$LIBKVER_OSRELEASE"; then
-    export LIBKVER_OSRELEASE
-fi
-
-KEEP_PACKAGES_RE=''
-for p in $KEEP_PACKAGES; do
-    if test -n "$KEEP_PACKAGES_RE"; then
-	KEEP_PACKAGES_RE="$KEEP_PACKAGES_RE|"
-    fi
-    KEEP_PACKAGES_RE="$KEEP_PACKAGES_RE(^$p-[^-]* )"
-done
-export KEEP_PACKAGES_RE
 
 eval "$SLAVE_CMD" 1>&2
 
@@ -198,8 +183,16 @@ do_build_package (){
 		    rm -rf "${TARGET_SYSROOT}${TARGET_PREFIX}"
 		    rm -rf "${TARGET_SYSROOT}${TARGET_PKG_DBDIR}"
 		else
+		    # unset LD_PRELOAD before removing libkver.so
+		    unset LD_PRELOAD || true
 		    eval $RMDIRS_CMD
 		    eval $EXTRACT_BOOTSTRAP_CMD
+		    if test -n "$LIBKVER_OSRELEASE"; then
+			export LIBKVER_OSRELEASE
+			if test -n "$LD_PRELOAD"; then
+			    export LD_PRELOAD
+			fi
+		    fi
 		fi
 		;;
 	    *)
