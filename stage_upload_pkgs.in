@@ -22,6 +22,11 @@ export DISTBB_CONF
 . "$DISTBB_CONF"
 . @libexecdir@/common
 
+if test -z "$UPLOAD_PKGS_DEST"; then
+    echo '  skipped because UPLOAD_PKGS_DEST is unset'
+    exit
+fi
+
 # main
 verbose_print "  uploading packages... "
 

@@ -20,6 +20,11 @@ BUILD_ID="$1"
 . "$DISTBB_CONF"
 . @libexecdir@/common
 
+if test -z "$UPLOAD_LOGS_DEST"; then
+    echo '  skipped because UPLOAD_LOGS_DEST is unset'
+    exit
+fi
+
 # main
 verbose_print "  uploading logs... "
 
