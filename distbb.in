@@ -248,7 +248,7 @@ if test "$PKG_ALL_SUMMARY" = "$PKG_SUMMARY"; then
     exit 1
 fi
 
-if test "$I_AM_READY" -ne 4 2>/dev/null; then
+if test "$CONFIG_VERSION" -ne 1 2>/dev/null; then
     echo 'Read NEWS file! Your distbb.conf needs to be updated ;-)' 1>&2
     exit 1
 fi

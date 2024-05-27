@@ -75,7 +75,7 @@ REPORT_EMAIL="$USER"
 MASTER_MODE=yes
 
 ######################################################################
-I_AM_READY=4
+CONFIG_VERSION=1
 
 #
 # Read distbb.default.conf file for a list of configuration variables
