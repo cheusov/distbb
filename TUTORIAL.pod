@@ -97,15 +97,16 @@ is fully workable.
       OS_VERSION=10.0
       LD_PRELOAD=/usr/pkg/lib/libkver.so
       LIBKVER_OSRELEASE="$OS_VERSION"
-      RMDIRS_CMD=true
-      EXTRACT_BOOTSTRAP_CMD=true
+      RMDIRS_CMD="rm -rf $PKGSRC_PREFIX"
+      BOOTSTRAP="$PACKAGES/bootstrap.tar"
+      EXTRACT_BOOTSTRAP_CMD="tar -xf $BOOTSTRAP -C /"
       TRANSPORT='ssh'
       SLAVES='ssh://root@localhost:2201'
       REPORTS_DIR="$HOME/bulk-logs"
       BUILDER_USER=builder
       REPORT_EMAIL="$USER"
-      UPLOAD_PKGS_DEST='you@example.org:/pub/pkgsrc/packages/NetBSD/amd64/10.0-current/'
-      UPLOAD_LOGS_DEST='you@example.org:~/public_html/bulk_logs/'
+      # UPLOAD_PKGS_DEST='you@example.org:/pub/pkgsrc/packages/NetBSD/$(uname -m)/10.0-$PKGSRCVER/'
+      # UPLOAD_LOGS_DEST='you@example.org:~/public_html/bulk_logs/'
       MASTER_MODE=yes
       I_AM_READY=4
       . /home/cheusov/pkg_distbb/share/distbb/distbb.default.conf
@@ -251,9 +252,11 @@ At this moment I</srv/sandboxes/nb10> should be fully functional. So, you can pl
 =head2 Installing linkver inside NetBSD-10 rootfs
 
 Since we run bulk builds for NetBSD-10 on NetBSD-current we have to cheat system's uname(1).
-For this to work we need libkver package inside chroot.
+For this to work we need libkver package inside chroot and create a bootstrap tarball.
 
       # chroot /srv/sandboxes/nb10 pkg_add libkver
+      # chroot /srv/sandboxes/nb10 tar -cf- /usr/pkg \
+             > "/srv/pkgsrc_bin/NetBSD/$(uname -m)/10-current/bootstrap.tar"
 
 =head1 Configuring chroot-ed sandboxes
 
