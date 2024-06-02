@@ -55,8 +55,8 @@ gen_unregistered_CONFLICTS (){
 gen_missing_progs (){
     verbose_print "  missing programs ... "
 
-    cat "$failed_files".tmp |
-    xargs @libexecdir@/distbb_grep '[Cc]ommand not found|Error (code )?127' > "$check_missing_progs_fn"
+    xargs @libexecdir@/distbb_grep '[Cc]ommand not found|Error (code )?127' \
+	  < "$failed_files".tmp > "$check_missing_progs_fn"
 
     verbose_print '\n'
 }
@@ -85,8 +85,8 @@ gen_failed_files (){
 gen_configure_errors (){
     verbose_print "  configure errors ... "
 
-    cat "$failed_files".configure.tmp |
-    xargs @libexecdir@/distbb_grep 'configure: error:' > "$check_configure_errors_fn"
+    xargs @libexecdir@/distbb_grep 'configure: error:' \
+	  < "$failed_files".configure.tmp > "$check_configure_errors_fn"
 
     verbose_print '\n'
 }
@@ -94,7 +94,6 @@ gen_configure_errors (){
 gen_PLIST_errors (){
     verbose_print "  PLIST problems ... "
 
-    cat "$failed_files".package.tmp |
     xargs -n200 runawk -f dirname.awk -f basename.awk -e '
     /The following files are in the PLIST/, /Error/{
 	if (/The following files are in the PLIST/)
@@ -105,7 +104,7 @@ gen_PLIST_errors (){
 	    print "\n"
     }
     END {  if (prefix) print "."  }
-    ' > "$check_PLIST_errors_fn"
+    ' < "$failed_files".package.tmp > "$check_PLIST_errors_fn"
 
     verbose_print '\n'
 }
@@ -113,10 +112,9 @@ gen_PLIST_errors (){
 gen_missing_headers (){
     verbose_print "  missing headers ... "
 
-    cat "$failed_files".build.tmp |
     xargs @libexecdir@/distbb_grep -C0 \
 	'[.](c|cpp|C|CC|cxx|c[+][+]|h|hpp):.*No such file or directory|error: missing required header' \
-	> "$check_missing_headers_fn"
+	< "$failed_files".build.tmp > "$check_missing_headers_fn"
 
     verbose_print '\n'
 }
@@ -124,9 +122,8 @@ gen_missing_headers (){
 gen_missing_libraries (){
     verbose_print "  missing libraries ... "
 
-    cat "$failed_files".build.tmp |
     xargs @libexecdir@/distbb_grep -C0 'ld: cannot find -l|ld: library not found' \
-	> "$check_missing_libraries_fn"
+	< "$failed_files".build.tmp > "$check_missing_libraries_fn"
 
     verbose_print '\n'
 }
@@ -134,9 +131,8 @@ gen_missing_libraries (){
 gen_permission_denied (){
     verbose_print '  "permission denied" bugs ... '
 
-    cat "$failed_files".tmp |
     xargs @libexecdir@/distbb_grep 'Permission denied' \
-	> "$check_permission_denied_fn"
+	< "$failed_files".tmp > "$check_permission_denied_fn"
 
     verbose_print '\n'
 }
@@ -144,9 +140,8 @@ gen_permission_denied (){
 gen_libtool_bugs (){
     verbose_print '  libtool bugs ... '
 
-    cat "$failed_files".tmp |
     xargs @libexecdir@/distbb_grep 'libtool: link: specify a tag' \
-	> "$check_libtool_bugs_fn"
+	< "$failed_files".tmp > "$check_libtool_bugs_fn"
 
     verbose_print '\n'
 }
@@ -154,9 +149,8 @@ gen_libtool_bugs (){
 gen_pkgsrc_warnings (){
     verbose_print '  pkgsrc warnings ... '
 
-    cat "$failed_files".tmp |
     xargs @libexecdir@/distbb_grep '^WARNING:' \
-	> "$check_pkgsrc_warnings_fn"
+	< "$failed_files".tmp > "$check_pkgsrc_warnings_fn"
 
     verbose_print '\n'
 }
@@ -164,9 +158,8 @@ gen_pkgsrc_warnings (){
 gen_segfaults (){
     verbose_print '  segmentation faults ... '
 
-    cat "$failed_files".tmp |
     xargs @libexecdir@/distbb_grep 'Segmentation fault' \
-	> "$check_segfault_fn"
+	< "$failed_files".tmp > "$check_segfault_fn"
 
     verbose_print '\n'
 }
@@ -174,9 +167,8 @@ gen_segfaults (){
 gen_memory_allocation (){
     verbose_print '  memory allocation failures ... '
 
-    cat "$failed_files".tmp |
     xargs @libexecdir@/distbb_grep 'Cannot allocate memory|out of memory|virtual memory exhausted|terminate.*std::bad_alloc' \
-	> "$check_memalloc_fn"
+	< "$failed_files".tmp > "$check_memalloc_fn"
 
     verbose_print '\n'
 }

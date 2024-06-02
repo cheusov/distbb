@@ -55,16 +55,16 @@ verbose_print "done\n"
 
 verbose_print "  META/packages_*.txt ... "
 
-enrich_pkgpath 'PKGNAME MAINTAINER' $packages_built_prev_fn.tmp |
-    sort_uniq > $packages_built_prev_fn
-enrich_pkgpath 'PKGNAME MAINTAINER' $packages_built_fn.tmp | \
-    sort_uniq > $packages_built_fn
-enrich_pkgpath 'PKGNAME MAINTAINER' $packages_failed_fn.tmp | \
-    sort_uniq > $packages_failed_fn
-enrich_pkgpath 'PKGNAME MAINTAINER' $packages_failed_deps_fn.tmp | \
-    sort_uniq > $packages_failed_deps_fn
-enrich_pkgpath 'PKGNAME MAINTAINER' $packages_failed_notavail_fn.tmp | \
-    sort_uniq > $packages_failed_notavail_fn
+enrich_pkgpath 'PKGNAME MAINTAINER' "$packages_built_prev_fn.tmp" |
+    sort_uniq > "$packages_built_prev_fn"
+enrich_pkgpath 'PKGNAME MAINTAINER' "$packages_built_fn.tmp" | \
+    sort_uniq > "$packages_built_fn"
+enrich_pkgpath 'PKGNAME MAINTAINER' "$packages_failed_fn.tmp" | \
+    sort_uniq > "$packages_failed_fn"
+enrich_pkgpath 'PKGNAME MAINTAINER' "$packages_failed_deps_fn.tmp" | \
+    sort_uniq > "$packages_failed_deps_fn"
+enrich_pkgpath 'PKGNAME MAINTAINER' "$packages_failed_notavail_fn.tmp" | \
+    sort_uniq > "$packages_failed_notavail_fn"
 
 verbose_print "done\n"
 

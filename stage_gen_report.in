@@ -30,7 +30,7 @@ build_end=$(cat "$build_end_fn")
 
 verbose_print "  sort_uniq PKGNAMEs/failed_{because,deps}.txt ... "
 
-find $REPORT1_DIR -type f \
+find "$REPORT1_DIR" -type f \
     '(' -name failed_because.txt -o -name failed_deps.txt ')' |
 while read f; do
     sort_uniq_inplace "$f"
@@ -116,7 +116,7 @@ pkgpath2pkgname (){
 }
 
 distbb_diff2html (){
-    awk -v report1_dir=$REPORT1_DIR -F'\t' -v q="'" '
+    awk -v report1_dir="$REPORT1_DIR" -F'\t' -v q="'" '
 function p (progress, pkgpath, pkgbase, version, breaks) {
    printf "<tr>%s <td> %s</td><td> %s</td><td> %s</td><td> %s</td></tr>\n",
 	progress, pkgpath, pkgbase, breaks, version
@@ -300,12 +300,11 @@ EOF
     printf '<tr><td>%-36s</td> <td align="right">%4s</td></tr>\n' '<b>Maintainer</b>' '<b>Breaks</b>'
     echo ''
 
-    cat "$packages_failed_fn" |
     while read pkgpath pkgname maintainer; do
 	echo "$maintainer $pkgpath"
-	awk -v m=$maintainer '
+	awk -v m="$maintainer" '
 	   { print m, $1}' "${REPORT1_DIR}/$(get_log_dir $pkgpath $pkgname)/failed_deps.txt"
-    done | sort_uniq |
+    done < "$packages_failed_fn" | sort_uniq |
     awk '{++count [$1]}
     END {for (m in count) print m, count [m] }' |
     sort -k2,2rn |
@@ -380,8 +379,8 @@ EOF
 report_html_prev_vs_curr (){
     # previous bulk build vs. this one
     if test -n "$DISTBB_DIFF"; then
-	if test -f $bb_history_fn; then
-	    bbid_prev=$(tail -2 $bb_history_fn | head -1)
+	if test -f "$bb_history_fn"; then
+	    bbid_prev=$(tail -2 "$bb_history_fn" | head -1)
 	    bbdir_prev="$REPORTS_DIR/$bbid_prev"
 	else
 	    bbid_prev=''
@@ -397,7 +396,7 @@ report_html_prev_vs_curr (){
 <h3><a name="old vs new"></a>Progress: $bbid_prev vs. $BUILD_ID</h3>
 EOF
 	    print_distbb_diff_help_msg
-	    distbb_diff $bbdir_prev $REPORT1_DIR | distbb_diff2html
+	    distbb_diff "$bbdir_prev" "$REPORT1_DIR" | distbb_diff2html
 	fi
     fi
 }
@@ -409,9 +408,9 @@ report_html_best_vs_curr (){
 	bbdir_best="$REPORTS_DIR/$bbid_best"
 
 	best_is_ok=''
-	if test -d $bbdir_best -a \
-	    -f $bbdir_best/META/packages_built_total.txt -a \
-	    -f $bbdir_best/META/pkg_src_summary.txt
+	if test -d "$bbdir_best" -a \
+	    -f "$bbdir_best"/META/packages_built_total.txt -a \
+	    -f "$bbdir_best"/META/pkg_src_summary.txt
 	then
 	    best_is_ok=1
 	fi
@@ -424,7 +423,7 @@ report_html_best_vs_curr (){
 once in the past, but now fails</i></p>
 EOF
 	    print_distbb_diff_help_msg
-	    distbb_diff $bbdir_best $REPORT1_DIR | distbb_diff2html
+	    distbb_diff "$bbdir_best" "$REPORT1_DIR" | distbb_diff2html
 	fi
     fi
 }
@@ -504,7 +503,7 @@ EOF
 		' "$i"
 
 		html_footer
-	    } > $html_i
+	    } > "$html_i"
 	fi
     done
 
@@ -577,8 +576,8 @@ EOF
 report_full_html (){
     html_header
 
-    report_html > $REPORT1_DIR/META/tmp/report_body.html
-    cat $REPORT1_DIR/META/tmp/report_body.html
+    report_html > "$REPORT1_DIR"/META/tmp/report_body.html
+    cat "$REPORT1_DIR"/META/tmp/report_body.html
 
     html_footer
 }
@@ -659,7 +658,7 @@ report_html2txt (){
 verbose_print "  META/report{_mini,}.txt ... "
 
 report_txt_fn="$meta_dir/report.txt"
-report_html2txt $REPORT1_DIR/META/tmp/report_body.html |
+report_html2txt "$REPORT1_DIR"/META/tmp/report_body.html |
 sed 's| *$||' > "$report_txt_fn"
 
 report_mini_txt_fn="$meta_dir/report_mini.txt"
@@ -803,7 +802,7 @@ gen_stage_xxx (){
 
     find "$REPORT1_DIR" -name 'stage_*.tmp' |
     while read stage_fn; do
-	if test -s $stage_fn; then
+	if test -s "$stage_fn"; then
 	    html_fn=${stage_fn%%.tmp}.html
 	    stage2html "$stage_fn" >"$html_fn"
 	fi

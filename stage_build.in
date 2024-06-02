@@ -22,7 +22,7 @@ BUILD_ID="$1"
 
 # main
 ######################################################################
-cd $REPORT1_DIR
+cd "$REPORT1_DIR"
 
 ######################################################################
 ### graph of packages for paexec
@@ -47,11 +47,11 @@ postfilter (){
     # recalculates counters in a queue file
     # removes unneeded bulk_log/pkgpath directories etc.
 runawk \
-   -v report1_dir=$REPORT1_DIR \
-   -v packages_failed_fn=$packages_failed_fn.tmp \
-   -v packages_failed_notavail_fn=$packages_failed_notavail_fn.tmp \
-   -v progress_fn=$progress_fn \
-   -v pkg_src_summary=$pkg_src_summary_fn \
+   -v report1_dir="$REPORT1_DIR" \
+   -v packages_failed_fn="$packages_failed_fn.tmp" \
+   -v packages_failed_notavail_fn="$packages_failed_notavail_fn.tmp" \
+   -v progress_fn="$progress_fn" \
+   -v pkg_src_summary="$pkg_src_summary_fn" \
    -v eot="$eot" \
    -e '
 # input line format:
@@ -233,7 +233,7 @@ paexec -mt="$eot" -s $PAEXEC_EXTRA_OPTS -EI -lr $TRANSPORT $SLAVES \
     postfilter
 
 ######################################################################
-rmdir $REPORT1_DIR/* 2>/dev/null || true
+rmdir "$REPORT1_DIR"/* 2>/dev/null || true
 
 if test -n "$DISTBB_DIFF"; then
     printf "%s\n" "$BUILD_ID" >> "$bb_history_fn"
@@ -241,4 +241,4 @@ if test -n "$DISTBB_DIFF"; then
     mv "$bb_history_fn.tmp" "$bb_history_fn"
 fi
 
-echo "$(date -u '+%Y-%m-%d %H:%M') UTC" > $build_end_fn
+echo "$(date -u '+%Y-%m-%d %H:%M') UTC" > "$build_end_fn"

@@ -12,7 +12,6 @@ set -e
 . "$DISTBB_CONF"
 . @libexecdir@/common
 
-cat "$PKG_SUMMARY" |
-awk -F= "\$1 == \"PKGNAME\" {print \"All/\" \$2 \"$PKG_SUFX\"}"
+awk -F= "\$1 == \"PKGNAME\" {print \"All/\" \$2 \"$PKG_SUFX\"}" "$PKG_SUMMARY"
 
 print_binrep_spec_files
