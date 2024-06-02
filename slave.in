@@ -276,7 +276,7 @@ while read pkgpath; do
     if build_package "$pkgpath" > "$logfn"; then
 	echo success
     else
-	cat "$logfn"
+	awk '{print " " $0}' "$logfn"
 	echo failure
     fi
 
