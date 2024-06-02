@@ -283,5 +283,5 @@ while read pkgpath; do
     fi
 
     #
-    echo '' # end of task marker
+    echo "$PAEXEC_EOT"
 done

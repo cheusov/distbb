@@ -35,6 +35,8 @@ rm "$queue_fn.tmp"
 
 verbose_print "done\n"
 
+export eot='d0b586170bd6117bea00144c86207e0e'
+
 ######################################################################
 ### main loop - building
 
@@ -50,6 +52,7 @@ runawk \
    -v packages_failed_notavail_fn=$packages_failed_notavail_fn.tmp \
    -v progress_fn=$progress_fn \
    -v pkg_src_summary=$pkg_src_summary_fn \
+   -v eot="$eot" \
    -e '
 # input line format:
 #    $1 - <SLAVE_HOST>
@@ -128,7 +131,7 @@ $0 ~ /^[^ ]+ [0-9]+  / {
 
 # end of task
 {
-   assert(NF == 2, "this should not happen")
+   assert(NF == 3 && $3 == eot, "this should not happen")
    if (stage [$2] != "")
       xclose(log_fn)
 }
@@ -225,7 +228,7 @@ verbose_print "Building\n"
 env_for_slave="DISTBB_CONF=$DISTBB_CONF aux_reqd_deps_fn=$aux_reqd_deps_fn"
 
 eval runpipe0 \
-    paexec -s $PAEXEC_EXTRA_OPTS -EI -lr $TRANSPORT $SLAVES \
+    paexec -mt="$eot" -s $PAEXEC_EXTRA_OPTS -EI -lr $TRANSPORT $SLAVES \
        -c "'env $env_for_slave @libexecdir@/wrapper $DISTBB_SLAVE'" \
        < "$queue_fn" '|' \
     postfilter
