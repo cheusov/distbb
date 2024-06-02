@@ -270,33 +270,17 @@ build_package (){
     return $ex
 }
 
-check_max_log_size (){
-    awk -v limit="$LOG_SIZE_LIMIT" '
-    {
-	print " " $0 # space is for paexec! empty line is not allowed!
-#	print $0
-
-	curr += length($0)+1
-	if (limit && curr >= limit){
-	    print " Maximum log size is reached! Exiting..."
-	    exit 1
-	}
-    }' "$@"
-}
-
 save_TARGETS_and_EXTRA_OPTS
 
 while read pkgpath; do
     restore_TARGETS_and_EXTRA_OPTS
 
-    runpipe_base build_package $pkgpath '|' check_max_log_size > "$logfn"
-    case "$pipestatus_1" in
-	0)
-	    echo success;;
-	*)
-	    cat "$logfn"
-	    echo failure;;
-    esac
+    if build_package "$pkgpath" > "$logfn"; then
+	echo success
+    else
+	cat "$logfn"
+	echo failure
+    fi
 
     #
     echo '' # end of task marker
