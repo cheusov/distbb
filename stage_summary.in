@@ -8,6 +8,7 @@
 ######################################################################
 
 set -e
+set -o pipefail
 
 # usage: stage_upload_logs BUILD_ID
 test $# -eq 1

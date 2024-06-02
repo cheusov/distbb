@@ -8,7 +8,6 @@
 ######################################################################
 
 set -e
-. @bindir@/pipestatus
 
 # usage: stage_upload_pkgs BUILD_ID
 test $# -eq 1

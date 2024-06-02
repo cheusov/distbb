@@ -8,6 +8,7 @@
 ######################################################################
 
 set -e
+set -o pipefail
 
 export PATH=@bindir@:$PATH
 
@@ -154,8 +155,6 @@ if test -n "$retry" && test -z "$BUILD_ID"; then
 fi
 
 ######################################################################
-
-. @bindir@/pipestatus
 
 # date start for placint it to html/txt report
 build_start="$(date -u '+%Y-%m-%d %H:%M') UTC"

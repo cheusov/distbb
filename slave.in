@@ -9,8 +9,6 @@
 
 set -e
 
-. @bindir@/pipestatus
-
 : ${DISTBB_CONF:=@sysconfdir@/distbb.conf}
 . "$DISTBB_CONF"
 

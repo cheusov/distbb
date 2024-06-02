@@ -8,7 +8,7 @@
 ######################################################################
 
 set -e
-. @bindir@/pipestatus
+set -o pipefail
 
 # usage: stage_gen_report BUILD_ID
 test $# -eq 1
