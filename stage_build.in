@@ -225,7 +225,7 @@ verbose_print "Building\n"
 env_for_slave="DISTBB_CONF=$DISTBB_CONF aux_reqd_deps_fn=$aux_reqd_deps_fn"
 
 paexec -mt="$eot" -s $PAEXEC_EXTRA_OPTS -EI -lr -t "$TRANSPORT" -n "$SLAVES" \
-       -c "env $env_for_slave @libexecdir@/wrapper $DISTBB_SLAVE" \
+       -C env $env_for_slave @libexecdir@/wrapper "$DISTBB_SLAVE" \
        < "$queue_fn" |
     postfilter
 
