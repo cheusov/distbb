@@ -115,8 +115,7 @@ $3 == "--**--**--" && $5 == "--**--**--" {
 
    # for detecting failed stage
    curr_stage_fn = (log_dir "/curr_stage.tmp")
-   last_target = $4
-   print last_target > curr_stage_fn
+   print $4 > curr_stage_fn
    xclose(curr_stage_fn)
 
    next
@@ -177,7 +176,7 @@ status [$2] == "failure" {
       print pkgpath >> packages_failed_notavail_fn
       xclose(packages_failed_notavail_fn)
    }else{
-      print "    F-A-I-L-E-D", last_target ":", pkgpath, "on", run_on [$2]
+      print "    F-A-I-L-E-D", stage [$2] ":", pkgpath, "on", run_on [$2]
       print pkgpath >> packages_failed_fn
       xclose(packages_failed_fn)
    }
