@@ -182,13 +182,14 @@ do_build_package (){
 		    rm -rf "${TARGET_SYSROOT}${TARGET_PKG_DBDIR}"
 		else
 		    # unset LD_PRELOAD before removing libkver.so
+		    ld_preload_backup="$LD_PRELOAD"
 		    unset LD_PRELOAD || true
 		    eval $RMDIRS_CMD
 		    eval $EXTRACT_BOOTSTRAP_CMD
 		    if test -n "$LIBKVER_OSRELEASE"; then
 			export LIBKVER_OSRELEASE
-			if test -n "$LD_PRELOAD"; then
-			    export LD_PRELOAD
+			if test -n "$ld_preload_backup"; then
+			    export LD_PRELOAD="$ld_preload_backup"
 			fi
 		    fi
 		fi
