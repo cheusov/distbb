@@ -288,8 +288,8 @@ verbose_print "done\n"
 printf '' > "$errors_fn"
 
 ######################################################################
-### dependency graph of packages to rebuild
-verbose_print "  dependency graph of packages to rebuild..."
+### dependency graph of packages to build
+verbose_print "  dependency graph of packages to build..."
 
 awk '
 /^PKGNAME/ {pkgbase = substr($0, 9); sub(/-[^-]*$/, "", pkgbase)}
