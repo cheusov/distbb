@@ -172,7 +172,12 @@ status [$2] == "success" {
 status [$2] == "failure" {
    # failed
    if (stage [$2] ~ /^(Available|Excluded)$/){
-      print "    Not Available:", pkgpath, "on", run_on [$2]
+      if (stage [$2] == "Available")
+         printf "    Not Available: "
+      else
+         printf "    Excluded: "
+
+      print pkgpath, "on", run_on [$2]
       print pkgpath >> packages_failed_notavail_fn
       xclose(packages_failed_notavail_fn)
    }else{
