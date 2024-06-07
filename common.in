@@ -148,7 +148,8 @@ check_memalloc_fn="$meta_dir/check_memory_allocation_failures.txt"
 build_start_fn="$meta_dir/build_start.tmp"
 build_end_fn="$meta_dir/build_end.tmp"
 
-queue_fn="$tmpdir/queue_PAe.tmp"
+dep_graph_to_build_fn="$tmpdir/dep_graph_to_build.tmp"
+packages_to_rebuild_fn="$tmpdir/packages_to_rebuild.tmp"
 rebuild_PAe_fn="$tmpdir/rebuild_PAe.tmp"
 
 aux_reqd_deps_fn="$MSCOMMONDIR/reqd_deps.txt"

@@ -30,19 +30,18 @@ cd "$REPORT1_DIR"
 ### graph of packages for paexec
 verbose_print "  initial queue..."
 
-@libexecdir@/gen_queue -f "$progress_fn" "$rebuild_PAe_fn" > "$queue_fn"
-$WEIGH_PACKAGES_CMD -f "$queue_fn" "$pkg_src_summary_fn" > "$queue_fn.tmp"
-cat "$queue_fn.tmp" >> "$queue_fn"
-rm "$queue_fn.tmp"
+@libexecdir@/gen_queue -f "$progress_fn" "$rebuild_PAe_fn" > "$dep_graph_to_build_fn"
+$WEIGH_PACKAGES_CMD -f "$dep_graph_to_build_fn" "$pkg_src_summary_fn" > "$dep_graph_to_build_fn.tmp"
+cat "$dep_graph_to_build_fn.tmp" >> "$dep_graph_to_build_fn"
+rm "$dep_graph_to_build_fn.tmp"
 
 verbose_print '\n'
 
 ######################################################################
 ### packages to build
 
-verbose_print "  packages to build: "
-
-count=$(awk '
+verbose_print '  dependency graph to build: %s\n' "$dep_graph_to_build_fn"
+awk '
 NF==2 {
    h[$1] = h[$2] = 0
 }
@@ -50,11 +49,11 @@ NF==1 {
    h[$1] = 0
 }
 END {
-   for (p in h) ++cnt
-   print cnt
-}' "$queue_fn")
+   for (p in h) print p
+}' "$dep_graph_to_build_fn" > "$packages_to_rebuild_fn"
+verbose_print "  packages to build: %s\n" "$packages_to_rebuild_fn"
 
-verbose_print '%s\n' "$count"
+verbose_print "  #packages to build: %s\n" $(awk 'END {print NR}' "$packages_to_rebuild_fn")
 
 ######################################################################
 ### main loop - building
@@ -249,7 +248,7 @@ env_for_slave="DISTBB_CONF=$DISTBB_CONF aux_reqd_deps_fn=$aux_reqd_deps_fn"
 
 paexec -mt="$eot" -s $PAEXEC_EXTRA_OPTS -EI -lr -t "$TRANSPORT" -n "$SLAVES" \
        -C env $env_for_slave @libexecdir@/wrapper "$DISTBB_SLAVE" \
-       < "$queue_fn" |
+       < "$dep_graph_to_build_fn" |
     postfilter
 
 ######################################################################
