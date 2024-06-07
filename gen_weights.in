@@ -12,6 +12,10 @@
 #use "xclose.awk"
 #use "has_prefix.awk"
 
+# This is a heuristics for building heavy packages and packages having
+# a lot of dependencies before others in order to minimize total bulk
+# build time in parallel mode.
+
 #.begin-str help
 # gen_weights - takes a dependency graph of packages and pkg_src_summary
 # on input and outputs weights of packages in paexec(1) format, i.e.
@@ -26,31 +30,39 @@
 #.end-str
 
 BEGIN {
+	PENALTY_FOR_DEPENDENCY = 30
+	SIZE_MULTIPLIER = 1/10240
+	CXX_MULTIPLIER = 10
+}
+
+BEGIN {
 	fn = getarg("f")
 	assert(fn != "") # this option is mandatory
 
 	while(xgetline0(fn)){
 		if (NF >= 1)
 			pkg [$1] = 0
-		if (NF == 2)
+		if (NF == 2) {
 			pkg [$2] = 0
+			deps [$1] = deps [$1] " " $2
+			incount[$1] += 0
+			incount[$2] += 1
+		}
 	}
 
 	xclose(fn)
-	mult = 1
-	cxx_mult = 10
+	mult = SIZE_MULTIPLIER
 }
 
 NF == 0 {
 	if (pkgpath in pkg){
-#		print pkg
 		$0 = alldistfiles
 		sum_sz = 0
 		for (i=1; i <= NF; ++i){
 			idx = index($i, ":")
 			sum_sz += substr($i, idx+1)
 		}
-		print "weight:", pkgpath, int((sum_sz / 10240 + 1) * mult)
+		weight[pkgpath] = int(sum_sz * mult + 5)
 	}
 	mult = 1
 	pkgpath = alldistfiles = ""
@@ -59,7 +71,6 @@ NF == 0 {
 
 has_prefix($0, "PKGPATH=") {
 	pkgpath = substr($0, 9)
-#	print "pkgpath", pkgpath
 	next
 }
 
@@ -70,7 +81,37 @@ has_prefix($0, "ALLDISTFILES=") {
 
 has_prefix($0, "USE_LANGUAGES=") {
 	if ($0 ~ /[Cc][+][+]/)
-		mult = cxx_mult
+		mult *= CXX_MULTIPLIER
 
 	next
+}
+
+END {
+	# topological sort and sum weights for all dependent packages' weight and some penalty
+	tail = head = 1
+	for (pkgpath in incount) {
+		if (!incount[pkgpath])
+			queue[tail++] = pkgpath
+	}
+	for (; head < tail; ++head) {
+		pkgpath = queue[head]
+		queue[head]
+		split(deps[pkgpath], arr, / /)
+		for (idx in arr) {
+			dep = arr[idx]
+			if (dep == "") continue
+			--incount[dep]
+			weight[pkgpath] += weight[dep] + PENALTY_FOR_DEPENDENCY
+			if (! incount[dep]) {
+				queue[tail++] = dep
+			}
+		}
+	}
+}
+
+END {
+	for (pkgpath in weight) {
+		weight[pkgpath] += 0
+		print "weight:", pkgpath, weight[pkgpath]
+	}
 }
