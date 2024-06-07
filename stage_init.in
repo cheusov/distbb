@@ -91,7 +91,7 @@ else
     eval @libexecdir@/wrapper $RMDIRS_CMD
     eval @libexecdir@/wrapper $EXTRACT_BOOTSTRAP_CMD
 fi
-verbose_print "done\n"
+verbose_print '\n'
 
 ######################################################################
 ### initial packages
@@ -127,7 +127,7 @@ done
 
 sort_uniq_inplace "$raw_packages_fn"
 
-verbose_print "done\n"
+verbose_print '\n'
 
 ######################################################################
 ### updating PKG_ALL_SUMMARY
@@ -137,13 +137,13 @@ if test -z "$skip_updating_summary"; then
 	verbose_print "  updating target pkg_all_summary..."
 	eval @libexecdir@/wrapper $PKG_UPDATE_ALL_SUMMARY_CMD \
 	    "$TARGET_PKG_ALL_SUMMARY" "$TARGET_PACKAGES/All"
-	verbose_print "done\n"
+	verbose_print '\n'
     fi
 
     verbose_print "  updating pkg_all_summary..."
     eval @libexecdir@/wrapper $PKG_UPDATE_ALL_SUMMARY_CMD \
 	"$PKG_ALL_SUMMARY" "$PACKAGES/All"
-    verbose_print "done\n"
+    verbose_print '\n'
 fi
 
 ######################################################################
@@ -180,7 +180,7 @@ if test -z "$skip_updating_src_summary"; then
 	    exit 1
 	fi
 	set -e
-	verbose_print "done\n"
+	verbose_print '\n'
 
 	#
 	if test -s "$build_src_summary_log_fn"; then
@@ -210,7 +210,7 @@ if test -z "$skip_updating_src_summary"; then
 	exit 1
     fi
     set -e
-    verbose_print "done\n"
+    verbose_print '\n'
 
     if is_true "$CROSS_COMPILE"; then
 	raw_packages_fn="$raw_target_packages_fn"
@@ -283,7 +283,7 @@ sort_uniq_inplace "$tmpdir/packages_PAeNA.tmp"
 PAeNA2PA "$tmpdir/packages_PAeNA.tmp" | sort -u > "$tmpdir/packages_PA.tmp"
 comm -23 "$raw_packages_fn" "$tmpdir/packages_PA.tmp" > "$packages_failed_scan_fn"
 
-verbose_print "done\n"
+verbose_print '\n'
 
 printf '' > "$errors_fn"
 
@@ -354,7 +354,7 @@ sort "$changed_pkgs_fn" "$changed_pkgs_fn" "$tmpdir/packages_PAe.tmp" |
 uniq -c |
 awk '$1 == 1 {print $2}' > "$packages_built_prev_fn.tmp"
 
-verbose_print "done\n"
+verbose_print '\n'
 
 ######################################################################
 ### comparison binaries against pkgsrc tree
@@ -373,7 +373,7 @@ EOF
     indent2 "$tmp_stderr_fn" >> "$errors_fn"
 fi
 
-verbose_print "done\n"
+verbose_print '\n'
 
 ######################################################################
 ### list of already built packages
@@ -382,6 +382,6 @@ verbose_print "  copying auxiliary files..."
 
 cp "$reqd_deps_NA_fn" "$aux_reqd_deps_fn"
 
-verbose_print "done\n"
+verbose_print '\n'
 
 ######################################################################

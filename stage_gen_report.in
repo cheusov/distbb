@@ -36,7 +36,7 @@ while read f; do
     sort_uniq_inplace "$f"
 done
 
-verbose_print 'done\n'
+verbose_print '\n'
 
 ######################################################################
 
@@ -588,7 +588,7 @@ verbose_print "  META/report.html ... "
 
 report_full_html > "$meta_dir/report.html"
 
-verbose_print 'done\n'
+verbose_print '\n'
 
 ######################################################################
 
@@ -690,7 +690,7 @@ BEGIN {
 }
 ' "$report_txt_fn" > "$report_mini_txt_fn"
 
-verbose_print 'done\n'
+verbose_print '\n'
 
 ######################################################################
 
@@ -724,7 +724,7 @@ NF == 0 {
 }
 ' "$pkg_src_summary_fn"
 
-verbose_print 'done\n'
+verbose_print '\n'
 
 ######################################################################
 pkgname_pkgpath2html (){
@@ -808,7 +808,7 @@ gen_stage_xxx (){
 	fi
     done
 
-    verbose_print "done\n"
+    verbose_print '\n'
 }
 
 gen_stage_xxx
@@ -850,7 +850,7 @@ while read pkgpath pkgname maintainer; do
     failed_because_txt2html "$pkgname" "$pkgpath" > "$fn"
 done < "$packages_failed_deps_fn"
 
-verbose_print "done\n"
+verbose_print '\n'
 
 ######################################################################
 failed_deps_txt2html (){
@@ -885,6 +885,6 @@ while read pkgpath pkgname maintainer; do
     failed_deps_txt2html "$pkgname" "$pkgpath" > "$fn"
 done
 
-verbose_print "done\n"
+verbose_print '\n'
 
 ######################################################################

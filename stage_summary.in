@@ -36,20 +36,20 @@ else
     cp "$bin_summary_fn" "$PKG_SUMMARY".tmp
 fi
 mv "$PKG_SUMMARY".tmp "$PKG_SUMMARY"
-verbose_print "done\n"
+verbose_print '\n'
 
 # pkg_enriched_summary.tmp
 verbose_print "  $(basename $enriched_summary_fn)... "
 list_all_built_pkgs |
 xargs pkg_bin_summary -e -f PKGNAME,PKGPATH,COMMENT,PLIST,CONFLICTS \
     > "$enriched_summary_fn"
-verbose_print "done\n"
+verbose_print '\n'
 
 # gzip + bzip2
 verbose_print "  $(basename ${PKG_SUMMARY%.txt}.gz)... "
 "$GZIP" < "$PKG_SUMMARY" > "${PKG_SUMMARY%.txt}.gz"
-verbose_print "done\n"
+verbose_print '\n'
 
 verbose_print "  $(basename ${PKG_SUMMARY%.txt}.bz2)... "
 "$BZIP2" < "$PKG_SUMMARY" > "${PKG_SUMMARY%.txt}.bz2"
-verbose_print "done\n"
+verbose_print '\n'

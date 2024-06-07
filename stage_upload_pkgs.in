@@ -49,4 +49,4 @@ while true; do
     sleep "$UPLOAD_PKGS_PAUSE"
 done
 
-verbose_print "done\n"
+verbose_print '\n'

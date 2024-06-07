@@ -28,14 +28,14 @@ cd "$REPORT1_DIR"
 
 ######################################################################
 ### graph of packages for paexec
-verbose_print "Initial queue..."
+verbose_print "  initial queue..."
 
 @libexecdir@/gen_queue -f "$progress_fn" "$rebuild_PAe_fn" > "$queue_fn"
 $WEIGH_PACKAGES_CMD -f "$queue_fn" "$pkg_src_summary_fn" > "$queue_fn.tmp"
 cat "$queue_fn.tmp" >> "$queue_fn"
 rm "$queue_fn.tmp"
 
-verbose_print "done\n"
+verbose_print '\n'
 
 ######################################################################
 ### packages to build

@@ -22,4 +22,4 @@ BUILD_ID="$1"
 # main
 verbose_print "  sending report... "
 eval @libexecdir@/wrapper $REPORT_CMD < "$REPORT1_DIR/META/$REPORT_FILE"
-verbose_print "done\n"
+verbose_print '\n'

@@ -42,4 +42,4 @@ while true; do
     sleep "$UPLOAD_LOGS_PAUSE"
 done
 
-verbose_print "done\n"
+verbose_print '\n'
