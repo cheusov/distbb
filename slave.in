@@ -260,7 +260,7 @@ build_package (){
 	     -f "$DISTBB_LOCAL_MK" \
 	     -f @datadir@/distbb.mk \
 	     "$CLEAN_TARGET" \
-	     $bmake_opts $stdin_from_dev_null
+	     $bmake_opts $stdin_from_dev_null >/dev/null 2>&1
     fi
 
     unset MAKECONF || true # ksh, dash, pdksh
