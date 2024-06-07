@@ -112,3 +112,12 @@ Depends:
 # does nothing. It's for keeping WRKDIR as is
 .PHONY: None
 None:
+
+############################################################
+############################################################
+# CleanDistfiles target:
+.PHONY: CleanDistfiles
+CleanDistfiles:
+.for d in ${DISTFILES}
+	rm -f ${DISTDIR}/${d}
+.endfor

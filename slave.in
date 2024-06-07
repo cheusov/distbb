@@ -145,6 +145,20 @@ run_bmake() ( # subprocess due to ULIMIT_CMD!
 	 $bmake_opts "$1" $stdin_from_dev_null
 )
 
+run_bmake_with_repeat() {
+    # set +e mode here
+    # $1 -- target
+    run_bmake "$1"
+    _ex=$?
+    if test $_ex != 0 -a checksum = "$1"; then
+	# clean distfiles and repeat
+	run_bmake CleanDistfiles
+	run_bmake "$t"
+	_ex=$?
+    fi
+    return $_ex
+}
+
 do_build_package (){
     # $1 - long pkgpath, e.g. www/php-apc:PHP_VERSION_REQD=5
     # $2 - real pkgpath, e.g. www/php-apc
@@ -215,7 +229,7 @@ do_build_package (){
 		bmake_env="$bmake_env PKGPATHe=$BH_pkg$1 BH_pkg=$BH_pkg"
 
 		set +e
-		run_bmake "$t" || return $?
+		run_bmake_with_repeat "$t" || return $?
 		set -e
 		;;
 	esac
