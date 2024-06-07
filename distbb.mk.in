@@ -98,9 +98,17 @@ Vars:
 # Depends target:
 # install all required dependencies, removing {al,ter}:../native/dependencies
 .PHONY: Depends
+
 Depends:
 	env PKG_ADD_CMD="${PKG_ADD_CMD}" \
 	    PKG_DBDIR="${PKG_DBDIR}" \
 	    PKG_SUFX=${PKG_SUFX} \
 	    aux_reqd_deps_fn=${aux_reqd_deps_fn} \
 	    @libexecdir@/make-depends "${BH_pkg}${PKGNAME}"
+
+############################################################
+############################################################
+# None target:
+# does nothing. It's for keeping WRKDIR as is
+.PHONY: None
+None:

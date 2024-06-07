@@ -135,6 +135,16 @@ restore_TARGETS_and_EXTRA_OPTS (){
     EXTRA_OPTS="$orig_EXTRA_OPTS"
 }
 
+run_bmake() ( # subprocess due to ULIMIT_CMD!
+    # $1 -- target
+    eval "$ULIMIT_CMD"
+    eval "\$SU_UNPRIV_CMD_$1" \
+	 env $bmake_env $BMAKE -f Makefile \
+	 -f "$DISTBB_LOCAL_MK" \
+	 -f @datadir@/distbb.mk \
+	 $bmake_opts "$1" $stdin_from_dev_null
+)
+
 do_build_package (){
     # $1 - long pkgpath, e.g. www/php-apc:PHP_VERSION_REQD=5
     # $2 - real pkgpath, e.g. www/php-apc
@@ -205,14 +215,7 @@ do_build_package (){
 		bmake_env="$bmake_env PKGPATHe=$BH_pkg$1 BH_pkg=$BH_pkg"
 
 		set +e
-		(
-		    eval "$ULIMIT_CMD"
-		    eval "\$SU_UNPRIV_CMD_$t" \
-			env $bmake_env $BMAKE -f Makefile \
-			-f "$DISTBB_LOCAL_MK" \
-			-f @datadir@/distbb.mk \
-			$bmake_opts $t $stdin_from_dev_null
-		) || return $?
+		run_bmake "$t" || return $?
 		set -e
 		;;
 	esac
@@ -255,13 +258,7 @@ build_package (){
     fi
 
     # clean even if it fails
-    if test "_$CLEAN_TARGET" != "_None"; then
-	eval $bmake_env $BMAKE -f Makefile \
-	     -f "$DISTBB_LOCAL_MK" \
-	     -f @datadir@/distbb.mk \
-	     "$CLEAN_TARGET" \
-	     $bmake_opts $stdin_from_dev_null >/dev/null 2>&1
-    fi
+    run_bmake "$CLEAN_TARGET" >/dev/null 2>&1
 
     unset MAKECONF || true # ksh, dash, pdksh
 
