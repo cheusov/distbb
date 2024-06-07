@@ -12,7 +12,7 @@ PAeNA2PAe () { sed 's/;[^ ]*//g' "$@"; }
 PAeNA2PA ()  { sed 's/[;:][^ ]*//g' "$@"; }
 
 verbose_print (){
-    printf "$1" 1>&2
+    printf "$@" 1>&2
 }
 
 sort_uniq (){

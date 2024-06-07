@@ -20,6 +20,8 @@ BUILD_ID="$1"
 . "$DISTBB_CONF"
 . @libexecdir@/common
 
+export eot='d0b586170bd6117bea00144c86207e0e'
+
 # main
 ######################################################################
 cd "$REPORT1_DIR"
@@ -35,7 +37,24 @@ rm "$queue_fn.tmp"
 
 verbose_print "done\n"
 
-export eot='d0b586170bd6117bea00144c86207e0e'
+######################################################################
+### packages to build
+
+verbose_print "  packages to build: "
+
+count=$(awk '
+NF==2 {
+   h[$1] = h[$2] = 0
+}
+NF==1 {
+   h[$1] = 0
+}
+END {
+   for (p in h) ++cnt
+   print cnt
+}' "$queue_fn")
+
+verbose_print '%s\n' "$count"
 
 ######################################################################
 ### main loop - building
