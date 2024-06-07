@@ -29,7 +29,7 @@ cd "$REPORT1_DIR"
 verbose_print "Initial queue..."
 
 @libexecdir@/gen_queue -f "$progress_fn" "$rebuild_PAe_fn" > "$queue_fn"
-eval $WEIGH_PACKAGES_CMD -f "$queue_fn" "$pkg_src_summary_fn" > "$queue_fn.tmp"
+$WEIGH_PACKAGES_CMD -f "$queue_fn" "$pkg_src_summary_fn" > "$queue_fn.tmp"
 cat "$queue_fn.tmp" >> "$queue_fn"
 rm "$queue_fn.tmp"
 
