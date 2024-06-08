@@ -225,7 +225,8 @@ report_html_jumpto (){
     <li><a href="#summary">Summary</a></li>
     <li><a href="#failures per maintainer">Failures per maintainer</a></li>
     <li><a href="#failed">Failed packages</a></li>
-    <li><a href="#failed depends">Failed due to deps</a></li>
+    <li><a href="#unavailable">Unavailable packages</a></li>
+    <li><a href="#failed depends">Failed due to dependencies</a></li>
     <li><a href="#old vs new">Progress: prev. vs. curr.</a></li>
     <li><a href="#best vs new">Progress: best vs. curr.</a></li>
     <li><a href="#checks">Sanity checks and tips</a></li>
@@ -320,9 +321,12 @@ EOF
 
 report_html_failed_pkgs (){
     # failed packages
+    # $1 -- HTML tag "a" name
+    # $2 -- HTML tag "h3" text
+    test $# = 2
     cat <<EOF
 <hr>
-<h3><a name="failed"></a>Failed packages</h3>
+<h3><a name="$1"></a>$2</h3>
 
 EOF
     printf '%s' '<table width="100%">'
@@ -332,7 +336,6 @@ EOF
 	-e 's,class="[^"]*",,g' \
 	-e 's,[A-Z][a-z ]*,<b>&</b>,g'
 
-    cat "$packages_failed_fn" "$packages_failed_notavail_fn" |
     while read pkgpath pkgname maintainer; do
 	breaks=$(count_lines "${REPORT1_DIR}/$(get_log_dir $pkgpath $pkgname)/failed_deps.txt")
 	failed_stage=$(get_failed_stage "$pkgpath" "$pkgname")
@@ -525,7 +528,10 @@ report_html (){
     report_html_responsible
     report_html_summary
     report_html_notes
-    report_html_failed_pkgs
+    report_html_failed_pkgs failed 'Failed packages' \
+	< "$packages_failed_fn"
+    report_html_failed_pkgs unavailable 'Unavailable packages' \
+	< "$packages_failed_notavail_fn"
     report_html_failed_deps
     report_html_prev_vs_curr
     report_html_best_vs_curr
