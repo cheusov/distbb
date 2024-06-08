@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Copyright (c) 2008-2011 Aleksey Cheusov <vle@gmx.net>
+# Copyright (c) 2008-2024 Aleksey Cheusov <vle@gmx.net>
 # All rights reserved.
 #
 # See LICENSE file
@@ -210,8 +210,8 @@ report_html_responsible (){
 }
 
 report_html_notes (){
-    echo '<hr>'
     if test "$NOTES"; then
+	echo '<hr>'
 	echo '<h3><a name="notes"></a>Notes</h3>'
 	cat "$NOTES"
     fi
