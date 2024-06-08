@@ -237,7 +237,7 @@ status [$2] == "failure" {
 '
 }
 
-if ! is_true "$MASTER_MODE"; then
+if ! is_true "$PARALLEL_MODE"; then
     SLAVES=+1 # building on localhost
     TRANSPORT=''
 fi

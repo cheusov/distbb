@@ -232,7 +232,7 @@ fi
 if test "$MAIL_PROG" != ':'; then
     test_var REPORT_EMAIL
 fi
-if is_true "$MASTER_MODE"; then
+if is_true "$PARALLEL_MODE"; then
     test_var SLAVES
     test_var PSS_SLAVES
 fi

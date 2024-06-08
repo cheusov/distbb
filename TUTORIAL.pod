@@ -108,7 +108,7 @@ is fully workable.
       # UPLOAD_PKGS_DEST="you@example.org:/pub/pkgsrc/packages/NetBSD/$(uname -m)/10.0-$PKGSRCVER/"
       # REPORT_URL_PREFIX="https://example.org/~you/bulk_logs"
       # UPLOAD_LOGS_DEST='you@example.org:~/public_html/bulk_logs/'
-      MASTER_MODE=yes
+      PARALLEL_MODE=yes
       CONFIG_VERSION=1
       . /home/cheusov/pkg_distbb/share/distbb/distbb.default.conf
 

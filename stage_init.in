@@ -82,7 +82,7 @@ printf '' > "$progress_fn"
 ######################################################################
 ### unpacking bootstrap
 verbose_print "  removing PREFIX and unpacking bootstrap..."
-if is_true "$MASTER_MODE"; then
+if is_true "$PARALLEL_MODE"; then
     for s in $SLAVES; do
 	eval "$TRANSPORT '$s' 'env DISTBB_CONF=$DISTBB_CONF @libexecdir@/wrapper $RMDIRS_CMD'"
 	eval "$TRANSPORT '$s' 'env DISTBB_CONF=$DISTBB_CONF @libexecdir@/wrapper $EXTRACT_BOOTSTRAP_CMD'"
@@ -112,7 +112,7 @@ if test "$packages"; then
     # remove comments and empty lines
     cleanup_package_list > "$raw_packages_fn"
 else
-    if is_true "$MASTER_MODE" -a -n "$TRANSPORT" -a -n "$SLAVES"; then
+    if is_true "$PARALLEL_MODE" -a -n "$TRANSPORT" -a -n "$SLAVES"; then
 	slave1="$(echo $SLAVES | sed 's, .*$,,')"
 	eval "$TRANSPORT '$slave1' 'env DISTBB_CONF=$DISTBB_CONF @libexecdir@/wrapper $LIST_ALL_PKGS_CMD'"
     else
@@ -159,7 +159,7 @@ if test -n "$LIBKVER_OSRELEASE"; then
 fi
 
 if test -z "$skip_updating_src_summary"; then
-    if ! is_true "$MASTER_MODE"; then
+    if ! is_true "$PARALLEL_MODE"; then
 	unset PSS_SLAVES || true
     fi
 

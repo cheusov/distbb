@@ -69,8 +69,8 @@ assign (){
 
 # set it to non-empty string if you want "distributed" bulk build
 # also see SLAVES variable
-#: ${MASTER_MODE 'yes'
-: ${MASTER_MODE:=no} # for building "inplace", i.e. destroying $PREFIX
+#: ${PARALLEL_MODE:=yes}
+: ${PARALLEL_MODE:=no} # for building "inplace", i.e. destroying $PREFIX
 
 # transport to the slaves
 #: ${TRANSPORT:=/usr/bin/ssh -x}
@@ -163,13 +163,11 @@ fi
 #: ${PSS_SLAVES:=+6}
 #: ${PSS_SLAVES:=} # dangerous for the same reason
 
-if test yes = "$MASTER_MODE"; then
-    SLAVES=$(echo $SLAVES) # trim spaces
+if test yes = "$PARALLEL_MODE" -o 1 = "$PARALLEL_MODE"; then
     # Gnerating pkg_src_summary on slave hosts (recomended)
-    #: ${PSS_SLAVES:=$SLAVES $SLAVES} # 2 processes per slave machine
 
+    #: ${PSS_SLAVES:=$SLAVES $SLAVES} # 2 processes per slave
     : ${PSS_SLAVES:=$SLAVES} # reasonable default
-    PSS_SLAVES=$(echo $PSS_SLAVES) # trim spaces
 
     #: ${PSS_TRANSPORT:=} # (for SMP machine)
     #: ${PSS_TRANSPORT:=/usr/bin/ssh -x}
