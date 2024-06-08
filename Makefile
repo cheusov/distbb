@@ -61,7 +61,7 @@ INTEXTS_REPLS +=    cssdir      ${CSSDIR}
 INTEXTS_REPLS +=    version     ${VERSION}
 
 CLEANFILES += *~ core* distbb.1 distbb.cat1 ChangeLog
-CLEANFILES += ${INSCRIPTS} ${INFILES} distbb.html
+CLEANFILES += ${INSCRIPTS} ${INFILES} distbb.html TUTORIAL.html
 
 DIST_TARGETS =	TUTORIAL.html
 
