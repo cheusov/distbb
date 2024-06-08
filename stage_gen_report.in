@@ -197,6 +197,8 @@ report_html_header (){
 <h2>$OPSYS $OSVER</h2>
 
 <!--  <p><a href="$REPORT_URL" title="Full report">$REPORT_URL</a></p> -->
+<p><a href="${REPORT_URL%%.html}.txt" title="Parsable report">Parsable report</a></p>
+<p><a href="${REPORT_URL%%report.html}" title="Bulk build raw data">Bulk build raw data</a></p>
 
 EOF
 }
@@ -637,10 +639,17 @@ report_html2txt (){
       printf "%-4s %-24s %-20s %5s %24s\n", diff, pkgpath, pkgbase, breaks, vers
       next
    }
+   /Parsable report/ || /Bulk build raw data/ {
+      next
+   }
+   /^Unavailable packages/, /------------/ {
+      next
+   }
    /^Failed packages/, /------------/ {
       if (NF == 4) printf "  %-35s %6s %-34s\n", $1, $2, $4
       else if (NF == 3) printf "  %-35s %6s %-34s\n", $1, "", $3
       else if (NF != 1) print $0
+      else if (/------------/) print $0
       next
    }
    /Summary/, /Failures per/ {
