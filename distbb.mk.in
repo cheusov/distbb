@@ -79,6 +79,7 @@ DBB_QVARS.CONFIGURE_SCRIPT=		1
 .PHONY: Vars
 
 Vars:
+	@echo 'Environment variables'; set | awk '{print "    " $$0}'
 .for v in ${DBB_VARS}
 .if !empty(${v}:U)
 	@echo ${v}:
