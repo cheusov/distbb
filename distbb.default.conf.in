@@ -329,7 +329,7 @@ fi
 #: ${PACKAGES_URL:=ftp://ftp.netbsd.org/pub/pkgsrc/packages/NetBSD/amd64/5.1_$PKGSRCVER/}
 
 #
-#: ${REPORT_URL_PREFIX:=http://your-domain.com/~you/pkgsrc/logs/}
+: ${REPORT_URL_PREFIX:=https://your-domain.com/~you/pkgsrc-distbb/logs}
 if test -n "$BUILD_ID"; then
     : ${REPORT_URL:=$REPORT_URL_PREFIX/`basename $BUILD_ID`/META/report.html}
 fi
@@ -433,4 +433,3 @@ if is_true "$CROSS_COMPILE"; then
     export CROSS_COMPILE
     export TARGET_MAKECONF
 fi
-

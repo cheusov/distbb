@@ -105,7 +105,8 @@ is fully workable.
       REPORTS_DIR="$HOME/bulk-logs"
       BUILDER_USER=builder
       REPORT_EMAIL="$USER"
-      # UPLOAD_PKGS_DEST='you@example.org:/pub/pkgsrc/packages/NetBSD/$(uname -m)/10.0-$PKGSRCVER/'
+      # UPLOAD_PKGS_DEST="you@example.org:/pub/pkgsrc/packages/NetBSD/$(uname -m)/10.0-$PKGSRCVER/"
+      # REPORT_URL_PREFIX="https://example.org/~you/bulk_logs"
       # UPLOAD_LOGS_DEST='you@example.org:~/public_html/bulk_logs/'
       MASTER_MODE=yes
       CONFIG_VERSION=1
