@@ -415,4 +415,24 @@ Now we are ready for running bulk builds. Let's start with building one package.
 
 See B<distbb> options for more details.
 
+=head1 Running/shutting down sandboxes at boot/shutdown time.
+
+Update system-wide files I</etc/rc.local> and I</etc/rc.shutdown>.
+
+I</etc/rc.local>:
+
+    ...
+    for i in `seq 2`; do
+        /srv/sandboxes/sandbox"$i"-nb10/sandbox mount
+    done
+    ...
+
+I</etc/rc.shutdown>:
+
+    ...
+    for i in `seq 2`; do
+        /srv/sandboxes/sandbox"$i"-nb10/sandbox umount
+    done
+    ...
+
 L<https://github.com/cheusov/distbb/>
