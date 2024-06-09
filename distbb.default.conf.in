@@ -111,7 +111,7 @@ assign (){
 #
 # If you want to build short version of src_summary, uncomment the following
 # (see pkg_src_summary(1))
-: ${fields:=PKGNAME,PKGPATH,DEPENDS,BUILD_DEPENDS,TOOL_DEPENDS,BOOTSTRAP_DEPENDS,MAINTAINER,NO_BIN_ON_FTP,NO_BIN_ON_CDROM,USE_LANGUAGES,PKG_FAIL_REASON,ALLDISTFILES}
+: ${fields:=PKGNAME,PKGPATH,MAINTAINER,NO_BIN_ON_FTP,NO_BIN_ON_CDROM,USE_LANGUAGES,PKG_FAIL_REASON,ALLDISTFILES}
 #
 # For generating an "expanded" PLIST.
 # It is useless for distbb but looks very nice ;-)
@@ -139,7 +139,7 @@ assign (){
 if test -n "$partial_bb_flag"; then
     : ${PKG_UPDATE_SRC_SUMMARY_CMD:=@bindir@/pkg_src_summary -f $fields -muA > \"$PKG_SRC_SUMMARY\"}
 else
-    : ${PKG_UPDATE_SRC_SUMMARY_CMD:=@bindir@/pkg_src_summary -f $fields -mu > \"$PKG_SRC_SUMMARY\"}
+    : ${PKG_UPDATE_SRC_SUMMARY_CMD:=@bindir@/pkg_src_summary -f $fields -mdDTBu > \"$PKG_SRC_SUMMARY\"}
 fi
 
 # program for comparing pkg_summary(5) for available binaries and
