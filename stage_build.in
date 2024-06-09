@@ -31,7 +31,7 @@ cd "$REPORT1_DIR"
 verbose_print "  initial queue..."
 
 @libexecdir@/gen_queue -f "$progress_fn" "$rebuild_PAe_fn" > "$dep_graph_to_build_fn"
-$WEIGH_PACKAGES_CMD -f "$dep_graph_to_build_fn" "$pkg_src_summary_fn" > "$dep_graph_to_build_fn.tmp"
+$WEIGH_PACKAGES_CMD -f "$dep_graph_to_build_fn" "$processed_pkg_src_summary_fn" > "$dep_graph_to_build_fn.tmp"
 cat "$dep_graph_to_build_fn.tmp" >> "$dep_graph_to_build_fn"
 rm "$dep_graph_to_build_fn.tmp"
 
@@ -69,7 +69,7 @@ runawk \
    -v packages_failed_fn="$packages_failed_fn.tmp" \
    -v packages_failed_notavail_fn="$packages_failed_notavail_fn.tmp" \
    -v progress_fn="$progress_fn" \
-   -v pkg_src_summary="$pkg_src_summary_fn" \
+   -v pkg_src_summary="$processed_pkg_src_summary_fn" \
    -v eot="$eot" \
    -e '
 # input line format:

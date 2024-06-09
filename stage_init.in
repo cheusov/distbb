@@ -252,20 +252,20 @@ NF == 0 {
 ' "$@"
 }
 
-pkg_assignments2pkgpath "$PKG_SRC_SUMMARY" |
-pkg_enrich_summary -bt > "$pkg_src_summary_fn.tmp"
-pkg_summary2bb_pkgs "$pkg_src_summary_fn.tmp" > "$pkg_src_summary_fn"
+pkg_assignments2pkgpath "$PKG_SRC_SUMMARY" | tee "$pkg_src_summary_fn" |
+    pkg_enrich_summary -bt > "$processed_pkg_src_summary_fn.tmp"
+pkg_summary2bb_pkgs "$processed_pkg_src_summary_fn.tmp" > "$processed_pkg_src_summary_fn"
 if is_true "$CROSS_COMPILE"; then
     # build host summary
-    add_BH_prefix1 "$pkg_src_summary_fn" > "$pkg_src_summary_fn.tmp"
+    add_BH_prefix1 "$processed_pkg_src_summary_fn" > "$processed_pkg_src_summary_fn.tmp"
 
     # target host summary
-    pkg_assignments2pkgpath "$TARGET_PKG_SRC_SUMMARY" > "$pkg_src_summary_fn.tmp2"
-    pkg_summary2bb_pkgs "$pkg_src_summary_fn.tmp2" > "$pkg_src_summary_fn.tmp3"
-    add_BH_prefix2 "$pkg_src_summary_fn.tmp3" >> "$pkg_src_summary_fn.tmp"
-    rm "$pkg_src_summary_fn.tmp3" "$pkg_src_summary_fn.tmp2"
+    pkg_assignments2pkgpath "$TARGET_PKG_SRC_SUMMARY" > "$processed_pkg_src_summary_fn.tmp2"
+    pkg_summary2bb_pkgs "$processed_pkg_src_summary_fn.tmp2" > "$processed_pkg_src_summary_fn.tmp3"
+    add_BH_prefix2 "$processed_pkg_src_summary_fn.tmp3" >> "$processed_pkg_src_summary_fn.tmp"
+    rm "$processed_pkg_src_summary_fn.tmp3" "$processed_pkg_src_summary_fn.tmp2"
 
-    mv "$pkg_src_summary_fn.tmp" "$pkg_src_summary_fn"
+    mv "$processed_pkg_src_summary_fn.tmp" "$processed_pkg_src_summary_fn"
 fi
 
 ######################################################################
@@ -273,10 +273,10 @@ fi
 verbose_print "  is there packages for which pkg_src_summary failed?..."
 
 pkg_grep_summary -f PKGPATH,PKGNAME,ASSIGNMENTS -t strfile PKGPATH \
-    "$raw_packages_fn" < "$pkg_src_summary_fn" | summary2PAeNA \
+    "$raw_packages_fn" < "$processed_pkg_src_summary_fn" | summary2PAeNA \
     > "$tmpdir/packages_PAeNA.tmp"
 pkg_grep_summary -f PKGPATH,PKGNAME,ASSIGNMENTS -t strfile PKGPATHe \
-    "$raw_packages_fn" < "$pkg_src_summary_fn" | summary2PAeNA \
+    "$raw_packages_fn" < "$processed_pkg_src_summary_fn" | summary2PAeNA \
     >> "$tmpdir/packages_PAeNA.tmp"
 sort_uniq_inplace "$tmpdir/packages_PAeNA.tmp"
 
@@ -295,9 +295,9 @@ awk '
 /^PKGNAME/ {pkgbase = substr($0, 9); sub(/-[^-]*$/, "", pkgbase)}
 /^PKGPATH/ {pkgpath = substr($0, 9); sub(/:.*$/, "", pkgpath)}
 NF == 0 {print pkgpath "," pkgbase}
-' "$pkg_src_summary_fn" > "$tmpdir/src_PABA.tmp"
+' "$processed_pkg_src_summary_fn" > "$tmpdir/src_PABA.tmp"
 
-summary2PKGPATH "$pkg_src_summary_fn" |
+summary2PKGPATH "$processed_pkg_src_summary_fn" |
 sort -u > "$tmpdir/all_src_pkgpaths.tmp"
 
 all_deps_PAeNA_fn="$tmpdir/all_deps_PAeNA.tmp"
@@ -310,7 +310,7 @@ else
 fi
 
 pkg_summary2deps -Apnrsal2 -P "$tmpdir/all_src_pkgpaths.tmp" \
-    "$pkg_src_summary_fn" "$all_bin_summary_fn" \
+    "$processed_pkg_src_summary_fn" "$all_bin_summary_fn" \
     > "$all_deps_PAeNA_fn" 2>"$tmp_stderr_fn"
 if test -s "$tmp_stderr_fn"; then
     cat >> "$errors_fn" <<'EOF'
@@ -321,7 +321,7 @@ EOF
 fi
 
 @libexecdir@/pkg_summary2build_deps \
-    -s "$pkg_src_summary_fn" \
+    -s "$processed_pkg_src_summary_fn" \
     -b "$all_bin_summary_fn" \
     -r "$tmpdir/updated_PAeNA.tmp" \
     -m ${deps_graph_mode} \
@@ -361,7 +361,7 @@ verbose_print '\n'
 verbose_print "  pkg_src_summary vs. pkg_summary comparison..."
 
 eval @libexecdir@/wrapper \
-    $PKG_CMP_SUMMARY_CMD "$pkg_src_summary_fn" "$PKG_ALL_SUMMARY" \
+    $PKG_CMP_SUMMARY_CMD "$processed_pkg_src_summary_fn" "$PKG_ALL_SUMMARY" \
     > "$summary_cmp_fn" || true
 
 grep '^<' "$summary_cmp_fn" > "$tmp_stderr_fn" || true
