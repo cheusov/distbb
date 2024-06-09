@@ -285,10 +285,13 @@ save_TARGETS_and_EXTRA_OPTS
 while read pkgpath; do
     restore_TARGETS_and_EXTRA_OPTS
 
+    echo "build_start: `$EPOCH_SECONDS_CMD`"
     if build_package "$pkgpath" > "$logfn"; then
+	echo "build_end: `$EPOCH_SECONDS_CMD`"
 	echo success
     else
 	awk '{print " " $0}' "$logfn"
+	echo "build_end: `$EPOCH_SECONDS_CMD`"
 	echo failure
     fi
 

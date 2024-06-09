@@ -8,6 +8,8 @@ ICONDIR    ?=			${DATADIR}
 CSSDIR     ?=			${DATADIR}
 DOCDIR     ?=			${PREFIX}/share/doc/distbb
 
+EPOCH_SECONDS_CMD ?=		date +%s
+
 ##################################################
 
 .include "version.mk"
@@ -59,6 +61,7 @@ INTEXTS_REPLS +=    datadir     ${DATADIR}
 INTEXTS_REPLS +=    icondir     ${ICONDIR}
 INTEXTS_REPLS +=    cssdir      ${CSSDIR}
 INTEXTS_REPLS +=    version     ${VERSION}
+INTEXTS_REPLS +=    epoch_seconds_cmd	${EPOCH_SECONDS_CMD:Q}
 
 CLEANFILES += *~ core* distbb.1 distbb.cat1 ChangeLog
 CLEANFILES += ${INSCRIPTS} ${INFILES} distbb.html TUTORIAL.html

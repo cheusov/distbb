@@ -416,6 +416,9 @@ fi
 # similar to PKG_UPDATE_SRC_SUMMARY_CMD but for target platform
 : ${TARGET_PKG_UPDATE_SRC_SUMMARY_CMD:=@bindir@/pkg_src_summary -bA > \"$TARGET_PKG_SRC_SUMMARY\"}
 
+# command that outputs seconds since epoch
+: ${EPOCH_SECONDS_CMD:=@epoch_seconds_cmd@}
+
 ############################################################
 export PSS_SLAVES
 export PSS_OPTIONS

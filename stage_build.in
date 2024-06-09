@@ -146,6 +146,16 @@ $0 ~ /^[^ ]+ [0-9]+  / {
    next
 }
 
+/^[^ ]+ [0-9]+ build_start:/ {
+   build_start [$2] = $4
+   next
+}
+
+/^[^ ]+ [0-9]+ build_end:/ {
+   build_end [$2] = $4
+   next
+}
+
 # end of task
 {
    assert(NF == 3 && $3 == eot, "this should not happen")
@@ -180,7 +190,7 @@ status [$2] == "success" {
    free_arrs($2)
 
    #
-   print "success", pkgpath >> progress_fn
+   print "success", pkgpath, build_end [$2] - build_start [$2] >> progress_fn
    xclose(progress_fn)
 
    #
@@ -224,7 +234,7 @@ status [$2] == "failure" {
    free_arrs($2)
 
    #
-   print "failure", pkgpath >> progress_fn
+   print "failure", pkgpath, build_end[$2] - build_start[$2] >> progress_fn
    xclose(progress_fn) # to make stage "build" rerunable
 
    #
