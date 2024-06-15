@@ -79,7 +79,9 @@ DBB_QVARS.CONFIGURE_SCRIPT=		1
 .PHONY: Vars
 
 Vars:
+.if ${VARS_SHOW_ENVIRONMENT} == "yes"
 	@echo 'Environment variables'; set | awk '{print "    " $$0}'
+.endif
 .for v in ${DBB_VARS}
 .if !empty(${v}:U)
 	@echo ${v}:

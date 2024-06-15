@@ -86,6 +86,16 @@ BEGIN {
       else if ($0 ~ /^PKGNAME=/) pkgname = substr($0, 9)
       else if (NF == 0) pkgnames [pkgpath] = pkgname
    }
+
+   i = 0
+   cnt = split(ENVIRON["TARGETS"], targets_array)
+   for (j = 1; j <= cnt; ++j) {
+      target = targets_array[j]
+      if (target != "Available" && target != "Excluded" && target != "Vars") {
+         stages[i] = target
+         ++i
+      }
+   }
 }
 
 function get_log_dir (pkgpath,            pkgname){
@@ -146,13 +156,13 @@ $0 ~ /^[^ ]+ [0-9]+  / {
    next
 }
 
-/^[^ ]+ [0-9]+ build_start:/ {
-   build_start [$2] = $4
+/^[^ ]+ [0-9]+ [^ ]+_start:/ {
+   stage_start [substr($3, 1, length($3) - 7), $2] = $4
    next
 }
 
-/^[^ ]+ [0-9]+ build_end:/ {
-   build_end [$2] = $4
+/^[^ ]+ [0-9]+ [^ ]+_end:/ {
+   stage_end [substr($3, 1, length($3) - 5), $2] = $4
    next
 }
 
@@ -179,6 +189,16 @@ status [$2] == "fatal" {
    next
 }
 
+function print_progress(status, pkgpath,             _i, _stage){
+   printf "%s %s", status, pkgpath >> progress_fn
+   for (_i = 0; _i < 100 && (_i in stages); ++_i) {
+      _stage = stages[_i]
+      printf " %s_time=%s", _stage, stage_end[_stage, $2] - stage_start[_stage, $2] >> progress_fn
+   }
+   printf "\n" >> progress_fn
+   xclose(progress_fn)
+}
+
 status [$2] == "success" {
    # succeeded
    print "    succeeded:", pkgpath, "on", run_on [$2]
@@ -190,8 +210,7 @@ status [$2] == "success" {
    free_arrs($2)
 
    #
-   print "success", pkgpath, build_end [$2] - build_start [$2] >> progress_fn
-   xclose(progress_fn)
+   print_progress("success", pkgpath)
 
    #
    next
@@ -234,8 +253,7 @@ status [$2] == "failure" {
    free_arrs($2)
 
    #
-   print "failure", pkgpath, build_end[$2] - build_start[$2] >> progress_fn
-   xclose(progress_fn) # to make stage "build" rerunable
+   print_progress("failure", pkgpath)
 
    #
    next

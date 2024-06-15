@@ -391,6 +391,9 @@ fi
 : ${GZIP:=gzip}
 : ${BZIP2:=bzip2}
 
+#
+: ${VARS_SHOW_ENVIRONMENT:=no}
+
 # Support for pkgtools/linkver
 #: ${LD_PRELOAD:=@libexecdir@/libkver.so}
 #: ${LIBKVER_OSRELEASE:=5.1}
@@ -428,6 +431,9 @@ export PSS_PAEXEC_EXTRA_OPTS
 export PKG_SUFX
 export PKGSRCDIR
 export BMAKE
+
+export VARS_SHOW_ENVIRONMENT
+export TARGETS
 
 if is_true "$CROSS_COMPILE"; then
     export CROSS_COMPILE

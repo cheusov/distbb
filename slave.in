@@ -146,7 +146,6 @@ run_bmake() ( # subprocess due to ULIMIT_CMD!
 )
 
 run_bmake_with_repeat() {
-    # set +e mode here
     # $1 -- target
     run_bmake "$1"
     _ex=$?
@@ -159,11 +158,54 @@ run_bmake_with_repeat() {
     return $_ex
 }
 
+do_run_target(){
+    # $1 -- target
+    header "$t"
+    case "$t" in
+	Init)
+	    # remove /usr/pkg and unpack bootstrap
+	    if test -n "$TH_pkg"; then
+		if test -z "$TARGET_SYSROOT" -o -z "${TARGET_PREFIX}" -o -z "${TARGET_PKG_DBDIR}"; then
+		    echo 'TARGET_* variables must be non-empty!' 1>&2
+		    return 1
+		fi
+
+		rm -rf "${TARGET_SYSROOT}${TARGET_PREFIX}"
+		rm -rf "${TARGET_SYSROOT}${TARGET_PKG_DBDIR}"
+	    else
+		# unset LD_PRELOAD before removing libkver.so
+		ld_preload_backup="$LD_PRELOAD"
+		unset LD_PRELOAD || true
+		eval $RMDIRS_CMD
+		eval $EXTRACT_BOOTSTRAP_CMD
+		if test -n "$LIBKVER_OSRELEASE"; then
+		    export LIBKVER_OSRELEASE
+		    if test -n "$ld_preload_backup"; then
+			export LD_PRELOAD="$ld_preload_backup"
+		    fi
+		fi
+	    fi
+	    ;;
+	*)
+	    case "${t}_${TH_pkg}" in
+		*_|Depends_1)
+		    bmake_env=;;
+		*)
+		    bmake_env="MAKECONF=$TARGET_MAKECONF";;
+	    esac
+
+	    bmake_env="$bmake_env PKGPATHe=$BH_pkg$1 BH_pkg=$BH_pkg"
+
+	    run_bmake_with_repeat "$t" || return $?
+	    ;;
+    esac
+}
+
 do_build_package (){
     # $1 - long pkgpath, e.g. www/php-apc:PHP_VERSION_REQD=5
     # $2 - real pkgpath, e.g. www/php-apc
 
-    header preinit
+    header preinit >> "$logfn"
 
     # new targets? new extra_opts?
     echo "$SPECIAL_PACKAGES" |
@@ -191,48 +233,15 @@ do_build_package (){
     export bmake_opts
 
     for t in $TARGETS; do
-	header $t
-
-	case "$t" in
-	    Init)
-		# remove /usr/pkg and unpack bootstrap
-		if test -n "$TH_pkg"; then
-		    if test -z "$TARGET_SYSROOT" -o -z "${TARGET_PREFIX}" -o -z "${TARGET_PKG_DBDIR}"; then
-			echo 'TARGET_* variables must be non-empty!' 1>&2
-			return 1
-		    fi
-
-		    rm -rf "${TARGET_SYSROOT}${TARGET_PREFIX}"
-		    rm -rf "${TARGET_SYSROOT}${TARGET_PKG_DBDIR}"
-		else
-		    # unset LD_PRELOAD before removing libkver.so
-		    ld_preload_backup="$LD_PRELOAD"
-		    unset LD_PRELOAD || true
-		    eval $RMDIRS_CMD
-		    eval $EXTRACT_BOOTSTRAP_CMD
-		    if test -n "$LIBKVER_OSRELEASE"; then
-			export LIBKVER_OSRELEASE
-			if test -n "$ld_preload_backup"; then
-			    export LD_PRELOAD="$ld_preload_backup"
-			fi
-		    fi
-		fi
-		;;
-	    *)
-		case "${t}_${TH_pkg}" in
-		    *_|Depends_1)
-			bmake_env=;;
-		    *)
-			bmake_env="MAKECONF=$TARGET_MAKECONF";;
-		esac
-
-		bmake_env="$bmake_env PKGPATHe=$BH_pkg$1 BH_pkg=$BH_pkg"
-
-		set +e
-		run_bmake_with_repeat "$t" || return $?
-		set -e
-		;;
-	esac
+	echo "${t}_start: `$EPOCH_SECONDS_CMD`"
+	set +e
+	do_run_target "$t" >> "$logfn" 2>&1
+	ex=$?
+	echo "${t}_end: `$EPOCH_SECONDS_CMD`"
+	set -e
+	if test $ex -ne 0; then
+	    return $ex
+	fi
     done
 }
 
@@ -285,13 +294,10 @@ save_TARGETS_and_EXTRA_OPTS
 while read pkgpath; do
     restore_TARGETS_and_EXTRA_OPTS
 
-    echo "build_start: `$EPOCH_SECONDS_CMD`"
-    if build_package "$pkgpath" > "$logfn"; then
-	echo "build_end: `$EPOCH_SECONDS_CMD`"
+    if build_package "$pkgpath"; then
 	echo success
     else
 	awk '{print " " $0}' "$logfn"
-	echo "build_end: `$EPOCH_SECONDS_CMD`"
 	echo failure
     fi
 
