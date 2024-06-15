@@ -29,8 +29,6 @@ Plan0)
    - recognize previous bulk build and packages failed at that time
      which succeeded in new bulk build. Compare {BUILD_,}DEPENDS then
 
- - Update README!!!
-
  - pkg_info -N
 
  - use shlock for protection against running several instances of distbb

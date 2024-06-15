@@ -1,0 +1,315 @@
+=head1 NAME
+
+distbb - distributed bulk build tool for I<pkgsrc>
+
+=head1 SYNOPSIS
+
+B<distbb> I<-h>
+
+B<distbb> I<-V>
+
+B<distbb> I<[options]>
+
+=head1 FEATURES
+
+B<distbb> has the following features:
+
+=over 6
+
+=item
+
+packages may be built in isolated environment, e.g., chroots or virtual machines.
+
+=item
+
+more than one package may be built in parallel.
+
+=item
+
+arbitrary list of packages may be built (see B<-p> and B<-f> options).
+
+=item
+
+good full-featured reports.
+
+=item
+
+support for unprivileged bulk builds.
+
+=item
+
+flexibility and extensibility, user-defined stages and bmake targets.
+
+=item
+
+parallelism is provided by paexec(1).
+
+=item
+
+written in shell, awk and other command-line tools.
+
+=item
+
+flexibility, a lot of things can be customized via config file.
+
+=item
+
+modularity, bulk build consists of the following stages:
+
+=over 2
+
+=item
+
+init: preparations
+
+=item
+
+build: packages build
+
+=item
+
+gen_report_data: generation of bulk build results
+
+=item
+
+summary: update pkg_summary(5)
+
+=item
+
+checks: post build checks and statistics
+
+=item
+
+gen_report: generation of bulk build report data
+
+=item
+
+update_best: compare current bulk build with previous one, e.g., 2024Q2 vs. HEAD
+
+=item
+
+checksum: generation of SHA512.bz2
+
+=item
+
+upload_logs: upload logs to remote host
+
+=item
+
+upload_pkgs: upload packages to remote host, NO_BIN_ON_CDROM
+and NO_BIN_ON_FTP are taken into account
+
+=item
+
+send_report: send bulk build report via email
+
+=back
+
+=item
+
+resistance to virtual machine failure, in parallel mode if client host
+(virtual machine) fails for some reason, distbb continues to work and rebuild
+failed package. After reboot, failed virtual machine can be used again,
+this is automated process.
+
+=item
+
+enriched PKGPATH can be used for building, e.g.,
+
+    $ ~/pkg_distbb/bin/distbb -p 'sysutils/mc:PKG_OPTIONS.mc=-ncurses~-nls~slang~-mc-charset,PKGNAME=mc-light-4.8.28nb4'
+    $ ~/pkg_distbb/bin/distbb -p 'sysutils/mc:PKG_OPTIONS.mc=-x11,PKGNAME=mc-nox11-4.8.28nb4'
+    $ ~/pkg_distbb/bin/distbb -p 'sysutils/mc'
+    $ ~/pkg_distbb/bin/distbb -p 'devel/py-flit_core:PYTHON_VERSION_REQD=311'
+    $ ~/pkg_distbb/bin/distbb -p 'textproc/dictem:EMACS_TYPE=26'
+
+Enriching here means additional building options in the following form
+category/package[:var1=value1[,var2=value2[,...]]]
+
+=item
+
+comprehensive logs
+
+=over 2
+
+=item
+
+I<META/report.html> -- HTML version of the report.
+
+=item
+
+I<META/report.txt>  -- plain text version of the report.
+
+=item
+
+I<META/report_mini.txt> -- mini version of META/report.txt.
+
+=item
+
+I<META/packages_built_prev.txt> -- list of packages that was
+built previously and not rebuilt.
+
+=item
+
+I<META/packages_built.txt> -- list of really built packages.
+
+=item
+
+I<META/packages_built_total.txt> -- list of packages ready for use.
+
+=item
+
+I<META/packages_failed.txt> -- list of really failed packages.
+
+=item
+
+I<META/packages_failed_scan.txt> -- list of packages for which
+B<pkg_src_summary(1)> failed, e.g., due to syntax errors in Makefile.
+
+=item
+
+I<META/packages_failed_notavail.txt> -- list of packages marked
+as not available (NOT_FOR_PLATFORM, ONLY_FOR_COMPILER etc.).
+
+=item
+
+I<META/packages_failed_deps.txt> -- list of packages failed
+due to broken dependencies.
+
+=item
+
+I<META/packages_failed_total.txt> --
+failed_scan + failed_notavail + faild + failed_deps.
+
+=item
+
+I<META/build_src_summary_log.txt> -- bmake stderr collected during
+building the src_summary
+(see META/pkg_src_summary.txt and META/packages_failed_scan.txt).
+
+=item
+
+I<META/progress.txt> -- currently built and failed packages with time spent for
+different bmake targets.
+
+=item
+
+I<META/summary_cmp.txt> -- comparison of binary packages and pkgsrc tree.
+
+=item
+
+I<META/pkg_src_summary.txt> -- package summary for pkgsrc tree or requested packages
+(B<-p> or B<-f>) with their dependencies..
+
+=back
+
+=back
+
+=head1 OPTIONS
+
+=over 6
+
+=item B<-h>
+
+Display this help.
+
+=item B<-V>
+
+Display version of B<distbb>.
+
+=item B<-C> I<config_file>
+
+Specify the configuration file. The default is I<@sysconfdir@/distbb.conf>.
+
+=item B<-p> I<packages>
+
+Specify a list of packages (PKGPATHs) to build. By default all pkgsrc packages are built.
+This option implies B<-x> I<summary> B<-x> I<checksum> B<-x> I<upload_pkgs>.
+
+=item B<-f> I<file>
+
+Specify a filename with packages (PKGPATHs) to build, one line per package.
+By default all pkgsrc packages are built. Single dash "-" means stdin.
+This option implies "B<-x> I<summary>", "B<-x> I<checksum>", and "B<-x> I<upload_pkgs>".
+
+=item B<-i>
+
+Build all installed packages.
+
+=item B<-I> I<pkgdb>
+
+The same as -i but installed packages are obtained from I<pkgdb>.
+
+=item B<-a>
+
+Build packages specified by B<-f> or B<-p> and add new summaries to I<pkg_summary(5)>.
+
+=item B<-D>
+
+Show difference with previous bulk build.
+
+=item B<-B> I<buildid>
+
+Specify the build id which is used as a name of directory for working files
+under report directory. By default build id is generated as YYYYMMDD.HHMM
+of the current time.
+
+=item B<-r>
+
+If your bulk build failed for some reason (host system reboot, for
+example), you can continue your bulk build from the point it stopped
+at.
+
+=item B<-k>
+
+Skip updating pkg_src_summary.
+
+=item B<-K>
+
+Skip updating pkg_summary.
+
+=item B<-s>
+
+Exit status is 0, if all requested packages were built successfully, or 5 otherwise.
+
+=item B<-l> I<label>
+
+Specify the label for bulk build. Unless -B option is applied
+bulk build files will be stored in $REPORTS_DIR/$BUILD_ID-<label> directory.
+
+=item B<-x> I<stage>
+
+Disable the specified stage from BUILD_STAGES.
+Multiple B<-x> are allowed.
+"B<-x> I<upload>" is equivalent to
+"B<-x> I<upload_logs> B<-x> I<upload_pkgs>".
+
+=item B<-X> I<stage>
+
+Enable the specified stage.
+
+=item B<-m> <mode>
+
+Specify mode of dependency graph generation.
+0 - use package from pkgsrc tree (the default)
+1 - use latest available binary if it satisfies
+DEPENDS, BUILD_DEPENDS or TOOL_DEPENDS.
+
+=back
+
+=head1 CONFIG FILES
+
+@sysconfdir@/distbb.conf
+
+=head1 EXIT STATUS
+
+Zero if succeeded, none-zero otherwise.
+
+=head1 SEE ALSO
+
+B<distbb.conf(5)>
+
+=head1 AUTHOR
+
+Copyright (c) 2008-2024 Aleksey Cheusov <cheusov@NetBSD.org>
+
+L<https://github.com/cheusov/distbb>

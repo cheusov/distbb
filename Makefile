@@ -26,15 +26,17 @@ INSCRIPTS =	distbb stage_init stage_build \
 		wrapper_unpriv wrapper distbb_chroot distbb_grep
 
 INFILES =			distbb.conf distbb.local.mk distbb.mk \
-				common distbb.default.conf
+				common distbb.default.conf distbb.pod
 
 SCRIPTS=			${INSCRIPTS}
 SCRIPTSDIR =			${LIBEXECDIR}
 SCRIPTSDIR_distbb =		${BINDIR}
 SCRIPTSDIR_distbb_diff =	${BINDIR}
 
-DOC_FILES ?=			TUTORIAL.html README LICENSE NEWS TODO
+DOC_FILES ?=			TUTORIAL.pod LICENSE NEWS TODO
 FILES =			${INFILES} ${DOC_FILES} distbb.css distbb.ico distbb.awk
+
+MAN =				distbb.1
 
 FILESDIR               =	${EGDIR}
 FILESDIR_distbb.mk     =	${DATADIR}
