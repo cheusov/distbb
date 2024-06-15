@@ -26,7 +26,7 @@ INSCRIPTS =	distbb stage_init stage_build \
 		wrapper_unpriv wrapper distbb_chroot distbb_grep
 
 INFILES =			distbb.conf distbb.local.mk distbb.mk \
-				common distbb.default.conf distbb.pod
+				common distbb.default.conf distbb.conf.pod distbb.pod
 
 SCRIPTS=			${INSCRIPTS}
 SCRIPTSDIR =			${LIBEXECDIR}
@@ -36,7 +36,7 @@ SCRIPTSDIR_distbb_diff =	${BINDIR}
 DOC_FILES ?=			TUTORIAL.pod LICENSE NEWS TODO
 FILES =			${INFILES} ${DOC_FILES} distbb.css distbb.ico distbb.awk
 
-MAN =				distbb.1
+MAN =				distbb.1 distbb.conf.5
 
 FILESDIR               =	${EGDIR}
 FILESDIR_distbb.mk     =	${DATADIR}
@@ -65,7 +65,7 @@ INTEXTS_REPLS +=    cssdir      ${CSSDIR}
 INTEXTS_REPLS +=    version     ${VERSION}
 INTEXTS_REPLS +=    epoch_seconds_cmd	${EPOCH_SECONDS_CMD:Q}
 
-CLEANFILES += *~ core* distbb.1 distbb.cat1 ChangeLog
+CLEANFILES += *~ core* distbb.1 distbb.conf.5 distbb.cat1 ChangeLog
 CLEANFILES += ${INSCRIPTS} ${INFILES} distbb.html TUTORIAL.html
 
 DIST_TARGETS =	TUTORIAL.html

@@ -61,7 +61,7 @@ assign (){
 #: ${LIST_ALL_PKGS_CMD:=/path/to/list_pkgs_with_my_extra_wip_packages}
 
 #
-: ${EXTRACT_BOOTSTRAP_CMD:=/bin/tar -xf $BOOTSTRAP -C /}
+: ${EXTRACT_BOOTSTRAP_CMD:=tar -xf $BOOTSTRAP -C /}
 
 # Tool for weighing packages, the higher weight of a package, the
 # sooner it is built. See gen_weight for usage.

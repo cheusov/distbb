@@ -1,0 +1,301 @@
+=head1 NAME
+
+distbb.conf - distributed bulk build tool for I<pkgsrc>
+
+=head1 SYNOPSIS
+
+B<distbb.conf> is a configuration file for B<distbb> which is actually a shell script.
+
+=head1 MAIN CONFIGURATION VARIABLES
+
+=over 6
+
+=item
+
+I<PKGSRCDIR> -- root directory for pkgsrc. The default is I</usr/pkgsrc>.
+
+=item
+
+I<PKGSRCVER> -- pkgsrc version. The default is I<unknown>.
+
+=item
+
+I<PKGSRC_PREFIX> -- pkgsrc prefix. The default is I</usr/pkg>.
+
+=item
+
+I<PACKAGES> -- directory with binary packages. The default is I<$PKGSRCDIR/packages>.
+
+=item
+
+I<DISTDIR> -- distdir directory.
+
+=item
+
+I<BMAKE> -- path to B<bmake>.
+
+=item
+
+I<REPORTS_DIR> -- directory for bulk-logs. The default is I<$HOME/bulk-logs>.
+
+=item
+
+I<NOTES> -- filename that contains notes about bulk build. This variable is unset by default.
+
+=item
+
+I<RMDIRS_CMD> -- command for removing pkgsrc prefix directory
+before starting a package build.
+
+=item
+
+I<SLAVE_CMD> -- extra commands that run on slave hosts. For example,
+
+    renice 10 $$ > /dev/null
+
+=item
+
+I<ULIMIT_CMD> -- ulimit command run on slave hosts/chroots. For example,
+
+    ulimit -t 6000
+
+=item
+
+I<BOOTSTRAP> -- path to bootstrap tarball.
+
+=item
+
+I<EXTRACT_BOOTSTRAP_CMD> -- command that extracts bootstrap tarball. The default is
+
+    tar -xf $BOOTSTRAP -C /
+
+=item
+
+I<OPSYS> -- operating system name to show in reports. The default is I<$(uname -s)>.
+
+=item
+
+I<OS_VERSION> -- operating system version to show in reports. The default is I<$(uname -r)>.
+
+=item
+
+I<MACHINE_ARCH> -- hardware architecture to show in reports. The default is I<$(uname -m)>.
+
+=item
+
+I<PARALLEL_MODE> -- if I<yes>, multiple packages are built in parallel in isolated environments.
+Otherwise, packages are build in place one by one. The default is I<no>.
+
+=item
+
+I<TRANSPORT> -- transport to slave hosts/chroots. The default is I<ssh -x>. Other possible value is
+I<@libexecdir@/distbb_chroot /var/chroot/>.
+
+=item
+
+I<SLAVES> -- slave hosts/chroots separated by space.
+
+=item
+
+I<REPORT_URL_PREFIX> -- URL prefix for uploaded bulk build report.
+
+=item
+
+I<REPORT_MINI_SIZE_LIMIT> -- size limit for report_mini.txt.
+
+=item
+
+I<RESPONSIBLE> -- person who runs bulk build (in HTML form).
+This variable is unset by default.
+
+=item
+
+I<UPLOAD_PKGS_FILES> -- command for uploading packages. The default value is
+
+    @libexecdir@/upload_pkgs_all_files
+
+Alternative values are
+
+    @libexecdir@/upload_pkgs_no_bin_on_ftp
+    @libexecdir@/upload_pkgs_built_total
+    @libexecdir@/upload_pkgs_no_bin_on_cdrom
+
+=item
+
+I<UPLOAD_PKGS_PROG> -- command for uploading. The default value is I<rsync_upload>.
+
+=item
+
+I<UPLOAD_PKGS_ATTEMPTS> -- #attemps to upload packages. I<0> means no limit.
+
+=item
+
+I<UPLOAD_PKGS_PAUSE> -- seconds between upload attempts.
+
+=item
+
+I<UPLOAD_LOGS_PROG> -- command for uploading bulk build logs.
+
+=item
+
+I<UPLOAD_LOGS_ATTEMPTS> -- #attemps to upload bulk build logs. I<0> means no limit.
+
+=item
+
+I<UPLOAD_LOGS_PAUSE> -- seconds between upload attempts.
+
+=back
+
+=head1 ADDITIONAL CONFIGURATION VARIABLES
+
+=over 6
+
+=item
+
+I<BUILD_STAGES> -- bulk build stages. The default value is
+
+    build gen_report_data summary checks gen_report update_best
+    checksum upload_logs upload_pkgs send_report
+
+=item
+
+I<TARGETS> -- a list of targets for building package, separated by space. The default is
+
+    Init clean Available Excluded Vars Depends fetch checksum
+    extract patch configure build package
+
+=item
+
+I<GZIP> -- gzip(1)
+
+=item
+
+I<BZIP2> -- bzip2(1)
+
+=item
+
+I<RSYNC_CMD> -- B<rsync(1)> command for uploading.
+
+=item
+
+I<DISTBB_LOCAL_MK> --
+
+=item
+
+I<LIST_ALL_PKGS_CMD> -- command that outputs all packages from pkgsrc tree. The default is
+
+    @bindir@/pkg_list_all_pkgs
+
+=item
+
+I<WEIGH_PACKAGES_CMD> -- command that weighs packages. Weighing is required in order to minimize
+total bulk build time by building heavy packages before others. The default is
+
+    @libexecdir@/gen_weights
+
+=item
+
+I<REPORT_FILE> -- file to send as a report. The default is I<report_mini.txt>.
+Other possible value -- I<report.txt>.
+
+=item
+
+I<MAIL_PROG> -- program for sending email. The default is I<mail>.
+
+=item
+
+I<MSCOMMONDIR> --
+
+=item
+
+I<PKG_ALL_SUMMARY> -- summary file that contains summaries for all packages.
+The default is
+
+    $PACKAGES/All/pkg_all_summary.txt
+
+=item
+
+I<PKG_SUMMARY> -- pkg_summary(5) file.
+The default is
+
+    $PACKAGES/All/pkg_summary.txt
+
+=item
+
+I<PKG_SRC_SUMMARY> -- pkg_summary(5) file for pkgsrc tree.
+
+=item
+
+I<PKG_UPDATE_ALL_SUMMARY_CMD> --
+
+=item
+
+I<PKG_UPDATE_SRC_SUMMARY_CMD> --
+
+=item
+
+I<PKG_CMP_SUMMARY_CMD> --
+
+=item
+
+I<EXTRA_DEPS> -- extra packages installed before starting a package build.
+
+=item
+
+I<EXTRA_OPTS> -- extra options passed to B<bmake>. The default is
+
+    DEPENDS_TARGET=nonexistant BATCH=yes PKG_VERBOSE=1
+
+=item
+
+I<CLEAN_TARGET> -- bmake target for post-build cleaning the WRKDIR.
+The default is I<clean>. Other available value is I<None>, it may be used for
+post-build debugging.
+
+=item
+
+I<DISTBB_SLAVE> --
+
+=item
+
+I<SPECIAL_PACKAGES> -- list of per-package build settings.
+See I<distbb.default.conf> for examples.
+
+=item
+
+I<OFFENDERS_CNT> -- the number of maintainers for gathering
+breakages statistics. The default is I<20>.
+
+=item
+
+I<MAX_FAILED_DEPS_CNT> -- the number of broken dependents to show.
+The default is I<6>.
+
+=item
+
+I<PAEXEC_EXTRA_OPTS> -- paexec(1) extra options. The default value is I<-Z300 -W2>.
+
+=item
+
+I<ICON_FILE> -- icon file for report in HTML form.
+
+=item
+
+I<CSS_FILE> -- CSS file for report in HTML form.
+
+=item
+
+I<VARS_SHOW_ENVIRONMENT> -- If I<yes>, environment variables are included to the report.
+The default is I<no>.
+
+=back
+
+=head1 SEE ALSO
+
+B<distbb.(1)>
+
+=head1 AUTHOR
+
+Copyright (c) 2008-2024 Aleksey Cheusov <cheusov@NetBSD.org>
+
+L<https://github.com/cheusov/distbb>
