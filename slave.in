@@ -97,14 +97,6 @@ export RMDIRS_CMD
 
 ######################################################################
 
-# < /dev/null - for building packages that require
-# an interaction with user
-if test "$STDIN_FROM_DEV_NULL"; then
-    stdin_from_dev_null=' < /dev/null'
-else
-    stdin_from_dev_null=''
-fi
-
 header (){
     printf ' --**--**-- %8s --**--**--\n' "$1"
 }
@@ -142,7 +134,7 @@ run_bmake() ( # subprocess due to ULIMIT_CMD!
 	 env $bmake_env $BMAKE -f Makefile \
 	 -f "$DISTBB_LOCAL_MK" \
 	 -f @datadir@/distbb.mk \
-	 $bmake_opts "$1" $stdin_from_dev_null
+	 $bmake_opts "$1" < /dev/null
 )
 
 run_bmake_with_repeat() {
