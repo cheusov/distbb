@@ -30,7 +30,7 @@ verbose_print "  uploading logs... "
 a=1
 while true; do
     ex=0
-    if eval $UPLOAD_LOGS_PROG "$REPORT1_DIR" "$UPLOAD_LOGS_DEST"; then
+    if eval $UPLOAD_LOGS_CMD "$REPORT1_DIR" "$UPLOAD_LOGS_DEST"; then
 	break
     else
 	ex=$?

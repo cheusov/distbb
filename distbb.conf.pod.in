@@ -134,7 +134,7 @@ I<UPLOAD_PKGS_PAUSE> -- seconds between upload attempts.
 
 =item
 
-I<UPLOAD_LOGS_PROG> -- command for uploading bulk build logs.
+I<UPLOAD_LOGS_CMD> -- command for uploading bulk build logs.
 
 =item
 

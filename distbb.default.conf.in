@@ -354,7 +354,7 @@ fi
 
 #
 #: ${UPLOAD_LOGS_DEST:=you@your-domain.com:~/public_html/pkgsrc-distbb/logs/}
-: ${UPLOAD_LOGS_PROG:=$RSYNC_CMD -a --delete-excluded --exclude \"*.tmp\" -e ssh}
+: ${UPLOAD_LOGS_CMD:=$RSYNC_CMD -a --delete-excluded --exclude \"*.tmp\" -e ssh}
 : ${UPLOAD_LOGS_ATTEMPTS:=5} # 0 - means no limit
 : ${UPLOAD_LOGS_PAUSE:=60} # seconds between attempts
 
