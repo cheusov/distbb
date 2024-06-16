@@ -229,7 +229,7 @@ if test -n "$UNPRIV_USER"; then
     exit 1
 fi
 
-if test "$MAIL_PROG" != ':'; then
+if test "$MAIL_CMD" != ':'; then
     test_var REPORT_EMAIL
 fi
 if is_true "$PARALLEL_MODE"; then

@@ -200,7 +200,7 @@ Other possible value -- I<report.txt>.
 
 =item
 
-I<MAIL_PROG> -- program for sending email. The default is I<mail>.
+I<MAIL_CMD> -- program for sending email. The default is I<mail>.
 
 =item
 
