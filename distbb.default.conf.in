@@ -344,10 +344,10 @@ fi
 
 #
 #: ${UPLOAD_PKGS_DEST:=you@your-domain.com:~/public_html/pkgsrc-distbb/packages/}
-: ${UPLOAD_PKGS_FILES:=@libexecdir@/upload_pkgs_all_files}
+#: ${UPLOAD_PKGS_FILES:=@libexecdir@/upload_pkgs_all_files}
 #: ${UPLOAD_PKGS_FILES:=@libexecdir@/upload_pkgs_built_total}
 #: ${UPLOAD_PKGS_FILES:=@libexecdir@/upload_pkgs_no_bin_on_cdrom}
-#: ${UPLOAD_PKGS_FILES:=@libexecdir@/upload_pkgs_no_bin_on_ftp}
+: ${UPLOAD_PKGS_FILES:=@libexecdir@/upload_pkgs_no_bin_on_ftp}
 : ${UPLOAD_PKGS_CMD:=rsync_upload}
 : ${UPLOAD_PKGS_ATTEMPTS:=5} # 0 - means no limit
 : ${UPLOAD_PKGS_PAUSE:=60} # seconds between attempts

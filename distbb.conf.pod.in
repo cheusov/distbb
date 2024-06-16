@@ -121,11 +121,11 @@ This variable is unset by default.
 
 I<UPLOAD_PKGS_FILES> -- command for uploading packages. The default value is
 
-    @libexecdir@/upload_pkgs_all_files
+    @libexecdir@/upload_pkgs_no_bin_on_ftp
 
 Alternative values are
 
-    @libexecdir@/upload_pkgs_no_bin_on_ftp
+    @libexecdir@/upload_pkgs_all_files
     @libexecdir@/upload_pkgs_built_total
     @libexecdir@/upload_pkgs_no_bin_on_cdrom
 
