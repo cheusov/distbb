@@ -242,7 +242,7 @@ I<EXTRA_DEPS> -- extra packages installed before starting a package build.
 
 =item
 
-I<EXTRA_OPTS> -- extra options passed to B<bmake>. The default is
+I<BMAKE_EXTRA_OPTS> -- extra options passed to B<bmake>. The default is
 
     DEPENDS_TARGET=nonexistant BATCH=yes PKG_VERBOSE=1
 

@@ -119,12 +119,12 @@ remove_comments (){
 
 save_TARGETS_and_EXTRA_OPTS (){
     orig_TARGETS="$TARGETS"
-    orig_EXTRA_OPTS="$EXTRA_OPTS"
+    orig_BMAKE_EXTRA_OPTS="$BMAKE_EXTRA_OPTS"
 }
 
 restore_TARGETS_and_EXTRA_OPTS (){
     TARGETS="$orig_TARGETS"
-    EXTRA_OPTS="$orig_EXTRA_OPTS"
+    BMAKE_EXTRA_OPTS="$orig_BMAKE_EXTRA_OPTS"
 }
 
 run_bmake() ( # subprocess due to ULIMIT_CMD!
@@ -210,9 +210,9 @@ do_build_package (){
 	TARGETS="$new_TARGETS"
     fi
 
-    new_EXTRA_OPTS="`sed -n 's,^EXTRA_OPTS=,,p' $tmpfn`"
-    if test "$new_EXTRA_OPTS"; then
-	EXTRA_OPTS="$new_EXTRA_OPTS"
+    new_BMAKE_EXTRA_OPTS="`sed -n 's,^BMAKE_EXTRA_OPTS=,,p' $tmpfn`"
+    if test "$new_BMAKE_EXTRA_OPTS"; then
+	BMAKE_EXTRA_OPTS="$new_BMAKE_EXTRA_OPTS"
     fi
 
     #
@@ -221,7 +221,7 @@ do_build_package (){
     fi
 
     # $TARGETS
-    bmake_opts="$EXTRA_OPTS $multivar_opts"
+    bmake_opts="$BMAKE_EXTRA_OPTS $multivar_opts"
     export bmake_opts
 
     for t in $TARGETS; do

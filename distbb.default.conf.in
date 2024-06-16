@@ -226,7 +226,7 @@ fi
 
 # extra options passed to bmake
 # BATCH is mandatory for bulk builds!
-: ${EXTRA_OPTS:=DEPENDS_TARGET=nonexistant BATCH=yes PKG_VERBOSE=1}
+: ${BMAKE_EXTRA_OPTS:=DEPENDS_TARGET=nonexistant BATCH=yes PKG_VERBOSE=1}
 
 # do not change the following unless you know what you are doing
 : ${DISTBB_SLAVE:=@libexecdir@/slave}
@@ -253,39 +253,39 @@ fi
 #SPECIAL_PACKAGES="\
 #PKGPATH=pkgtools/digest
 #TARGETS=Init clean Vars Depends fetch checksum extract patch configure build package
-#EXTRA_OPTS=BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=yes CHECK_SHLIBS=no
+#BMAKE_EXTRA_OPTS=BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=yes CHECK_SHLIBS=no
 #
 #PKGPATH=pkgtools/bootstrap-mk-files
 #TARGETS=Init clean Vars Depends fetch checksum extract patch configure build package
-#EXTRA_OPTS=BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=yes CHECK_SHLIBS=no
+#BMAKE_EXTRA_OPTS=BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=yes CHECK_SHLIBS=no
 #
 #PKGPATH=net/tnftp
 #TARGETS=Init clean Vars Depends fetch checksum extract patch configure build package
-#EXTRA_OPTS=BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=yes CHECK_SHLIBS=no
+#BMAKE_EXTRA_OPTS=BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=yes CHECK_SHLIBS=no
 #
 #PKGPATH=sysutils/checkperms
 #TARGETS=Init clean Vars Depends fetch checksum extract patch configure build package
-#EXTRA_OPTS=BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=yes CHECK_SHLIBS=no
+#BMAKE_EXTRA_OPTS=BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=yes CHECK_SHLIBS=no
 #
 #PKGPATH=devel/bmake
 #TARGETS=Init clean Vars Depends fetch checksum extract patch configure build package
-#EXTRA_OPTS=BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=yes CHECK_SHLIBS=no
+#BMAKE_EXTRA_OPTS=BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=yes CHECK_SHLIBS=no
 #
 #PKGPATH=pkgtools/pkg_install
 #TARGETS=Init clean Vars Depends fetch checksum extract patch configure build package
-#EXTRA_OPTS=BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=yes CHECK_SHLIBS=no
+#BMAKE_EXTRA_OPTS=BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=yes CHECK_SHLIBS=no
 #
 #PKGPATH=audio/festival # TARGETS is not changed!
-#EXTRA_OPTS=CC=/usr/bin/gcc-3.4 CXX=/usr/bin/g++-3.4 BATCH=yes PKG_VERBOSE=1
+#BMAKE_EXTRA_OPTS=CC=/usr/bin/gcc-3.4 CXX=/usr/bin/g++-3.4 BATCH=yes PKG_VERBOSE=1
 #
 #PKGPATH=emulators/qemu # TARGETS is not changed!
-#EXTRA_OPTS=CC=/usr/bin/gcc-3.4 CXX=/usr/bin/g++-3.4 BATCH=yes PKG_VERBOSE=1
+#BMAKE_EXTRA_OPTS=CC=/usr/bin/gcc-3.4 CXX=/usr/bin/g++-3.4 BATCH=yes PKG_VERBOSE=1
 #
 #PKGPATH=devel/popt # distcc is not available yet, so, we set CC to gcc
-#EXTRA_OPTS=CC=/usr/bin/gcc BATCH=yes PKG_VERBOSE=1
+#BMAKE_EXTRA_OPTS=CC=/usr/bin/gcc BATCH=yes PKG_VERBOSE=1
 #
 #PKGPATH=devel/distcc # distcc is not available yet, so, we set CC to gcc
-#EXTRA_OPTS=CC=/usr/bin/gcc BATCH=yes PKG_VERBOSE=1
+#BMAKE_EXTRA_OPTS=CC=/usr/bin/gcc BATCH=yes PKG_VERBOSE=1
 #
 #"
 
