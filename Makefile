@@ -34,7 +34,8 @@ SCRIPTSDIR_distbb =		${BINDIR}
 SCRIPTSDIR_distbb_diff =	${BINDIR}
 
 DOC_FILES ?=			TUTORIAL.pod LICENSE NEWS TODO
-FILES =			${INFILES} ${DOC_FILES} distbb.css distbb.ico distbb.awk
+FILES =			distbb.local.mk distbb.mk ${DOC_FILES} distbb.css \
+	distbb.ico distbb.awk common distbb.default.conf distbb.conf
 
 MAN =				distbb.1 distbb.conf.5
 
