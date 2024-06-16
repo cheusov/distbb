@@ -122,7 +122,7 @@ Alternative values are
 
 =item
 
-I<UPLOAD_PKGS_PROG> -- command for uploading. The default value is I<rsync_upload>.
+I<UPLOAD_PKGS_CMD> -- command for uploading. The default value is I<rsync_upload>.
 
 =item
 
