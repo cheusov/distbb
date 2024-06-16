@@ -73,9 +73,9 @@ assign (){
 : ${PARALLEL_MODE:=no} # for building "inplace", i.e. destroying $PREFIX
 
 # transport to the slaves
-#: ${TRANSPORT:=/usr/bin/ssh -x}
+: ${TRANSPORT:=ssh -x}
 #: ${TRANSPORT:=/usr/bin/rsh}
-: ${TRANSPORT:=@libexecdir@/distbb_chroot /var/chroot/}
+#: ${TRANSPORT:=@libexecdir@/distbb_chroot /var/chroot/}
 
 # hosts|chroots where actual builds are done
 #: ${SLAVES:=root@host1 root@host2 root@host3}
