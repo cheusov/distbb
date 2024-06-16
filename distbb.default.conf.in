@@ -383,7 +383,7 @@ fi
 : ${CSS_FILE:=@cssdir@/distbb.css}
 
 # Archivers
-: ${GZIP:=gzip}
+: ${GZIP_CMD:=gzip}
 : ${BZIP2:=bzip2}
 
 #

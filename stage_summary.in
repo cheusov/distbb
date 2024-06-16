@@ -47,7 +47,7 @@ verbose_print '\n'
 
 # gzip + bzip2
 verbose_print "  $(basename ${PKG_SUMMARY%.txt}.gz)... "
-"$GZIP" < "$PKG_SUMMARY" > "${PKG_SUMMARY%.txt}.gz"
+"$GZIP_CMD" < "$PKG_SUMMARY" > "${PKG_SUMMARY%.txt}.gz"
 verbose_print '\n'
 
 verbose_print "  $(basename ${PKG_SUMMARY%.txt}.bz2)... "

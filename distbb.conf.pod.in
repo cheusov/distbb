@@ -166,7 +166,7 @@ I<TARGETS> -- a list of targets for building package, separated by space. The de
 
 =item
 
-I<GZIP> -- gzip(1)
+I<GZIP_CMD> -- gzip(1)
 
 =item
 

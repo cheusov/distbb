@@ -42,7 +42,7 @@ NF == 0 {
 /^FILE_CKSUM=sha512 / {cksum = $2}' "$PKG_SUMMARY" |
 sort >> SHA512.txt
 
-"$GZIP"  < SHA512.txt > SHA512.gz
+"$GZIP_CMD"  < SHA512.txt > SHA512.gz
 "$BZIP2" < SHA512.txt > SHA512.bz2
 
 verbose_print '\n'
