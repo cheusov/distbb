@@ -384,7 +384,7 @@ fi
 
 # Archivers
 : ${GZIP_CMD:=gzip}
-: ${BZIP2:=bzip2}
+: ${BZIP2_CMD:=bzip2}
 
 #
 : ${VARS_SHOW_ENVIRONMENT:=no}

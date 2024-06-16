@@ -51,5 +51,5 @@ verbose_print "  $(basename ${PKG_SUMMARY%.txt}.gz)... "
 verbose_print '\n'
 
 verbose_print "  $(basename ${PKG_SUMMARY%.txt}.bz2)... "
-"$BZIP2" < "$PKG_SUMMARY" > "${PKG_SUMMARY%.txt}.bz2"
+"$BZIP2_CMD" < "$PKG_SUMMARY" > "${PKG_SUMMARY%.txt}.bz2"
 verbose_print '\n'

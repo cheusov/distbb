@@ -43,6 +43,6 @@ NF == 0 {
 sort >> SHA512.txt
 
 "$GZIP_CMD"  < SHA512.txt > SHA512.gz
-"$BZIP2" < SHA512.txt > SHA512.bz2
+"$BZIP2_CMD" < SHA512.txt > SHA512.bz2
 
 verbose_print '\n'

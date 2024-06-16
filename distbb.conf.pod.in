@@ -170,7 +170,7 @@ I<GZIP_CMD> -- gzip(1)
 
 =item
 
-I<BZIP2> -- bzip2(1)
+I<BZIP2_CMD> -- bzip2(1)
 
 =item
 
