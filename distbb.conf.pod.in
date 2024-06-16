@@ -5,6 +5,9 @@ distbb.conf - distributed bulk build tool for I<pkgsrc>
 =head1 SYNOPSIS
 
 B<distbb.conf> is a configuration file for B<distbb> which is actually a shell script.
+It is loaded both on host and slaves. All exported variables are passed to B<bmake>.
+This means that one can set (and export!) such variables as MAKE_JOBS, READLINE_DEFAULT,
+PKG_DEFAULT_OPTIONS etc. directly in this configuration file.
 
 =head1 MAIN CONFIGURATION VARIABLES
 
@@ -13,6 +16,8 @@ B<distbb.conf> is a configuration file for B<distbb> which is actually a shell s
 =item
 
 I<PKGSRCDIR> -- root directory for pkgsrc. The default is I</usr/pkgsrc>.
+This variable is automatically exported.
+Therefore, it makes sense to not set PKGSRCDIR in B<mk.conf>.
 
 =item
 
@@ -25,10 +30,14 @@ I<PKGSRC_PREFIX> -- pkgsrc prefix. The default is I</usr/pkg>.
 =item
 
 I<PACKAGES> -- directory with binary packages. The default is I<$PKGSRCDIR/packages>.
+This variable is automatically exported.
+Therefore, it makes sense to remove PACKAGES from B<mk.conf>.
 
 =item
 
-I<DISTDIR> -- distdir directory.
+I<DISTDIR> -- distdir directory. By default it is unset.
+If set, it is automatically exported.
+In this case, it makes sense to remove DISTDIR from B<mk.conf>.
 
 =item
 
