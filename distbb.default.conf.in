@@ -69,8 +69,8 @@ assign (){
 
 # set it to non-empty string if you want "distributed" bulk build
 # also see SLAVES variable
-#: ${PARALLEL_MODE:=yes}
-: ${PARALLEL_MODE:=no} # for building "inplace", i.e. destroying $PREFIX
+: ${PARALLEL_MODE:=yes}
+#: ${PARALLEL_MODE:=no} # for building "inplace", i.e. destroying $PREFIX
 
 # transport to the slaves
 : ${TRANSPORT:=ssh -x}

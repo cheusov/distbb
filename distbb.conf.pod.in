@@ -84,7 +84,7 @@ I<MACHINE_ARCH> -- hardware architecture to show in reports. The default is I<$(
 =item
 
 I<PARALLEL_MODE> -- if I<yes>, multiple packages are built in parallel in isolated environments.
-Otherwise, packages are build in place one by one. The default is I<no>.
+Otherwise, packages are built in place one by one. The default is I<yes>.
 
 =item
 
