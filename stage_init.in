@@ -36,7 +36,7 @@ EOF
     exit 1
 fi
 
-test -n "$BUILD_ID" -a -n "$REPORTS_DIR" # who knows...
+test -n "$BUILD_ID" -a -n "$BULK_LOGS_DIR" # who knows...
 rm -rf "$REPORT1_DIR"
 mkdir -p -m 700 "$tmpdir"
 cp "$ICON_FILE" "$REPORT1_DIR/distbb.ico"

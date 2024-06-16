@@ -274,7 +274,7 @@ Exit status is 0, if all requested packages were built successfully, or 5 otherw
 =item B<-l> I<label>
 
 Specify the label for bulk build. Unless -B option is applied
-bulk build files will be stored in $REPORTS_DIR/$BUILD_ID-<label> directory.
+bulk build files will be stored in $BULK_LOGS_DIR/$BUILD_ID-<label> directory.
 
 =item B<-x> I<stage>
 

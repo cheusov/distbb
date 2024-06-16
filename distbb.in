@@ -42,7 +42,7 @@ OPTIONS:
                     or 5 otherwise
   -l <label>        label for bulk build, unless -B option is applied
                     bulk build file will be stored
-                    in $REPORTS_DIR/$BUILD_ID-<label> directory
+                    in $BULK_LOGS_DIR/$BUILD_ID-<label> directory
   -x <stage>        exclude <stage> from BUILD_STAGES.
                     Multiple -x are allowed.
                     "-x upload" is equivalent to
@@ -200,7 +200,7 @@ test_var PKG_SUMMARY
 test_var PKG_SRC_SUMMARY
 test_var PKG_UPDATE_SRC_SUMMARY_CMD
 test_var PKG_CMP_SUMMARY_CMD
-test_var REPORTS_DIR
+test_var BULK_LOGS_DIR
 test_var PKG_SUFX
 test_var CLEAN_TARGET
 test_var TARGETS

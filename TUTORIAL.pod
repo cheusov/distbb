@@ -102,7 +102,7 @@ is fully workable.
       EXTRACT_BOOTSTRAP_CMD="tar -xf $BOOTSTRAP -C /"
       TRANSPORT='ssh'
       SLAVES='ssh://root@localhost:2201'
-      REPORTS_DIR="$HOME/bulk-logs"
+      BULK_LOGS_DIR="$HOME/bulk-logs"
       BUILDER_USER=builder
       REPORT_EMAIL="$USER"
       # UPLOAD_PKGS_DEST="you@example.org:/pub/pkgsrc/packages/NetBSD/$(uname -m)/10.0-$PKGSRCVER/"

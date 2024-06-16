@@ -386,7 +386,7 @@ report_html_prev_vs_curr (){
     if test -n "$DISTBB_DIFF"; then
 	if test -f "$bb_history_fn"; then
 	    bbid_prev=$(tail -2 "$bb_history_fn" | head -1)
-	    bbdir_prev="$REPORTS_DIR/$bbid_prev"
+	    bbdir_prev="$BULK_LOGS_DIR/$bbid_prev"
 	else
 	    bbid_prev=''
 	    bbdir_prev='/does/not/exist'
@@ -410,7 +410,7 @@ report_html_best_vs_curr (){
     # virtually "best" bulk build vs. this one
     if test -n "$DISTBB_DIFF"; then
 	bbid_best=.best_bb
-	bbdir_best="$REPORTS_DIR/$bbid_best"
+	bbdir_best="$BULK_LOGS_DIR/$bbid_best"
 
 	best_is_ok=''
 	if test -d "$bbdir_best" -a \

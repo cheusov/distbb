@@ -36,7 +36,7 @@ I<BMAKE> -- path to B<bmake>.
 
 =item
 
-I<REPORTS_DIR> -- directory for bulk-logs. The default is I<$HOME/bulk-logs>.
+I<BULK_LOGS_DIR> -- directory for bulk-logs. The default is I<$HOME/bulk-logs>.
 
 =item
 

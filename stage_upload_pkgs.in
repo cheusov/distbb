@@ -32,7 +32,7 @@ verbose_print "  uploading packages... "
 switch_to_target
 cd "$PACKAGES"
 
-export REPORT1_DIR REPORTS_DIR BUILD_ID
+export REPORT1_DIR BULK_LOGS_DIR BUILD_ID
 
 a=1
 while true; do

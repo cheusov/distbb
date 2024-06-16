@@ -92,8 +92,8 @@ if test -z "$BUILD_ID"; then
     echo "BUILD_ID MUST be set" 1>&2
     exit 2
 fi
-if test -z "$REPORTS_DIR"; then
-    echo "REPORTS_DIR MUST be set" 1>&2
+if test -z "$BULK_LOGS_DIR"; then
+    echo "BULK_LOGS_DIR MUST be set" 1>&2
     exit 2
 fi
 
@@ -101,7 +101,7 @@ if echo "$BUILD_ID" | grep ^/ > /dev/null; then
     REPORT1_DIR="$BUILD_ID"
     BUILD_ID=$(basename "$BUILD_ID")
 else
-    REPORT1_DIR="$REPORTS_DIR/$BUILD_ID"
+    REPORT1_DIR="$BULK_LOGS_DIR/$BUILD_ID"
 fi
 
 meta_dir="$REPORT1_DIR/META"
@@ -158,7 +158,7 @@ aux_reqd_deps_fn="$MSCOMMONDIR/reqd_deps.txt"
 
 reqd_deps_NA_fn="$tmpdir/reqd_deps_NA.tmp"
 
-bb_history_fn="$REPORTS_DIR/bulk_builds_history.txt"
+bb_history_fn="$BULK_LOGS_DIR/bulk_builds_history.txt"
 
 version='@version@'
 

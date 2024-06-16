@@ -52,7 +52,7 @@ SLAVES='ssh://root@localhost:2201 ssh://root@localhost:2202 ssh://root@localhost
 #SLAVES='NetBSD10-$$PKGSRCVER-1 NetBSD10-$$PKGSRCVER-2 NetBSD10-$$PKGSRCVER-3'
 
 # Default local directory for bulk build logs
-REPORTS_DIR="$HOME/bulk-logs"
+BULK_LOGS_DIR="$HOME/bulk-logs"
 
 # We use unprivileged bulk builds. This is user for this.
 # $PKGSRCDIR and $PACKAGES directories must have appropriate permissions.

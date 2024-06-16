@@ -179,7 +179,7 @@ fi
 : ${PSS_PPERS:=3} # to process N packages per slave at once
 
 # directory where reports are saved
-: ${REPORTS_DIR:=$HOME/bulk-logs}
+: ${BULK_LOGS_DIR:=$HOME/bulk-logs}
 
 # binary package extension
 : ${PKG_SUFX:=.tgz}
