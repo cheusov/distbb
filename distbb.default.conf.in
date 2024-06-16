@@ -371,7 +371,7 @@ fi
 
 # Extra options passed to paexec(1)
 #: ${PAEXEC_EXTRA_OPTS:=-z}
-: ${PAEXEC_EXTRA_OPTS:=-Z300 -W2}
+: ${PAEXEC_EXTRA_OPTS:=-Z300 -W1}
 
 # Extra options passed to paexec(1) while running pkg_src_summary(1)
 : ${PSS_PAEXEC_EXTRA_OPTS:=$PAEXEC_EXTRA_OPTS}

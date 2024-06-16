@@ -30,11 +30,8 @@
 #.end-str
 
 BEGIN {
-	PENALTY_FOR_DEPENDENCY = 15*1024 # additional dependency is equavalent to 15Mb
-	SIZE_MULTIPLIER = 1/1024 # kilobytes
+	SIZE_MULTIPLIER = 1 / 1024 / 50 # 50 kilobytes
 	CXX_MULTIPLIER = 20 # we assume that C++ compiling is 20-times slower than C
-	INIT_SIZE = 1024 # kilobytes
-	UNPACK = 1024 # pkg_add-s is equivalent to compiling 1MB
 }
 
 BEGIN {
@@ -64,9 +61,7 @@ NF == 0 {
 			idx = index($i, ":")
 			sum_sz += substr($i, idx+1)
 		}
-#		printf "sum_sz=%s\n", sum_sz > "/dev/stderr"
-		weight[pkgpath] = int(sum_sz * mult * SIZE_MULTIPLIER + UNPACK)
-#		printf "weight[%s]=%s\n", pkgpath, weight[pkgpath] > "/dev/stderr"
+		print "weight:", pkgpath, int(sum_sz * mult * SIZE_MULTIPLIER)
 	}
 	mult = 1
 	pkgpath = alldistfiles = ""
@@ -88,34 +83,4 @@ has_prefix($0, "USE_LANGUAGES=") {
 		mult *= CXX_MULTIPLIER
 
 	next
-}
-
-END {
-	# topological sort and sum weights for all dependent packages' weight and some penalty
-	tail = head = 1
-	for (pkgpath in incount) {
-		if (!incount[pkgpath])
-			queue[tail++] = pkgpath
-	}
-	for (; head < tail; ++head) {
-		pkgpath = queue[head]
-		queue[head]
-		split(deps[pkgpath], arr, / /)
-		for (idx in arr) {
-			dep = arr[idx]
-			if (dep == "") continue
-			--incount[dep]
-			weight[pkgpath] += weight[dep] + PENALTY_FOR_DEPENDENCY
-			if (! incount[dep]) {
-				queue[tail++] = dep
-			}
-		}
-	}
-}
-
-END {
-	for (pkgpath in weight) {
-		weight[pkgpath] += 0
-		print "weight:", pkgpath, weight[pkgpath]
-	}
 }

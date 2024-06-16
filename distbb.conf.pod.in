@@ -273,7 +273,7 @@ The default is I<6>.
 
 =item
 
-I<PAEXEC_EXTRA_OPTS> -- paexec(1) extra options. The default value is I<-Z300 -W2>.
+I<PAEXEC_EXTRA_OPTS> -- paexec(1) extra options. The default value is I<-Z300 -W1>.
 
 =item
 
