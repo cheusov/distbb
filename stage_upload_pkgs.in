@@ -29,7 +29,6 @@ fi
 # main
 verbose_print "  uploading packages... "
 
-switch_to_target
 cd "$PACKAGES"
 
 export REPORT1_DIR BULK_LOGS_DIR BUILD_ID

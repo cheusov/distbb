@@ -26,6 +26,9 @@ export eot='d0b586170bd6117bea00144c86207e0e'
 ######################################################################
 cd "$REPORT1_DIR"
 
+dep_graph_to_build_fn="$tmpdir/dep_graph_to_build.tmp"
+packages_to_rebuild_fn="$tmpdir/packages_to_rebuild.tmp"
+
 ######################################################################
 ### graph of packages for paexec
 verbose_print "  initial queue..."

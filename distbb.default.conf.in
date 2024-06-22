@@ -144,7 +144,7 @@ fi
 
 # program for comparing pkg_summary(5) for available binaries and
 # pkg_src_summary collected from pkgsrc source tree
-: ${PKG_CMP_SUMMARY_CMD:=@bindir@/pkg_cmp_summary -p}
+: ${PKG_CMP_SUMMARY_CMD:=@bindir@/pkg_cmp_summary -p2}
 
 # if you want to build src_summary using several processes or several
 # machines in a network, set PSS_SLAVES.
