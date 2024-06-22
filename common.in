@@ -1,6 +1,6 @@
 #-*-mode:  sh -*-
 
-# Copyright (c) 2008-2011 Aleksey Cheusov <vle@gmx.net>
+# Copyright (c) 2008-2024 Aleksey Cheusov <vle@gmx.net>
 # All rights reserved.
 #
 # See LICENSE file
@@ -142,17 +142,14 @@ processed_pkg_src_summary_fn="$tmpdir/processed_pkg_src_summary.tmp"
 build_start_fn="$meta_dir/build_start.tmp"
 build_end_fn="$meta_dir/build_end.tmp"
 
-dep_graph_to_build_fn="$tmpdir/dep_graph_to_build.tmp"
-packages_to_rebuild_fn="$tmpdir/packages_to_rebuild.tmp"
-rebuild_PAe_fn="$tmpdir/rebuild_PAe.tmp"
-
-aux_reqd_deps_fn="$MSCOMMONDIR/reqd_deps.txt"
-
-reqd_deps_NA_fn="$tmpdir/reqd_deps_NA.tmp"
+rebuild_PAe_fn="$tmpdir/packages_to_rebuild_PAe.tmp"
 
 bb_history_fn="$BULK_LOGS_DIR/bulk_builds_history.txt"
 
 version='@version@'
+
+
+aux_reqd_deps_fn="$MSCOMMONDIR/reqd_deps.txt"
 
 ######################################################################
 enrich_pkgpath (){

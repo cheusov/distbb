@@ -22,7 +22,6 @@ BUILD_ID="$1"
 # main
 verbose_print "  checksums for binary packages..."
 
-switch_to_target
 cd "$PACKAGES"
 
 {

@@ -44,7 +44,12 @@ cp "$CSS_FILE" "$REPORT1_DIR/distbb.css"
 
 echo "$build_start" > "$build_start_fn"
 
-tmp_stderr_fn="$tmpdir/tmp_stderr"
+tmp_stderr_fn="$tmpdir/tmp_stderr.tmp"
+pkgsrc_deps_fn="$tmpdir/pkgsrc_deps.tmp";
+raw_packages_fn="$tmpdir/raw_packages.tmp"
+packages_PAeNA_fn="$tmpdir/packages_PAeNA.tmp"
+packages_PA_fn="$tmpdir/packages_PA.tmp"
+updated_packages_fn="$tmpdir/updated_packages.tmp"
 
 indent2 (){
     awk '{print "  " $0}' "$@"
@@ -62,10 +67,6 @@ NF == 0 {
    pkgpath = pkgname = assign = ""
 }
 ' "$@"
-}
-
-summary2PKGPATH (){
-    sed -n 's/^PKGPATH=//p' "$@"
 }
 
 # main
@@ -107,7 +108,6 @@ cleanup_package_list (){
     }' "$packages"
 }
 
-raw_packages_fn="$tmpdir/raw_packages.tmp"
 if test "$packages"; then
     # remove comments and empty lines
     cleanup_package_list > "$raw_packages_fn"
@@ -180,86 +180,22 @@ verbose_print "  is there packages for which pkg_src_summary failed?..."
 
 pkg_grep_summary -f PKGPATH,PKGNAME,ASSIGNMENTS -t strfile PKGPATH \
     "$raw_packages_fn" < "$processed_pkg_src_summary_fn" | summary2PAeNA \
-    > "$tmpdir/packages_PAeNA.tmp"
+    > "$packages_PAeNA_fn"
 pkg_grep_summary -f PKGPATH,PKGNAME,ASSIGNMENTS -t strfile PKGPATHe \
     "$raw_packages_fn" < "$processed_pkg_src_summary_fn" | summary2PAeNA \
-    >> "$tmpdir/packages_PAeNA.tmp"
-sort_uniq_inplace "$tmpdir/packages_PAeNA.tmp"
+    >> "$packages_PAeNA_fn"
+sort_uniq_inplace "$packages_PAeNA_fn"
 
-PAeNA2PA "$tmpdir/packages_PAeNA.tmp" | sort -u > "$tmpdir/packages_PA.tmp"
-comm -23 "$raw_packages_fn" "$tmpdir/packages_PA.tmp" > "$packages_failed_scan_fn"
-
-verbose_print '\n'
-
-printf '' > "$errors_fn"
-
-######################################################################
-### dependency graph of packages to build
-verbose_print "  dependency graph of packages to build..."
-
-awk '
-/^PKGNAME/ {pkgbase = substr($0, 9); sub(/-[^-]*$/, "", pkgbase)}
-/^PKGPATH/ {pkgpath = substr($0, 9); sub(/:.*$/, "", pkgpath)}
-NF == 0 {print pkgpath "," pkgbase}
-' "$processed_pkg_src_summary_fn" > "$tmpdir/src_PABA.tmp"
-
-summary2PKGPATH "$processed_pkg_src_summary_fn" |
-sort -u > "$tmpdir/all_src_pkgpaths.tmp"
-
-all_deps_PAeNA_fn="$tmpdir/all_deps_PAeNA.tmp"
-all_bin_summary_fn="$tmpdir/all_bin_summary.tmp"
-all_bin_summary_fn="$PKG_ALL_SUMMARY"
-
-pkg_summary2deps -Apnrsal2 -P "$tmpdir/all_src_pkgpaths.tmp" \
-    "$processed_pkg_src_summary_fn" "$all_bin_summary_fn" \
-    > "$all_deps_PAeNA_fn" 2>"$tmp_stderr_fn"
-if test -s "$tmp_stderr_fn"; then
-    cat >> "$errors_fn" <<'EOF'
-------------------
-pkg_summary2deps:
-EOF
-    indent2 "$tmp_stderr_fn" >> "$errors_fn"
-fi
-
-@libexecdir@/pkg_summary2build_deps \
-    -s "$processed_pkg_src_summary_fn" \
-    -b "$all_bin_summary_fn" \
-    -r "$tmpdir/updated_PAeNA.tmp" \
-    -m ${deps_graph_mode} \
-    "$all_deps_PAeNA_fn" > "$tmpdir/reqd_deps_PAeNA_pre.tmp"
-
-if test "$packages"; then
-    pkg_subgraph_deps -r -f "$tmpdir/packages_PAeNA.tmp" \
-	"$tmpdir/reqd_deps_PAeNA_pre.tmp" > "$tmpdir/reqd_deps_PAeNA.tmp"
-else
-    ln -s "$tmpdir/reqd_deps_PAeNA_pre.tmp" "$tmpdir/reqd_deps_PAeNA.tmp"
-fi
-
-PAeNA2NA  "$tmpdir/reqd_deps_PAeNA.tmp" > "$reqd_deps_NA_fn"
-
-pkg_subgraph_deps -f "$tmpdir/updated_PAeNA.tmp" \
-    "$tmpdir/reqd_deps_PAeNA.tmp" |
-PAeNA2PAe > "$rebuild_PAe_fn"
-
-printf '' > "$summary_cmp_fn"
-
-# rebuilt previously
-PAeNA2PAe "$tmpdir/packages_PAeNA.tmp" | sort -u > "$tmpdir/packages_PAe.tmp"
-
-changed_pkgs_fn="$tmpdir/changed.tmp"
-awk 'NF == 3 {print $2 "\n" $3; next}
-     NF == 1 {print}' "$rebuild_PAe_fn" |
-sort -u > "$changed_pkgs_fn"
-
-sort "$changed_pkgs_fn" "$changed_pkgs_fn" "$tmpdir/packages_PAe.tmp" |
-uniq -c |
-awk '$1 == 1 {print $2}' > "$packages_built_prev_fn.tmp"
+PAeNA2PA "$packages_PAeNA_fn" | sort -u > "$packages_PA_fn"
+comm -23 "$raw_packages_fn" "$packages_PA_fn" > "$packages_failed_scan_fn"
 
 verbose_print '\n'
 
 ######################################################################
 ### comparison binaries against pkgsrc tree
 verbose_print "  pkg_src_summary vs. pkg_summary comparison..."
+
+printf '' > "$errors_fn"
 
 eval @libexecdir@/wrapper \
     $PKG_CMP_SUMMARY_CMD "$processed_pkg_src_summary_fn" "$PKG_ALL_SUMMARY" \
@@ -277,11 +213,56 @@ fi
 verbose_print '\n'
 
 ######################################################################
+### dependency graph of packages to build
+verbose_print "  dependency graph of packages to build..."
+
+pkg_summary2deps -Aspnrl2 "$processed_pkg_src_summary_fn" \
+    > "$pkgsrc_deps_fn" 2>"$tmp_stderr_fn"
+if test -s "$tmp_stderr_fn"; then
+    cat >> "$errors_fn" <<'EOF'
+------------------
+pkg_summary2deps:
+EOF
+    indent2 "$tmp_stderr_fn" >> "$errors_fn"
+fi
+
+awk '
+$1  == ">" || $1  == "<" {
+   p[$2 ";" $4 "-" $5] = 1
+}
+$1  == "-" {
+   p[$2 ";" $3 "-" $4] = 1
+}
+$1  == "=" {
+   d[$2 ";" $4 "-" $5] = 1
+}
+END {
+   for (n in p) if (! (n in d))
+      print n
+}
+' "$summary_cmp_fn" > "$updated_packages_fn"
+
+pkg_subgraph_deps -f "$updated_packages_fn" \
+    "$pkgsrc_deps_fn" |
+    PAeNA2PAe > "$rebuild_PAe_fn"
+
+pkg_subgraph_deps -v -f "$updated_packages_fn" \
+    "$pkgsrc_deps_fn" |
+    PAeNA2PAe |
+    awk '
+	NF == 1 { h[$1] = 1 }
+	NF == 2 { h[$2] = 1 }
+	NF == 3 { h[$2] = h[$3] = 1 }
+	END { for (p in h) print p }' > "$packages_built_prev_fn.tmp"
+
+verbose_print '\n'
+
+######################################################################
 ### list of already built packages
 
 verbose_print "  copying auxiliary files..."
 
-cp "$reqd_deps_NA_fn" "$aux_reqd_deps_fn"
+PAeNA2NA "$pkgsrc_deps_fn" > "$aux_reqd_deps_fn"
 
 verbose_print '\n'
 
