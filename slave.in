@@ -89,9 +89,6 @@ if test -n "$TARGET_MAKECONF"; then
     export TARGET_ARCH=`get_var -f $TARGET_MAKECONF VARNAME=TARGET_ARCH`
 fi
 
-export BH_PACKAGES="$PACKAGES"
-export BH_PKG_DBDIR="$PKG_DBDIR"
-
 export EXTRACT_BOOTSTRAP_CMD
 export RMDIRS_CMD
 
@@ -156,37 +153,20 @@ do_run_target(){
     case "$t" in
 	Init)
 	    # remove /usr/pkg and unpack bootstrap
-	    if test -n "$TH_pkg"; then
-		if test -z "$TARGET_SYSROOT" -o -z "${TARGET_PREFIX}" -o -z "${TARGET_PKG_DBDIR}"; then
-		    echo 'TARGET_* variables must be non-empty!' 1>&2
-		    return 1
-		fi
-
-		rm -rf "${TARGET_SYSROOT}${TARGET_PREFIX}"
-		rm -rf "${TARGET_SYSROOT}${TARGET_PKG_DBDIR}"
-	    else
-		# unset LD_PRELOAD before removing libkver.so
-		ld_preload_backup="$LD_PRELOAD"
-		unset LD_PRELOAD || true
-		eval $RMDIRS_CMD
-		eval $EXTRACT_BOOTSTRAP_CMD
-		if test -n "$LIBKVER_OSRELEASE"; then
-		    export LIBKVER_OSRELEASE
-		    if test -n "$ld_preload_backup"; then
-			export LD_PRELOAD="$ld_preload_backup"
-		    fi
+	    # unset LD_PRELOAD before removing libkver.so
+	    ld_preload_backup="$LD_PRELOAD"
+	    unset LD_PRELOAD || true
+	    eval $RMDIRS_CMD
+	    eval $EXTRACT_BOOTSTRAP_CMD
+	    if test -n "$LIBKVER_OSRELEASE"; then
+		export LIBKVER_OSRELEASE
+		if test -n "$ld_preload_backup"; then
+		    export LD_PRELOAD="$ld_preload_backup"
 		fi
 	    fi
 	    ;;
 	*)
-	    case "${t}_${TH_pkg}" in
-		*_|Depends_1)
-		    bmake_env=;;
-		*)
-		    bmake_env="MAKECONF=$TARGET_MAKECONF";;
-	    esac
-
-	    bmake_env="$bmake_env PKGPATHe=$BH_pkg$1 BH_pkg=$BH_pkg"
+	    bmake_env="$bmake_env PKGPATHe=$1"
 
 	    run_bmake_with_repeat "$t" || return $?
 	    ;;
@@ -246,17 +226,7 @@ build_package (){
     multivar_opts=''
     unset MAKECONF || true # ksh, dash, pdksh
 
-    BH_pkg=
-    TH_pkg=
-    if ! is_true "$CROSS_COMPILE"; then
-	long_pkgpath="$1"
-    elif echo "$1" | grep ^BH-- > /dev/null; then
-	BH_pkg='BH--'
-	long_pkgpath=`echo $1 | cut -b 5-`
-    else
-	TH_pkg=1
-	long_pkgpath="$1"
-    fi
+    long_pkgpath="$1"
 
     real_pkgpath="`echo $long_pkgpath | cut -d: -f1`"
     if test "$real_pkgpath" != "$long_pkgpath"; then

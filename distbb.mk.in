@@ -107,7 +107,7 @@ Depends:
 	    PKG_DBDIR="${PKG_DBDIR}" \
 	    PKG_SUFX=${PKG_SUFX} \
 	    aux_reqd_deps_fn=${aux_reqd_deps_fn} \
-	    @libexecdir@/make-depends "${BH_pkg}${PKGNAME}"
+	    @libexecdir@/make-depends ${PKGNAME:Q}
 
 ############################################################
 ############################################################

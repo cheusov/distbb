@@ -396,9 +396,6 @@ fi
 ############################################################
 # variables for cross-builds
 
-# set the following to 1|yes|true for cross-compiling packages
-: ${CROSS_COMPILE:=0} # !!! NOT IMPLEMENTED YET !!!
-
 # similar to PACKAGES but for target platform
 : ${TARGET_PACKAGES:=$PKGSRCDIR/cross-packages}
 
@@ -434,8 +431,3 @@ export BMAKE
 
 export VARS_SHOW_ENVIRONMENT
 export TARGETS
-
-if is_true "$CROSS_COMPILE"; then
-    export CROSS_COMPILE
-    export TARGET_MAKECONF
-fi

@@ -21,7 +21,6 @@ BUILD_ID="$1"
 . @libexecdir@/common
 
 # main
-switch_to_target
 cd "$PACKAGES/All"
 
 # pkg_summary.txt

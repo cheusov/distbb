@@ -214,11 +214,6 @@ test_var LIST_ALL_PKGS_CMD
 test_var DISTBB_LOCAL_MK
 test_var MSCOMMONDIR
 
-if is_true "$CROSS_COMPILE"; then
-    test_var TARGET_MAKECONF
-    test_var TARGET_PACKAGES
-fi
-
 if test -n "$USER_MAIL"; then
     echo 'USER_MAIL configuration variable was renamed to REPORT_EMAIL' 1>&2
     exit 1
