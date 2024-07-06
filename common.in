@@ -142,6 +142,7 @@ processed_pkg_src_summary_fn="$tmpdir/processed_pkg_src_summary.tmp"
 build_start_fn="$meta_dir/build_start.tmp"
 build_end_fn="$meta_dir/build_end.tmp"
 
+rebuild_all_PAe_fn="$tmpdir/packages_to_rebuild_all_PAe.tmp"
 rebuild_PAe_fn="$tmpdir/packages_to_rebuild_PAe.tmp"
 
 bb_history_fn="$BULK_LOGS_DIR/bulk_builds_history.txt"

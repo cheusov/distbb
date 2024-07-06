@@ -125,9 +125,9 @@ $0 ~ /^[^ ]+ [0-9]+ (success|failure|fatal)$/ {
 }
 
 status [$2] == "failure" && !($2 in failed_deps) {
-   task_number = $2
+   _task_number = $2
    $1 = $2 = ""
-   failed_deps [task_number] = $0
+   failed_deps [_task_number] = $0
    next
 }
 
@@ -187,7 +187,7 @@ function free_arrs (task){
 status [$2] == "fatal" {
    # fatal
    print "    FATAL:", pkgpath, "on", run_on [$2]
-   xsystem("rm -rf " get_log_dir(pkgpaths [$2]))
+   xsystem("rm -rf " log_dir)
    free_arrs($2)
    next
 }

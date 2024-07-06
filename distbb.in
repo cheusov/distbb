@@ -52,8 +52,8 @@ OPTIONS:
   -I <pkg_db>       the same as -i but installed packages
                     are obtained from <pkg_db>
   -m <mode>         mode of dependency graph generation
-                    0 - use package from pkgsrc tree (the default)
-                    1 - use latest available binary if it satisfies
+                    0 - rebuild dependants recursively (the default)
+                    1 - minimal rebuilds
                     DEPENDS and BUILD_DEPENDS
   -a                build packages specified by -f or -p and
                     add new summaries to pkg_summary(5)
@@ -94,7 +94,7 @@ unexclude (){
     unset "exclude_stage_$1" || true
 }
 
-export deps_graph_mode=0
+export rebuild_mode=0
 
 while getopts hVf:p:C:DB:l:kKx:X:rsiI:m:a f; do
     case $f in
@@ -114,7 +114,7 @@ while getopts hVf:p:C:DB:l:kKx:X:rsiI:m:a f; do
 	s)   strict=1;;
 	i)   full_bb; pkgs=; pkgs_fn=; K_opt=; installed=1;;
 	I)   full_bb; pkgs=; pkgs_fn=; K_opt="-K $OPTARG"; installed=1;;
-	m)   export deps_graph_mode="$OPTARG";;
+	m)   export rebuild_mode="$OPTARG";;
 	a)   full_bb; export add_new_summaries=1;;
 	'?') printf '%s\n' "$USAGE"; exit 1;;
     esac

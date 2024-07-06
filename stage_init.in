@@ -69,6 +69,64 @@ NF == 0 {
 ' "$@"
 }
 
+cmp2updated_packages(){
+    awk '
+$1  == ">" || $1  == "<" {
+   p[$2 ";" $4 "-" $5] = 1
+}
+$1  == "-" {
+   p[$2 ";" $3 "-" $4] = 1
+}
+$1  == "=" {
+   d[$2 ";" $4 "-" $5] = 1
+}
+END {
+   for (n in p) if (! (n in d))
+      print n
+}
+' "$@"
+}
+
+generate_built_prev() {
+    awk -v rebuild_graph="$1" '
+BEGIN {
+   while (getline < rebuild_graph) {
+      if (NF == 1) {
+         rebuild[$1]=1
+      } else if (NF == 3) {
+         rebuild[$2] = rebuild[$3] = 1
+      }
+   }
+}
+
+{
+   sub(/;.*$/, "", $1)
+}
+
+NF == 1 && ! ($1 in rebuild) {
+   h[$1]=1
+   next
+}
+
+NF == 3 {
+   sub(/;.*$/, "", $2)
+   if (! ($2 in rebuild)) {
+      h[$2]=1
+   }
+
+   sub(/;.*$/, "", $3)
+   if (! ($3 in rebuild)) {
+      h[$3]=1
+   }
+}
+
+END {
+   for (p in h) {
+      print p
+   }
+}' "$2"
+}
+
 # main
 verbose_print "Preparations\n"
 
@@ -226,34 +284,19 @@ EOF
     indent2 "$tmp_stderr_fn" >> "$errors_fn"
 fi
 
-awk '
-$1  == ">" || $1  == "<" {
-   p[$2 ";" $4 "-" $5] = 1
-}
-$1  == "-" {
-   p[$2 ";" $3 "-" $4] = 1
-}
-$1  == "=" {
-   d[$2 ";" $4 "-" $5] = 1
-}
-END {
-   for (n in p) if (! (n in d))
-      print n
-}
-' "$summary_cmp_fn" > "$updated_packages_fn"
+cmp2updated_packages "$summary_cmp_fn" > "$updated_packages_fn"
 
-pkg_subgraph_deps -f "$updated_packages_fn" \
-    "$pkgsrc_deps_fn" |
-    PAeNA2PAe > "$rebuild_PAe_fn"
+pkg_subgraph_deps -f "$updated_packages_fn" "$pkgsrc_deps_fn" |
+    PAeNA2PAe > "$rebuild_all_PAe_fn"
 
-pkg_subgraph_deps -v -f "$updated_packages_fn" \
-    "$pkgsrc_deps_fn" |
-    PAeNA2PAe |
-    awk '
-	NF == 1 { h[$1] = 1 }
-	NF == 2 { h[$2] = 1 }
-	NF == 3 { h[$2] = h[$3] = 1 }
-	END { for (p in h) print p }' > "$packages_built_prev_fn.tmp"
+if test "$rebuild_mode" = 0; then
+    ln "$rebuild_all_PAe_fn" "$rebuild_PAe_fn"
+else
+    false # not implemented yet
+fi
+
+generate_built_prev "$rebuild_PAe_fn" "$pkgsrc_deps_fn" \
+   > "$packages_built_prev_fn.tmp"
 
 verbose_print '\n'
 
