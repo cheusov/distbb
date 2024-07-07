@@ -751,7 +751,7 @@ pkgname_pkgpath2html (){
 
 stages_bar (){
     printf '<div>Stages:&nbsp;'
-    for t in $TARGETS; do
+    for t in $DISTBB_TARGETS; do
 	if test -s "$pkgdir/stage_$t.tmp"; then
 	    if test "$t" = "$stage"; then
 		printf "$stage"

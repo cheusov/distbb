@@ -115,12 +115,12 @@ remove_comments (){
 }
 
 save_TARGETS_and_EXTRA_OPTS (){
-    orig_TARGETS="$TARGETS"
+    orig_TARGETS="$DISTBB_TARGETS"
     orig_BMAKE_EXTRA_OPTS="$BMAKE_EXTRA_OPTS"
 }
 
 restore_TARGETS_and_EXTRA_OPTS (){
-    TARGETS="$orig_TARGETS"
+    DISTBB_TARGETS="$orig_TARGETS"
     BMAKE_EXTRA_OPTS="$orig_BMAKE_EXTRA_OPTS"
 }
 
@@ -184,10 +184,10 @@ do_build_package (){
     remove_comments |
     pkg_grep_summary 'PKGPATH' "\$2 == \"$1\"" > $tmpfn
 
-    new_TARGETS="`sed -n 's,^TARGETS=,,p' $tmpfn`"
+    new_TARGETS="`sed -n 's,^DISTBB_TARGETS=,,p' $tmpfn`"
 
     if test "$new_TARGETS"; then
-	TARGETS="$new_TARGETS"
+	DISTBB_TARGETS="$new_TARGETS"
     fi
 
     new_BMAKE_EXTRA_OPTS="`sed -n 's,^BMAKE_EXTRA_OPTS=,,p' $tmpfn`"
@@ -200,11 +200,11 @@ do_build_package (){
 	return 1
     fi
 
-    # $TARGETS
+    # $DISTBB_TARGETS
     bmake_opts="$BMAKE_EXTRA_OPTS $multivar_opts"
     export bmake_opts
 
-    for t in $TARGETS; do
+    for t in $DISTBB_TARGETS; do
 	echo "${t}_start: `$EPOCH_SECONDS_CMD`"
 	set +e
 	do_run_target "$t" >> "$logfn" 2>&1

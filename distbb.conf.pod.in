@@ -168,7 +168,7 @@ I<BUILD_STAGES> -- bulk build stages. The default value is
 
 =item
 
-I<TARGETS> -- a list of targets for building package, separated by space. The default is
+I<DISTBB_TARGETS> -- a list of targets for building package, separated by space. The default is
 
     Init clean Available Excluded Vars Depends fetch checksum
     extract patch configure build package

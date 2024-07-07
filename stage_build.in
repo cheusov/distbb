@@ -91,7 +91,7 @@ BEGIN {
    }
 
    i = 0
-   cnt = split(ENVIRON["TARGETS"], targets_array)
+   cnt = split(ENVIRON["DISTBB_TARGETS"], targets_array)
    for (j = 1; j <= cnt; ++j) {
       target = targets_array[j]
       if (target != "Available" && target != "Excluded" && target != "Vars") {

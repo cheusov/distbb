@@ -218,11 +218,11 @@ fi
 #    remove /usr/pkg directory (see RMDIRS_CMD)
 #    unpack bootstrap (see EXTRACT_BOOTSTRAP_CMD)
 # The target "Available" checks PKG_FAIL_REASON...
-#    It is recommended to include it to TARGETS,
+#    It is recommended to include it to DISTBB_TARGETS,
 #    otherwise counters in "Failures per maintainer" will
 #    be not fully correct
 # The "Vars" lists bmake's variables for easier debugging
-: ${TARGETS:=Init clean Available Excluded Vars Depends fetch checksum extract patch configure build package}
+: ${DISTBB_TARGETS:=Init clean Available Excluded Vars Depends fetch checksum extract patch configure build package}
 
 # extra options passed to bmake
 # BATCH is mandatory for bulk builds!
@@ -252,33 +252,33 @@ fi
 
 #SPECIAL_PACKAGES="\
 #PKGPATH=pkgtools/digest
-#TARGETS=Init clean Vars Depends fetch checksum extract patch configure build package
+#DISTBB_TARGETS=Init clean Vars Depends fetch checksum extract patch configure build package
 #BMAKE_EXTRA_OPTS=BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=yes CHECK_SHLIBS=no
 #
 #PKGPATH=pkgtools/bootstrap-mk-files
-#TARGETS=Init clean Vars Depends fetch checksum extract patch configure build package
+#DISTBB_TARGETS=Init clean Vars Depends fetch checksum extract patch configure build package
 #BMAKE_EXTRA_OPTS=BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=yes CHECK_SHLIBS=no
 #
 #PKGPATH=net/tnftp
-#TARGETS=Init clean Vars Depends fetch checksum extract patch configure build package
+#DISTBB_TARGETS=Init clean Vars Depends fetch checksum extract patch configure build package
 #BMAKE_EXTRA_OPTS=BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=yes CHECK_SHLIBS=no
 #
 #PKGPATH=sysutils/checkperms
-#TARGETS=Init clean Vars Depends fetch checksum extract patch configure build package
+#DISTBB_TARGETS=Init clean Vars Depends fetch checksum extract patch configure build package
 #BMAKE_EXTRA_OPTS=BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=yes CHECK_SHLIBS=no
 #
 #PKGPATH=devel/bmake
-#TARGETS=Init clean Vars Depends fetch checksum extract patch configure build package
+#DISTBB_TARGETS=Init clean Vars Depends fetch checksum extract patch configure build package
 #BMAKE_EXTRA_OPTS=BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=yes CHECK_SHLIBS=no
 #
 #PKGPATH=pkgtools/pkg_install
-#TARGETS=Init clean Vars Depends fetch checksum extract patch configure build package
+#DISTBB_TARGETS=Init clean Vars Depends fetch checksum extract patch configure build package
 #BMAKE_EXTRA_OPTS=BATCH=yes PKG_VERBOSE=1 USE_DESTDIR=yes CHECK_SHLIBS=no
 #
-#PKGPATH=audio/festival # TARGETS is not changed!
+#PKGPATH=audio/festival # DISTBB_TARGETS is not changed!
 #BMAKE_EXTRA_OPTS=CC=/usr/bin/gcc-3.4 CXX=/usr/bin/g++-3.4 BATCH=yes PKG_VERBOSE=1
 #
-#PKGPATH=emulators/qemu # TARGETS is not changed!
+#PKGPATH=emulators/qemu # DISTBB_TARGETS is not changed!
 #BMAKE_EXTRA_OPTS=CC=/usr/bin/gcc-3.4 CXX=/usr/bin/g++-3.4 BATCH=yes PKG_VERBOSE=1
 #
 #PKGPATH=devel/popt # distcc is not available yet, so, we set CC to gcc
@@ -430,4 +430,4 @@ fi
 export BMAKE
 
 export VARS_SHOW_ENVIRONMENT
-export TARGETS
+export DISTBB_TARGETS

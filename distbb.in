@@ -203,7 +203,7 @@ test_var PKG_CMP_SUMMARY_CMD
 test_var BULK_LOGS_DIR
 test_var PKG_SUFX
 test_var CLEAN_TARGET
-test_var TARGETS
+test_var DISTBB_TARGETS
 test_var DISTBB_SLAVE
 test_var OFFENDERS_CNT
 test_var MAX_FAILED_DEPS_CNT
