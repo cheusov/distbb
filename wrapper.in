@@ -1,5 +1,10 @@
 #!/bin/sh
 
+# Copyright (c) 2008-2026 Aleksey Cheusov <vle@gmx.net>
+# All rights reserved.
+#
+# See LICENSE file
+
 : ${DISTBB_CONF:=@sysconfdir@/distbb.conf}
 . "$DISTBB_CONF"
 
