@@ -177,7 +177,7 @@ do_build_package (){
     # $1 - long pkgpath, e.g. www/php-apc:PHP_VERSION_REQD=5
     # $2 - real pkgpath, e.g. www/php-apc
 
-    header preinit >> "$logfn"
+    header preinit > "$logfn"
 
     # new targets? new extra_opts?
     echo "$SPECIAL_PACKAGES" |
