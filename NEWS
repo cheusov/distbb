@@ -1,4 +1,12 @@
 ===================================================================
+Version 0.49.0 by Aleksey Cheusov, Sat, 24 Oct 2026 19:24:27 +0400
+
+ A lot of improvements and clean-ups. It's recomended to configure
+ bulk build from scratch.
+
+ Follow TUTORIAL.pod to configure distbb.
+
+===================================================================
 Version 0.48.0 by Aleksey Cheusov, Sun, 12 May 2024 18:39:40 +0400
 
   Fix distbb_chroot script.

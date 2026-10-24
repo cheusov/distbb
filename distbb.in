@@ -94,7 +94,7 @@ unexclude (){
     unset "exclude_stage_$1" || true
 }
 
-export rebuild_mode=0
+export rebuild_mode=all
 
 while getopts hVf:p:C:DB:l:kKx:X:rsiI:m:a f; do
     case $f in
@@ -120,6 +120,11 @@ while getopts hVf:p:C:DB:l:kKx:X:rsiI:m:a f; do
     esac
 done
 shift `expr $OPTIND - 1`
+
+case "$rebuild_mode" in
+    all|min) ;;
+    *) echo "Invalid argument -m $rebuild_mode" 1>&2; exit 1;;
+esac
 
 export pkgs_fn
 

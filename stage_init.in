@@ -127,6 +127,60 @@ END {
 }' "$2"
 }
 
+minimize_rebuild_graph() {
+    awk -v updated_packages="$updated_packages_fn" '
+BEGIN {
+   while (getline < updated_packages) {
+      rebuild[$0]=1
+   }
+}
+
+NF == 1 && ($0 in rebuild) {
+   packages[$0] = 1
+   next
+}
+
+NF == 3 {
+#   if ($1 == "DEPENDS")
+   outgoing[$2, ++outgoing_cnt[$2]] = $3
+#   else if (($2 in rebuild) && ($3 in rebuild))
+#      print $0
+
+   if ($2 in rebuild)
+      packages[$2] = 1
+   if ($3 in rebuild)
+      packages[$3] = 1
+
+   next
+}
+
+{ exit 12 }
+
+function rec(start, curr,            i) {
+   if (start != curr && (curr in packages)) {
+      deps[start " " curr] = 1
+#     print "DEPENDS", start, curr
+   } else if (curr in outgoing_cnt) {
+#      print " depends", start, curr > "/dev/stderr"
+      for (i = 1; i <= outgoing_cnt[curr]; ++i) {
+         rec(start, outgoing[curr, i])
+      }
+   }
+}
+
+END {
+   for (p in packages) {
+#      print "REBUILD", p > "/dev/stderr"
+      print p
+      rec(p, p)
+   }
+   for (dep in deps) {
+      print "XXX", dep
+   }
+}
+' "$@"
+}
+
 # main
 verbose_print "Preparations\n"
 
@@ -286,13 +340,13 @@ fi
 
 cmp2updated_packages "$summary_cmp_fn" > "$updated_packages_fn"
 
-pkg_subgraph_deps -f "$updated_packages_fn" "$pkgsrc_deps_fn" |
-    PAeNA2PAe > "$rebuild_all_PAe_fn"
+pkg_subgraph_deps -f "$updated_packages_fn" "$pkgsrc_deps_fn" > "$rebuild_all_PAe_fn"
 
-if test "$rebuild_mode" = 0; then
-    ln "$rebuild_all_PAe_fn" "$rebuild_PAe_fn"
+if test "$rebuild_mode" = all; then
+    PAeNA2PAe "$rebuild_all_PAe_fn" > "$rebuild_PAe_fn"
 else
-    false # not implemented yet
+    minimize_rebuild_graph "$rebuild_all_PAe_fn" |
+	PAeNA2PAe > "$rebuild_PAe_fn"
 fi
 
 generate_built_prev "$rebuild_PAe_fn" "$pkgsrc_deps_fn" \
