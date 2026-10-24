@@ -99,6 +99,8 @@ BEGIN {
          ++i
       }
    }
+
+   progress0_fn = report1_dir "/META/progress0.tmp"
 }
 
 function get_log_dir (pkgpath,            pkgname){
@@ -109,39 +111,45 @@ function get_log_dir (pkgpath,            pkgname){
    return report1_dir "/" pkgpath "_" pkgname
 }
 
-!($2 in pkgpaths) {
+!($2 in taskid2pkgpath) {
    # $3 - package name (PKGPATH)
-   pkgpaths [$2] = $3
-   run_on   [$2] = $1
+   print $0 > progress0_fn
+   taskid2pkgpath [$2] = $3
+   taskid2slavehost [$2] = $1
    print "  started:", $3, "on", $1
    xsystem("mkdir -p " get_log_dir($3))
 
    next
 }
 
+{
+   pkgpath = taskid2pkgpath [$2]
+   log_dir = get_log_dir(pkgpath)
+   log_fn  = log_dir "/stage_" taskid2stage [$2] ".tmp"
+
+   print $0 > (log_dir "/full.tmp")
+}
+
 $0 ~ /^[^ ]+ [0-9]+ (success|failure|fatal)$/ {
-   status [$2] = $3
+   print $0 > progress0_fn
+   taskid2status [$2] = $3
    next
 }
 
-status [$2] == "failure" && !($2 in failed_deps) {
+taskid2status [$2] == "failure" && !($2 in taskid2failed_deps) {
+   print $0 > progress0_fn
    _task_number = $2
    $1 = $2 = ""
-   failed_deps [_task_number] = $0
+   taskid2failed_deps [_task_number] = $0
    next
-}
-
-{
-   pkgpath = pkgpaths [$2]
-   log_dir = get_log_dir(pkgpath)
-   log_fn  = log_dir "/stage_" stage [$2] ".tmp"
 }
 
 $3 == "--**--**--" && $5 == "--**--**--" {
-   if (stage [$2] != ""){
+   print $0 > progress0_fn
+   if (taskid2stage [$2] != ""){
       xclose(log_fn)
    }
-   stage [$2] = $4
+   taskid2stage [$2] = $4
    printf "" > (log_dir "/stage_" $4 ".tmp")
 
    # for detecting failed stage
@@ -149,13 +157,6 @@ $3 == "--**--**--" && $5 == "--**--**--" {
    print $4 > curr_stage_fn
    xclose(curr_stage_fn)
 
-   next
-}
-
-$0 ~ /^[^ ]+ [0-9]+  / {
-   # normal log line
-   sub(/^[^ ]+ [^ ]+  /, "")
-   print > log_fn
    next
 }
 
@@ -169,24 +170,33 @@ $0 ~ /^[^ ]+ [0-9]+  / {
    next
 }
 
+$0 ~ /^[^ ]+ [0-9]+  / {
+   # normal log line
+   sub(/^[^ ]+ [^ ]+  /, "")
+   print > log_fn
+   next
+}
+
 # end of task
 {
+   print $0 > progress0_fn
    assert(NF == 3 && $3 == eot, "this should not happen")
-   if (stage [$2] != "")
+   if (taskid2stage [$2] != "")
       xclose(log_fn)
 }
 
 function free_arrs (task){
-   delete pkgpaths [task]
-   delete run_on   [task]
-   delete status [task]
-   delete stage [task]
-   delete failed_deps [task]
+   delete taskid2pkgpath [task]
+   delete taskid2slavehost [task]
+   delete taskid2status [task]
+   delete taskid2stage [task]
+   delete taskid2failed_deps [task]
 }
 
-status [$2] == "fatal" {
+taskid2status [$2] == "fatal" {
    # fatal
-   print "    FATAL:", pkgpath, "on", run_on [$2]
+   print "    FATAL:", pkgpath, "on", taskid2slavehost [$2]
+   xclose(log_dir "/full.tmp")
    xsystem("rm -rf " log_dir)
    free_arrs($2)
    next
@@ -202,11 +212,12 @@ function print_progress(status, pkgpath,             _i, _stage){
    xclose(progress_fn)
 }
 
-status [$2] == "success" {
+taskid2status [$2] == "success" {
    # succeeded
-   print "    succeeded:", pkgpath, "on", run_on [$2]
+   print "    succeeded:", pkgpath, "on", taskid2slavehost [$2]
 
    # removing log directory
+   xclose(log_dir "/full.tmp")
    xsystem("rm -rf " log_dir)
 
    # free memory
@@ -219,25 +230,25 @@ status [$2] == "success" {
    next
 }
 
-status [$2] == "failure" {
+taskid2status [$2] == "failure" {
    # failed
-   if (stage [$2] ~ /^(Available|Excluded)$/){
-      if (stage [$2] == "Available")
+   if (taskid2stage [$2] ~ /^(Available|Excluded)$/){
+      if (taskid2stage [$2] == "Available")
          printf "    Not Available: "
       else
          printf "    Excluded: "
 
-      print pkgpath, "on", run_on [$2]
+      print pkgpath, "on", taskid2slavehost [$2]
       print pkgpath >> packages_failed_notavail_fn
       xclose(packages_failed_notavail_fn)
    }else{
-      print "    F-A-I-L-E-D", stage [$2] ":", pkgpath, "on", run_on [$2]
+      print "    F-A-I-L-E-D", taskid2stage [$2] ":", pkgpath, "on", taskid2slavehost [$2]
       print pkgpath >> packages_failed_fn
       xclose(packages_failed_fn)
    }
 
    # indirectly failed
-   cnt = split(failed_deps [$2], failed_pkgs)
+   cnt = split(taskid2failed_deps [$2], failed_pkgs)
    log_fn  = log_dir "/failed_deps.txt"
    printf "" > log_fn
    for (i=2; i <= cnt; ++i){

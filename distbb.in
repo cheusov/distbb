@@ -161,7 +161,7 @@ fi
 
 ######################################################################
 
-# date start for placint it to html/txt report
+# date start for placing it to html/txt report
 build_start="$(date -u '+%Y-%m-%d %H:%M') UTC"
 # date start in YYYYMMDD-HHMM format
 if test -z "$BUILD_ID"; then
