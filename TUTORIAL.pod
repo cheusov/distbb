@@ -110,7 +110,7 @@ is fully workable.
       # UPLOAD_LOGS_DEST='you@example.org:~/public_html/bulk_logs/'
       PARALLEL_MODE=yes
       CONFIG_VERSION=1
-      . /home/cheusov/pkg_distbb/share/distbb/distbb.default.conf
+      . /home/you/pkg_distbb/share/distbb/distbb.default.conf
 
 
 =head1 Configuring host system
@@ -136,18 +136,16 @@ B<pkg_install.conf(5)> configured, so, B<pkg_add(8)> works properly.
 =head2 Shared directories
 
       # mkdir -p /srv/pkgsrc_bin/NetBSD/$(uname -m)/10-current/All /srv/pkgsrc /srv/pkgsrc_distfiles
-      # chown $USER:builders /srv/pkgsrc_distfiles
+      # chown you:builders /srv/pkgsrc_distfiles
       # chmod g+w /srv/pkgsrc_distfiles
-      # chown $USER /srv/pkgsrc
-      # chown -R $USER /srv/pkgsrc_bin
+      # chown you /srv/pkgsrc
+      # chown -R you /srv/pkgsrc_bin
 
 =head2 Download and unpack current pkgsrc
 
-      # su - you
       you$ ftp -o- http://cdn.netbsd.org/pub/pkgsrc/current/pkgsrc.tar.xz | \
            tar -C /srv/pkgsrc/ -zxf-
       you$ mv /srv/pkgsrc/pkgsrc /srv/pkgsrc/current
-      you$ exit
 
 Binary packages are created by user I<builder>. Let's make directory
 writable for its group.
@@ -165,22 +163,23 @@ the template for future real sandboxes.
 As I said before I assume you are running NetBSD current and want to
 run bulk builds for NetBSD-10. So, let's create a rootfs for
 NetBSD-10. It is not chrooted sandbox yet :-) In this rootfs we don't
-need some sets, so, we exclude them. If you experience some problems
+need some sets, so, we exclude them. If you experience problems
 in downloading NetBSD sets, delete incompletely downloaded file from
-I</tmp/cache-dir> directory and repeat I<sets2rootfs> command.
+I</tmp/cache-dir> directory and rerun I<sets2rootfs> command.
 
       # mkdir -p /srv/sandboxes/nb10
       # mkdir /tmp/cache-dir # temporary directory for downloaded sets
       # sets2rootfs -c /tmp/cache-dir -d /srv/sandboxes/nb10 \
-        -r 10.0 -Xkern -xgames -xgpufw -xrescue -xmodules
+        -r 10.0 -Xkern -xgames -xgpufw -xrescue -xmodules -xtdb -xmanhtml \
+        -xtests -xdebug
 
 =head2 postinstall(8) in NetBSD-10 rootfs.
 
       # cp /tmp/cache-dir/etc.* /tmp/cache-dir/xetc.* /srv/sandboxes/nb10/tmp/
       # chroot /srv/sandboxes/nb10 /usr/sbin/postinstall \
-          -s /tmp/etc.* -s /tmp/cache-dir/xetc.* check
+          -s /tmp/etc.tgz -s /tmp/xetc.tgz check
       # chroot /srv/sandboxes/nb10 /usr/sbin/postinstall \
-          -s /tmp/etc.* -s /tmp/cache-dir/xetc.* fix
+          -s /tmp/etc.tgz -s /tmp/xetc.tgz fix
       # cp /etc/resolv.conf /srv/sandboxes/nb10/etc/
       # rm /srv/sandboxes/nb10/tmp/etc.*
       # rm /srv/sandboxes/nb10/tmp/xetc.*
@@ -201,7 +200,7 @@ So, create I</srv/sandboxes/nb10/etc/mk.conf> file.
 
     WRKOBJDIR=              /tmp/obj_pkgsrc
     
-    X11_TYPE=               modular
+    # X11_TYPE=               modular
     
     PKG_DEVELOPER=          yes
     
@@ -212,9 +211,8 @@ So, create I</srv/sandboxes/nb10/etc/mk.conf> file.
     
     .endif # end pkgsrc settings
 
-We don't set variables PKGSRCDIR, PACKAGES and DISTDIR here because they is passed to
-B<bmake>'s environment from I<distbb.conf> file.  Of course, you can
-modify I<mk.conf> if needed.
+We don't set variables PKGSRCDIR, PACKAGES and DISTDIR here because they are passed to
+B<bmake>'s environment from I<distbb.conf> file.
 
 =head2 Home directory for I<root> user inside NetBSD-10 rootfs
 
@@ -235,7 +233,7 @@ order to avoid using I<root> privileges.
 I assume you use ed25519 ssh
 key. If not, modify the following line accordingly.
 
-      # cat "$HOME/.ssh/id_ed25519.pub" > /srv/sandboxes/nb10/root/.ssh/authorized_keys
+      # cat "/home/you/.ssh/id_ed25519.pub" > /srv/sandboxes/nb10/root/.ssh/authorized_keys
 
 =head2 Check point for NetBSD-10 rootfs
 
@@ -280,7 +278,7 @@ Now, let's create directories inside our future sandbox. They will be mount poin
       # mkdir -p /srv/sandboxes/sandbox1-nb10/srv/pkgsrc_distfiles
       # mkdir -p /srv/sandboxes/sandbox1-nb10$HOME/pkg_distbb
 
-Recreate I<etc> directory for NetBSD-10.
+Recreate I<etc> directory for sandbox #1.
 
       # rm -rf /srv/sandboxes/sandbox1-nb10/etc
       # cp -a /srv/sandboxes/nb10/etc /srv/sandboxes/sandbox1-nb10/
@@ -296,7 +294,7 @@ Also, add the following lines to I<fses>
       /srv/pkgsrc /srv/pkgsrc ro \
       /srv/pkgsrc_bin /srv/pkgsrc_bin rw \
       /srv/pkgsrc_distfiles /srv/pkgsrc_distfiles rw \
-      YOURHOME/pkg_distbb YOURHOME/pkg_distbb ro \
+      /home/you/pkg_distbb /home/you/pkg_distbb ro \
 
 In my case I<fses> variable looks like the following
 
@@ -335,7 +333,7 @@ and I<$HOME/pkg_distbb>.
 
 Run the following commands from sandbox #1 chroot.
 Here we use the same I<uid> and I<gid> as on hosts system.
-For debugging purposes (who knows? :-) ) we create I<builder>'s home directory.
+For debugging purposes we create I<builder>'s home directory.
 
       sandbox # groupadd -g 1100 builders
       sandbox # useradd -m -u 1100 -g builders builder
@@ -411,7 +409,7 @@ Start all sandboxes.
 
 Now we are ready for running bulk builds. Let's start with building one package.
 
-    you$ $HOME/pkg_distbb/bin/bmake -p lang/gawk -x upload_pkgs
+    you$ ~/pkg_distbb/bin/bmake -p lang/gawk -x upload_pkgs
 
 See B<distbb> options for more details.
 
